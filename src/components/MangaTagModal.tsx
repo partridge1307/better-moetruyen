@@ -64,7 +64,7 @@ const MangaTagModal: FC<MangaTagModalProps> = ({ tag, field }) => {
           </PopoverTrigger>
         </div>
 
-        <PopoverContent className="bg-zinc-800">
+        <PopoverContent className="bg-zinc-800" align="end">
           <Command className="bg-zinc-800 text-slate-50">
             <CommandInput placeholder="Thể loại" />
             <CommandEmpty>Không tìm thấy thể loại</CommandEmpty>

@@ -52,7 +52,6 @@ const ForumComponents: { title: string; href: string; description: string }[] =
     },
   ];
 
-// TODO: Fix responsive
 const NavMenu = () => {
   return (
     <NavigationMenu className="justify-start">

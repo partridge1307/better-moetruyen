@@ -1,12 +1,10 @@
 import { FC } from 'react';
 import MangaUploadForm from './MangaUploadForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/Tabs';
-import { Manga, Tag } from '@prisma/client';
-import MangaUploadManage from './MangaUploadManage';
 
 interface MangaUploadProps {
-  manga: Array<Manga>;
-  tag: Array<Tag>;
+  manga: object[];
+  tag: object[];
 }
 
 const MangaUpload: FC<MangaUploadProps> = ({ manga, tag }) => {
@@ -21,7 +19,7 @@ const MangaUpload: FC<MangaUploadProps> = ({ manga, tag }) => {
         {!manga.length ? (
           <p>Bạn chưa upload bộ nào mất rồi. Hãy upload một bộ ngay thôi nhé</p>
         ) : (
-          <MangaUploadManage manga={manga} />
+          <></>
         )}
       </TabsContent>
       <TabsContent value="upload">

@@ -21,11 +21,16 @@ import { Popover, PopoverContent, PopoverTrigger } from './ui/Popover';
 
 interface MangaTagModalProps {
   tag: object[];
-  form: any;
+  field: any;
 }
 
-const MangaTagModal: FC<MangaTagModalProps> = ({ tag, form }) => {
+const MangaTagModal: FC<MangaTagModalProps> = ({ tag, field }) => {
   const [tags, setTag] = useState<Array<string>>([]);
+
+  const pushTag = tags.filter(
+    (t, i) => tags.indexOf(field.value.find((v: string) => v === t)) !== i
+  );
+  field.value.push(...pushTag);
 
   return (
     <FormItem>
@@ -44,9 +49,7 @@ const MangaTagModal: FC<MangaTagModalProps> = ({ tag, form }) => {
                   <span
                     onClick={() => {
                       setTag([...tags.filter((t, index) => index !== i)]);
-                      form.setValue('tag', [
-                        ...tags.filter((t, index) => index !== i),
-                      ]);
+                      field.value.splice(field.value.indexOf(t), 1);
                     }}
                   >
                     <X className="h-5 w-5 text-red-500" />
@@ -56,7 +59,7 @@ const MangaTagModal: FC<MangaTagModalProps> = ({ tag, form }) => {
           </ul>
           <PopoverTrigger asChild>
             <FormControl>
-              <Input className="border-none" />
+              <Input className="border-none text-transparent" {...field} />
             </FormControl>
           </PopoverTrigger>
         </div>
@@ -81,7 +84,6 @@ const MangaTagModal: FC<MangaTagModalProps> = ({ tag, form }) => {
                           onSelect={(currentVal) => {
                             if (!tags.includes(currentVal)) {
                               setTag((prev) => [...prev, currentVal]);
-                              form.setValue('tag', [...tags, currentVal]);
                             }
                           }}
                         >

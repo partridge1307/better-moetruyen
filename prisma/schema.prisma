@@ -8,13 +8,14 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(cuid())
-  email    String   @unique
-  password String
-  name     String?  @unique
-  image    String?
-  manga    Manga[]
-  createAt DateTime @default(now())
+  id            String   @id @default(cuid())
+  email         String   @unique
+  password      String
+  name          String?  @unique
+  image         String?
+  isFirstUpload Boolean  @default(true)
+  manga         Manga[]
+  createAt      DateTime @default(now())
 }
 
 model Manga {
@@ -27,8 +28,11 @@ model Manga {
   chapter     Chapter[]
   creator     User      @relation(fields: [creatorId], references: [id])
   creatorId   String
+  isPublished Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@unique([name, creatorId])
 }
 
 model Tag {

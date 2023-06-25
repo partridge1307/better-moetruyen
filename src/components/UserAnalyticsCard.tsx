@@ -16,8 +16,16 @@ const UserAnalyticsCard: FC<UserAnalyticsProps> = ({ user, manga }) => {
 
       <CardContent>
         <dl className="flex gap-3 tracking-tight">
-          <dt>Tổng số truyện đã upload:</dt>
-          <dd>{manga.length}</dd>
+          <dt>Tổng số truyện đã publish:</dt>
+          {/* @ts-expect-error */}
+          <dd>{manga.filter((m) => m.isPublished)?.length}</dd>
+        </dl>
+      </CardContent>
+      <CardContent>
+        <dl className="flex gap-3 tracking-tight">
+          <dt>Tổng số truyện chờ publish:</dt>
+          {/* @ts-expect-error */}
+          <dd>{manga.filter((m) => !m.isPublished)?.length}</dd>
         </dl>
       </CardContent>
     </Card>

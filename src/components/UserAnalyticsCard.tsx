@@ -1,15 +1,20 @@
 import { User } from 'next-auth';
 import { FC } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
+import { Manga } from '@prisma/client';
 
-interface UserAnalyticsProps {
+interface UserAnalyticsProps extends React.HTMLAttributes<HTMLDivElement> {
   user: Pick<User, 'name'>;
-  manga: object[];
+  manga: Array<Manga>;
 }
 
-const UserAnalyticsCard: FC<UserAnalyticsProps> = ({ user, manga }) => {
+const UserAnalyticsCard: FC<UserAnalyticsProps> = ({
+  user,
+  manga,
+  ...props
+}) => {
   return (
-    <Card className="bg-zinc-700 text-slate-50 h-fit">
+    <Card {...props}>
       <CardHeader>
         <CardTitle className="text-center">{user.name}</CardTitle>
       </CardHeader>
@@ -17,14 +22,12 @@ const UserAnalyticsCard: FC<UserAnalyticsProps> = ({ user, manga }) => {
       <CardContent>
         <dl className="flex gap-3 tracking-tight">
           <dt>Tổng số truyện đã publish:</dt>
-          {/* @ts-expect-error */}
           <dd>{manga.filter((m) => m.isPublished)?.length}</dd>
         </dl>
       </CardContent>
       <CardContent>
         <dl className="flex gap-3 tracking-tight">
           <dt>Tổng số truyện chờ publish:</dt>
-          {/* @ts-expect-error */}
           <dd>{manga.filter((m) => !m.isPublished)?.length}</dd>
         </dl>
       </CardContent>

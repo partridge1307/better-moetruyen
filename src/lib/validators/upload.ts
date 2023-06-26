@@ -21,3 +21,22 @@ export const MangaUploadValidator = z
   });
 
 export type CreateMangaUploadPayload = z.infer<typeof MangaUploadValidator>;
+
+export const ChapterUploadValidator = z
+  .object({
+    chapterIndex: z
+      .number()
+      .min(0, { message: 'Số thứ tự chapter phải lớn hơn 0' }),
+    chapterName: z
+      .string()
+      .min(3, { message: 'Tối thiểu 3 ký tự' })
+      .max(255, { message: 'Tối đa 255 ký tự' }),
+    image: z.any() as ZodType<FileList>,
+  })
+  .required()
+  .refine((schema) => schema.image, {
+    message: 'Phải chứa ít nhất một ảnh',
+    path: ['image'],
+  });
+
+export type CreateChapterUploadPayload = z.infer<typeof ChapterUploadValidator>;

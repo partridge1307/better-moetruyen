@@ -44,10 +44,11 @@ model Tag {
 }
 
 model Chapter {
-  id        Int      @id @default(autoincrement())
-  name      String?
-  images    String[]
-  manga     Manga    @relation(fields: [mangaId], references: [id])
-  mangaId   Int
-  createdAt DateTime @default(now())
+  id           Int      @id @default(autoincrement())
+  chapterIndex Int      @default(0)
+  name         String?
+  images       String[]
+  manga        Manga    @relation(fields: [mangaId], references: [id])
+  mangaId      Int
+  createdAt    DateTime @default(now())
 }

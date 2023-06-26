@@ -7,7 +7,8 @@ import {
 } from '@/lib/validators/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
-import { startTransition, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from './ui/Button';
 import {
@@ -20,7 +21,6 @@ import {
   FormMessage,
 } from './ui/Form';
 import { Input } from './ui/Input';
-import { useRouter } from 'next/navigation';
 
 const UserAuthSignInForm = () => {
   const form = useForm<CreateAuthSignInPayload>({

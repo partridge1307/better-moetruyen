@@ -54,6 +54,7 @@ const MangaUploadForm: FC<MangaUploadFormProps> = ({ tag }) => {
       values: object;
     }) => {
       const {
+        // eslint-disable-next-line no-unused-vars
         image,
         tag: tagForm,
         ...mangaBody

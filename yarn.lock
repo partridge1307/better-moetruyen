@@ -623,6 +623,15 @@
     "@babel/runtime" "^7.13.10"
     "@radix-ui/react-slot" "1.0.2"
 
+"@radix-ui/react-progress@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-progress/-/react-progress-1.0.3.tgz#8380272fdc64f15cbf263a294dea70a7d5d9b4fa"
+  integrity sha512-5G6Om/tYSxjSeEdrb1VfKkfZfn/1IlPWd731h2RfPuSbIfNUgfqAwbKfJCg/PP6nuUCTrYzalwHSpSinoWoCag==
+  dependencies:
+    "@babel/runtime" "^7.13.10"
+    "@radix-ui/react-context" "1.0.1"
+    "@radix-ui/react-primitive" "1.0.3"
+
 "@radix-ui/react-roving-focus@1.0.4":
   version "1.0.4"
   resolved "https://registry.npmjs.org/@radix-ui/react-roving-focus/-/react-roving-focus-1.0.4.tgz"
@@ -829,11 +838,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/editorjs__header@^2.6.0":
-  version "2.6.0"
-  resolved "https://registry.npmjs.org/@types/editorjs__header/-/editorjs__header-2.6.0.tgz"
-  integrity sha512-J9TyO/BjNVddi+syyXpvMRMtVz5Z62pwmFKynWsgP+wnJYdWF8ABqgomokIsAvuEwH5NHa/YxsTltYcPPGCRRQ==
-
 "@types/json5@^0.0.29":
   version "0.0.29"
   resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz"
@@ -845,18 +849,6 @@
   integrity sha512-drE6uz7QBKq1fYqqoFKTDRdFCPHd5TCub75BM+D+cMx7NU9hUz7SESLfC2fSCXVFMO5Yj8sOWHuGqPgjc+fz0Q==
   dependencies:
     "@types/node" "*"
-
-"@types/lodash.debounce@^4.0.7":
-  version "4.0.7"
-  resolved "https://registry.npmjs.org/@types/lodash.debounce/-/lodash.debounce-4.0.7.tgz"
-  integrity sha512-X1T4wMZ+gT000M2/91SYj0d/7JfeNZ9PeeOldSNoE/lunLeQXKvkmIumI29IaKMotU/ln/McOIvgzZcQ/3TrSA==
-  dependencies:
-    "@types/lodash" "*"
-
-"@types/lodash@*":
-  version "4.14.195"
-  resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.195.tgz"
-  integrity sha512-Hwx9EUgdwf2GLarOjQp5ZH8ZmblzcbTBC2wtQWNKARBSxM9ezRIAUpeDTgoQRAFB0+8CNWXVA9+MaSOzOF3nPg==
 
 "@types/node@*", "@types/node@^20.3.1":
   version "20.3.1"

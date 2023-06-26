@@ -1,7 +1,6 @@
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { upload } from '@/lib/discord';
-import { MangaUploadValidator } from '@/lib/validators/upload';
 import { z } from 'zod';
 
 export async function POST(req: Request) {

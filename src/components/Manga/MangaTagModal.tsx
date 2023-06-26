@@ -8,16 +8,20 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from './ui/Command';
+} from '@/components/ui/Command';
 import {
   FormControl,
   FormDescription,
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/Form';
-import { Input } from './ui/Input';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/Popover';
+} from '@/components/ui/Form';
+import { Input } from '@/components/ui/Input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/Popover';
 
 interface MangaTagModalProps {
   tag: object[];

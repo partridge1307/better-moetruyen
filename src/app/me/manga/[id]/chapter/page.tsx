@@ -1,8 +1,8 @@
-import ManageChapter from '@/components/ManageChapter';
-import MangaUploadCard from '@/components/MangaUploadCard';
 import { db } from '@/lib/db';
 import { FC } from 'react';
 import { notFound } from 'next/navigation';
+import ManageChapter from '@/components/Chapter/ManageChapter';
+import MangaUploadCard from '@/components/Manga/MangaUploadCard';
 
 interface pageProps {
   params: {

@@ -15,13 +15,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/Form';
-import { Input } from './ui/Input';
-import { Button } from './ui/Button';
+} from '@/components/ui/Form';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 import Image from 'next/image';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { Progress } from './ui/Progress';
+import { Progress } from '@/components/ui/Progress';
 import { useToast } from '@/hooks/use-toast';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 

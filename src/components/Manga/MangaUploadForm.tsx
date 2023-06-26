@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FC, startTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import MangaTagModal from './MangaTagModal';
-import { Button } from './ui/Button';
+import { Button } from '@/components/ui/Button';
 import {
   Form,
   FormControl,
@@ -17,9 +17,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/Form';
-import { Input } from './ui/Input';
-import { Textarea } from './ui/TextArea';
+} from '@/components/ui/Form';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/TextArea';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { useCustomToast } from '@/hooks/use-custom-toast';

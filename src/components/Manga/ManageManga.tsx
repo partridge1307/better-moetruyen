@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import MangaUploadForm from './MangaUploadForm';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/Tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { Manga, Tag } from '@prisma/client';
 import MangaUploadManage from './MangaUploadManage';
 
@@ -9,7 +9,7 @@ interface MangaUploadProps {
   tag: Array<Tag>;
 }
 
-const MangaUpload: FC<MangaUploadProps> = ({ manga, tag }) => {
+const ManageManga: FC<MangaUploadProps> = ({ manga, tag }) => {
   return (
     <Tabs defaultValue="manage" className="bg-zinc-700 rounded-lg px-2 py-4">
       <TabsList className="grid grid-cols-2">
@@ -31,4 +31,4 @@ const MangaUpload: FC<MangaUploadProps> = ({ manga, tag }) => {
   );
 };
 
-export default MangaUpload;
+export default ManageManga;

@@ -11,7 +11,7 @@ import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { startTransition } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from './ui/Button';
+import { Button } from '@/components/ui/Button';
 import {
   Form,
   FormControl,
@@ -19,8 +19,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from './ui/Form';
-import { Input } from './ui/Input';
+} from '@/components/ui/Form';
+import { Input } from '@/components/ui/Input';
 
 const UserAuthSignUpForm = () => {
   const { toast } = useToast();

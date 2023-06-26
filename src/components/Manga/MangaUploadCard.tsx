@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from './ui/Card';
+} from '@/components/ui/Card';
 import Image from 'next/image';
 import { formatTimeToNow } from '@/lib/utils';
 import Link from 'next/link';

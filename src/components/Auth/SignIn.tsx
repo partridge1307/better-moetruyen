@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { Icons } from './Icons';
-import UserAuthSignUpForm from './UserAuthSignUpForm';
+import { Icons } from '@/components/Icons';
+import UserAuthSignInForm from './UserAuthSignInForm';
 
-const SignUp = () => {
+const SignIn = () => {
   return (
     <div className="container mx-auto w-full justify-center flex flex-col sm:w-[400px]">
       <div className="flex flex-col space-y-4 text-center">
@@ -11,19 +11,20 @@ const SignUp = () => {
           <h1 className="font-bold text-xl">Moetruyen</h1>
         </div>
         <p className="leading-tight">
-          Bạn sẽ chấp nhận mọi điều khoản, chính sách của Moetruyen khi đăng ký
+          Bạn sẽ chấp nhận mọi điều khoản, chính sách của Moetruyen khi đăng
+          nhập
         </p>
 
         {/* Sign In Form */}
-        <UserAuthSignUpForm />
+        <UserAuthSignInForm />
 
         <p className="px-8 text-sm">
-          Đã là thành viên Moetruyen?{' '}
+          Lần đầu tới Moetruyen?{' '}
           <Link
-            href="/sign-in"
+            href="/sign-up"
             className="text-sm underline underline-offset-4 hover:text-slate-200"
           >
-            Đăng nhập
+            Đăng ký
           </Link>
         </p>
       </div>
@@ -31,4 +32,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;

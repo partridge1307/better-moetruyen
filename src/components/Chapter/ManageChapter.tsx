@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Chapter } from '@prisma/client';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/Tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import ChapterUploadForm from './ChapterUploadForm';
 
 interface ManageChapterProps {

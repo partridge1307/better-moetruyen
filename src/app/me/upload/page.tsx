@@ -1,5 +1,5 @@
-import ManageManga from '@/components/ManageManga';
-import UserAnalyticsCard from '@/components/UserAnalyticsCard';
+import ManageManga from '@/components/Manga/ManageManga';
+import UserAnalyticsCard from '@/components/User/UserAnalyticsCard';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';

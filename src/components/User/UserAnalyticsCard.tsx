@@ -1,6 +1,6 @@
 import { User } from 'next-auth';
 import { FC } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Manga } from '@prisma/client';
 
 interface UserAnalyticsProps extends React.HTMLAttributes<HTMLDivElement> {

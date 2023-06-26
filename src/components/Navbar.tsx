@@ -3,7 +3,7 @@ import { Icons } from './Icons';
 import NavMenu from './NavMenu';
 import { getAuthSession } from '@/lib/auth';
 import { buttonVariants } from './ui/Button';
-import UserAccountNav from './UserAccountNav';
+import UserAccountNav from '@/components/User/UserAccountNav';
 
 const Navbar = async () => {
   const session = await getAuthSession();

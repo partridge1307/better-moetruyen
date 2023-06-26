@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/Tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import MangaUploadCard from './MangaUploadCard';
 import { Manga } from '@prisma/client';
 import {
@@ -7,7 +7,7 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from './ui/ContextMenu';
+} from '@/components/ui/ContextMenu';
 import { Plus, Settings2, UploadCloud } from 'lucide-react';
 import Link from 'next/link';
 

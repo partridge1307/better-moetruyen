@@ -1,41 +1,89 @@
-import Link from 'next/link';
-import { Icons } from './Icons';
-import NavMenu from './NavMenu';
 import { getAuthSession } from '@/lib/auth';
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import SignOutButton from './Auth/SignOutButton';
+import { Icons } from './Icons';
+import NavSidebar from './NavSidebar';
+import UserAvatar from './User/UserAvatar';
 import { buttonVariants } from './ui/Button';
-import UserAccountNav from '@/components/User/UserAccountNav';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './ui/DropdownMenu';
 
 const Navbar = async () => {
   const session = await getAuthSession();
 
   return (
-    <div className="fixed inset-x-0 h-fit py-2 top-0 z-10 border-b border-zinc-700">
-      <div className="container h-full max-w-7xl flex items-center justify-between gap-6">
-        {/* Logo */}
-        <Link href="/" className="hidden md:flex items-center gap-2">
-          <Icons.logo className="h-8 w-8 sm:h-6 sm:w-6 bg-white" />
-          <p className="font-bold text-xl">Moetruyen</p>
-        </Link>
-
-        {/* Navigation menu */}
-        <NavMenu />
-
-        {/* Search */}
-
-        {/* Profile */}
-        {session?.user ? (
-          <UserAccountNav user={session.user} />
-        ) : (
-          <Link
-            href="/sign-in"
-            className={buttonVariants({
-              variant: 'ghost',
-              className: 'bg-black text-center',
-            })}
-          >
-            Đăng nhập
+    <div className="fixed top-0 z-10 inset-x-0 h-fit border-b">
+      <div className="container px-0 max-sm:px-4 mx-auto flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <NavSidebar />
+          <Link href="/" className="flex items-center gap-2">
+            <Icons.logo className="h-6 w-6 bg-black dark:bg-white" />
+            <p className="text-2xl font-semibold max-sm:hidden">Moetruyen</p>
           </Link>
-        )}
+        </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            {session?.user ? (
+              <UserAvatar user={session.user} />
+            ) : (
+              <Icons.user className="h-7 w-7" />
+            )}
+          </DropdownMenuTrigger>
+
+          {session?.user ? (
+            <DropdownMenuContent align="end" className="min-w-[300px] p-2">
+              <p className="font-medium text-center">{session.user.name}</p>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/me/followed-manga">Truyện đang theo dõi</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/me/followed-team">Team đang theo dõi</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/me/manga"
+                  className={cn(
+                    buttonVariants({ variant: 'outline' }),
+                    'w-full'
+                  )}
+                >
+                  Quản lý truyện
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <SignOutButton />
+            </DropdownMenuContent>
+          ) : (
+            <DropdownMenuContent align="end" className="min-w-[200px] p-2">
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/sign-in"
+                  className={cn(buttonVariants(), 'w-full')}
+                >
+                  Đăng nhập
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/sign-up"
+                  className={cn(buttonVariants(), 'w-full')}
+                >
+                  Đăng ký
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          )}
+        </DropdownMenu>
       </div>
     </div>
   );

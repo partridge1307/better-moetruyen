@@ -4,20 +4,26 @@
 .dark .ce-conversion-toolbar,
 .dark .ce-settings,
 .dark .ce-settings__button,
-.dark .ce-toolbar__settings-btn,
 .dark .cdx-button,
 .dark .ce-popover,
-.dark .ce-toolbar__plus:hover {
+.dark .ce-toolbar__plus:hover,
+.dark .ce-toolbar__settings-btn:hover {
   background: theme('colors.popover.DEFAULT');
   color: inherit;
   border-color: theme('colors.border');
+}
+
+.dark .ce-popover-item__title {
+  color: theme('colors.accent.foreground');
 }
 
 .dark .ce-inline-tool,
 .dark .ce-conversion-toolbar__label,
 .dark .ce-toolbox__button,
 .dark .cdx-settings-button,
-.dark .ce-toolbar__plus {
+.dark .ce-toolbar__plus,
+.dark .ce-toolbar__settings-btn,
+.dark .ce-popover-item:hover .ce-popover-item__title {
   color: inherit;
 }
 
@@ -45,8 +51,7 @@
 .dark .ce-inline-toolbar__dropdown:hover,
 .dark .ce-inline-tool:hover,
 .dark .ce-popover__item:hover,
-.dark .ce-conversion-tool:hover,
-.dark .ce-toolbar__settings-btn:hover {
+.dark .ce-conversion-tool:hover {
   background-color: theme('colors.accent.DEFAULT');
   color: theme('colors.accent.foreground');
 }

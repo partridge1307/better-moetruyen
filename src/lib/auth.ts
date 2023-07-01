@@ -56,7 +56,7 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         if (!user.name)
-          await db.user.update({
+          user = await db.user.update({
             where: {
               id: user.id,
             },

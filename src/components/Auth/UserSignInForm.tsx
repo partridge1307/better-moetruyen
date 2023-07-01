@@ -1,28 +1,27 @@
 'use client';
 
-import { useToast } from '@/hooks/use-toast';
 import {
   AuthSignInValidator,
   CreateAuthSignInPayload,
 } from '@/lib/validators/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/Button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
+} from '../ui/Form';
+import { Input } from '../ui/Input';
+import { Button } from '../ui/Button';
+import { signIn } from 'next-auth/react';
+import { useState } from 'react';
+import { toast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
-const UserAuthSignInForm = () => {
+const UserSignInForm = () => {
   const form = useForm<CreateAuthSignInPayload>({
     resolver: zodResolver(AuthSignInValidator),
     defaultValues: {
@@ -30,11 +29,10 @@ const UserAuthSignInForm = () => {
       password: '',
     },
   });
-  const { refresh, push } = useRouter();
-  const { toast } = useToast();
-  const [isLoading, setLoading] = useState<boolean>(false);
 
-  const onSubmit = async (values: CreateAuthSignInPayload) => {
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+  async function submitHanlder(values: CreateAuthSignInPayload) {
     setLoading(true);
     try {
       const { email, password } = AuthSignInValidator.parse(values);
@@ -45,15 +43,15 @@ const UserAuthSignInForm = () => {
         redirect: false,
       });
 
-      if (res?.error === 'CredentialsSignin')
+      if (res && res.error === 'CredentialsSignin')
         throw new Error('Tài khoản hoặc mật khẩu không chính xác');
 
-      toast({
+      router.back();
+      router.refresh();
+
+      return toast({
         title: 'Thành công',
-        description: 'Đang chuyển về trang chủ',
       });
-      push('/');
-      refresh();
     } catch (error) {
       if (error instanceof Error) {
         return toast({
@@ -63,7 +61,7 @@ const UserAuthSignInForm = () => {
         });
       }
 
-      toast({
+      return toast({
         title: 'Có lỗi xảy ra',
         description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
         variant: 'destructive',
@@ -71,48 +69,54 @@ const UserAuthSignInForm = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+      <form onSubmit={form.handleSubmit(submitHanlder)} className="space-y-4">
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormMessage />
               <FormLabel>Email</FormLabel>
+              <FormMessage />
               <FormControl>
-                <Input placeholder="Email của bạn" type="email" {...field} />
+                <Input
+                  type="email"
+                  placeholder="Email của bạn"
+                  className="border-2 dark:border-slate-200 focus:ring-offset-2 focus-visible:dark:ring-slate-200"
+                  {...field}
+                />
               </FormControl>
-              <FormDescription>Email của bạn</FormDescription>
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Password</FormLabel>
               <FormMessage />
-              <FormLabel>Mật khẩu</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Mật khẩu của bạn"
                   type="password"
+                  placeholder="Mật khẩu của bạn"
+                  className="border-2 dark:border-slate-200 focus:ring-offset-2 focus-visible:dark:ring-slate-200"
                   {...field}
                 />
               </FormControl>
-              <FormDescription>Mật khẩu của bạn</FormDescription>
             </FormItem>
           )}
         />
+
         <Button
-          isLoading={isLoading}
           type="submit"
-          variant="ghost"
-          className="bg-black w-full"
+          isLoading={isLoading}
+          disabled={isLoading}
+          className="w-full"
         >
           Đăng nhập
         </Button>
@@ -121,4 +125,4 @@ const UserAuthSignInForm = () => {
   );
 };
 
-export default UserAuthSignInForm;
+export default UserSignInForm;

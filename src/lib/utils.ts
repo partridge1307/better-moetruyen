@@ -1,10 +1,14 @@
-import { twMerge } from 'tailwind-merge';
 import { ClassValue, clsx } from 'clsx';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import locale from 'date-fns/locale/vi';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export function sleep(time: number) {
+  return new Promise((res) => setTimeout(res, time * 1000));
 }
 
 export const verifyHTML = (token: string) => `<!DOCTYPE html>
@@ -86,7 +90,7 @@ function formatDistance(token: string, count: number, options?: any): string {
     if (options.comparison > 0) {
       return 'Khoảng ' + result;
     } else {
-      if (result === 'just now') return result;
+      if (result === 'vừa xong') return result;
       return result + ' trước';
     }
   }
@@ -95,7 +99,7 @@ function formatDistance(token: string, count: number, options?: any): string {
 }
 
 export function formatTimeToNow(date: Date): string {
-  return formatDistanceToNow(date, {
+  return formatDistanceToNowStrict(date, {
     addSuffix: true,
     locale: {
       ...locale,

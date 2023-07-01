@@ -1,5 +1,5 @@
-import { AvatarProps } from '@radix-ui/react-avatar';
-import { User } from 'next-auth';
+import type { AvatarProps } from '@radix-ui/react-avatar';
+import type { User } from 'next-auth';
 import { FC } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/Avatar';
 import { Icons } from '@/components/Icons';
@@ -17,9 +17,9 @@ const UserAvatar: FC<UserAvatarProps> = ({ user, ...props }) => {
           <Image fill src={user.image} alt="Profile picture" />
         </div>
       ) : (
-        <AvatarFallback>
+        <AvatarFallback className="bg-transparent dark:hover:bg-transparent/20">
           <span className="sr-only">{user?.name}</span>
-          <Icons.user className="h-4 w-4 text-black" />
+          <Icons.user className="h-7 w-7 text-black dark:text-white" />
         </AvatarFallback>
       )}
     </Avatar>

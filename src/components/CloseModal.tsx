@@ -1,18 +1,17 @@
 'use client';
 
 import { X } from 'lucide-react';
-import { Button } from './ui/Button';
 import { useRouter } from 'next/navigation';
+import { FC } from 'react';
+import { Button } from './ui/Button';
 
-const CloseModal = () => {
-  const { back } = useRouter();
+interface CloseModalProps extends React.HTMLAttributes<HTMLButtonElement> {}
+
+const CloseModal: FC<CloseModalProps> = (props) => {
+  const router = useRouter();
+
   return (
-    <Button
-      variant="subtle"
-      onClick={() => back()}
-      className="h-6 w-6 p-0 rounded-md"
-      aria-label="close modal"
-    >
+    <Button onClick={() => router.back()} aria-label="close modal" {...props}>
       <X className="h-4 w-4" />
     </Button>
   );

@@ -1,17 +1,12 @@
 'use client';
 
-import { useToast } from '@/hooks/use-toast';
 import {
   AuthSignUpValidator,
   CreateAuthSignUpPayload,
 } from '@/lib/validators/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import { useRouter } from 'next/navigation';
-import { startTransition } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/Button';
+import { Button } from '../ui/Button';
 import {
   Form,
   FormControl,
@@ -19,12 +14,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
+} from '../ui/Form';
+import { Input } from '../ui/Input';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import { toast } from '@/hooks/use-toast';
 
-const UserAuthSignUpForm = () => {
-  const { toast } = useToast();
-  const { refresh } = useRouter();
+const UserSignUpForm = () => {
   const form = useForm<CreateAuthSignUpPayload>({
     resolver: zodResolver(AuthSignUpValidator),
     defaultValues: {
@@ -33,16 +29,12 @@ const UserAuthSignUpForm = () => {
       passwordConfirm: '',
     },
   });
-  const { mutate: signUp, isLoading } = useMutation({
-    mutationFn: async (values: object) => {
-      const { email, password, passwordConfirm } =
-        AuthSignUpValidator.parse(values);
 
-      const { data } = await axios.post('/api/auth/sign-up', {
-        email,
-        password,
-        passwordConfirm,
-      });
+  const { mutate: signUp, isLoading } = useMutation({
+    mutationFn: async (values: CreateAuthSignUpPayload) => {
+      const signUpForm = AuthSignUpValidator.parse(values);
+
+      const { data } = await axios.post('/api/auth/sign-up', signUpForm);
 
       return data as string;
     },
@@ -50,7 +42,7 @@ const UserAuthSignUpForm = () => {
       if (e instanceof AxiosError) {
         if (e.response?.status === 401) {
           return toast({
-            title: e.message,
+            title: 'Tài khoản đã được tạo',
             description: 'Vui lòng tạo tài khoản khác',
             variant: 'destructive',
           });
@@ -64,10 +56,6 @@ const UserAuthSignUpForm = () => {
       });
     },
     onSuccess: () => {
-      startTransition(() => {
-        refresh();
-      });
-
       return toast({
         title: 'Thành công',
         description: 'Một đường dẫn xác thực đã gửi tới mail của bạn',
@@ -78,18 +66,25 @@ const UserAuthSignUpForm = () => {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit((values) => signUp(values))}
-        className="space-y-3"
+        onSubmit={form.handleSubmit((values: CreateAuthSignUpPayload) =>
+          signUp(values)
+        )}
+        className="space-y-4"
       >
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormMessage />
               <FormLabel>Email</FormLabel>
+              <FormMessage />
               <FormControl>
-                <Input placeholder="Email của bạn" type="email" {...field} />
+                <Input
+                  type="email"
+                  placeholder="Email của bạn"
+                  className="border-2 dark:border-slate-200 focus:ring-offset-2 focus-visible:dark:ring-slate-200"
+                  {...field}
+                />
               </FormControl>
             </FormItem>
           )}
@@ -100,12 +95,13 @@ const UserAuthSignUpForm = () => {
           name="password"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Password</FormLabel>
               <FormMessage />
-              <FormLabel>Mật khẩu</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Mật khẩu của bạn"
                   type="password"
+                  placeholder="Mật khẩu của bạn"
+                  className="border-2 dark:border-slate-200 focus:ring-offset-2 focus-visible:dark:ring-slate-200"
                   {...field}
                 />
               </FormControl>
@@ -118,12 +114,13 @@ const UserAuthSignUpForm = () => {
           name="passwordConfirm"
           render={({ field }) => (
             <FormItem>
+              <FormLabel>Nhập lại password</FormLabel>
               <FormMessage />
-              <FormLabel>Nhập lại mật khẩu</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Mật khẩu của bạn"
                   type="password"
+                  placeholder="Mật khẩu của bạn"
+                  className="border-2 dark:border-slate-200 focus:ring-offset-2 focus-visible:dark:ring-slate-200"
                   {...field}
                 />
               </FormControl>
@@ -132,10 +129,10 @@ const UserAuthSignUpForm = () => {
         />
 
         <Button
-          isLoading={isLoading}
           type="submit"
-          variant="ghost"
-          className="bg-black w-full"
+          isLoading={isLoading}
+          disabled={isLoading}
+          className="w-full"
         >
           Đăng ký
         </Button>
@@ -144,4 +141,4 @@ const UserAuthSignUpForm = () => {
   );
 };
 
-export default UserAuthSignUpForm;
+export default UserSignUpForm;

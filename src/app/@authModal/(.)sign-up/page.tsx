@@ -3,15 +3,10 @@ import CloseModal from '@/components/CloseModal';
 
 const Page = () => {
   return (
-    <div className="fixed inset-0 bg-zinc-900/30 z-10 flex items-center pt-14">
-      <div className="container h-fit max-w-lg mx-auto">
-        <div className="relative bg-zinc-700 w-full h-full py-7 px-2 rounded-lg space-y-14">
-          <div className="absolute right-4">
-            <CloseModal />
-          </div>
-
-          <SignUp />
-        </div>
+    <div className="fixed flex items-center inset-0 bg-white/30 dark:bg-zinc-900/30 z-20">
+      <div className="container relative mx-auto h-3/4 bg-white dark:bg-zinc-800 max-w-2xl py-4 rounded-lg">
+        <CloseModal className="absolute right-4 h-6 w-6 p-0 rounded-md" />
+        <SignUp />
       </div>
     </div>
   );

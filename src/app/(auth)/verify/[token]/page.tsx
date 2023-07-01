@@ -4,7 +4,6 @@ import { AuthVeifyValidator } from '@/lib/validators/auth';
 import Link from 'next/link';
 import { FC } from 'react';
 import { z } from 'zod';
-import 'server-only';
 
 interface pageProps {
   params: {

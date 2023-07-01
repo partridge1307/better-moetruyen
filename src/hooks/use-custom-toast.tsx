@@ -20,7 +20,27 @@ export const useCustomToast = () => {
     });
   };
 
+  const verifyToast = () => {
+    const { dismiss } = toast({
+      title: 'Yêu cầu có quyền',
+      description:
+        'Có vẻ như bạn chưa được cấp quyền upload. Để được cấp quyền hãy IB admin nhé.',
+      variant: 'destructive',
+      action: (
+        <Link
+          href="https://discord.gg/dongmoe"
+          target="_blank"
+          className={buttonVariants({ variant: 'outline' })}
+          onClick={() => dismiss()}
+        >
+          Xác thực
+        </Link>
+      ),
+    });
+  };
+
   return {
     loginToast,
+    verifyToast,
   };
 };

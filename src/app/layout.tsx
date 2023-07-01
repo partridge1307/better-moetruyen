@@ -2,8 +2,9 @@ import Navbar from '@/components/Navbar';
 import Providers from '@/components/Providers';
 import { Toaster } from '@/components/ui/Toaster';
 import { cn } from '@/lib/utils';
+import '@/styles/editor.css';
 import '@/styles/globals.css';
-import { type Metadata } from 'next';
+import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
 export const metadata: Metadata = {
@@ -24,16 +25,15 @@ export default function RootLayout({
     <html lang="vi">
       <body
         className={cn(
-          'bg-zinc-800 text-slate-50 antialiased min-h-screen relative',
+          'h-screen antialiased dark:bg-zinc-800 dark:text-slate-50',
           inter.className
         )}
       >
         <Providers>
-          <Navbar />
-
           {authModal}
 
-          <div className="absolute container mx-auto h-full">{children}</div>
+          <Navbar />
+          {children}
         </Providers>
         <Toaster />
       </body>

@@ -1,18 +1,29 @@
 import { ZodType, z } from 'zod';
 
+export const authorInfo = z.object({
+  id: z.number(),
+  name: z.string(),
+});
+
+export type authorInfoProps = z.infer<typeof authorInfo>;
+
+export const tagInfo = z.object({
+  id: z.number(),
+  name: z.string(),
+});
+
+export type tagInfoProps = z.infer<typeof tagInfo>;
+
 export const MangaUploadValidator = z
   .object({
-    image: z.any() as ZodType<File | Blob>,
+    image: z.any() as ZodType<File>,
     name: z
       .string()
       .min(3, { message: 'Tối thiểu 3 kí tự' })
       .max(255, { message: 'Tối đa 255 kí tự' }),
-    description: z
-      .string()
-      .min(20, { message: 'Tối thiểu 20 kí tự' })
-      .max(2048, { message: 'Tối đa 2048 kí tự' }),
-    author: z.string().min(1, { message: 'Phải có tên tác giả' }),
-    tag: z.string().array().min(1, { message: 'Tối thiểu có một Tag' }),
+    description: z.any(),
+    author: z.array(authorInfo).min(1, { message: 'Tối thiểu một tác giả' }),
+    tag: z.array(tagInfo).min(1, { message: 'Tối thiểu có một thể loại' }),
   })
   .required()
   .refine((schema) => schema.image, {
@@ -20,7 +31,7 @@ export const MangaUploadValidator = z
     path: ['image'],
   });
 
-export type CreateMangaUploadPayload = z.infer<typeof MangaUploadValidator>;
+export type MangaUploadPayload = z.infer<typeof MangaUploadValidator>;
 
 export const ChapterUploadValidator = z
   .object({
@@ -33,10 +44,9 @@ export const ChapterUploadValidator = z
       .max(255, { message: 'Tối đa 255 ký tự' }),
     image: z.any() as ZodType<FileList>,
   })
-  .required()
-  .refine((schema) => schema.image, {
-    message: 'Phải chứa ít nhất một ảnh',
+  .refine((schema) => schema.image.length >= 5, {
+    message: 'Phải chứa ít nhất 5 ảnh',
     path: ['image'],
   });
 
-export type CreateChapterUploadPayload = z.infer<typeof ChapterUploadValidator>;
+export type ChapterUploadPayload = z.infer<typeof ChapterUploadValidator>;

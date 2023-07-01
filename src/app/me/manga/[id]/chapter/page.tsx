@@ -1,36 +1,44 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { FC } from 'react';
-import { notFound } from 'next/navigation';
-import ManageChapter from '@/components/Chapter/ManageChapter';
-import MangaUploadCard from '@/components/Manga/MangaUploadCard';
+import { redirect } from 'next/navigation';
+import DataChapterTable from './DataChapterTable';
+import { columns } from './column';
+import Link from 'next/link';
+import { buttonVariants } from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
 
-interface pageProps {
-  params: {
-    id: string;
-  };
-}
+const page = async ({ params }: { params: { id: string } }) => {
+  const session = await getAuthSession();
+  if (!session) return redirect('/sign-in');
 
-const page: FC<pageProps> = async ({ params }) => {
-  const manga = await db.manga.findFirst({
+  const chapter = await db.chapter.findMany({
     where: {
-      id: +params.id,
-    },
-    include: {
-      chapter: true,
+      mangaId: +params.id,
     },
   });
 
-  if (!manga) return notFound();
-
-  return (
-    <div className="container max-sm:px-0 mx-auto h-fit pt-14">
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_.4fr] gap-y-4 md:gap-x-4 py-6">
-        {/* TODO: Manga's chapter info */}
-        <ManageChapter chapter={manga?.chapter} mangaId={params.id} />
-
-        {/* Specific Manga Info */}
-        <MangaUploadCard manga={manga} />
-      </div>
+  return !!chapter.length ? (
+    <div className="flex flex-col">
+      <Link
+        href={`/me/manga/${params.id}/chapter/upload`}
+        className={cn(
+          buttonVariants({ variant: 'outline' }),
+          'self-end rounded-lg'
+        )}
+      >
+        Thêm chapter
+      </Link>
+      <DataChapterTable columns={columns} data={chapter} />
+    </div>
+  ) : (
+    <div className="h-full flex flex-col items-center justify-center gap-4">
+      <p>Truyện chưa có chapter nào cả</p>
+      <Link
+        href={`/me/manga/${params.id}/chapter/upload`}
+        className={buttonVariants()}
+      >
+        Thêm chapter
+      </Link>
     </div>
   );
 };

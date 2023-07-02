@@ -125,3 +125,24 @@
     background: #2e2e2e;
   }
 }
+
+.swiper-button-next {
+  height: 100% !important;
+  width: calc(var(--swiper-navigation-size) / 44 * 44) !important;
+  top: calc(var(--swiper-navigation-size) / 44 * 22) !important;
+  right: 0px !important;
+}
+
+.swiper-button-next::after {
+  @apply opacity-0;
+}
+
+.swiper-button-prev {
+  height: 100% !important;
+  width: calc(var(--swiper-navigation-size) / 44 * 44) !important;
+  top: calc(var(--swiper-navigation-size) / 44 * 22) !important;
+  left: 0px !important;
+}
+.swiper-button-prev::after {
+  @apply opacity-0;
+}

@@ -14,6 +14,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { Manga } from '@prisma/client';
 import { DialogClose } from '@radix-ui/react-dialog';
@@ -21,11 +23,8 @@ import { useMutation } from '@tanstack/react-query';
 import type { Row } from '@tanstack/react-table';
 import axios, { AxiosError } from 'axios';
 import { MoreHorizontal } from 'lucide-react';
-import Link from 'next/link';
-import { startTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
+import { startTransition } from 'react';
 
 interface DataTableRowActionProps {
   row: Row<Manga>;
@@ -83,20 +82,20 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-[200px]">
         <DropdownMenuItem asChild>
-          <Link
+          <a
             href={`/me/manga/${manga.id}/chapter`}
             className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
           >
             Xem chapter
-          </Link>
+          </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link
+          <a
             href={`/me/manga/${manga.id}`}
             className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
           >
             Thông tin truyện
-          </Link>
+          </a>
         </DropdownMenuItem>
         {!manga.isPublished && (
           <Dialog>

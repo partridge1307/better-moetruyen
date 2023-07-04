@@ -64,18 +64,24 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
   const IndexInputHandler = useCallback(
     (idx: number) => {
       if (slider.current !== null) {
-        if (idx < currentImage) {
-          slider.current.scrollLeft =
-            slider.current.scrollLeft -
-            (chapter.images.length - idx + 1) * width;
-          setCurrentImage(idx);
+        if (readingMode === 'horizontal') {
+          if (idx < currentImage) {
+            slider.current.scrollLeft =
+              slider.current.scrollLeft -
+              (chapter.images.length - idx + 1) * width;
+            setCurrentImage(idx);
+          } else {
+            slider.current.scrollLeft = slider.current.scrollLeft + idx * width;
+            setCurrentImage(idx);
+          }
         } else {
-          slider.current.scrollLeft = slider.current.scrollLeft + idx * width;
-          setCurrentImage(idx);
+          const target = document.getElementById(`${idx}`) as HTMLImageElement;
+          currentImageRef.current = target;
+          currentImageRef.current.scrollIntoView({ behavior: 'smooth' });
         }
       }
     },
-    [chapter.images.length, currentImage, width]
+    [chapter.images.length, currentImage, readingMode, width]
   );
   const horizontalJumpToImageHandler = useCallback(
     (idx: number) => {

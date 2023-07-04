@@ -11,7 +11,7 @@ interface pageProps {
 const page: FC<pageProps> = async ({ params }) => {
   const manga = await db.manga.findFirst({
     where: {
-      id: +params.id,
+      id: parseInt(params.id, 10),
     },
     include: {
       chapter: true,

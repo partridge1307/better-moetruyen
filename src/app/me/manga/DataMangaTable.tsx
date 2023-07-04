@@ -24,7 +24,7 @@ import {
 } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import DataToolbar from './DataToolbar';
 import { Input } from '@/components/ui/Input';
 

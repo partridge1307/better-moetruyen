@@ -6,6 +6,7 @@ const chapterValidator = z.object({
   images: z.string().array(),
   chapterName: z.string(),
   chapterIndex: z.number(),
+  volume: z.number(),
 });
 
 export async function POST(req: Request, context: { params: { id: string } }) {
@@ -13,10 +14,21 @@ export async function POST(req: Request, context: { params: { id: string } }) {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });
 
+    if (
+      !(await db.manga.findFirst({
+        where: {
+          id: parseInt(context.params.id, 10),
+          creatorId: session.user.id,
+        },
+      }))
+    )
+      return new Response('Forbidden', { status: 400 });
+
     const {
       chapterIndex,
       chapterName: name,
       images,
+      volume,
     } = chapterValidator.parse(await req.json());
 
     let index;
@@ -24,7 +36,7 @@ export async function POST(req: Request, context: { params: { id: string } }) {
       index = (
         await db.chapter.findFirst({
           where: {
-            mangaId: +context.params.id,
+            mangaId: parseInt(context.params.id, 10),
           },
           orderBy: {
             chapterIndex: 'desc',
@@ -40,7 +52,10 @@ export async function POST(req: Request, context: { params: { id: string } }) {
 
     if (
       await db.chapter.findFirst({
-        where: { mangaId: +context.params.id, chapterIndex: index },
+        where: {
+          mangaId: parseInt(context.params.id, 10),
+          chapterIndex: index,
+        },
       })
     )
       return new Response('Forbidden', { status: 403 });
@@ -49,9 +64,10 @@ export async function POST(req: Request, context: { params: { id: string } }) {
       data: {
         chapterIndex: index,
         name,
+        volume,
         images: [...images],
         manga: {
-          connect: { id: +context.params.id },
+          connect: { id: parseInt(context.params.id, 10) },
         },
       },
     });

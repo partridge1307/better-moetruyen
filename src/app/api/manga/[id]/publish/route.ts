@@ -8,7 +8,7 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
 
     const targetManga = await db.manga.findFirst({
       where: {
-        id: +context.params.id,
+        id: parseInt(context.params.id, 10),
       },
       include: {
         _count: {
@@ -33,11 +33,7 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
         view: {
           connectOrCreate: {
             where: { mangaId: targetManga.id },
-            create: {
-              totalView: 0,
-              dailyView: [],
-              weeklyView: [],
-            },
+            create: { totalView: 0 },
           },
         },
       },

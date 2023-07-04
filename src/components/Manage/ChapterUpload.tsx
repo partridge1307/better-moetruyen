@@ -48,6 +48,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
     defaultValues: {
       chapterIndex: 0,
       chapterName: '',
+      volume: 0,
       image: undefined,
     },
   });
@@ -175,6 +176,24 @@ const ChapterUpload = ({ id }: { id: string }) => {
               <FormMessage />
               <FormControl>
                 <Input placeholder="Tên chapter" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="volume"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Volume</FormLabel>
+              <FormMessage />
+              <FormControl>
+                <Input
+                  type="number"
+                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  onBlur={field.onBlur}
+                />
               </FormControl>
             </FormItem>
           )}

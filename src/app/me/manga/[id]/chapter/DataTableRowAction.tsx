@@ -38,9 +38,7 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
 
   const { mutate: publish, isLoading: isPublishLoading } = useMutation({
     mutationFn: async (id: number) => {
-      const { data } = await axios.patch(
-        `/api/manga/${chapter.mangaId}/chapter/${id}`
-      );
+      const { data } = await axios.patch(`/api/chapter/${id}/publish`);
 
       return data as string;
     },
@@ -85,12 +83,12 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-[200px]">
         <DropdownMenuItem asChild>
-          <a
+          <Link
             href={`/me/manga/${chapter.mangaId}/chapter/${chapter.id}`}
             className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
           >
             Sửa chapter
-          </a>
+          </Link>
         </DropdownMenuItem>
         {!chapter.isPublished && (
           <Dialog>

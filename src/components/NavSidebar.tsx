@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Book, Menu, Pin, SunMoon, User2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from './ui/Button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/Sheet';
 import { SwitchWithIcon } from './ui/Switch';
@@ -89,7 +89,6 @@ const NavSidebar = () => {
   }
 
   const pathname = usePathname();
-
   const [isChecked, setChecked] = useState<boolean>(
     typeof window !== 'undefined' && localStorage.theme === 'dark'
   );

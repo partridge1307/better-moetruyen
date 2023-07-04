@@ -1,8 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { sleep } from './utils';
 
-// @ts-expect-error
-export const upload = async (blobImage: any) => {
+export const upload = async (blobImage: any): Promise<string> => {
   try {
     const form = new FormData();
     form.append('file', blobImage, 'image.webp');

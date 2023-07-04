@@ -42,6 +42,7 @@ export const ChapterUploadValidator = z
       .string()
       .min(3, { message: 'Tối thiểu 3 ký tự' })
       .max(255, { message: 'Tối đa 255 ký tự' }),
+    volume: z.number().min(0, { message: 'Volume phải là số dương' }),
     image: z.any() as ZodType<FileList>,
   })
   .refine((schema) => schema.image.length >= 5, {

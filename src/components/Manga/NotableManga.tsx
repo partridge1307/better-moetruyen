@@ -32,13 +32,14 @@ const NotableManga: FC<NotableMangaProps> = ({ manga, ...props }) => {
       {manga.map((m) => (
         <SwiperSlide key={m.id}>
           <div className="relative w-[90%] h-full mx-auto">
+            <Image
+              fill
+              priority
+              src={m.image}
+              alt="Manga Image Notable Card"
+              className="object-cover"
+            />
             <Link href={`/manga/${m.id}`}>
-              <Image
-                fill
-                src={m.image}
-                alt="Manga Image Notable Card"
-                className="object-cover"
-              />
               <div className="absolute bottom-0 flex items-end w-full min-h-full p-4 pb-10 bg-gradient-to-t from-slate-100 dark:from-zinc-900 to-transparent">
                 <div className="flex justify-between items-center w-full">
                   <div className="flex flex-col gap-x-5 max-w-[50%]">

@@ -23,6 +23,7 @@ import { useMutation } from '@tanstack/react-query';
 import type { Row } from '@tanstack/react-table';
 import axios, { AxiosError } from 'axios';
 import { MoreHorizontal } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { startTransition } from 'react';
 
@@ -82,20 +83,20 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-[200px]">
         <DropdownMenuItem asChild>
-          <a
+          <Link
             href={`/me/manga/${manga.id}/chapter`}
             className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
           >
             Xem chapter
-          </a>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a
+          <Link
             href={`/me/manga/${manga.id}`}
             className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
           >
             Thông tin truyện
-          </a>
+          </Link>
         </DropdownMenuItem>
         {!manga.isPublished && (
           <Dialog>

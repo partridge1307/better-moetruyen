@@ -56,16 +56,19 @@ model Tag {
 }
 
 model Chapter {
-  id           Int       @id @default(autoincrement())
-  chapterIndex Int       @default(1)
+  id           Int          @id @default(autoincrement())
+  chapterIndex Int          @default(1)
   name         String?
   images       String[]
-  manga        Manga     @relation(fields: [mangaId], references: [id])
+  volume       Int
+  manga        Manga        @relation(fields: [mangaId], references: [id])
   mangaId      Int
-  isPublished  Boolean   @default(false)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  isPublished  Boolean      @default(false)
   comment      Comment[]
+  dailyView    DailyView[]
+  weeklyView   WeeklyView[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 }
 
 enum VoteType {
@@ -101,11 +104,27 @@ model CommentVote {
 }
 
 model View {
-  manga      Manga  @relation(fields: [mangaId], references: [id])
+  manga      Manga        @relation(fields: [mangaId], references: [id])
   mangaId    Int
   totalView  Int
-  dailyView  Json[]
-  weeklyView Json[]
+  dailyView  DailyView[]
+  weeklyView WeeklyView[]
 
   @@id([mangaId])
+}
+
+model DailyView {
+  id        Int     @id @default(autoincrement())
+  view      View    @relation(fields: [mangaId], references: [mangaId])
+  mangaId   Int
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapterId Int
+}
+
+model WeeklyView {
+  id        Int     @id @default(autoincrement())
+  view      View    @relation(fields: [mangaId], references: [mangaId])
+  mangaId   Int
+  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapterId Int
 }

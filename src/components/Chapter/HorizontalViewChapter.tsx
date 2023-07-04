@@ -1,0 +1,83 @@
+import { cn } from '@/lib/utils';
+import type { Chapter, Manga } from '@prisma/client';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
+import { forwardRef, type MutableRefObject } from 'react';
+
+interface HorizontalViewChapterProps {
+  chapter: Chapter & {
+    manga: Pick<Manga, 'name'>;
+  };
+  slideLeft(): void;
+  slideRight(): void;
+  imageRef: MutableRefObject<HTMLImageElement | null>;
+  currentImage: number;
+}
+
+const HorizontalViewChapter = forwardRef<
+  HTMLDivElement,
+  HorizontalViewChapterProps
+>(({ chapter, slideLeft, slideRight, imageRef, currentImage }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className="h-full w-full flex overflow-auto scroll-smooth transition-transform no-scrollbar"
+    >
+      {chapter.images.map((img, idx) => {
+        if (idx === Math.floor((chapter.images.length * 70) / 100)) {
+          return (
+            <div
+              id={`${idx}`}
+              key={idx}
+              className="relative h-full w-full shrink-0"
+            >
+              <Image
+                ref={imageRef}
+                fill
+                priority
+                src={img}
+                alt={chapter.manga.name}
+                className="object-contain"
+              />
+            </div>
+          );
+        } else {
+          return (
+            <div key={idx} className="relative h-full w-full shrink-0">
+              <Image
+                fill
+                priority
+                src={img}
+                alt={chapter.manga.name}
+                className="object-contain"
+              />
+            </div>
+          );
+        }
+      })}
+
+      <button
+        onClick={slideLeft}
+        className={cn(
+          'absolute left-0 h-full w-20 transition-colors opacity-0 md:hover:opacity-100 dark:hover:bg-zinc-900/70',
+          currentImage <= 0 ? 'hidden' : null
+        )}
+      >
+        <ChevronLeft className="w-20 h-20" />
+      </button>
+      <button
+        onClick={slideRight}
+        className={cn(
+          'absolute right-0 h-full w-20 transition-colors opacity-0 md:hover:opacity-100 dark:hover:bg-zinc-900/70',
+          currentImage + 1 >= chapter.images.length ? 'hidden' : null
+        )}
+      >
+        <ChevronRight className="w-20 h-20" />
+      </button>
+    </div>
+  );
+});
+
+HorizontalViewChapter.displayName = 'HorizontalViewChapter';
+
+export default HorizontalViewChapter;

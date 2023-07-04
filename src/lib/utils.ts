@@ -1,5 +1,5 @@
 import { ClassValue, clsx } from 'clsx';
-import { formatDistanceToNowStrict } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import locale from 'date-fns/locale/vi';
 import { twMerge } from 'tailwind-merge';
 
@@ -53,7 +53,7 @@ export const verifyHTML = (token: string) => `<!DOCTYPE html>
 
 export const groupBy = <T>(
   array: T[],
-  predicate: (value: T, index: number, array: T[]) => string
+  predicate: (value: T, index: number, array: T[]) => any
 ) =>
   array.reduce((acc, value, index, array) => {
     (acc[predicate(value, index, array)] ||= []).push(value);
@@ -99,7 +99,7 @@ function formatDistance(token: string, count: number, options?: any): string {
 }
 
 export function formatTimeToNow(date: Date): string {
-  return formatDistanceToNowStrict(date, {
+  return formatDistanceToNow(date, {
     addSuffix: true,
     locale: {
       ...locale,

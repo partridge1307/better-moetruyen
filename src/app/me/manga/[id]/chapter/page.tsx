@@ -13,7 +13,7 @@ const page = async ({ params }: { params: { id: string } }) => {
 
   const chapter = await db.chapter.findMany({
     where: {
-      mangaId: +params.id,
+      mangaId: parseInt(params.id, 10),
     },
   });
 

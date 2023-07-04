@@ -1,32 +1,29 @@
-import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 
-export async function PATCH(
+export async function POST(
   req: Request,
   context: { params: { id: string; chapterId: string } }
 ) {
   try {
-    const session = await getAuthSession();
-    if (!session) return new Response('Unauthorized', { status: 401 });
-
-    const targetChapter = await db.chapter.findFirst({
+    const view = await db.view.findFirst({
       where: {
-        id: +context.params.chapterId,
-      },
-      include: {
-        manga: true,
+        mangaId: parseInt(context.params.id, 10),
       },
     });
-    if (!targetChapter) return new Response('Not found', { status: 404 });
-    if (targetChapter.manga.creatorId !== session.user.id)
-      return new Response('Forbidden', { status: 403 });
+    if (!view) return new Response('Something went wrong', { status: 500 });
 
-    await db.chapter.update({
+    await db.view.update({
       where: {
-        id: +context.params.chapterId,
+        mangaId: parseInt(context.params.id, 10),
       },
       data: {
-        isPublished: true,
+        totalView: view.totalView + 1,
+        dailyView: {
+          create: { chapterId: parseInt(context.params.chapterId, 10) },
+        },
+        weeklyView: {
+          create: { chapterId: parseInt(context.params.chapterId, 10) },
+        },
       },
     });
 

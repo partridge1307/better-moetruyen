@@ -3,10 +3,10 @@
 import useOnScreen from '@/hooks/use-on-screen';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import type { Chapter } from '@prisma/client';
+import type { Chapter, Manga } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
 import ChapterControll from './ChapterControll';
 import HorizontalViewChapter from './HorizontalViewChapter';
@@ -19,9 +19,17 @@ interface ViewChapterProps {
       id: number;
     };
   };
+  mangaChapterList: {
+    chapter: {
+      id: number;
+      chapterIndex: number;
+      volume: number;
+      name: string | null;
+    }[];
+  };
 }
 
-const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
+const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
   const { mutate: IncreaseView } = useMutation({
     mutationFn: async () => {
       const { data } = await axios.post(
@@ -51,11 +59,11 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
   const imageRef = useRef<HTMLImageElement | null>(null);
   const inView = useOnScreen(imageRef);
 
-  const ReadingModeHanlder = useCallback((mode: 'vertical' | 'horizontal') => {
+  const ReadingModeHanlder = (mode: 'vertical' | 'horizontal') => {
     localStorage.setItem('readingMode', mode);
     setReadingMode(mode);
-  }, []);
-  const slideLeft = useCallback(() => {
+  };
+  const slideLeft = () => {
     if (slider.current !== null) {
       const target = document.getElementById(
         `${currentImage - 1}`
@@ -63,8 +71,8 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
       currentImageRef.current = target;
       currentImageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [currentImage]);
-  const slideRight = useCallback(() => {
+  };
+  const slideRight = () => {
     if (slider.current !== null) {
       const target = document.getElementById(
         `${currentImage + 1}`
@@ -72,32 +80,27 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
       currentImageRef.current = target;
       currentImageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [currentImage]);
-  const IndexInputHandler = useCallback((idx: number) => {
+  };
+  const IndexInputHandler = (idx: number) => {
     if (slider.current !== null) {
       const target = document.getElementById(`${idx}`) as HTMLImageElement;
       currentImageRef.current = target;
       currentImageRef.current.scrollIntoView({ behavior: 'instant' });
+      setCurrentImage(idx);
     }
-  }, []);
-  const jumptoImageHandler = useCallback(
-    (idx: number) => {
-      if (slider.current !== null) {
-        const target = document.getElementById(`${idx}`) as HTMLImageElement;
-        currentImageRef.current = target;
-        currentImageRef.current.scrollIntoView({ behavior: 'instant' });
-        if (readingMode === 'vertical') setCurrentImage(idx);
-      }
-    },
-    [readingMode]
-  );
-  const progressBarHandler = useCallback(
-    (mode: 'hidden' | 'fixed' | 'lightbar') => {
-      localStorage.setItem('progressBar', mode);
-      setProgressBar(mode);
-    },
-    []
-  );
+  };
+  const jumptoImageHandler = (idx: number) => {
+    if (slider.current !== null) {
+      const target = document.getElementById(`${idx}`) as HTMLImageElement;
+      currentImageRef.current = target;
+      currentImageRef.current.scrollIntoView({ behavior: 'instant' });
+      if (readingMode === 'vertical') setCurrentImage(idx);
+    }
+  };
+  const progressBarHandler = (mode: 'hidden' | 'fixed' | 'lightbar') => {
+    localStorage.setItem('progressBar', mode);
+    setProgressBar(mode);
+  };
 
   useEffect(() => {
     localStorage.setItem('startPage', `${Date.now()}`);
@@ -157,10 +160,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
         <ChapterControll
           currentImage={currentImage}
           chapter={chapter}
-          setCurrentImage={(idx) => {
-            IndexInputHandler(idx);
-            setCurrentImage(idx);
-          }}
+          setCurrentImage={IndexInputHandler}
           readingMode={readingMode}
           setReadingMode={ReadingModeHanlder}
           progressBar={progressBar}

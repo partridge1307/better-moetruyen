@@ -98,7 +98,7 @@ function formatDistance(token: string, count: number, options?: any): string {
   return result;
 }
 
-export function formatTimeToNow(date: Date): string {
+export function formatTimeToNow(date: Date | number): string {
   return formatDistanceToNow(date, {
     addSuffix: true,
     locale: {

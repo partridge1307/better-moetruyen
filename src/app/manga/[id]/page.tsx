@@ -122,7 +122,7 @@ const page: FC<pageProps> = async ({ params }) => {
               </CardHeader>
             </Card>
             <Suspense fallback={<Loader2 className="h-4 w-4 animate-spin" />}>
-              <ChapterList mangaId={params.id} />
+              <ChapterList mangaId={manga.id} />
             </Suspense>
           </TabsContent>
         </Tabs>

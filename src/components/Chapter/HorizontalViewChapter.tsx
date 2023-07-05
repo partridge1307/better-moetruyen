@@ -2,7 +2,8 @@ import { cn } from '@/lib/utils';
 import type { Chapter, Manga } from '@prisma/client';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import { forwardRef, type MutableRefObject, memo } from 'react';
+import Link from 'next/link';
+import { forwardRef, type MutableRefObject } from 'react';
 
 interface HorizontalViewChapterProps {
   chapter: Chapter & {
@@ -60,6 +61,10 @@ const HorizontalViewChapter = forwardRef<
         }
       })}
 
+      {currentImage + 1 >= chapter.images.length && (
+        <Link href={`/chapter/`}></Link>
+      )}
+
       <button
         onClick={slideLeft}
         className={cn(
@@ -84,4 +89,4 @@ const HorizontalViewChapter = forwardRef<
 
 HorizontalViewChapter.displayName = 'HorizontalViewChapter';
 
-export default memo(HorizontalViewChapter);
+export default HorizontalViewChapter;

@@ -2,7 +2,8 @@
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
-import { cn, groupBy } from '@/lib/utils';
+import { Tags } from '@/lib/query';
+import { cn } from '@/lib/utils';
 import {
   MangaUploadPayload,
   MangaUploadValidator,
@@ -10,7 +11,6 @@ import {
   tagInfoProps,
 } from '@/lib/validators/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { Tag } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
 import axios, { AxiosError } from 'axios';
@@ -45,7 +45,7 @@ type authorResultProps = {
   author: authorInfoProps[];
 };
 
-const MangaUpload = ({ tag }: { tag: Tag[] }) => {
+const MangaUpload = ({ tag }: { tag: Tags }) => {
   const { verifyToast } = useCustomToast();
   const form = useForm<MangaUploadPayload>({
     resolver: zodResolver(MangaUploadValidator),
@@ -335,24 +335,22 @@ const MangaUpload = ({ tag }: { tag: Tag[] }) => {
                     <CommandEmpty>Không tìm thấy</CommandEmpty>
                     <CommandList>
                       {tag.length &&
-                        Object.entries(
-                          groupBy(tag, (tag: Tag) => tag.category)
-                        ).map(([key, value]) => (
-                          <CommandGroup key={key} heading={key}>
-                            {value.map((v) => (
+                        tag.map((t, idx) => (
+                          <CommandGroup key={`${idx}`} heading={t.category}>
+                            {t.data.map((d, idx) => (
                               <CommandItem
-                                key={v.id}
-                                title={v.description}
+                                key={`${idx}`}
+                                title={d.description}
                                 className="cursor-pointer"
                                 onSelect={(currVal) => {
                                   if (
                                     !tagSelect.some(
-                                      (t) => t.name.toLowerCase() === currVal
+                                      (d) => d.name.toLowerCase() === currVal
                                     )
                                   ) {
                                     const tagValue = [
                                       ...tagSelect,
-                                      ...tag.filter(
+                                      ...t.data.filter(
                                         (t) => t.name.toLowerCase() === currVal
                                       ),
                                     ];
@@ -372,14 +370,14 @@ const MangaUpload = ({ tag }: { tag: Tag[] }) => {
                                 <div
                                   className={cn(
                                     'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
-                                    tagSelect.includes(v)
+                                    tagSelect.includes(d)
                                       ? 'bg-primary text-primary-foreground'
                                       : 'opacity-50 [&_svg]:invisible'
                                   )}
                                 >
                                   <Check className="h-4 w-4" />
                                 </div>
-                                {v.name}
+                                {d.name}
                               </CommandItem>
                             ))}
                           </CommandGroup>

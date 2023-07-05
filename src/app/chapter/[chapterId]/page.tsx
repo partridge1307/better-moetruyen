@@ -25,10 +25,32 @@ const page: FC<pageProps> = async ({ params }) => {
     },
   });
   if (!chapter || !chapter.manga.isPublished) return notFound();
+  const mangaChapterList = await db.manga.findFirst({
+    where: {
+      id: chapter.manga.id,
+    },
+    select: {
+      chapter: {
+        select: {
+          id: true,
+          chapterIndex: true,
+          volume: true,
+          name: true,
+        },
+      },
+    },
+  });
+  if (!mangaChapterList) return notFound();
+
+  const currentChapterIdx = mangaChapterList.chapter.findIndex(
+    (c) => c.id === chapter.id
+  );
+  const nextChapter = mangaChapterList.chapter[currentChapterIdx + 1];
+  const prevChapter = mangaChapterList.chapter[currentChapterIdx - 1];
 
   return (
     <div className="mt-8 h-full">
-      <ViewChapter chapter={chapter} />
+      <ViewChapter chapter={chapter} mangaChapterList={mangaChapterList} />
     </div>
   );
 };

@@ -1,8 +1,8 @@
+import { cn } from '@/lib/utils';
 import { Chapter } from '@prisma/client';
 import Link from 'next/link';
-import { FC, memo } from 'react';
+import { FC } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
-import { cn } from '@/lib/utils';
 import { Separator } from '../ui/Separator';
 
 interface ChapterControllProps {
@@ -183,4 +183,4 @@ const ChapterControll: FC<ChapterControllProps> = ({
   );
 };
 
-export default memo(ChapterControll);
+export default ChapterControll;

@@ -40,8 +40,11 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
   });
   const [currentImage, setCurrentImage] = useState(0);
   const [readingMode, setReadingMode] = useState<'vertical' | 'horizontal'>(
-    'horizontal'
+    'vertical'
   );
+  const [progressBar, setProgressBar] = useState<
+    'hidden' | 'fixed' | 'lightbar'
+  >('hidden');
   const slider = useRef<HTMLDivElement | null>(null);
   const currentImageRef = useRef<HTMLImageElement | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -49,6 +52,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
   const inView = useOnScreen(imageRef);
 
   const ReadingModeHanlder = useCallback((mode: 'vertical' | 'horizontal') => {
+    localStorage.setItem('readingMode', mode);
     setReadingMode(mode);
   }, []);
   const slideLeft = useCallback(() => {
@@ -76,30 +80,42 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
       currentImageRef.current.scrollIntoView({ behavior: 'instant' });
     }
   }, []);
-  const jumptoImageHandler = useCallback((idx: number) => {
-    if (slider.current !== null) {
-      const target = document.getElementById(`${idx}`) as HTMLImageElement;
-      currentImageRef.current = target;
-      currentImageRef.current.scrollIntoView({ behavior: 'instant' });
-    }
-  }, []);
+  const jumptoImageHandler = useCallback(
+    (idx: number) => {
+      if (slider.current !== null) {
+        const target = document.getElementById(`${idx}`) as HTMLImageElement;
+        currentImageRef.current = target;
+        currentImageRef.current.scrollIntoView({ behavior: 'instant' });
+        if (readingMode === 'vertical') setCurrentImage(idx);
+      }
+    },
+    [readingMode]
+  );
+  const progressBarHandler = useCallback(
+    (mode: 'hidden' | 'fixed' | 'lightbar') => {
+      localStorage.setItem('progressBar', mode);
+      setProgressBar(mode);
+    },
+    []
+  );
 
   useEffect(() => {
     localStorage.setItem('startPage', `${Date.now()}`);
-    localStorage.readingMode === 'vertical'
-      ? setReadingMode('vertical')
-      : setReadingMode('horizontal');
+    localStorage.readingMode === 'horizontal'
+      ? setReadingMode('horizontal')
+      : null;
+    localStorage.progressBar === 'lightbar'
+      ? setProgressBar('lightbar')
+      : localStorage.progressBar === 'fixed'
+      ? setProgressBar('fixed')
+      : null;
   }, []);
   useEffect(() => {
     if (readingMode === 'vertical') {
       observerRef.current = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            if (Number(entry.target.id) < currentImage) {
-              setCurrentImage(Number(entry.target.id));
-            } else {
-              setCurrentImage(Number(entry.target.id));
-            }
+            setCurrentImage(Number(entry.target.id));
           }
         },
         { threshold: 0.4 }
@@ -108,17 +124,13 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
       observerRef.current = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
-            if (Number(entry.target.id) < currentImage) {
-              setCurrentImage(Number(entry.target.id));
-            } else {
-              setCurrentImage(Number(entry.target.id));
-            }
+            setCurrentImage(Number(entry.target.id));
           }
         },
         { threshold: 1 }
       );
     }
-  }, [currentImage, readingMode]);
+  }, [readingMode]);
   useEffect(() => {
     chapter.images.map((_, idx) => {
       const target = document.getElementById(`${idx}`) as HTMLImageElement;
@@ -129,7 +141,6 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
       };
     });
   }, [chapter.images, readingMode]);
-
   if (typeof window !== 'undefined' && inView && 'startPage' in localStorage) {
     if (Date.now() - parseInt(localStorage.startPage, 10) > 30 * 1000) {
       localStorage.removeItem('startPage');
@@ -152,18 +163,66 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
           }}
           readingMode={readingMode}
           setReadingMode={ReadingModeHanlder}
+          progressBar={progressBar}
+          setProgressBar={progressBarHandler}
         />
+      </div>
+      <div className="relative h-full w-full">
+        {readingMode === 'horizontal' ? (
+          <HorizontalViewChapter
+            ref={slider}
+            chapter={chapter}
+            slideLeft={slideLeft}
+            slideRight={slideRight}
+            imageRef={imageRef}
+            currentImage={currentImage}
+          />
+        ) : (
+          <VerticalViewChapter
+            ref={slider}
+            chapter={chapter}
+            imageRef={imageRef}
+          />
+        )}
 
-        <div className="h-4 flex items-center gap-2 max-sm:hidden">
+        <div
+          className={cn(
+            'absolute bottom-0 px-6 p-2 w-full h-8 flex items-center gap-2 rounded-full transition-all dark:hover:bg-zinc-700 max-sm:hidden',
+            progressBar === 'hidden'
+              ? 'opacity-0 hover:opacity-100'
+              : progressBar === 'lightbar'
+              ? 'items-end p-0 dark:hover:bg-transparent'
+              : null
+          )}
+        >
           {chapter.images.map((_, idx) => (
             <HoverCard key={idx} openDelay={100} closeDelay={100}>
-              <HoverCardTrigger
-                className={cn(
-                  'cursor-pointer w-full h-1/2 hover:h-full transition-all rounded-md dark:bg-zinc-900',
-                  idx <= currentImage ? 'dark:bg-orange-500' : null
-                )}
-                onClick={() => jumptoImageHandler(idx)}
-              />
+              {progressBar === 'lightbar' ? (
+                <HoverCardTrigger asChild>
+                  <div
+                    className="relative cursor-pointer w-full h-3/4 rounded-t-md transition-all bg-gradient-to-t dark:from-zinc-900/70 to-transparent"
+                    onClick={() => jumptoImageHandler(idx)}
+                  >
+                    <div
+                      className={cn(
+                        'absolute bottom-0 rounded-md h-[.15rem] w-full',
+                        idx <= currentImage
+                          ? 'dark:bg-orange-500'
+                          : 'dark:bg-zinc-900'
+                      )}
+                    />
+                  </div>
+                </HoverCardTrigger>
+              ) : (
+                <HoverCardTrigger
+                  className={cn(
+                    'cursor-pointer w-full h-1/3 hover:h-full transition-all rounded-md dark:bg-zinc-900',
+                    idx <= currentImage ? 'dark:bg-orange-500' : null,
+                    progressBar === 'hidden' ? 'h-2/5' : null
+                  )}
+                  onClick={() => jumptoImageHandler(idx)}
+                />
+              )}
               <HoverCardContent className="w-fit p-3 rounded-2xl dark:bg-zinc-900/80 dark:text-white">
                 {idx + 1}
               </HoverCardContent>
@@ -171,24 +230,6 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
           ))}
         </div>
       </div>
-
-      {readingMode === 'horizontal' ? (
-        <HorizontalViewChapter
-          ref={slider}
-          chapter={chapter}
-          slideLeft={slideLeft}
-          slideRight={slideRight}
-          imageRef={imageRef}
-          currentImage={currentImage}
-        />
-      ) : (
-        <VerticalViewChapter
-          ref={slider}
-          chapter={chapter}
-          imageRef={imageRef}
-          currentImageRef={currentImageRef}
-        />
-      )}
     </div>
   );
 };

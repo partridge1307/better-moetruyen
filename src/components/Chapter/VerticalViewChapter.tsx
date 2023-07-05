@@ -7,41 +7,26 @@ interface VerticalViewChapterProps {
     manga: Pick<Manga, 'name'>;
   };
   imageRef: MutableRefObject<HTMLImageElement | null>;
-  currentImageRef: MutableRefObject<HTMLImageElement | null>;
 }
 
 const VerticalViewChapter = forwardRef<
   HTMLDivElement,
   VerticalViewChapterProps
->(({ chapter, imageRef, currentImageRef }, ref) => {
+>(({ chapter, imageRef }, ref) => {
   return (
     <div
       ref={ref}
       className="h-full w-full space-y-2 md:space-y-10 overflow-auto no-scrollbar"
     >
       {chapter.images.map((img, idx) => {
-        if (idx === 0) {
-          return (
-            <div key={`${idx}`} id={`${idx}`} className="relative h-fit w-full">
-              <Image
-                ref={currentImageRef}
-                width={0}
-                height={0}
-                sizes="0%"
-                priority
-                src={img}
-                alt={`Trang ${idx + 1}`}
-                className="object-contain max-sm:w-full w-4/5 md:mx-auto"
-              />
-            </div>
-          );
-        } else if (idx === Math.floor(chapter.images.length * 0.7)) {
+        if (idx === Math.floor(chapter.images.length * 0.7)) {
           return (
             <div key={`${idx}`} id={`${idx}`} className="relative h-fit w-full">
               <Image
                 ref={imageRef}
                 width={0}
                 height={0}
+                priority
                 sizes="0%"
                 src={img}
                 alt={`Trang ${idx + 1}`}
@@ -56,6 +41,7 @@ const VerticalViewChapter = forwardRef<
                 width={0}
                 height={0}
                 sizes="0%"
+                priority
                 src={img}
                 alt={`Trang ${idx + 1}`}
                 className="object-contain max-sm:w-full w-4/5 md:mx-auto"

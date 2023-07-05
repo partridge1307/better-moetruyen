@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { FC, memo } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
 import { cn } from '@/lib/utils';
+import { Separator } from '../ui/Separator';
 
 interface ChapterControllProps {
   currentImage: number;
@@ -13,9 +14,17 @@ interface ChapterControllProps {
     };
   };
   setCurrentImage(value: number): void;
-  readingMode: string;
+  readingMode: 'vertical' | 'horizontal';
   setReadingMode(value: 'vertical' | 'horizontal'): void;
+  progressBar: 'hidden' | 'fixed' | 'lightbar';
+  setProgressBar(value: 'hidden' | 'fixed' | 'lightbar'): void;
 }
+
+const progressBarArr: Array<'hidden' | 'fixed' | 'lightbar'> = [
+  'hidden',
+  'fixed',
+  'lightbar',
+];
 
 const ChapterControll: FC<ChapterControllProps> = ({
   currentImage,
@@ -23,6 +32,8 @@ const ChapterControll: FC<ChapterControllProps> = ({
   setCurrentImage,
   readingMode,
   setReadingMode,
+  progressBar,
+  setProgressBar,
 }) => {
   function onInputHandler(e: React.ChangeEvent<HTMLInputElement>) {
     if (Number(e.target.value) > Number(e.target.max)) {
@@ -31,11 +42,15 @@ const ChapterControll: FC<ChapterControllProps> = ({
       e.target.value = e.target.min;
     }
   }
-
   function onSubmitHandler() {
     const idx = (document.getElementById('index-input') as HTMLInputElement)
       .value;
     setCurrentImage(Number(idx) - 1);
+  }
+
+  function onProgressBarHandler() {
+    const target = progressBarArr[progressBarArr.indexOf(progressBar) + 1];
+    setProgressBar(target ? target : 'hidden');
   }
 
   return (
@@ -100,7 +115,6 @@ const ChapterControll: FC<ChapterControllProps> = ({
                     readingMode === 'vertical' ? 'dark:border-orange-500' : null
                   )}
                   onClick={() => {
-                    localStorage.setItem('readingMode', 'vertical');
                     setReadingMode('vertical');
                   }}
                 >
@@ -126,7 +140,6 @@ const ChapterControll: FC<ChapterControllProps> = ({
                       : null
                   )}
                   onClick={() => {
-                    localStorage.setItem('readingMode', 'horizontal');
                     setReadingMode('horizontal');
                   }}
                 >
@@ -144,6 +157,24 @@ const ChapterControll: FC<ChapterControllProps> = ({
                   <p className="text-center">Ngang</p>
                 </div>
               </div>
+            </div>
+
+            <Separator className="my-6 dark:bg-slate-700/60 h-[.15rem] rounded-full" />
+
+            <div className="space-y-2">
+              <p className="text-xl">Thanh tiến trình đọc</p>
+              <button
+                className="text-center w-full text-lg py-2 rounded-lg transition-all dark:hover:bg-zinc-700/70 dark:hover:text-white/80 dark:bg-zinc-700 dark:text-white"
+                onClick={() => onProgressBarHandler()}
+              >
+                <p className={progressBar === 'hidden' ? '' : 'hidden'}>Ẩn</p>
+                <p className={progressBar === 'fixed' ? '' : 'hidden'}>
+                  Luôn hiện
+                </p>
+                <p className={progressBar === 'lightbar' ? '' : 'hidden'}>
+                  Lightbar
+                </p>
+              </button>
             </div>
           </PopoverContent>
         </Popover>

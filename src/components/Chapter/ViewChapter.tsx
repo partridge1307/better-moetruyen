@@ -1,17 +1,16 @@
 'use client';
 
+import useOnScreen from '@/hooks/use-on-screen';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { Chapter } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
-import { useWindowSize } from '@uidotdev/usehooks';
 import axios from 'axios';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
 import ChapterControll from './ChapterControll';
 import HorizontalViewChapter from './HorizontalViewChapter';
 import VerticalViewChapter from './VerticalViewChapter';
-import useOnScreen from '@/hooks/use-on-screen';
 
 interface ViewChapterProps {
   chapter: Chapter & {
@@ -45,69 +44,44 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
   );
   const slider = useRef<HTMLDivElement | null>(null);
   const currentImageRef = useRef<HTMLImageElement | null>(null);
-  const { width } = useWindowSize();
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const inView = useOnScreen(imageRef);
 
+  const ReadingModeHanlder = useCallback((mode: 'vertical' | 'horizontal') => {
+    setReadingMode(mode);
+  }, []);
   const slideLeft = useCallback(() => {
     if (slider.current !== null) {
-      slider.current.scrollLeft = slider.current.scrollLeft - width;
-      setCurrentImage((prev) => prev - 1);
-    }
-  }, [width]);
-  const slideRight = useCallback(() => {
-    if (slider.current !== null) {
-      slider.current.scrollLeft = slider.current.scrollLeft + width;
-      setCurrentImage((prev) => prev + 1);
-    }
-  }, [width]);
-  const IndexInputHandler = useCallback(
-    (idx: number) => {
-      if (slider.current !== null) {
-        if (readingMode === 'horizontal') {
-          if (idx < currentImage) {
-            slider.current.scrollLeft =
-              slider.current.scrollLeft -
-              (chapter.images.length - idx + 1) * width;
-            setCurrentImage(idx);
-          } else {
-            slider.current.scrollLeft = slider.current.scrollLeft + idx * width;
-            setCurrentImage(idx);
-          }
-        } else {
-          const target = document.getElementById(`${idx}`) as HTMLImageElement;
-          currentImageRef.current = target;
-          currentImageRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-    },
-    [chapter.images.length, currentImage, readingMode, width]
-  );
-  const horizontalJumpToImageHandler = useCallback(
-    (idx: number) => {
-      if (slider.current !== null) {
-        if (idx < currentImage) {
-          slider.current.scrollLeft =
-            slider.current.scrollLeft -
-            (chapter.images.length - idx + 1) * width;
-          setCurrentImage(idx);
-        } else {
-          slider.current.scrollLeft = slider.current.scrollLeft + idx * width;
-          setCurrentImage(idx);
-        }
-      }
-    },
-    [chapter.images.length, currentImage, width]
-  );
-  const verticalJumpToImageHandler = useCallback((idx: number) => {
-    if (slider.current !== null) {
-      const target = document.getElementById(`${idx}`) as HTMLImageElement;
+      const target = document.getElementById(
+        `${currentImage - 1}`
+      ) as HTMLImageElement;
       currentImageRef.current = target;
       currentImageRef.current.scrollIntoView({ behavior: 'smooth' });
     }
+  }, [currentImage]);
+  const slideRight = useCallback(() => {
+    if (slider.current !== null) {
+      const target = document.getElementById(
+        `${currentImage + 1}`
+      ) as HTMLImageElement;
+      currentImageRef.current = target;
+      currentImageRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [currentImage]);
+  const IndexInputHandler = useCallback((idx: number) => {
+    if (slider.current !== null) {
+      const target = document.getElementById(`${idx}`) as HTMLImageElement;
+      currentImageRef.current = target;
+      currentImageRef.current.scrollIntoView({ behavior: 'instant' });
+    }
   }, []);
-  const ReadingModeHanlder = useCallback((mode: 'vertical' | 'horizontal') => {
-    setReadingMode(mode);
+  const jumptoImageHandler = useCallback((idx: number) => {
+    if (slider.current !== null) {
+      const target = document.getElementById(`${idx}`) as HTMLImageElement;
+      currentImageRef.current = target;
+      currentImageRef.current.scrollIntoView({ behavior: 'instant' });
+    }
   }, []);
 
   useEffect(() => {
@@ -117,20 +91,44 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
       : setReadingMode('horizontal');
   }, []);
   useEffect(() => {
-    if (readingMode === 'vertical' && slider.current) {
-      const handler = () => {
-        if (window.scrollY <= 260) {
-          slider.current?.scrollIntoView({ behavior: 'smooth' });
-        }
-      };
-      slider.current.addEventListener('scroll', handler);
+    if (readingMode === 'vertical') {
+      observerRef.current = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            if (Number(entry.target.id) < currentImage) {
+              setCurrentImage(Number(entry.target.id));
+            } else {
+              setCurrentImage(Number(entry.target.id));
+            }
+          }
+        },
+        { threshold: 0.4 }
+      );
+    } else {
+      observerRef.current = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            if (Number(entry.target.id) < currentImage) {
+              setCurrentImage(Number(entry.target.id));
+            } else {
+              setCurrentImage(Number(entry.target.id));
+            }
+          }
+        },
+        { threshold: 1 }
+      );
+    }
+  }, [currentImage, readingMode]);
+  useEffect(() => {
+    chapter.images.map((_, idx) => {
+      const target = document.getElementById(`${idx}`) as HTMLImageElement;
+      observerRef.current?.observe(target);
 
       return () => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        slider.current?.removeEventListener('scroll', handler);
+        observerRef.current?.unobserve(target);
       };
-    }
-  }, [readingMode]);
+    });
+  }, [chapter.images, readingMode]);
 
   if (typeof window !== 'undefined' && inView && 'startPage' in localStorage) {
     if (Date.now() - parseInt(localStorage.startPage, 10) > 30 * 1000) {
@@ -138,9 +136,8 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
       IncreaseView();
     }
   }
-
   if (typeof window !== 'undefined' && slider.current !== null) {
-    slider.current.scrollIntoView({ behavior: 'smooth' });
+    slider.current.scrollIntoView({ behavior: 'instant' });
   }
 
   return (
@@ -149,7 +146,10 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
         <ChapterControll
           currentImage={currentImage}
           chapter={chapter}
-          setCurrentImage={IndexInputHandler}
+          setCurrentImage={(idx) => {
+            IndexInputHandler(idx);
+            setCurrentImage(idx);
+          }}
           readingMode={readingMode}
           setReadingMode={ReadingModeHanlder}
         />
@@ -162,11 +162,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter }) => {
                   'cursor-pointer w-full h-1/2 hover:h-full transition-all rounded-md dark:bg-zinc-900',
                   idx <= currentImage ? 'dark:bg-orange-500' : null
                 )}
-                onClick={() =>
-                  readingMode === 'vertical'
-                    ? verticalJumpToImageHandler(idx)
-                    : horizontalJumpToImageHandler(idx)
-                }
+                onClick={() => jumptoImageHandler(idx)}
               />
               <HoverCardContent className="w-fit p-3 rounded-2xl dark:bg-zinc-900/80 dark:text-white">
                 {idx + 1}

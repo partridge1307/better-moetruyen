@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import type { Chapter, Manga } from '@prisma/client';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import { forwardRef, type MutableRefObject } from 'react';
+import { forwardRef, type MutableRefObject, memo } from 'react';
 
 interface HorizontalViewChapterProps {
   chapter: Chapter & {
@@ -43,7 +43,11 @@ const HorizontalViewChapter = forwardRef<
           );
         } else {
           return (
-            <div key={idx} className="relative h-full w-full shrink-0">
+            <div
+              id={`${idx}`}
+              key={idx}
+              className="relative h-full w-full shrink-0"
+            >
               <Image
                 fill
                 priority
@@ -59,7 +63,7 @@ const HorizontalViewChapter = forwardRef<
       <button
         onClick={slideLeft}
         className={cn(
-          'absolute left-0 h-full w-20 transition-colors opacity-0 md:hover:opacity-100 dark:hover:bg-zinc-900/70',
+          'absolute left-0 h-full w-2/5 opacity-0',
           currentImage <= 0 ? 'hidden' : null
         )}
       >
@@ -68,7 +72,7 @@ const HorizontalViewChapter = forwardRef<
       <button
         onClick={slideRight}
         className={cn(
-          'absolute right-0 h-full w-20 transition-colors opacity-0 md:hover:opacity-100 dark:hover:bg-zinc-900/70',
+          'absolute right-0 h-full w-2/5 opacity-0',
           currentImage + 1 >= chapter.images.length ? 'hidden' : null
         )}
       >
@@ -80,4 +84,4 @@ const HorizontalViewChapter = forwardRef<
 
 HorizontalViewChapter.displayName = 'HorizontalViewChapter';
 
-export default HorizontalViewChapter;
+export default memo(HorizontalViewChapter);

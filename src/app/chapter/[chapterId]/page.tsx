@@ -19,11 +19,12 @@ const page: FC<pageProps> = async ({ params }) => {
         select: {
           name: true,
           id: true,
+          isPublished: true,
         },
       },
     },
   });
-  if (!chapter) return notFound();
+  if (!chapter || !chapter.manga.isPublished) return notFound();
 
   return (
     <div className="mt-8 h-full">

@@ -161,3 +161,7 @@
 .custom-zoom [data-rmiz-modal-overlay='visible'] {
   background-color: rgba(0, 0, 0, 0.7);
 }
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}

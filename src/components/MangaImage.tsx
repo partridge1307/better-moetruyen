@@ -24,7 +24,14 @@ const MangaImage: FC<MangaCardProps> = ({ image, className }) => {
       classDialog="custom-zoom"
     >
       <div className="relative w-24 h-32 md:w-44 md:h-56">
-        <Image fill src={image} alt="Manga Image" className={className} />
+        <Image
+          fill
+          sizes="0%"
+          priority
+          src={image}
+          alt="Manga Image"
+          className={className}
+        />
         <div
           className="absolute h-full w-full rounded-md flex items-center justify-center opacity-0 cursor-zoom-in hover:opacity-100 hover:bg-black/50"
           onClick={() => setIsZoomed(true)}

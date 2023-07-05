@@ -66,6 +66,7 @@ const page: FC<pageProps> = async ({ params }) => {
       <div className="relative w-full h-[22rem] md:h-72">
         <Image
           fill
+          priority
           src={manga.image}
           alt="Manga Image"
           className="object-cover brightness-[.3] rounded-md"

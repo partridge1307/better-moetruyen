@@ -1,5 +1,5 @@
-import NotableManga from '@/components/Manga/NotableManga';
-import { db } from '@/lib/db';
+import NotableManga from "@/components/Manga/NotableManga";
+import { db } from "@/lib/db";
 
 const Home = async () => {
   const manga = await db.manga.findMany({
@@ -14,8 +14,8 @@ const Home = async () => {
   });
 
   return (
-    <div className="container h-full mx-auto pt-20">
-      <div className="relative w-full h-72">
+    <div className="container mx-auto h-full pt-20">
+      <div className="relative h-72 w-full">
         <NotableManga manga={manga} className="relative h-96" />
       </div>
     </div>

@@ -1,14 +1,14 @@
-import { mangaChapterGroupByVolume } from '@/lib/query';
-import { formatTimeToNow } from '@/lib/utils';
-import { Clock } from 'lucide-react';
-import Link from 'next/link';
-import { FC } from 'react';
+import { mangaChapterGroupByVolume } from "@/lib/query";
+import { formatTimeToNow } from "@/lib/utils";
+import { Clock } from "lucide-react";
+import Link from "next/link";
+import { FC } from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '../ui/Accordion';
+} from "../ui/Accordion";
 
 interface ChapterListProps {
   mangaId: number;
@@ -34,14 +34,14 @@ const ChapterList: FC<ChapterListProps> = async ({ mangaId }) => {
                       <li key={`${i}`}>
                         <Link
                           href={`/chapter/${d.id}`}
-                          className="flex max-sm:flex-wrap max-sm:gap-2 justify-between items-center rounded-lg p-2 py-5 bg-zinc-800"
+                          className="flex items-center justify-between rounded-lg bg-zinc-800 p-2 py-5 max-sm:flex-wrap max-sm:gap-2"
                         >
                           <div className="flex gap-2">
                             <p>Chap. {d.index}</p>
                             <p>-</p>
                             <p
                               title={d.name ? d.name : `Chapter ${d.index}`}
-                              className="capitalize line-clamp-2 md:line-clamp-3"
+                              className="line-clamp-2 capitalize md:line-clamp-3"
                             >
                               {d.name}
                             </p>

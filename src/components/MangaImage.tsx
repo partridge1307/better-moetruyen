@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { Maximize2 } from 'lucide-react';
-import Image from 'next/image';
-import { FC, useCallback, useState } from 'react';
-import { Controlled as Zoom } from 'react-medium-image-zoom';
-import 'react-medium-image-zoom/dist/styles.css';
+import { Maximize2 } from "lucide-react";
+import Image from "next/image";
+import { FC, useCallback, useState } from "react";
+import { Controlled as Zoom } from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 interface MangaCardProps extends React.HTMLAttributes<HTMLImageElement> {
   image: string;
@@ -23,7 +23,7 @@ const MangaImage: FC<MangaCardProps> = ({ image, className }) => {
       onZoomChange={handleZoom}
       classDialog="custom-zoom"
     >
-      <div className="relative w-24 h-32 md:w-44 md:h-56">
+      <div className="relative h-32 w-24 md:h-56 md:w-44">
         <Image
           fill
           sizes="0%"
@@ -33,7 +33,7 @@ const MangaImage: FC<MangaCardProps> = ({ image, className }) => {
           className={className}
         />
         <div
-          className="absolute h-full w-full rounded-md flex items-center justify-center opacity-0 cursor-zoom-in hover:opacity-100 hover:bg-black/50"
+          className="absolute flex h-full w-full cursor-zoom-in items-center justify-center rounded-md opacity-0 hover:bg-black/50 hover:opacity-100"
           onClick={() => setIsZoomed(true)}
         >
           <Maximize2 className="h-1/2 w-1/2" />

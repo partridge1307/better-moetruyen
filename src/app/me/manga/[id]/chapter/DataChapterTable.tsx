@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Input } from '@/components/ui/Input';
+import { Input } from "@/components/ui/Input";
 import {
   useReactTable,
   type ColumnDef,
@@ -14,9 +14,9 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   flexRender,
-} from '@tanstack/react-table';
-import { useState } from 'react';
-import DataToolbar from './DataToolbar';
+} from "@tanstack/react-table";
+import { useState } from "react";
+import DataToolbar from "./DataToolbar";
 import {
   Table,
   TableBody,
@@ -24,9 +24,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/Table';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+} from "@/components/ui/Table";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -62,18 +62,18 @@ function DataChapterTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center max-sm:flex-wrap py-4 gap-4">
+      <div className="flex items-center gap-4 py-4 max-sm:flex-wrap">
         <Input
           placeholder="Lọc tên chapter"
           value={
-            (table.getColumn('Tên chapter')?.getFilterValue() as string) ?? ''
+            (table.getColumn("Tên chapter")?.getFilterValue() as string) ?? ""
           }
           onChange={(e) =>
-            table.getColumn('Tên chapter')?.setFilterValue(e.target.value)
+            table.getColumn("Tên chapter")?.setFilterValue(e.target.value)
           }
           className="rounded-xl"
         />
-        <DataToolbar column={table.getColumn('Trạng thái')} table={table} />
+        <DataToolbar column={table.getColumn("Trạng thái")} table={table} />
       </div>
 
       <Table>
@@ -98,7 +98,7 @@ function DataChapterTable<TData, TValue>({
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
+                data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
@@ -123,7 +123,7 @@ function DataChapterTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="h-4 w-4" />
         </Button>
         <Button
           variant="outline"
@@ -132,7 +132,7 @@ function DataChapterTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

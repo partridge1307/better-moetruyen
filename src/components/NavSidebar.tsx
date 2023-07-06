@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/utils';
-import { Book, Menu, Pin, SunMoon, User2 } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Button } from './ui/Button';
-import { Sheet, SheetContent, SheetTrigger } from './ui/Sheet';
-import { SwitchWithIcon } from './ui/Switch';
+import { cn } from "@/lib/utils";
+import { Book, Menu, Pin, SunMoon, User2 } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Button } from "./ui/Button";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/Sheet";
+import { SwitchWithIcon } from "./ui/Switch";
 
 interface NavContentProps {
   icon: JSX.Element;
@@ -21,55 +21,55 @@ interface NavContentProps {
 const NavContent: NavContentProps[] = [
   {
     icon: <Book />,
-    title: 'Manga',
+    title: "Manga",
     subMenu: [
       {
-        title: 'Mới cập nhật',
-        link: '/manga/latest',
+        title: "Mới cập nhật",
+        link: "/manga/latest",
       },
       {
-        title: 'Tìm kiếm nâng cao',
-        link: '/magna/advanced-search',
+        title: "Tìm kiếm nâng cao",
+        link: "/magna/advanced-search",
       },
       {
-        title: 'Ngẫu nhiên',
-        link: '/manga/random',
+        title: "Ngẫu nhiên",
+        link: "/manga/random",
       },
     ],
   },
   {
     icon: <User2 />,
-    title: 'Forum',
+    title: "Forum",
     subMenu: [
       {
-        title: 'Mới cập nhật',
-        link: '/manga/latest',
+        title: "Mới cập nhật",
+        link: "/manga/latest",
       },
       {
-        title: 'Tìm kiếm nâng cao',
-        link: '/magna/advanced-search',
+        title: "Tìm kiếm nâng cao",
+        link: "/magna/advanced-search",
       },
       {
-        title: 'Ngẫu nhiên',
-        link: '/manga/random',
+        title: "Ngẫu nhiên",
+        link: "/manga/random",
       },
     ],
   },
   {
     icon: <Pin />,
-    title: 'Thông tin',
+    title: "Thông tin",
     subMenu: [
       {
-        title: 'Luật của web',
-        link: '/rule',
+        title: "Luật của web",
+        link: "/rule",
       },
       {
-        title: 'Về Moetruyen',
-        link: '/about',
+        title: "Về Moetruyen",
+        link: "/about",
       },
       {
-        title: 'Chính sách điều khoản',
-        link: '/tos',
+        title: "Chính sách điều khoản",
+        link: "/tos",
       },
     ],
   },
@@ -80,15 +80,15 @@ const NavSidebar = () => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (
-        localStorage.theme === 'dark' ||
-        (!('theme' in localStorage) &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches)
+        localStorage.theme === "dark" ||
+        (!("theme" in localStorage) &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches)
       ) {
-        document.documentElement.classList.add('dark');
+        document.documentElement.classList.add("dark");
       } else {
-        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.remove("dark");
         setChecked(false);
       }
     }
@@ -96,12 +96,12 @@ const NavSidebar = () => {
 
   function handleSwitch(checked: boolean) {
     if (checked) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
       setChecked(true);
     } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
       setChecked(false);
     }
   }
@@ -109,21 +109,21 @@ const NavSidebar = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button className="p-2 h-fit rounded-full bg-transparent hover:bg-transparent/20 text-black dark:text-white">
+        <Button className="h-fit rounded-full bg-transparent p-2 text-black hover:bg-transparent/20 dark:text-white">
           <Menu className="h-8 w-8" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="dark:bg-zinc-800 p-0">
-        <div className="container max-sm:px-2 flex flex-col h-[90%] pb-4 overflow-y-auto scrollbar dark:scrollbar--dark">
-          <h1 className="font-semibold text-2xl text-center py-4 sticky top-0 bg-white dark:bg-zinc-800">
+      <SheetContent side="left" className="p-0 dark:bg-zinc-800">
+        <div className="scrollbar dark:scrollbar--dark container flex h-[90%] flex-col overflow-y-auto pb-4 max-sm:px-2">
+          <h1 className="sticky top-0 bg-white py-4 text-center text-2xl font-semibold dark:bg-zinc-800">
             Moetruyen
           </h1>
-          <ul className="px-4 mt-2 flex flex-col gap-y-10">
+          <ul className="mt-2 flex flex-col gap-y-10 px-4">
             <Link
               href="/"
               className={cn(
-                'w-full text-center text-xl font-medium py-2 rounded-lg',
-                pathname === '/' ? 'dark:bg-zinc-700 bg-slate-200' : null
+                "w-full rounded-lg py-2 text-center text-xl font-medium",
+                pathname === "/" ? "bg-slate-200 dark:bg-zinc-700" : null
               )}
             >
               Trang chủ
@@ -140,7 +140,7 @@ const NavSidebar = () => {
                     <Link
                       key={nsm.title}
                       href={nsm.link}
-                      className="pl-8 py-2 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-zinc-700"
+                      className="rounded-lg py-2 pl-8 transition-colors hover:bg-slate-100 dark:hover:bg-zinc-700"
                     >
                       {nsm.title}
                     </Link>
@@ -151,7 +151,7 @@ const NavSidebar = () => {
           </ul>
         </div>
 
-        <div className="h-[10%] px-6 flex justify-between items-center dark:bg-zinc-900">
+        <div className="flex h-[10%] items-center justify-between px-6 dark:bg-zinc-900">
           <div>
             <p>©Moetruyen</p>
             <p>Version: 0.0.3</p>

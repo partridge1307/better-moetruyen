@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
+import { useCustomToast } from "@/hooks/use-custom-toast";
+import { toast } from "@/hooks/use-toast";
 import {
   ChapterUploadValidator,
   type ChapterUploadPayload,
-} from '@/lib/validators/upload';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import Image from 'next/image';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from '../ui/Button';
+} from "@/lib/validators/upload";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
+import Image from "next/image";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "../ui/Button";
 import {
   Form,
   FormControl,
@@ -20,11 +20,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/Form';
-import { Input } from '../ui/Input';
-import { Progress } from '../ui/Progress';
-import ChapterImageUpload, { type previewImage } from './ChapterImageUpload';
-import ChapterIndexUpload from './ChapterIndexUpload';
+} from "../ui/Form";
+import { Input } from "../ui/Input";
+import { Progress } from "../ui/Progress";
+import ChapterImageUpload, { type previewImage } from "./ChapterImageUpload";
+import ChapterIndexUpload from "./ChapterIndexUpload";
 
 const ChapterUpload = ({ id }: { id: string }) => {
   const { loginToast } = useCustomToast();
@@ -35,7 +35,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
     resolver: zodResolver(ChapterUploadValidator),
     defaultValues: {
       chapterIndex: 0,
-      chapterName: '',
+      chapterName: "",
       volume: 0,
       image: undefined,
     },
@@ -45,9 +45,9 @@ const ChapterUpload = ({ id }: { id: string }) => {
       let imageURL: any = [];
       for (let i = 0; i < image.length; i++) {
         const form = new FormData();
-        form.append('file', image.item(i)!);
+        form.append("file", image.item(i)!);
         axios
-          .post('/api/image', form, {
+          .post("/api/image", form, {
             onUploadProgress: (progessEvent) => {
               const percentCompleted = Math.floor(
                 (progessEvent.loaded * 100) / progessEvent.total!
@@ -80,22 +80,22 @@ const ChapterUpload = ({ id }: { id: string }) => {
         if (e.response?.status === 401) return loginToast();
         if (e.response?.status === 403)
           return toast({
-            title: 'Trùng lặp STT',
+            title: "Trùng lặp STT",
             description:
-              'Đã có chapter trùng lặp STT này rồi. Vui lòng thử lại',
-            variant: 'destructive',
+              "Đã có chapter trùng lặp STT này rồi. Vui lòng thử lại",
+            variant: "destructive",
           });
       }
 
       return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Vui lòng thử lại',
-        variant: 'destructive',
+        title: "Có lỗi xảy ra",
+        description: "Vui lòng thử lại",
+        variant: "destructive",
       });
     },
     onSuccess: () => {
       return toast({
-        title: 'Thành công',
+        title: "Thành công",
       });
     },
   });
@@ -150,12 +150,12 @@ const ChapterUpload = ({ id }: { id: string }) => {
           setInputImage={(value) => setInputImage(value)}
         />
 
-        <ul className="w-full max-h-[300px] overflow-y-auto flex flex-col gap-4 scrollbar dark:scrollbar--dark">
+        <ul className="scrollbar dark:scrollbar--dark flex max-h-[300px] w-full flex-col gap-4 overflow-y-auto">
           {inputImage.length &&
             inputImage.map((img, i) => (
               <li
                 key={i}
-                className="relative flex items-center gap-10 bg-slate-300 dark:bg-zinc-800 p-2 rounded-md"
+                className="relative flex items-center gap-10 rounded-md bg-slate-300 p-2 dark:bg-zinc-800"
               >
                 <div className="relative h-12 w-12">
                   <Image
@@ -165,7 +165,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
                     className="object-cover"
                   />
                 </div>
-                <div className="flex justify-between w-full items-center text-sm">
+                <div className="flex w-full items-center justify-between text-sm">
                   <div>
                     <p>Tên: {img.name}</p>
                     <p>Định dạng: {img.type}</p>
@@ -176,7 +176,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
                   <Progress
                     value={img.progress}
                     className="w-1/2"
-                    indicatorClassName={`${img.done && 'bg-green-500'}`}
+                    indicatorClassName={`${img.done && "bg-green-500"}`}
                   />
                 )}
               </li>

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Table,
@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/Table';
+} from "@/components/ui/Table";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -21,12 +21,12 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
-import { Button } from '@/components/ui/Button';
-import DataToolbar from './DataToolbar';
-import { Input } from '@/components/ui/Input';
+} from "@tanstack/react-table";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import DataToolbar from "./DataToolbar";
+import { Input } from "@/components/ui/Input";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -61,18 +61,18 @@ function DataMangaTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center max-sm:flex-wrap py-4 gap-4">
+      <div className="flex items-center gap-4 py-4 max-sm:flex-wrap">
         <Input
           placeholder="Lọc tên truyện"
           value={
-            (table.getColumn('Tên truyện')?.getFilterValue() as string) ?? ''
+            (table.getColumn("Tên truyện")?.getFilterValue() as string) ?? ""
           }
           onChange={(e) =>
-            table.getColumn('Tên truyện')?.setFilterValue(e.target.value)
+            table.getColumn("Tên truyện")?.setFilterValue(e.target.value)
           }
           className="rounded-xl"
         />
-        <DataToolbar column={table.getColumn('Trạng thái')} table={table} />
+        <DataToolbar column={table.getColumn("Trạng thái")} table={table} />
       </div>
 
       <Table>
@@ -97,7 +97,7 @@ function DataMangaTable<TData, TValue>({
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
+                data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
@@ -122,7 +122,7 @@ function DataMangaTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="h-4 w-4" />
         </Button>
         <Button
           variant="outline"
@@ -131,7 +131,7 @@ function DataMangaTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
     </div>

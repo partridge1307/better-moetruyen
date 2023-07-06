@@ -1,10 +1,10 @@
-import type { Chapter, Manga } from '@prisma/client';
-import Image from 'next/image';
-import { forwardRef, type MutableRefObject, memo } from 'react';
+import type { Chapter, Manga } from "@prisma/client";
+import Image from "next/image";
+import { forwardRef, type MutableRefObject, memo } from "react";
 
 interface VerticalViewChapterProps {
   chapter: Chapter & {
-    manga: Pick<Manga, 'name'>;
+    manga: Pick<Manga, "name">;
   };
   imageRef: MutableRefObject<HTMLImageElement | null>;
 }
@@ -16,7 +16,7 @@ const VerticalViewChapter = forwardRef<
   return (
     <div
       ref={ref}
-      className="h-full w-full space-y-2 md:space-y-10 overflow-auto no-scrollbar"
+      className="no-scrollbar h-full w-full space-y-2 overflow-auto md:space-y-10"
     >
       {chapter.images.map((img, idx) => {
         if (idx === Math.floor(chapter.images.length * 0.7)) {
@@ -30,7 +30,7 @@ const VerticalViewChapter = forwardRef<
                 sizes="0%"
                 src={img}
                 alt={`Trang ${idx + 1}`}
-                className="object-contain max-sm:w-full w-4/5 md:mx-auto"
+                className="w-4/5 object-contain max-sm:w-full md:mx-auto"
               />
             </div>
           );
@@ -44,7 +44,7 @@ const VerticalViewChapter = forwardRef<
                 priority
                 src={img}
                 alt={`Trang ${idx + 1}`}
-                className="object-contain max-sm:w-full w-4/5 md:mx-auto"
+                className="w-4/5 object-contain max-sm:w-full md:mx-auto"
               />
             </div>
           );
@@ -54,6 +54,6 @@ const VerticalViewChapter = forwardRef<
   );
 });
 
-VerticalViewChapter.displayName = 'VerticalViewChapter';
+VerticalViewChapter.displayName = "VerticalViewChapter";
 
 export default memo(VerticalViewChapter);

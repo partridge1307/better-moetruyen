@@ -1,11 +1,11 @@
-import { type Dispatch, FC, type SetStateAction } from 'react';
+import { type Dispatch, FC, type SetStateAction } from "react";
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/Form';
+} from "../ui/Form";
 import {
   Select,
   SelectContent,
@@ -13,10 +13,10 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '../ui/Select';
-import { Input } from '../ui/Input';
-import type { ChapterUploadPayload } from '@/lib/validators/upload';
-import type { UseFormReturn } from 'react-hook-form';
+} from "../ui/Select";
+import { Input } from "../ui/Input";
+import type { ChapterUploadPayload } from "@/lib/validators/upload";
+import type { UseFormReturn } from "react-hook-form";
 
 interface ChapterIndexUploadProps {
   form: UseFormReturn<ChapterUploadPayload>;
@@ -41,8 +41,8 @@ const ChapterIndexUpload: FC<ChapterIndexUploadProps> = ({
             <div>
               <Select
                 onValueChange={(value) => {
-                  if (value === 'custom') setDisableChapterIndex(false);
-                  else if (value === 'append') {
+                  if (value === "custom") setDisableChapterIndex(false);
+                  else if (value === "append") {
                     field.onChange(0);
                     setDisableChapterIndex(true);
                   }

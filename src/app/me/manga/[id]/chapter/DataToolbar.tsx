@@ -1,24 +1,24 @@
-import { Button } from '@/components/ui/Button';
+import { Button } from "@/components/ui/Button";
 import {
   Command,
   CommandGroup,
   CommandItem,
   CommandList,
-} from '@/components/ui/Command';
+} from "@/components/ui/Command";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
+} from "@/components/ui/DropdownMenu";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/Popover';
-import { cn } from '@/lib/utils';
-import type { Column, Table } from '@tanstack/react-table';
-import { Check } from 'lucide-react';
+} from "@/components/ui/Popover";
+import { cn } from "@/lib/utils";
+import type { Column, Table } from "@tanstack/react-table";
+import { Check } from "lucide-react";
 
 interface DataToolbarProps<TData, TValue> {
   column?: Column<TData, TValue>;
@@ -36,12 +36,12 @@ function DataToolbar<TData, TValue>({
       {column && (
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="max-sm:w-24 w-36 rounded-xl">
-              {typeof statusValues === 'undefined'
-                ? 'Trạng thái'
+            <Button variant="outline" className="w-36 rounded-xl max-sm:w-24">
+              {typeof statusValues === "undefined"
+                ? "Trạng thái"
                 : statusValues === true
-                ? 'Published'
-                : 'Chờ publish'}
+                ? "Published"
+                : "Chờ publish"}
             </Button>
           </PopoverTrigger>
           <PopoverContent>
@@ -51,7 +51,7 @@ function DataToolbar<TData, TValue>({
                   <CommandItem
                     onSelect={() => {
                       let filterValues;
-                      if (typeof statusValues === 'undefined') {
+                      if (typeof statusValues === "undefined") {
                         filterValues = true;
                       } else {
                         filterValues = undefined;
@@ -63,13 +63,13 @@ function DataToolbar<TData, TValue>({
                   >
                     <div
                       className={cn(
-                        'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
                         statusValues === true
-                          ? 'bg-primary text-primary-foreground'
-                          : 'opacity-50 [&_svg]:invisible'
+                          ? "bg-primary text-primary-foreground"
+                          : "opacity-50 [&_svg]:invisible"
                       )}
                     >
-                      <Check className={cn('h-4 w-4')} />
+                      <Check className={cn("h-4 w-4")} />
                     </div>
                     <span>Published</span>
                   </CommandItem>
@@ -77,7 +77,7 @@ function DataToolbar<TData, TValue>({
                   <CommandItem
                     onSelect={() => {
                       let filterValues;
-                      if (typeof statusValues === 'undefined') {
+                      if (typeof statusValues === "undefined") {
                         filterValues = false;
                       } else {
                         filterValues = undefined;
@@ -88,10 +88,10 @@ function DataToolbar<TData, TValue>({
                   >
                     <div
                       className={cn(
-                        'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                        "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
                         statusValues === false
-                          ? 'bg-primary text-primary-foreground'
-                          : 'opacity-50 [&_svg]:invisible'
+                          ? "bg-primary text-primary-foreground"
+                          : "opacity-50 [&_svg]:invisible"
                       )}
                     >
                       <Check className="h-4 w-4" />
@@ -107,7 +107,7 @@ function DataToolbar<TData, TValue>({
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="max-sm:w-24 w-32 rounded-xl">
+          <Button variant="outline" className="w-32 rounded-xl max-sm:w-24">
             Hiển thị
           </Button>
         </DropdownMenuTrigger>

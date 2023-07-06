@@ -1,13 +1,13 @@
-import { cn } from '@/lib/utils';
-import type { Chapter, Manga } from '@prisma/client';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { forwardRef, type MutableRefObject } from 'react';
+import { cn } from "@/lib/utils";
+import type { Chapter, Manga } from "@prisma/client";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { forwardRef, type MutableRefObject } from "react";
 
 interface HorizontalViewChapterProps {
   chapter: Chapter & {
-    manga: Pick<Manga, 'name'>;
+    manga: Pick<Manga, "name">;
   };
   slideLeft(): void;
   slideRight(): void;
@@ -22,7 +22,7 @@ const HorizontalViewChapter = forwardRef<
   return (
     <div
       ref={ref}
-      className="h-full w-full flex overflow-auto scroll-smooth transition-transform no-scrollbar"
+      className="no-scrollbar flex h-full w-full overflow-auto scroll-smooth transition-transform"
     >
       {chapter.images.map((img, idx) => {
         if (idx === Math.floor((chapter.images.length * 70) / 100)) {
@@ -68,25 +68,25 @@ const HorizontalViewChapter = forwardRef<
       <button
         onClick={slideLeft}
         className={cn(
-          'absolute left-0 h-full w-2/5 opacity-0',
-          currentImage <= 0 ? 'hidden' : null
+          "absolute left-0 h-full w-2/5 opacity-0",
+          currentImage <= 0 ? "hidden" : null
         )}
       >
-        <ChevronLeft className="w-20 h-20" />
+        <ChevronLeft className="h-20 w-20" />
       </button>
       <button
         onClick={slideRight}
         className={cn(
-          'absolute right-0 h-full w-2/5 opacity-0',
-          currentImage + 1 >= chapter.images.length ? 'hidden' : null
+          "absolute right-0 h-full w-2/5 opacity-0",
+          currentImage + 1 >= chapter.images.length ? "hidden" : null
         )}
       >
-        <ChevronRight className="w-20 h-20" />
+        <ChevronRight className="h-20 w-20" />
       </button>
     </div>
   );
 });
 
-HorizontalViewChapter.displayName = 'HorizontalViewChapter';
+HorizontalViewChapter.displayName = "HorizontalViewChapter";
 
 export default HorizontalViewChapter;

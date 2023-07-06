@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { FC } from 'react';
-import { Button } from './ui/Button';
+import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { FC } from "react";
+import { Button } from "./ui/Button";
 
 interface CloseModalProps extends React.HTMLAttributes<HTMLButtonElement> {}
 

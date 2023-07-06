@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import {
   AuthSignInValidator,
   CreateAuthSignInPayload,
-} from '@/lib/validators/auth';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+} from "@/lib/validators/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -13,20 +13,20 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/Form';
-import { Input } from '../ui/Input';
-import { Button } from '../ui/Button';
-import { signIn } from 'next-auth/react';
-import { useState } from 'react';
-import { toast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
+} from "../ui/Form";
+import { Input } from "../ui/Input";
+import { Button } from "../ui/Button";
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 const UserSignInForm = () => {
   const form = useForm<CreateAuthSignInPayload>({
     resolver: zodResolver(AuthSignInValidator),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
@@ -37,34 +37,34 @@ const UserSignInForm = () => {
     try {
       const { email, password } = AuthSignInValidator.parse(values);
 
-      const res = await signIn('credentials', {
+      const res = await signIn("credentials", {
         email,
         password,
         redirect: false,
       });
 
-      if (res && res.error === 'CredentialsSignin')
-        throw new Error('Tài khoản hoặc mật khẩu không chính xác');
+      if (res && res.error === "CredentialsSignin")
+        throw new Error("Tài khoản hoặc mật khẩu không chính xác");
 
       router.back();
       router.refresh();
 
       return toast({
-        title: 'Thành công',
+        title: "Thành công",
       });
     } catch (error) {
       if (error instanceof Error) {
         return toast({
           title: error.message,
-          description: 'Vui lòng thử lại sau',
-          variant: 'destructive',
+          description: "Vui lòng thử lại sau",
+          variant: "destructive",
         });
       }
 
       return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
+        title: "Có lỗi xảy ra",
+        description: "Có lỗi xảy ra. Vui lòng thử lại sau",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -85,7 +85,7 @@ const UserSignInForm = () => {
                 <Input
                   type="email"
                   placeholder="Email của bạn"
-                  className="border-2 dark:border-slate-200 focus:ring-offset-2 focus-visible:dark:ring-slate-200"
+                  className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
                   {...field}
                 />
               </FormControl>
@@ -104,7 +104,7 @@ const UserSignInForm = () => {
                 <Input
                   type="password"
                   placeholder="Mật khẩu của bạn"
-                  className="border-2 dark:border-slate-200 focus:ring-offset-2 focus-visible:dark:ring-slate-200"
+                  className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
                   {...field}
                 />
               </FormControl>

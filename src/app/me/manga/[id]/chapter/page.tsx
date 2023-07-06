@@ -1,21 +1,21 @@
-import { getAuthSession } from '@/lib/auth';
-import { db } from '@/lib/db';
-import { redirect } from 'next/navigation';
-import DataChapterTable from './DataChapterTable';
-import { columns } from './column';
-import Link from 'next/link';
-import { buttonVariants } from '@/components/ui/Button';
-import { cn } from '@/lib/utils';
+import { getAuthSession } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { redirect } from "next/navigation";
+import DataChapterTable from "./DataChapterTable";
+import { columns } from "./column";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
 
 const page = async ({ params }: { params: { id: string } }) => {
   const session = await getAuthSession();
-  if (!session) redirect('/sign-in');
+  if (!session) redirect("/sign-in");
   const user = await db.user.findFirst({
     where: {
       id: session.user.id,
     },
   });
-  if (!user) return redirect('/sign-in');
+  if (!user) return redirect("/sign-in");
 
   const chapter = await db.chapter.findMany({
     where: {
@@ -31,8 +31,8 @@ const page = async ({ params }: { params: { id: string } }) => {
       <Link
         href={`/me/manga/${params.id}/chapter/upload`}
         className={cn(
-          buttonVariants({ variant: 'outline' }),
-          'self-end rounded-lg'
+          buttonVariants({ variant: "outline" }),
+          "self-end rounded-lg"
         )}
       >
         Thêm chapter
@@ -40,7 +40,7 @@ const page = async ({ params }: { params: { id: string } }) => {
       <DataChapterTable columns={columns} data={chapter} />
     </div>
   ) : (
-    <div className="h-full flex flex-col items-center justify-center gap-4">
+    <div className="flex h-full flex-col items-center justify-center gap-4">
       <p>Truyện chưa có chapter nào cả</p>
       <Link
         href={`/me/manga/${params.id}/chapter/upload`}

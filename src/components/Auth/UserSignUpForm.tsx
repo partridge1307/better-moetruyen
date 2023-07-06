@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
 import {
   AuthSignUpValidator,
   CreateAuthSignUpPayload,
-} from '@/lib/validators/auth';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { Button } from '../ui/Button';
+} from "@/lib/validators/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Button } from "../ui/Button";
 import {
   Form,
   FormControl,
@@ -14,19 +14,19 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/Form';
-import { Input } from '../ui/Input';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import { toast } from '@/hooks/use-toast';
+} from "../ui/Form";
+import { Input } from "../ui/Input";
+import { useMutation } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
+import { toast } from "@/hooks/use-toast";
 
 const UserSignUpForm = () => {
   const form = useForm<CreateAuthSignUpPayload>({
     resolver: zodResolver(AuthSignUpValidator),
     defaultValues: {
-      email: '',
-      password: '',
-      passwordConfirm: '',
+      email: "",
+      password: "",
+      passwordConfirm: "",
     },
   });
 
@@ -34,7 +34,7 @@ const UserSignUpForm = () => {
     mutationFn: async (values: CreateAuthSignUpPayload) => {
       const signUpForm = AuthSignUpValidator.parse(values);
 
-      const { data } = await axios.post('/api/auth/sign-up', signUpForm);
+      const { data } = await axios.post("/api/auth/sign-up", signUpForm);
 
       return data as string;
     },
@@ -42,23 +42,23 @@ const UserSignUpForm = () => {
       if (e instanceof AxiosError) {
         if (e.response?.status === 401) {
           return toast({
-            title: 'Tài khoản đã được tạo',
-            description: 'Vui lòng tạo tài khoản khác',
-            variant: 'destructive',
+            title: "Tài khoản đã được tạo",
+            description: "Vui lòng tạo tài khoản khác",
+            variant: "destructive",
           });
         }
       }
 
       return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Vui lòng thử lại',
-        variant: 'destructive',
+        title: "Có lỗi xảy ra",
+        description: "Vui lòng thử lại",
+        variant: "destructive",
       });
     },
     onSuccess: () => {
       return toast({
-        title: 'Thành công',
-        description: 'Một đường dẫn xác thực đã gửi tới mail của bạn',
+        title: "Thành công",
+        description: "Một đường dẫn xác thực đã gửi tới mail của bạn",
       });
     },
   });
@@ -82,7 +82,7 @@ const UserSignUpForm = () => {
                 <Input
                   type="email"
                   placeholder="Email của bạn"
-                  className="border-2 dark:border-slate-200 focus:ring-offset-2 focus-visible:dark:ring-slate-200"
+                  className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
                   {...field}
                 />
               </FormControl>
@@ -101,7 +101,7 @@ const UserSignUpForm = () => {
                 <Input
                   type="password"
                   placeholder="Mật khẩu của bạn"
-                  className="border-2 dark:border-slate-200 focus:ring-offset-2 focus-visible:dark:ring-slate-200"
+                  className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
                   {...field}
                 />
               </FormControl>
@@ -120,7 +120,7 @@ const UserSignUpForm = () => {
                 <Input
                   type="password"
                   placeholder="Mật khẩu của bạn"
-                  className="border-2 dark:border-slate-200 focus:ring-offset-2 focus-visible:dark:ring-slate-200"
+                  className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
                   {...field}
                 />
               </FormControl>

@@ -21,12 +21,12 @@ npx prisma generate # Tạo prisma client
 yarn prisma generate
 
 # Develop
-npm dev
+npm run dev
 # or
 yarn dev
 
 # Production
-npm build
+npm run build
 # or
 yarn build
 

@@ -1,5 +1,6 @@
-import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { getToken } from 'next-auth/jwt';
+import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
 const chapterValidator = z.object({
@@ -9,16 +10,19 @@ const chapterValidator = z.object({
   volume: z.number(),
 });
 
-export async function POST(req: Request, context: { params: { id: string } }) {
+export async function POST(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
-    const session = await getAuthSession();
-    if (!session) return new Response('Unauthorized', { status: 401 });
+    const token = await getToken({ req });
+    if (!token) return new Response('Unauthorized', { status: 401 });
 
     if (
       !(await db.manga.findFirst({
         where: {
           id: parseInt(context.params.id, 10),
-          creatorId: session.user.id,
+          creatorId: token.id,
         },
       }))
     )

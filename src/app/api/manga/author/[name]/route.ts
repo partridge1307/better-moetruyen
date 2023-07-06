@@ -1,10 +1,14 @@
-import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { getToken } from 'next-auth/jwt';
+import { NextRequest } from 'next/server';
 
-export async function GET(req: Request, context: { params: { name: string } }) {
+export async function GET(
+  req: NextRequest,
+  context: { params: { name: string } }
+) {
   try {
-    const session = await getAuthSession();
-    if (!session) return new Response('Unauthorized', { status: 401 });
+    const token = await getToken({ req });
+    if (!token) return new Response('Unauthorized', { status: 401 });
 
     const author = await db.mangaAuthor.findMany({
       where: {

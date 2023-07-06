@@ -63,7 +63,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
   return (
     <div className="container mx-auto h-full pt-20 space-y-10">
-      <div className="relative w-full h-[22rem] md:h-72">
+      <div className="relative w-full h-72">
         <Image
           fill
           priority
@@ -71,7 +71,7 @@ const page: FC<pageProps> = async ({ params }) => {
           alt="Manga Image"
           className="object-cover brightness-[.3] rounded-md"
         />
-        <div className="absolute inset-0 flex max-sm:justify-center items-center md:items-end p-4 md:p-6 rounded-md bg-gradient-to-t dark:from-zinc-900 to-transparent">
+        <div className="absolute inset-0 flex items-end p-6 rounded-md bg-gradient-to-t dark:from-zinc-900 to-transparent">
           <div className="flex max-sm:flex-col max-sm:items-center max-w-[100%] gap-2 md:gap-10">
             <MangaImage
               image={manga.image}
@@ -113,7 +113,7 @@ const page: FC<pageProps> = async ({ params }) => {
           </TabsList>
           <TabsContent
             value="chapter"
-            className="grid grid-cols-1 md:grid-cols-[.3fr_1fr] gap-4"
+            className="grid grid-cols-[.3fr_1fr] gap-4"
           >
             <Card className="h-fit dark:bg-transparent border-none shadow-none">
               <CardHeader>

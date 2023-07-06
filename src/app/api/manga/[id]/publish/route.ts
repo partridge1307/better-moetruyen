@@ -1,10 +1,14 @@
-import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { getToken } from 'next-auth/jwt';
+import { NextRequest } from 'next/server';
 
-export async function PATCH(req: Request, context: { params: { id: string } }) {
+export async function PATCH(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
-    const session = await getAuthSession();
-    if (!session) return new Response('Unauthorized', { status: 401 });
+    const token = await getToken({ req });
+    if (!token) return new Response('Unauthorized', { status: 401 });
 
     const targetManga = await db.manga.findFirst({
       where: {
@@ -19,7 +23,7 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
       },
     });
     if (!targetManga) return new Response('Not found', { status: 404 });
-    if (targetManga.creatorId !== session.user.id)
+    if (targetManga.creatorId !== token.id)
       return new Response('Forbidden', { status: 400 });
     if (targetManga._count.chapter <= 0)
       return new Response('Must have at least 1 chapter', { status: 403 });

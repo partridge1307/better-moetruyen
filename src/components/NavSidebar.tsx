@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Book, Menu, Pin, SunMoon, User2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from './ui/Button';
 import { Sheet, SheetContent, SheetTrigger } from './ui/Sheet';
 import { SwitchWithIcon } from './ui/Switch';
@@ -76,6 +76,24 @@ const NavContent: NavContentProps[] = [
 ];
 
 const NavSidebar = () => {
+  const [isChecked, setChecked] = useState<boolean>(true);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (
+        localStorage.theme === 'dark' ||
+        (!('theme' in localStorage) &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches)
+      ) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        setChecked(false);
+      }
+    }
+  }, []);
+
   function handleSwitch(checked: boolean) {
     if (checked) {
       document.documentElement.classList.add('dark');
@@ -87,11 +105,6 @@ const NavSidebar = () => {
       setChecked(false);
     }
   }
-
-  const pathname = usePathname();
-  const [isChecked, setChecked] = useState<boolean>(
-    typeof window !== 'undefined' && localStorage.theme === 'dark'
-  );
 
   return (
     <Sheet>

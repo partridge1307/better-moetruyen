@@ -21,10 +21,21 @@
 .dark .ce-conversion-toolbar__label,
 .dark .ce-toolbox__button,
 .dark .cdx-settings-button,
-.dark .ce-toolbar__plus,
 .dark .ce-toolbar__settings-btn,
 .dark .ce-popover-item:hover .ce-popover-item__title {
   color: inherit;
+}
+
+@media not all and (min-width: 640px) {
+  .dark .ce-toolbar__plus {
+    color: theme('colors.zinc.900');
+  }
+}
+
+@media (min-width: 768px) {
+  .dark .ce-toolbar__plus {
+    color: inherit;
+  }
 }
 
 .dark .ce-popover__item-icon,

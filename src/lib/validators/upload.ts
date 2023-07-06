@@ -10,6 +10,7 @@ export type authorInfoProps = z.infer<typeof authorInfo>;
 export const tagInfo = z.object({
   id: z.number(),
   name: z.string(),
+  description: z.string(),
 });
 
 export type tagInfoProps = z.infer<typeof tagInfo>;

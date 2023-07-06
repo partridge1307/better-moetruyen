@@ -1,0 +1,137 @@
+import { type Dispatch, FC, type SetStateAction } from 'react';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../ui/Form';
+import { Input } from '../ui/Input';
+import type { UseFormReturn } from 'react-hook-form';
+import type {
+  MangaUploadPayload,
+  authorInfoProps,
+} from '@/lib/validators/upload';
+import { Loader2, X } from 'lucide-react';
+
+export type authorResultProps = {
+  author: authorInfoProps[];
+};
+
+interface MangaAuthorUploadProps {
+  form: UseFormReturn<MangaUploadPayload>;
+  authorSelected: authorInfoProps[];
+  setAuthorSelected: Dispatch<SetStateAction<authorInfoProps[]>>;
+  authorInput: string;
+  setAuthorInput: Dispatch<SetStateAction<string>>;
+  isFetchingAuthor: boolean;
+  authorResult?: authorResultProps;
+}
+
+const MangaAuthorUpload: FC<MangaAuthorUploadProps> = ({
+  form,
+  authorSelected,
+  setAuthorSelected,
+  authorInput,
+  setAuthorInput,
+  isFetchingAuthor,
+  authorResult,
+}) => {
+  return (
+    <FormField
+      control={form.control}
+      name="author"
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Tác giả</FormLabel>
+          <FormMessage />
+          <FormControl>
+            <div className="border rounded-lg">
+              <ul className="flex gap-x-2">
+                {authorSelected.map((auth) => (
+                  <li
+                    key={auth.id}
+                    className="bg-zinc-800 p-1 flex items-center gap-x-1 rounded-md"
+                  >
+                    <span>{auth.name}</span>
+                    <X
+                      className="h-5 w-5 text-red-500 cursor-pointer"
+                      onClick={() => {
+                        const authorVal = [
+                          ...authorSelected.filter((a) => a.name !== auth.name),
+                        ];
+                        setAuthorSelected(authorVal);
+                        form.setValue('author', authorVal);
+                      }}
+                    />
+                  </li>
+                ))}
+              </ul>
+              <Input
+                ref={field.ref}
+                placeholder="Tác giả"
+                value={authorInput}
+                onChange={(e) => {
+                  setAuthorInput(e.target.value);
+                }}
+                className="border-none focus:ring-0 focus-visible:ring-offset-transparent focus-visible:ring-transparent"
+              />
+            </div>
+          </FormControl>
+          <ul className="flex items-center">
+            {isFetchingAuthor && <Loader2 className="w-4 h-4 animate-spin" />}
+            {!isFetchingAuthor && authorResult?.author.length
+              ? authorResult.author.map((auth) => (
+                  <li
+                    key={auth.id}
+                    className={`cursor-pointer p-1 bg-slate-800 rounded-md ${
+                      authorSelected.some((a) => a.name === auth.name) &&
+                      'hidden'
+                    }`}
+                    onClick={() => {
+                      if (!authorSelected.includes(auth)) {
+                        form.setValue('author', [...authorSelected, auth]);
+                        setAuthorSelected([...authorSelected, auth]);
+                      }
+                    }}
+                  >
+                    {auth.name}
+                  </li>
+                ))
+              : !!authorInput && (
+                  <li
+                    className={`flex items-center gap-x-2 rounded-md ${
+                      authorSelected.some((a) => a.name === authorInput) &&
+                      'hidden'
+                    }`}
+                  >
+                    Thêm:{' '}
+                    <span
+                      className="cursor-pointer p-1 bg-zinc-800"
+                      onClick={() => {
+                        if (
+                          !authorSelected.some((a) => a.name === authorInput)
+                        ) {
+                          form.setValue('author', [
+                            ...authorSelected,
+                            { id: -1, name: authorInput },
+                          ]);
+                          setAuthorSelected([
+                            ...authorSelected,
+                            { id: -1, name: authorInput },
+                          ]);
+                        }
+                      }}
+                    >
+                      {authorInput}
+                    </span>
+                  </li>
+                )}
+          </ul>
+        </FormItem>
+      )}
+    />
+  );
+};
+
+export default MangaAuthorUpload;

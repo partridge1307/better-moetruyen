@@ -1,5 +1,7 @@
 'use client';
 
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { toast } from '@/hooks/use-toast';
 import {
   ChapterUploadValidator,
   type ChapterUploadPayload,
@@ -21,28 +23,14 @@ import {
 } from '../ui/Form';
 import { Input } from '../ui/Input';
 import { Progress } from '../ui/Progress';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/Select';
-import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
-
-type previewImage = {
-  link: string;
-  name: string;
-  type: string;
-  size: number;
-  progress?: number | null;
-  done?: boolean;
-};
+import ChapterImageUpload, { type previewImage } from './ChapterImageUpload';
+import ChapterIndexUpload from './ChapterIndexUpload';
 
 const ChapterUpload = ({ id }: { id: string }) => {
   const { loginToast } = useCustomToast();
+  const [inputImage, setInputImage] = useState<previewImage[]>([]);
+  const [disaleChapterIndex, setDisableChapterIndex] = useState<boolean>(true);
+
   const form = useForm<ChapterUploadPayload>({
     resolver: zodResolver(ChapterUploadValidator),
     defaultValues: {
@@ -52,8 +40,6 @@ const ChapterUpload = ({ id }: { id: string }) => {
       image: undefined,
     },
   });
-
-  const [inputImage, setInputImage] = useState<previewImage[]>([]);
   const imgUpload = (image: FileList) =>
     new Promise((resolve) => {
       let imageURL: any = [];
@@ -114,8 +100,6 @@ const ChapterUpload = ({ id }: { id: string }) => {
     },
   });
 
-  const [disaleChapterIndex, setDisableChapterIndex] = useState<boolean>(true);
-
   const onSubmitHandler = (values: ChapterUploadPayload) => {
     upload(values);
   };
@@ -123,48 +107,10 @@ const ChapterUpload = ({ id }: { id: string }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="chapterIndex"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>STT chapter</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <div>
-                  <Select
-                    onValueChange={(value) => {
-                      if (value === 'custom') setDisableChapterIndex(false);
-                      else if (value === 'append') {
-                        field.onChange(0);
-                        setDisableChapterIndex(true);
-                      }
-                    }}
-                    defaultValue="append"
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Chọn" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="append">
-                          Sau chapter mới nhất
-                        </SelectItem>
-                        <SelectItem value="custom">Tự điền</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    ref={field.ref}
-                    disabled={disaleChapterIndex}
-                    type="number"
-                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                    onBlur={field.onBlur}
-                  />
-                </div>
-              </FormControl>
-            </FormItem>
-          )}
+        <ChapterIndexUpload
+          form={form}
+          setDisableChapterIndex={(value) => setDisableChapterIndex(value)}
+          disaleChapterIndex={disaleChapterIndex}
         />
 
         <FormField
@@ -199,38 +145,9 @@ const ChapterUpload = ({ id }: { id: string }) => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="image"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ảnh</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input
-                  ref={field.ref}
-                  type="file"
-                  multiple
-                  accept=".jpg, .png, .jpeg"
-                  onChange={(e) => {
-                    if (e.target.files?.length) {
-                      field.onChange(e.target.files);
-                      let imageObject = [];
-                      for (let i = 0; i < e.target.files.length; i++) {
-                        imageObject.push({
-                          link: URL.createObjectURL(e.target.files.item(i)!),
-                          name: e.target.files.item(i)!.name.split('.')[0],
-                          type: e.target.files.item(i)!.name.split('.')[1],
-                          size: Math.floor(e.target.files.item(i)!.size / 1000),
-                        });
-                      }
-                      setInputImage(imageObject);
-                    }
-                  }}
-                />
-              </FormControl>
-            </FormItem>
-          )}
+        <ChapterImageUpload
+          form={form}
+          setInputImage={(value) => setInputImage(value)}
         />
 
         <ul className="w-full max-h-[300px] overflow-y-auto flex flex-col gap-4 scrollbar dark:scrollbar--dark">

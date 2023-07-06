@@ -1,23 +1,36 @@
-import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { upload } from '@/lib/discord';
+import { authorInfo, tagInfo } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
+import { getToken } from 'next-auth/jwt';
+import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
-import { authorInfo, tagInfo } from '@/lib/validators/upload';
+
+const blocksInfo = z.object({
+  id: z.string(),
+  type: z.string(),
+  data: z.any(),
+});
+
+const descriptionInfo = z.object({
+  time: z.number(),
+  blocks: z.array(blocksInfo),
+  version: z.string(),
+});
 
 const mangaFormValidator = zfd.formData({
   image: zfd.file(),
   name: zfd.text(),
-  description: zfd.text(),
+  description: zfd.json(descriptionInfo),
   author: zfd.repeatableOfType(zfd.json(authorInfo)),
   tag: zfd.repeatableOfType(zfd.json(tagInfo)),
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const session = await getAuthSession();
-    if (!session) return new Response('Unauthorized', { status: 401 });
+    const token = await getToken({ req });
+    if (!token) return new Response('Unauthorized', { status: 401 });
 
     const form = await req.formData();
     const {
@@ -30,7 +43,7 @@ export async function POST(req: Request) {
 
     const user = await db.user.findFirst({
       where: {
-        id: session.user.id,
+        id: token.id,
       },
     });
     if (!user) return new Response('User does not exists', { status: 404 });
@@ -48,7 +61,7 @@ export async function POST(req: Request) {
     await db.manga.create({
       data: {
         name,
-        description,
+        description: JSON.stringify(description),
         image,
         creatorId: user.id,
         tags: {

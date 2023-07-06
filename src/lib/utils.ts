@@ -7,8 +7,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function sleep(time: number) {
-  return new Promise((res) => setTimeout(res, time * 1000));
+export function sleep(second: number) {
+  return new Promise((res) => setTimeout(res, second * 1000));
 }
 
 export const verifyHTML = (token: string) => `<!DOCTYPE html>

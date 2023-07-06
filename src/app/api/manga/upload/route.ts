@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     if (!user.verified && checkManga)
       return new Response('Need verify', { status: 400 });
 
-    const image = await upload(img);
+    const image = await upload({ blobImage: img, retryCount: 5 });
 
     await db.manga.create({
       data: {

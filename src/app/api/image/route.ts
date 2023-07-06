@@ -4,7 +4,7 @@ export async function POST(req: Request) {
   try {
     const form = await req.formData();
     const imageBlob = form.get('file');
-    const imageURL = await upload(imageBlob);
+    const imageURL = await upload({ blobImage: imageBlob, retryCount: 5 });
 
     return new Response(imageURL, { status: 201 });
   } catch (error) {

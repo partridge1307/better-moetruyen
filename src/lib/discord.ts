@@ -1,7 +1,13 @@
 import axios, { AxiosError } from 'axios';
 import { sleep } from './utils';
 
-export const upload = async (blobImage: any): Promise<string> => {
+export const upload = async ({
+  blobImage,
+  retryCount = 5,
+}: {
+  blobImage: any;
+  retryCount?: number;
+}): Promise<string> => {
   try {
     const form = new FormData();
     form.append('file', blobImage, 'image.webp');
@@ -10,12 +16,17 @@ export const upload = async (blobImage: any): Promise<string> => {
 
     return data.attachments[0].url as string;
   } catch (error) {
-    if (error instanceof AxiosError) {
-      if (error.response?.status === 429) {
-        await sleep(2);
-        return await upload(blobImage);
+    if (retryCount) {
+      retryCount--;
+      await sleep(2);
+      return await upload({ blobImage, retryCount });
+    } else {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 429) {
+          throw error.message;
+        }
       }
+      throw error;
     }
-    throw error;
   }
 };

@@ -3,7 +3,31 @@ import { AuthOptions, getServerSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { db } from './db';
 import { AuthSignInValidator } from './validators/auth';
-import { nanoid } from 'nanoid';
+import {
+  uniqueNamesGenerator,
+  NumberDictionary,
+  type Config,
+} from 'unique-names-generator';
+
+const CatNames = [
+  'Moe Mong Mo',
+  'Moe Biet Tuot',
+  'Moe Di Hia',
+  'Moe Bay Bong',
+  'Moe Bien Thai',
+  'Moe Tang Dong',
+  'Moe Hip Hop',
+  'Moe Luoi Nhat',
+];
+
+const numberDictionary = NumberDictionary.generate({ min: 1, max: 9999 });
+
+const customConfig: Config = {
+  dictionaries: [CatNames, numberDictionary],
+  separator: '',
+  length: 2,
+  style: 'capital',
+};
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -61,7 +85,7 @@ export const authOptions: AuthOptions = {
               id: user.id,
             },
             data: {
-              name: nanoid(10),
+              name: uniqueNamesGenerator(customConfig),
             },
           });
 

@@ -1,18 +1,20 @@
-import DataMangaTable from '@/app/me/manga/DataMangaTable';
-import { getAuthSession } from '@/lib/auth';
-import { db } from '@/lib/db';
-import { redirect } from 'next/navigation';
-import { columns } from './column';
+import DataMangaTable from "@/app/me/manga/DataMangaTable";
+import { getAuthSession } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { redirect } from "next/navigation";
+import { columns } from "./column";
+import { cookies } from "next/headers";
+import ForceSignOut from "@/components/ForceSignOut";
 
 const page = async () => {
   const session = await getAuthSession();
-  if (!session) redirect('/sign-in');
+  if (!session) return <ForceSignOut />;
   const user = await db.user.findFirst({
     where: {
       id: session.user.id,
     },
   });
-  if (!user) return redirect('/sign-in');
+  if (!user) return <ForceSignOut />;
 
   const manga = await db.manga.findMany({
     where: {

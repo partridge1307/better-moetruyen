@@ -6,16 +6,17 @@ import { columns } from "./column";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import ForceSignOut from "@/components/ForceSignOut";
 
 const page = async ({ params }: { params: { id: string } }) => {
   const session = await getAuthSession();
-  if (!session) redirect("/sign-in");
+  if (!session) return <ForceSignOut />;
   const user = await db.user.findFirst({
     where: {
       id: session.user.id,
     },
   });
-  if (!user) return redirect("/sign-in");
+  if (!user) return <ForceSignOut />;
 
   const chapter = await db.chapter.findMany({
     where: {

@@ -9,11 +9,20 @@ import { cn } from '@/lib/utils';
 
 const page = async ({ params }: { params: { id: string } }) => {
   const session = await getAuthSession();
-  if (!session) return redirect('/sign-in');
+  if (!session) redirect('/sign-in');
+  const user = await db.user.findFirst({
+    where: {
+      id: session.user.id,
+    },
+  });
+  if (!user) return redirect('/sign-in');
 
   const chapter = await db.chapter.findMany({
     where: {
       mangaId: parseInt(params.id, 10),
+      manga: {
+        creatorId: user.id,
+      },
     },
   });
 

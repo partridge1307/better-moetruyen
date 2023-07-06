@@ -31,16 +31,6 @@ export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
-
-    const form = await req.formData();
-    const {
-      image: img,
-      name,
-      description,
-      author,
-      tag,
-    } = mangaFormValidator.parse(form);
-
     const user = await db.user.findFirst({
       where: {
         id: token.id,
@@ -56,12 +46,21 @@ export async function POST(req: NextRequest) {
     if (!user.verified && checkManga)
       return new Response('Need verify', { status: 400 });
 
+    const form = await req.formData();
+    const {
+      image: img,
+      name,
+      description,
+      author,
+      tag,
+    } = mangaFormValidator.parse(form);
+
     const image = await upload({ blobImage: img, retryCount: 5 });
 
     await db.manga.create({
       data: {
         name,
-        description: JSON.stringify(description),
+        description: description,
         image,
         creatorId: user.id,
         tags: {

@@ -7,10 +7,16 @@ import { columns } from './column';
 const page = async () => {
   const session = await getAuthSession();
   if (!session) redirect('/sign-in');
+  const user = await db.user.findFirst({
+    where: {
+      id: session.user.id,
+    },
+  });
+  if (!user) return redirect('/sign-in');
 
   const manga = await db.manga.findMany({
     where: {
-      creatorId: session.user.id,
+      creatorId: user.id,
     },
   });
 

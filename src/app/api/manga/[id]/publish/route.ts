@@ -10,9 +10,17 @@ export async function PATCH(
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
 
+    const user = await db.user.findFirst({
+      where: {
+        id: token.id,
+      },
+    });
+    if (!user) return new Response('User does not exists', { status: 404 });
+
     const targetManga = await db.manga.findFirst({
       where: {
         id: parseInt(context.params.id, 10),
+        creatorId: user.id,
       },
       include: {
         _count: {
@@ -23,8 +31,6 @@ export async function PATCH(
       },
     });
     if (!targetManga) return new Response('Not found', { status: 404 });
-    if (targetManga.creatorId !== token.id)
-      return new Response('Forbidden', { status: 400 });
     if (targetManga._count.chapter <= 0)
       return new Response('Must have at least 1 chapter', { status: 403 });
 

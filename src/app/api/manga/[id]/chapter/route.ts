@@ -18,15 +18,20 @@ export async function POST(
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
 
-    if (
-      !(await db.manga.findFirst({
-        where: {
-          id: parseInt(context.params.id, 10),
-          creatorId: token.id,
-        },
-      }))
-    )
-      return new Response('Forbidden', { status: 400 });
+    const user = await db.user.findFirst({
+      where: {
+        id: token.id,
+      },
+    });
+    if (!user) return new Response('User does not exists', { status: 404 });
+
+    const manga = await db.manga.findFirst({
+      where: {
+        id: parseInt(context.params.id, 10),
+        creatorId: user.id,
+      },
+    });
+    if (!manga) return new Response('Forbidden', { status: 400 });
 
     const {
       chapterIndex,
@@ -40,7 +45,7 @@ export async function POST(
       index = (
         await db.chapter.findFirst({
           where: {
-            mangaId: parseInt(context.params.id, 10),
+            mangaId: manga.id,
           },
           orderBy: {
             chapterIndex: 'desc',
@@ -57,7 +62,7 @@ export async function POST(
     if (
       await db.chapter.findFirst({
         where: {
-          mangaId: parseInt(context.params.id, 10),
+          mangaId: manga.id,
           chapterIndex: index,
         },
       })
@@ -71,7 +76,7 @@ export async function POST(
         volume,
         images: [...images],
         manga: {
-          connect: { id: parseInt(context.params.id, 10) },
+          connect: { id: manga.id },
         },
       },
     });

@@ -24,7 +24,7 @@ model Manga {
   id          Int           @id @default(autoincrement())
   name        String
   author      MangaAuthor[]
-  description String        @default("Không có mô tả")
+  description Json
   image       String
   tags        Tag[]
   chapter     Chapter[]

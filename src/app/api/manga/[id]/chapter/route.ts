@@ -80,7 +80,7 @@ export async function POST(
         },
       },
     });
-    return new Response(null, { status: 204 });
+    return new Response('OK');
   } catch (error) {
     if (error instanceof z.ZodError)
       return new Response(error.message, { status: 422 });

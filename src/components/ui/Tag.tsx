@@ -6,7 +6,7 @@ interface TagWrapperProps extends React.HTMLAttributes<HTMLUListElement> {}
 const TagWrapper: FC<TagWrapperProps> = ({ className, children, ...props }) => (
   <ul
     className={cn(
-      'flex flex-wrap gap-3 max-w-sm md:max-w-md lg:max-w-lg xl:max-w-[100%]',
+      'flex flex-wrap gap-2 max-w-sm md:max-w-md lg:max-w-lg xl:max-w-[100%]',
       className
     )}
     {...props}

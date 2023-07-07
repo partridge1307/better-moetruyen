@@ -30,6 +30,7 @@ const VerticalViewChapter = forwardRef<
                 sizes="0%"
                 src={img}
                 alt={`Trang ${idx + 1}`}
+                tabIndex={-1}
                 className="w-4/5 object-contain max-sm:w-full md:mx-auto"
               />
             </div>
@@ -44,6 +45,7 @@ const VerticalViewChapter = forwardRef<
                 priority
                 src={img}
                 alt={`Trang ${idx + 1}`}
+                tabIndex={-1}
                 className="w-4/5 object-contain max-sm:w-full md:mx-auto"
               />
             </div>

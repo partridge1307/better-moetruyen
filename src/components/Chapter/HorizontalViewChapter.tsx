@@ -38,6 +38,7 @@ const HorizontalViewChapter = forwardRef<
                 priority
                 src={img}
                 alt={chapter.manga.name}
+                tabIndex={-1}
                 className="object-contain"
               />
             </div>
@@ -54,6 +55,7 @@ const HorizontalViewChapter = forwardRef<
                 priority
                 src={img}
                 alt={chapter.manga.name}
+                tabIndex={-1}
                 className="object-contain"
               />
             </div>

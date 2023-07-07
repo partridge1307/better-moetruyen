@@ -17,6 +17,12 @@ interface pageProps {
   };
 }
 
+type discordProps = {
+  code: boolean;
+  id?: string;
+  name?: string;
+};
+
 export async function generateMetadata({ params }: { params: { id: string } }) {
   if (!params.id)
     return {
@@ -63,51 +69,81 @@ const page: FC<pageProps> = async ({ params }) => {
   });
   if (!manga) return notFound();
 
+  let discord: discordProps = { code: false };
+  if (manga.discordLink) {
+    try {
+      const data = await (
+        await fetch(
+          `https://discord.com/api/v10/invites/${manga.discordLink
+            .split('/')
+            .pop()}?with_counts=true`,
+          {
+            next: { revalidate: 300 },
+          }
+        )
+      ).json();
+
+      if (data.code === 10006) discord.code = false;
+      discord.code = true;
+      discord.id = data.guild.id;
+      discord.name = data.guild.name;
+    } catch (error) {
+      discord.code = false;
+    }
+  }
+
+  let facebook: string | null = null;
+  if (manga.facebookLink) {
+    let fbStr = manga.facebookLink.replaceAll('/', '%2F');
+    fbStr = fbStr.replaceAll(':', '%3A');
+    facebook = fbStr;
+  }
+
   return (
-    <div className="container mx-auto h-full space-y-10 pt-20">
-      <div className="relative h-72 w-full">
-        <Image
-          fill
-          priority
-          src={manga.image}
-          alt="Manga Image"
-          className="rounded-md object-cover brightness-[.3]"
-        />
-        <div className="absolute inset-0 flex items-end rounded-md bg-gradient-to-t to-transparent p-6 dark:from-zinc-900">
-          <div className="flex max-w-[100%] gap-2 max-sm:flex-col max-sm:items-center md:gap-10">
-            <MangaImage
-              image={manga.image}
-              className="rounded-md object-cover"
+    <div className="container mx-auto h-full pt-20 space-y-14">
+      <div className="relative h-max">
+        <div className="p-4 max-sm:space-y-4 md:flex md:gap-10">
+          <MangaImage className="h-48 w-full md:w-40" image={manga.image} />
+
+          <div className="space-y-1 md:space-y-2">
+            <p className="text-2xl md:text-4xl font-semibold">{manga.name}</p>
+            <p className="text-sm">
+              {manga.author.map((a) => a.name).join(', ')}
+            </p>
+          </div>
+        </div>
+
+        <div className="absolute inset-0 -z-10">
+          <div className="relative h-full w-full">
+            <Image
+              fill
+              priority
+              sizes="0%"
+              src={manga.image}
+              alt="Manga Background Image"
+              className="object-cover blur-sm brightness-[.2] md:brightness-[.3] rounded-md"
             />
-            <div className="flex-1 space-y-2 md:space-y-3">
-              <p
-                className="line-clamp-2 text-xl font-bold md:line-clamp-3 md:text-4xl"
-                title={manga.name}
-              >
-                {manga.name}
-              </p>
-              <p className="max-sm:line-clamp-2 max-sm:text-sm">
-                {!!manga.author && manga.author.map((a) => a.name).join(', ')}
-              </p>
-            </div>
           </div>
         </div>
       </div>
 
-      <div className="space-y-6 rounded-md p-6 dark:bg-zinc-900/80">
-        <div className="space-y-2">
-          <p className="font-bold text-lg">Thể loại</p>
-          <TagWrapper className="flex flex-wrap gap-3">
-            {manga.tags &&
-              manga.tags.map((t, idx) => (
-                <TagContent key={idx} title={t.description}>
-                  {t.name}
-                </TagContent>
-              ))}
+      <div className="p-3 md:p-6 space-y-10 dark:bg-zinc-900/80 rounded-md">
+        <div className="space-y-1">
+          <p className="font-semibold text-lg">Thể loại</p>
+          <TagWrapper>
+            {manga.tags.map((tag, idx) => (
+              <TagContent
+                key={idx}
+                title={`${tag.description ? tag.description : tag.name}`}
+              >
+                {tag.name}
+              </TagContent>
+            ))}
           </TagWrapper>
         </div>
-        <div className="space-y-4">
-          <p className="font-bold text-lg">Mô tả</p>
+
+        <div className="space-y-2">
+          <p className="font-semibold text-lg">Mô tả</p>
           <EditorOutput content={manga.description} />
         </div>
 
@@ -118,15 +154,49 @@ const page: FC<pageProps> = async ({ params }) => {
           </TabsList>
           <TabsContent
             value="chapter"
-            className="grid grid-cols-[.3fr_1fr] gap-4"
+            className="grid grid-cols-1 md:grid-cols-[.4fr_1fr] lg:grid-cols-[.3fr_1fr] gap-6"
           >
-            <Card className="h-fit border-none shadow-none dark:bg-transparent">
-              <CardHeader>
-                {!!manga.creator.image && <UserAvatar user={manga.creator} />}
-                <CardTitle>{manga.creator.name}</CardTitle>
-              </CardHeader>
-            </Card>
-            <Suspense fallback={<Loader2 className="h-4 w-4 animate-spin" />}>
+            <div className="space-y-4">
+              <Card className="bg-transparent/10">
+                <CardHeader>
+                  {!!manga.creator.image && <UserAvatar user={manga.creator} />}
+                  <CardTitle>{manga.creator.name}</CardTitle>
+                </CardHeader>
+              </Card>
+
+              {discord.code && (
+                <div className="p-1">
+                  <p className="text-lg px-1">
+                    Discord:{' '}
+                    <span className="font-semibold">{discord.name}</span>
+                  </p>
+                  <iframe
+                    height={300}
+                    src={`https://discord.com/widget?id=${discord.id}&theme=dark`}
+                    allowTransparency
+                    allowFullScreen
+                    sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+                    className="w-full border dark:border-zinc-700 rounded-md"
+                  />
+                </div>
+              )}
+
+              {facebook && (
+                <div className="p-1">
+                  <p className="text-lg px-1">Facebook</p>
+                  <iframe
+                    height={300}
+                    src={`https://www.facebook.com/plugins/page.php?href=${facebook}&tabs=timeline&small_header=false&hide_cover=false&show_facepile=true&lazy=true`}
+                    allowTransparency
+                    allowFullScreen
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    className="w-full"
+                  />
+                </div>
+              )}
+            </div>
+
+            <Suspense fallback={<Loader2 className="h-6 w-6 animate-spin" />}>
               <ChapterList mangaId={manga.id} />
             </Suspense>
           </TabsContent>

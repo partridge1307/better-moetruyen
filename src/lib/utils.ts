@@ -111,4 +111,4 @@ export function formatTimeToNow(date: Date | number): string {
 export const fbRegex =
   /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\.\-]*)/;
 export const disRegex =
-  /(https:\/\/)?(www)?discord.?(gg|com)?\/(invite)?\/([^\/\?\&\%]*)\S/;
+  /(https:\/\/)?(www)?discord.?(gg|com)?\/?(invite)?\/([^\/\?\&\%]*)\S/;

@@ -10,14 +10,9 @@ import 'react-medium-image-zoom/dist/styles.css';
 interface MangaCardProps extends React.HTMLAttributes<HTMLImageElement> {
   image: string;
   className: string;
-  childrenClassName?: string;
 }
 
-const MangaImage: FC<MangaCardProps> = ({
-  image,
-  className,
-  childrenClassName,
-}) => {
+const MangaImage: FC<MangaCardProps> = ({ image, className }) => {
   const [isZoomed, setIsZoomed] = useState<boolean>(false);
 
   const handleZoom = useCallback((value: boolean) => {
@@ -37,10 +32,10 @@ const MangaImage: FC<MangaCardProps> = ({
           priority
           src={image}
           alt="Manga Image"
-          className={cn('object-cover rounded-md', childrenClassName)}
+          className="rounded-md object-cover"
         />
         <div
-          className="absolute flex h-full w-full cursor-zoom-in items-center justify-center rounded-md opacity-0 hover:bg-black/50 hover:opacity-100"
+          className="absolute flex inset-0 cursor-zoom-in items-center justify-center rounded-md opacity-0 hover:bg-black/50 hover:opacity-100"
           onClick={() => setIsZoomed(true)}
         >
           <Maximize2 className="h-1/2 w-1/2" />

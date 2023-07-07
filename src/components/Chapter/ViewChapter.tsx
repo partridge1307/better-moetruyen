@@ -147,7 +147,6 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
   if (typeof window !== 'undefined' && inView && 'startPage' in localStorage) {
     if (Date.now() - +localStorage.startPage > 30 * 1000) {
       localStorage.removeItem('startPage');
-      console.log('true');
       IncreaseView();
     }
   }

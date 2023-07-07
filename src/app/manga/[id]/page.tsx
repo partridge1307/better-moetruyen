@@ -163,7 +163,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
                 {discord.code && (
                   <div className="p-1">
-                    <p className="text-lg px-1">
+                    <p className="text-lg px-1 w-full">
                       Discord:{' '}
                       <span className="font-semibold">{discord.name}</span>
                     </p>

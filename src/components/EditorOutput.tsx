@@ -21,16 +21,16 @@ const renderers = {
 
 const EditorOutput: FC<EditorOutputProps> = ({ content }) => {
   // TODO: add show more
-  if (content.blocks.length >= 3) {
-    return (
-      <div className="relative">
-        <Output data={content} renderers={renderers} />
-        <div className="absolute w-full h-10 flex justify-center items-center cursor-pointer rounded-md bg-gradient-to-t dark:from-zinc-800 to-transparent">
-          Xem thêm
-        </div>
-      </div>
-    );
-  }
+  // if (content.blocks.length >= 3) {
+  //   return (
+  //     <div className="relative">
+  //       <Output data={content} renderers={renderers} />
+  //       <div className="absolute w-full h-10 flex justify-center items-center cursor-pointer rounded-md bg-gradient-to-t dark:from-zinc-800 to-transparent">
+  //         Xem thêm
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return <Output data={content} renderers={renderers} />;
 };

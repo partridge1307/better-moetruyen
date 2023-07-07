@@ -30,7 +30,7 @@ model Manga {
   discordLink  String?
   tags         Tag[]
   chapter      Chapter[]
-  creator      User          @relation(fields: [creatorId], references: [id], onDelete: NoAction)
+  creator      User          @relation(fields: [creatorId], references: [id])
   creatorId    String
   isPublished  Boolean       @default(false)
   view         View?
@@ -121,6 +121,7 @@ model DailyView {
   mangaId   Int
   chapter   Chapter @relation(fields: [chapterId], references: [id])
   chapterId Int
+  createdAt DateTime @default(now())
 }
 
 model WeeklyView {
@@ -129,4 +130,5 @@ model WeeklyView {
   mangaId   Int
   chapter   Chapter @relation(fields: [chapterId], references: [id])
   chapterId Int
+  createdAt DateTime @default(now())
 }

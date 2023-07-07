@@ -97,7 +97,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
       });
     },
     onSuccess: () => {
-      router.replace(`me/manga/${id}/chapter`);
+      router.push(`me/manga/${id}/chapter`);
       router.refresh();
       return toast({
         title: 'Thành công',

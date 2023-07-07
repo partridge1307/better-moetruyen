@@ -180,7 +180,7 @@ const page: FC<pageProps> = async ({ params }) => {
                 {manga.facebookLink && (
                   <div className="p-1">
                     <p className="text-lg px-1">Facebook</p>
-                    <div className="relative w-full p-1">
+                    <div className="relative w-full">
                       <div
                         className="fb-page"
                         data-href={manga.facebookLink}

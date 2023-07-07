@@ -9,6 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/Accordion";
+import parseJSON from 'date-fns/parseJSON';
 
 interface ChapterListProps {
   mangaId: number;
@@ -51,7 +52,7 @@ const ChapterList: FC<ChapterListProps> = async ({ mangaId }) => {
                             <dt>
                               <Clock className="h-4 w-4" />
                             </dt>
-                            <dd>{formatTimeToNow(Date.parse(d.createdAt))}</dd>
+                            <dd>{formatTimeToNow(parseJSON(d.createdAt))}</dd>
                           </dl>
                         </Link>
                       </li>

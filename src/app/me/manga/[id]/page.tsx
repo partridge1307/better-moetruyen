@@ -23,7 +23,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
   const manga = await db.manga.findFirst({
     where: {
-      id: parseInt(params.id, 10),
+      id: +params.id,
       creatorId: user.id,
     },
     include: {

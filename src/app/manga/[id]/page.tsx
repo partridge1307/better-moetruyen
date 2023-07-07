@@ -1,13 +1,15 @@
 import ChapterList from "@/components/Chapter/ChapterList";
-import MangaImage from "@/components/MangaImage";
-import UserAvatar from "@/components/User/UserAvatar";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/Tabs";
-import { db } from "@/lib/db";
-import { Loader2 } from "lucide-react";
-import Image from "next/image";
-import { notFound } from "next/navigation";
-import { FC, Suspense } from "react";
+import EditorOutput from '@/components/EditorOutput';
+import MangaImage from '@/components/MangaImage';
+import UserAvatar from '@/components/User/UserAvatar';
+import { Card, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import { TagContent, TagWrapper } from '@/components/ui/Tag';
+import { db } from '@/lib/db';
+import { Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import { notFound } from 'next/navigation';
+import { FC, Suspense } from 'react';
 
 interface pageProps {
   params: {
@@ -16,14 +18,14 @@ interface pageProps {
 }
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  if (!!!params.id)
+  if (!params.id)
     return {
-      title: "Moetruyen",
-      description: "Powered by Yuri",
+      title: 'Moetruyen',
+      description: 'Powered by Yuri',
     };
   const manga = await db.manga.findFirst({
     where: {
-      id: parseInt(params.id, 10),
+      id: +params.id,
     },
     select: {
       name: true,
@@ -32,20 +34,20 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   });
   if (!manga)
     return {
-      title: "Moetruyen",
-      description: "Powered by Yuri",
+      title: 'Moetruyen',
+      description: 'Powered by Yuri',
     };
 
   return {
     title: `Đọc ${manga.name} - Moetruyen`,
-    description: manga.description,
+    description: `Đọc ${manga.name} tại Moetruyen`,
   };
 }
 
 const page: FC<pageProps> = async ({ params }) => {
   const manga = await db.manga.findFirst({
     where: {
-      id: parseInt(params.id, 10),
+      id: +params.id,
       isPublished: true,
     },
     include: {
@@ -85,28 +87,30 @@ const page: FC<pageProps> = async ({ params }) => {
                 {manga.name}
               </p>
               <p className="max-sm:line-clamp-2 max-sm:text-sm">
-                {!!manga.author && manga.author.map((a) => a.name).join(", ")}
+                {!!manga.author && manga.author.map((a) => a.name).join(', ')}
               </p>
-              <ul className="flex max-h-20 flex-wrap items-center gap-3 overflow-auto text-sm md:max-h-32">
-                {!!manga.tags &&
-                  manga.tags.map((t) => (
-                    <li
-                      key={t.id}
-                      title={t.description}
-                      className="rounded-full bg-slate-200 p-1 px-2 dark:bg-sky-700"
-                    >
-                      {t.name}
-                    </li>
-                  ))}
-              </ul>
             </div>
           </div>
         </div>
       </div>
 
       <div className="space-y-6 rounded-md p-6 dark:bg-zinc-900/80">
-        {/* TODO: FIX editor */}
-        {/* <p>{manga.description}</p> */}
+        <div className="space-y-2">
+          <p className="font-bold text-lg">Thể loại</p>
+          <TagWrapper className="flex flex-wrap gap-3">
+            {manga.tags &&
+              manga.tags.map((t, idx) => (
+                <TagContent key={idx} title={t.description}>
+                  {t.name}
+                </TagContent>
+              ))}
+          </TagWrapper>
+        </div>
+        <div className="space-y-4">
+          <p className="font-bold text-lg">Mô tả</p>
+          <EditorOutput content={manga.description} />
+        </div>
+
         <Tabs defaultValue="chapter">
           <TabsList className="space-x-2 dark:bg-zinc-800">
             <TabsTrigger value="chapter">Chapter</TabsTrigger>

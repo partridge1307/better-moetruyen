@@ -1,13 +1,14 @@
 import { db } from '@/lib/db';
+import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
 const chapterValidator = z.object({
   images: z.string().array(),
-  chapterName: z.string(),
-  chapterIndex: z.number(),
-  volume: z.number(),
+  chapterName: z.string().min(3).max(255).optional(),
+  chapterIndex: z.number().min(0),
+  volume: z.number().min(1),
 });
 
 export async function POST(
@@ -18,20 +19,18 @@ export async function POST(
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
 
-    const user = await db.user.findFirst({
+    const user = await db.user.findFirstOrThrow({
       where: {
         id: token.id,
       },
     });
-    if (!user) return new Response('User does not exists', { status: 404 });
 
-    const manga = await db.manga.findFirst({
+    const manga = await db.manga.findFirstOrThrow({
       where: {
-        id: parseInt(context.params.id, 10),
+        id: +context.params.id,
         creatorId: user.id,
       },
     });
-    if (!manga) return new Response('Forbidden', { status: 400 });
 
     const {
       chapterIndex,
@@ -84,6 +83,11 @@ export async function POST(
   } catch (error) {
     if (error instanceof z.ZodError)
       return new Response(error.message, { status: 422 });
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        return new Response('Not found', { status: 404 });
+      }
+    }
     return new Response('Không thể upload chapter', { status: 500 });
   }
 }

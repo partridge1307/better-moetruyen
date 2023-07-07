@@ -1,34 +1,42 @@
-import { db } from '@/lib/db';
+import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
 export async function POST(
   req: Request,
   context: { params: { id: string; chapterId: string } }
 ) {
   try {
-    const view = await db.view.findFirst({
+    const chapter = await db.chapter.findFirstOrThrow({
       where: {
-        mangaId: parseInt(context.params.id, 10),
+        id: +context.params.chapterId,
+        mangaId: +context.params.id,
       },
     });
-    if (!view) return new Response('Something went wrong', { status: 500 });
 
     await db.view.update({
       where: {
-        mangaId: parseInt(context.params.id, 10),
+        mangaId: chapter.mangaId,
       },
       data: {
-        totalView: view.totalView + 1,
+        totalView: {
+          increment: 1,
+        },
         dailyView: {
-          create: { chapterId: parseInt(context.params.chapterId, 10) },
+          create: { chapterId: chapter.id },
         },
         weeklyView: {
-          create: { chapterId: parseInt(context.params.chapterId, 10) },
+          create: { chapterId: chapter.id },
         },
       },
     });
 
-    return new Response('OK');
+    return new Response("OK");
   } catch (error) {
-    return new Response('Something went wrong', { status: 500 });
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        return new Response("Not found", { status: 404 });
+      }
+    }
+    return new Response("Something went wrong", { status: 500 });
   }
 }

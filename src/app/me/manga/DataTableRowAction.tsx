@@ -34,7 +34,7 @@ interface DataTableRowActionProps {
 function DataTableRowAction({ row }: DataTableRowActionProps) {
   const manga = row.original;
   const router = useRouter();
-  const { loginToast } = useCustomToast();
+  const { loginToast, notFoundToast } = useCustomToast();
 
   const { mutate: publish, isLoading: isPublishLoading } = useMutation({
     mutationFn: async (id: number) => {
@@ -47,29 +47,24 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
         if (e.response?.status === 401) return loginToast();
         if (e.response?.status === 403)
           return toast({
-            title: "Không thể publish",
-            description: "Yêu cầu manga phải có ít nhất 1 chapter",
-            variant: "destructive",
+            title: 'Không thể publish',
+            description: 'Yêu cầu manga phải có ít nhất 1 chapter',
+            variant: 'destructive',
           });
-        if (e.response?.status === 404)
-          return toast({
-            title: "Không tìm thấy",
-            description: "Không tìm thấy manga",
-            variant: "destructive",
-          });
+        if (e.response?.status === 404) return notFoundToast();
       }
 
       return toast({
-        title: "Có lỗi xảy ra",
-        description: "Có lỗi xảy ra. Vui lòng thử lại sau",
-        variant: "destructive",
+        title: 'Có lỗi xảy ra',
+        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
+        variant: 'destructive',
       });
     },
     onSuccess: () => {
       startTransition(() => router.refresh());
 
       return toast({
-        title: "Thành công",
+        title: 'Thành công',
       });
     },
   });

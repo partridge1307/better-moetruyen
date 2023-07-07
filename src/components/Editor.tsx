@@ -1,12 +1,12 @@
-import "@/styles/editor.css";
-import type EditorJS from "@editorjs/editorjs";
+import '@/styles/editor.css';
+import type EditorJS from '@editorjs/editorjs';
 import {
   FC,
   useCallback,
   useEffect,
   useState,
   type MutableRefObject,
-} from "react";
+} from 'react';
 
 interface EditorProps {
   editorRef: MutableRefObject<EditorJS | undefined>;
@@ -15,47 +15,36 @@ interface EditorProps {
 const Editor: FC<EditorProps> = ({ editorRef }) => {
   const [mounted, setMounted] = useState<boolean>(false);
   const initializeEditor = useCallback(async () => {
-    const EditorJS = (await import("@editorjs/editorjs")).default;
-    const Header = (await import("@editorjs/header")).default;
-    const Embed = (await import("@editorjs/embed")).default;
-    const SimpleImage = (await import("@editorjs/simple-image")).default;
-    const CheckList = (await import("@editorjs/checklist")).default;
-    const Quote = (await import("@editorjs/quote")).default;
+    const EditorJS = (await import('@editorjs/editorjs')).default;
+    const Header = (await import('@editorjs/header')).default;
+    const SimpleImage = (await import('@editorjs/simple-image')).default;
+    const CheckList = (await import('@editorjs/checklist')).default;
+    const Quote = (await import('@editorjs/quote')).default;
+    const LinkTool = (await import('@editorjs/link')).default;
+    const Delimiter = (await import('@editorjs/delimiter')).default;
 
     if (!editorRef.current) {
       const editor = new EditorJS({
-        holder: "editor",
+        holder: 'editor',
         onReady() {
           editorRef.current = editor;
         },
-        placeholder: "Nhập nội dung vào đây",
+        placeholder: 'Nhập nội dung vào đây',
         inlineToolbar: true,
         data: { blocks: [] },
         tools: {
           header: Header,
           image: SimpleImage,
           quote: Quote,
+          delimiter: Delimiter,
           checklist: {
             class: CheckList,
             inlineToolbar: true,
           },
-          embed: {
-            class: Embed,
+          linktool: {
+            class: LinkTool,
             config: {
-              services: {
-                youtube: true,
-                facebook: true,
-                instagram: true,
-                pinterest: true,
-                discord: {
-                  regex:
-                    /https:\/\/discord.com\/channels\/([^A-Za-z\/\?\&]*)\/.*\S/,
-                  embedUrl:
-                    "https://discord.com/widget?id=<%= remote_id %>&theme=dark",
-                  html: '<iframe height="500" allowtransparency="true" frameborder="no" allowfullscreen="true" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="width: 100%"></iframe>',
-                  id: (groups: string[]) => groups[0],
-                },
-              },
+              endpoint: `/api/link`,
             },
           },
         },
@@ -65,7 +54,7 @@ const Editor: FC<EditorProps> = ({ editorRef }) => {
   }, []);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       setMounted(true);
     }
   }, []);
@@ -85,7 +74,12 @@ const Editor: FC<EditorProps> = ({ editorRef }) => {
 
   if (!mounted) return null;
 
-  return <div id="editor" className="cursor-text" />;
+  return (
+    <div
+      id="editor"
+      className="cursor-text rounded-md border-2 py-2 px-4 border-input/60"
+    />
+  );
 };
 
 export default Editor;

@@ -16,7 +16,7 @@ const page = async ({ params }: { params: { id: string } }) => {
 
   const manga = await db.manga.findFirst({
     where: {
-      id: parseInt(params.id, 10),
+      id: +params.id,
       creatorId: user.id,
     },
   });

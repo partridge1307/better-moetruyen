@@ -1,5 +1,5 @@
 import { ClassValue, clsx } from 'clsx';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, formatDistanceToNowStrict } from 'date-fns';
 import locale from 'date-fns/locale/vi';
 import { twMerge } from 'tailwind-merge';
 
@@ -107,3 +107,8 @@ export function formatTimeToNow(date: Date | number): string {
     },
   });
 }
+
+export const fbRegex =
+  /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\.\-]*)/;
+export const disRegex =
+  /(https:\/\/)?(www)?discord.?(gg|com)?\/(invite)?\/([^\/\?\&\%]*)\S/;

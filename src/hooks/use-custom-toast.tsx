@@ -39,8 +39,16 @@ export const useCustomToast = () => {
     });
   };
 
+  const notFoundToast = () =>
+    toast({
+      title: 'Không tìm thấy',
+      description: 'Không tìm thấy đối tượng. Vui lòng thử lại',
+      variant: 'destructive',
+    });
+
   return {
     loginToast,
     verifyToast,
+    notFoundToast,
   };
 };

@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { upload } from '@/lib/discord';
+import { disRegex, fbRegex } from '@/lib/utils';
 import { authorInfo, tagInfo } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
@@ -21,29 +22,31 @@ const descriptionInfo = z.object({
 
 const mangaFormValidator = zfd.formData({
   image: zfd.file(),
-  name: zfd.text(),
+  name: zfd.text(z.string().min(3).max(255)),
   description: zfd.json(descriptionInfo),
   author: zfd.repeatableOfType(zfd.json(authorInfo)),
   tag: zfd.repeatableOfType(zfd.json(tagInfo)),
+  facebook: zfd.text(z.string().optional()),
+  discord: zfd.text(z.string().optional()),
 });
 
 export async function POST(req: NextRequest) {
   try {
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
-    const user = await db.user.findFirst({
+
+    const user = await db.user.findFirstOrThrow({
       where: {
         id: token.id,
       },
     });
-    if (!user) return new Response('User does not exists', { status: 404 });
 
-    const checkManga = await db.manga.findFirst({
+    const existedManga = await db.manga.findFirst({
       where: {
         creatorId: user.id,
       },
     });
-    if (!user.verified && checkManga)
+    if (!user.verified && existedManga)
       return new Response('Need verify', { status: 400 });
 
     const form = await req.formData();
@@ -53,15 +56,24 @@ export async function POST(req: NextRequest) {
       description,
       author,
       tag,
+      facebook,
+      discord,
     } = mangaFormValidator.parse(form);
 
     const image = await upload({ blobImage: img, retryCount: 5 });
+
+    if (facebook && !fbRegex.test(facebook))
+      return new Response('Invalid FB link', { status: 406 });
+    if (discord && !disRegex.test(discord))
+      return new Response('Invalid Discord link', { status: 406 });
 
     await db.manga.create({
       data: {
         name,
         description: description,
         image,
+        facebookLink: !facebook ? null : facebook,
+        discordLink: !discord ? null : discord,
         creatorId: user.id,
         tags: {
           connect: tag.map((t) => ({
@@ -85,6 +97,9 @@ export async function POST(req: NextRequest) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
         return new Response('Duplicated manga', { status: 409 });
+      }
+      if (error.code === 'P2025') {
+        return new Response('Not found', { status: 404 });
       }
     }
     return new Response('Forbidden', { status: 500 });

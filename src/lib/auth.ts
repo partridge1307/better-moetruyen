@@ -10,14 +10,19 @@ import {
 } from 'unique-names-generator';
 
 const CatNames = [
-  'Moe Mong Mo',
-  'Moe Biet Tuot',
-  'Moe Di Hia',
-  'Moe Bay Bong',
-  'Moe Bien Thai',
-  'Moe Tang Dong',
-  'Moe Hip Hop',
-  'Moe Luoi Nhat',
+  'MoeMongMo',
+  'MoeBietTuot',
+  'MoeDiHia',
+  'MoeBayBong',
+  'MoeBienThai',
+  'MoeTangDong',
+  'MoeHipHop',
+  'MoeLuoiNhat',
+  'MoeNhayNhot',
+  'MoeFlexing',
+  'MoePressing',
+  'MoeMoeMoe',
+  'MoeSimpMy',
 ];
 
 const numberDictionary = NumberDictionary.generate({ min: 1, max: 9999 });
@@ -26,7 +31,6 @@ const customConfig: Config = {
   dictionaries: [CatNames, numberDictionary],
   separator: '',
   length: 2,
-  style: 'capital',
 };
 
 export const authOptions: AuthOptions = {

@@ -69,7 +69,7 @@ const UserSignUpForm = () => {
         onSubmit={form.handleSubmit((values: CreateAuthSignUpPayload) =>
           signUp(values)
         )}
-        className="space-y-4"
+        className="space-y-4 md:max-w-xl xl:max-w-2xl"
       >
         <FormField
           control={form.control}

@@ -21,20 +21,22 @@ model User {
 }
 
 model Manga {
-  id          Int           @id @default(autoincrement())
-  name        String
-  author      MangaAuthor[]
-  description Json
-  image       String
-  tags        Tag[]
-  chapter     Chapter[]
-  creator     User          @relation(fields: [creatorId], references: [id], onDelete: NoAction)
-  creatorId   String
-  isPublished Boolean       @default(false)
-  view        View?
-  comment     Comment[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id           Int           @id @default(autoincrement())
+  name         String
+  author       MangaAuthor[]
+  description  Json
+  image        String
+  facebookLink String?
+  discordLink  String?
+  tags         Tag[]
+  chapter      Chapter[]
+  creator      User          @relation(fields: [creatorId], references: [id], onDelete: NoAction)
+  creatorId    String
+  isPublished  Boolean       @default(false)
+  view         View?
+  comment      Comment[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   @@unique([name, creatorId])
 }

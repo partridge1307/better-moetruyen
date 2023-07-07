@@ -79,3 +79,23 @@
 .codex-editor__redactor {
   padding-bottom: 0 !important;
 }
+
+.dark .link-tool__content.link-tool__content--rendered {
+  background: theme('colors.zinc.800') !important;
+  border-radius: 8px !important;
+  color: theme('colors.white') !important;
+}
+
+.dark .link-tool__anchor {
+  color: theme('colors.sky.400') !important;
+  text-transform: uppercase !important;
+  font-size: 12px !important;
+}
+
+.link-tool__image {
+  width: 110px !important;
+  height: 110px !important;
+  border-radius: 5px !important;
+  float: left !important;
+  margin: 0 30px 0 0 !important;
+}

@@ -1,7 +1,7 @@
-import ViewChapter from '@/components/Chapter/ViewChapter';
-import { db } from '@/lib/db';
-import { notFound } from 'next/navigation';
-import { FC } from 'react';
+import ViewChapter from "@/components/Chapter/ViewChapter";
+import { db } from "@/lib/db";
+import { notFound } from "next/navigation";
+import { FC } from "react";
 
 interface pageProps {
   params: {
@@ -12,7 +12,7 @@ interface pageProps {
 const page: FC<pageProps> = async ({ params }) => {
   const chapter = await db.chapter.findFirst({
     where: {
-      id: parseInt(params.chapterId),
+      id: +params.chapterId,
     },
     include: {
       manga: {
@@ -41,12 +41,6 @@ const page: FC<pageProps> = async ({ params }) => {
     },
   });
   if (!mangaChapterList) return notFound();
-
-  const currentChapterIdx = mangaChapterList.chapter.findIndex(
-    (c) => c.id === chapter.id
-  );
-  const nextChapter = mangaChapterList.chapter[currentChapterIdx + 1];
-  const prevChapter = mangaChapterList.chapter[currentChapterIdx - 1];
 
   return (
     <div className="mt-8 h-full">

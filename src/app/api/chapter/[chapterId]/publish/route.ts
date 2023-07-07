@@ -1,6 +1,7 @@
-import { db } from '@/lib/db';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
+import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
+import { getToken } from "next-auth/jwt";
+import { NextRequest } from "next/server";
 
 export async function PATCH(
   req: NextRequest,
@@ -8,24 +9,28 @@ export async function PATCH(
 ) {
   try {
     const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    if (!token) return new Response("Unauthorized", { status: 401 });
 
-    const user = await db.user.findFirst({
+    const user = await db.user.findFirstOrThrow({
       where: {
         id: token.id,
       },
     });
-    if (!user) return new Response('User does not exists', { status: 404 });
 
-    const targetChapter = await db.chapter.findFirst({
+    const targetChapter = await db.chapter.findFirstOrThrow({
       where: {
-        id: parseInt(context.params.chapterId, 10),
+        id: +context.params.chapterId,
         manga: {
           creatorId: user.id,
         },
       },
     });
-    if (!targetChapter) return new Response('Not found', { status: 404 });
+    const manga = await db.manga.findFirst({
+      where: {
+        id: targetChapter.mangaId,
+      },
+    });
+    if (!manga?.isPublished) return new Response("Forbidden", { status: 400 });
 
     await db.chapter.update({
       where: {
@@ -36,8 +41,13 @@ export async function PATCH(
       },
     });
 
-    return new Response('OK');
+    return new Response("OK");
   } catch (error) {
-    return new Response('Something went wrong', { status: 500 });
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        return new Response("Not found", { status: 404 });
+      }
+    }
+    return new Response("Something went wrong", { status: 500 });
   }
 }

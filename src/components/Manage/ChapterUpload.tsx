@@ -25,9 +25,11 @@ import { Input } from "../ui/Input";
 import { Progress } from "../ui/Progress";
 import ChapterImageUpload, { type previewImage } from "./ChapterImageUpload";
 import ChapterIndexUpload from "./ChapterIndexUpload";
+import { useRouter } from 'next/navigation';
 
 const ChapterUpload = ({ id }: { id: string }) => {
-  const { loginToast } = useCustomToast();
+  const { loginToast, notFoundToast } = useCustomToast();
+  const router = useRouter();
   const [inputImage, setInputImage] = useState<previewImage[]>([]);
   const [disaleChapterIndex, setDisableChapterIndex] = useState<boolean>(true);
 
@@ -35,7 +37,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
     resolver: zodResolver(ChapterUploadValidator),
     defaultValues: {
       chapterIndex: 0,
-      chapterName: "",
+      chapterName: '',
       volume: 0,
       image: undefined,
     },
@@ -45,9 +47,9 @@ const ChapterUpload = ({ id }: { id: string }) => {
       let imageURL: any = [];
       for (let i = 0; i < image.length; i++) {
         const form = new FormData();
-        form.append("file", image.item(i)!);
+        form.append('file', image.item(i)!);
         axios
-          .post("/api/image", form, {
+          .post('/api/image', form, {
             onUploadProgress: (progessEvent) => {
               const percentCompleted = Math.floor(
                 (progessEvent.loaded * 100) / progessEvent.total!
@@ -78,24 +80,27 @@ const ChapterUpload = ({ id }: { id: string }) => {
     onError: (e) => {
       if (e instanceof AxiosError) {
         if (e.response?.status === 401) return loginToast();
+        if (e.response?.status === 404) return notFoundToast();
         if (e.response?.status === 403)
           return toast({
-            title: "Trùng lặp STT",
+            title: 'Trùng lặp STT',
             description:
-              "Đã có chapter trùng lặp STT này rồi. Vui lòng thử lại",
-            variant: "destructive",
+              'Đã có chapter trùng lặp STT này rồi. Vui lòng thử lại',
+            variant: 'destructive',
           });
       }
 
       return toast({
-        title: "Có lỗi xảy ra",
-        description: "Vui lòng thử lại",
-        variant: "destructive",
+        title: 'Có lỗi xảy ra',
+        description: 'Vui lòng thử lại',
+        variant: 'destructive',
       });
     },
     onSuccess: () => {
+      router.replace(`me/manga/${id}/chapter`);
+      router.refresh();
       return toast({
-        title: "Thành công",
+        title: 'Thành công',
       });
     },
   });
@@ -176,7 +181,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
                   <Progress
                     value={img.progress}
                     className="w-1/2"
-                    indicatorClassName={`${img.done && "bg-green-500"}`}
+                    indicatorClassName={`${img.done && 'bg-green-500'}`}
                   />
                 )}
               </li>

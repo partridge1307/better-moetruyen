@@ -23,8 +23,8 @@ const NotableManga: FC<NotableMangaProps> = ({ manga, ...props }) => {
       loop
       navigation
       spaceBetween={10}
-      slidesPerView={"auto"}
-      effect={"coverflow"}
+      slidesPerView={'auto'}
+      effect={'coverflow'}
       autoplay={{ delay: 15 * 1000 }}
       coverflowEffect={{ rotate: 0, stretch: 0, depth: 100, modifier: 2.5 }}
       {...props}
@@ -53,16 +53,14 @@ const NotableManga: FC<NotableMangaProps> = ({ manga, ...props }) => {
                               {m.author
                                 .slice(0, 4)
                                 .map((a) => a.name)
-                                .join(", ")}{" "}
+                                .join(', ')}{' '}
                               <span>+{m.author.length - 3}</span>
                             </>
                           ) : (
-                            m.author.map((a) => a.name).join(", ")
+                            m.author.map((a) => a.name).join(', ')
                           ))}
                       </p>
                     </div>
-                    {/* TODO: Fix description */}
-                    {/* <p className="truncate">{m.description}</p> */}
                   </div>
 
                   <ul className="flex max-w-[30%] flex-wrap items-center gap-3 text-sm">

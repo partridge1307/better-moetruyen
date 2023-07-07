@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import {
   Table,
   TableBody,
@@ -7,12 +9,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/Table";
+} from '@/components/ui/Table';
 import {
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFacetedRowModel,
@@ -21,12 +19,15 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
-import { Button } from "@/components/ui/Button";
-import DataToolbar from "./DataToolbar";
-import { Input } from "@/components/ui/Input";
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
+} from '@tanstack/react-table';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+import DataToolbar from './DataToolbar';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -65,14 +66,14 @@ function DataMangaTable<TData, TValue>({
         <Input
           placeholder="Lọc tên truyện"
           value={
-            (table.getColumn("Tên truyện")?.getFilterValue() as string) ?? ""
+            (table.getColumn('Tên truyện')?.getFilterValue() as string) ?? ''
           }
           onChange={(e) =>
-            table.getColumn("Tên truyện")?.setFilterValue(e.target.value)
+            table.getColumn('Tên truyện')?.setFilterValue(e.target.value)
           }
           className="rounded-xl"
         />
-        <DataToolbar column={table.getColumn("Trạng thái")} table={table} />
+        <DataToolbar column={table.getColumn('Trạng thái')} table={table} />
       </div>
 
       <Table>
@@ -97,11 +98,17 @@ function DataMangaTable<TData, TValue>({
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected() && "selected"}
+                data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    {/* @ts-expect-error */}
+                    <Link href={`/me/manga/${row.original.id}/chapter`}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </Link>
                   </TableCell>
                 ))}
               </TableRow>

@@ -12,8 +12,11 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
-import WeeklyViewManga from './WeeklyViewManga';
 const DailyViewManga = dynamic(() => import('./DailyViewManga'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
+const WeeklyViewManga = dynamic(() => import('./WeeklyViewManga'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
 });

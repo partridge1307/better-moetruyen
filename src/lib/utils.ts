@@ -1,7 +1,8 @@
 import { ClassValue, clsx } from 'clsx';
-import { formatDistanceToNow, formatDistanceToNowStrict } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import locale from 'date-fns/locale/vi';
 import { twMerge } from 'tailwind-merge';
+import { View } from './query';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -112,3 +113,33 @@ export const fbRegex =
   /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\.\-]*)/;
 export const disRegex =
   /(https:\/\/)?(www)?discord.?(gg|com)?\/?(invite)?\/([^\/\?\&\%]*)\S/;
+
+export function filterView({
+  target,
+  timeRange,
+  currentTime,
+}: {
+  target: View;
+  timeRange: number[];
+  currentTime: number;
+}) {
+  let res = timeRange,
+    inRangeIdx,
+    closetIdx;
+  res.fill(0);
+
+  for (let i = 0; i < target.length; i++) {
+    const distance = Math.abs(currentTime - target[i].time);
+    inRangeIdx = timeRange.findIndex((tr) => tr > distance);
+    closetIdx =
+      inRangeIdx === -1
+        ? timeRange.length - 1
+        : timeRange.indexOf(
+            Math.min(timeRange[inRangeIdx - 1], timeRange[inRangeIdx])
+          );
+
+    res[closetIdx] += Number(target[i].view);
+  }
+
+  return res;
+}

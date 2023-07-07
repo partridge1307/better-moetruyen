@@ -1,15 +1,16 @@
 'use client';
 
 import { View } from '@/lib/query';
-import { FC } from 'react';
+import { filterView } from '@/lib/utils';
 import {
-  Chart as ChartJS,
   CategoryScale,
+  Chart as ChartJS,
+  LineElement,
   LinearScale,
   PointElement,
-  LineElement,
   Tooltip,
 } from 'chart.js';
+import { FC } from 'react';
 import { Line } from 'react-chartjs-2';
 
 ChartJS.register(
@@ -24,19 +25,24 @@ export const opts = {
   responsive: true,
 };
 
-const labels = ['1h', '3h', '6h', '12h', '22h'];
+const labels = ['1d', '3d', '5d', '7d'];
 
 interface WeeklyViewMangaProps {
   weeklyView: View;
 }
-
 const WeeklyViewManga: FC<WeeklyViewMangaProps> = ({ weeklyView }) => {
+  const filteredView = filterView({
+    target: weeklyView,
+    timeRange: [1, 3, 5, 7],
+    currentTime: new Date(Date.now()).getHours(),
+  });
+
   const data = {
     labels,
     datasets: [
       {
         label: 'Lượt xem',
-        data: weeklyView.map((wv) => Number(wv.view)),
+        data: filteredView,
         pointRadius: 5,
         borderColor: 'rgb(249, 115, 22)',
         backgroundColor: 'rgba(249, 115, 22, 0.5)',

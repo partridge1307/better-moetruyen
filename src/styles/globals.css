@@ -165,3 +165,12 @@
 button {
   -webkit-tap-highlight-color: transparent;
 }
+
+.fb_iframe_widget iframe {
+  @apply absolute rounded-md;
+  border: solid !important;
+}
+
+:is(.dark) :where(.fb_iframe_widget) iframe {
+  border-color: rgb(63 63 70 / var(--tw-bg-opacity)) !important;
+}

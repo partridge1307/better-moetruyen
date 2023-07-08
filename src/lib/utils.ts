@@ -123,22 +123,33 @@ export function filterView({
   timeRange: number[];
   currentTime: number;
 }) {
-  let res = timeRange,
-    inRangeIdx,
-    closetIdx;
-  res.fill(0);
+  const excludedTarget = target.filter((t) => t.time <= currentTime);
+  let viewTimeHolder: number,
+    res: number[] = [];
 
-  for (let i = 0; i < target.length; i++) {
-    const distance = Math.abs(currentTime - target[i].time);
-    inRangeIdx = timeRange.findIndex((tr) => tr > distance);
-    closetIdx =
-      inRangeIdx === -1
-        ? timeRange.length - 1
-        : timeRange.indexOf(
-            Math.min(timeRange[inRangeIdx - 1], timeRange[inRangeIdx])
-          );
+  const currentTimeIdx = excludedTarget.findIndex((t) => t.time >= currentTime);
+  if (currentTimeIdx === -1) res.push(0);
+  else {
+    const lastValArr = excludedTarget.pop();
+    res.push(Number(lastValArr?.view));
+    viewTimeHolder = lastValArr?.time!;
+  }
 
-    res[closetIdx] += Number(target[i].view);
+  const timeRangeDistance = excludedTarget.map((t) =>
+    Math.abs(viewTimeHolder - t.time)
+  );
+  const inTimeRange = timeRangeDistance.map((td) => timeRange.find((tr) => td));
+
+  for (let i = 1; i < timeRange.length; i++) {
+    const spliceStart = inTimeRange.findIndex((tr) => tr === timeRange[i]);
+    const spliceCount = inTimeRange.filter(
+      (tr) => tr === inTimeRange[i]
+    ).length;
+
+    const splicedArr = excludedTarget.splice(spliceStart, spliceCount);
+    let count = 0;
+    Array.from(splicedArr, (x) => (count += Number(x.view)));
+    res.push(count);
   }
 
   return res;

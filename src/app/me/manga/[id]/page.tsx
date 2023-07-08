@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { dailyViewGroupByHour, weeklyViewGroupByDay } from '@/lib/query';
-import { cn } from '@/lib/utils';
+import { cn, filterView } from '@/lib/utils';
 import format from 'date-fns/format';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -52,6 +52,17 @@ const page: FC<pageProps> = async ({ params }) => {
 
   const dailyView = await dailyViewGroupByHour(manga.id);
   const weeklyView = await weeklyViewGroupByDay(manga.id);
+
+  const filteredDailyView = filterView({
+    target: dailyView,
+    timeRange: [0, 1, 3, 6, 12, 22],
+    currentTime: new Date(Date.now()).getHours(),
+  });
+  const filteredWeeklyView = filterView({
+    target: weeklyView,
+    timeRange: [0, 1, 3, 5, 7],
+    currentTime: new Date(Date.now()).getDay(),
+  });
 
   return (
     <Tabs defaultValue="info">
@@ -143,8 +154,8 @@ const page: FC<pageProps> = async ({ params }) => {
 
       <TabsContent value="analytics">
         <div className="p-2 md:px-4 space-y-8 md:space-y-10">
-          <DailyViewManga dailyView={dailyView} />
-          <WeeklyViewManga weeklyView={weeklyView} />
+          <DailyViewManga filteredView={filteredDailyView} />
+          <WeeklyViewManga filteredView={filteredWeeklyView} />
         </div>
       </TabsContent>
     </Tabs>

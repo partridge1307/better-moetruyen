@@ -1,7 +1,5 @@
 'use client';
 
-import { View } from '@/lib/query';
-import { filterView } from '@/lib/utils';
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -10,7 +8,7 @@ import {
   PointElement,
   Tooltip,
 } from 'chart.js';
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import { Line } from 'react-chartjs-2';
 
 ChartJS.register(
@@ -25,18 +23,12 @@ export const opts = {
   responsive: true,
 };
 
-const labels = ['1d', '3d', '5d', '7d'];
+const labels = ['0d', '1d', '3d', '5d', '7d'];
 
 interface WeeklyViewMangaProps {
-  weeklyView: View;
+  filteredView: number[];
 }
-const WeeklyViewManga: FC<WeeklyViewMangaProps> = ({ weeklyView }) => {
-  const filteredView = filterView({
-    target: weeklyView,
-    timeRange: [1, 3, 5, 7],
-    currentTime: new Date(Date.now()).getHours(),
-  });
-
+const WeeklyViewManga: FC<WeeklyViewMangaProps> = ({ filteredView }) => {
   const data = {
     labels,
     datasets: [
@@ -62,4 +54,4 @@ const WeeklyViewManga: FC<WeeklyViewMangaProps> = ({ weeklyView }) => {
   );
 };
 
-export default WeeklyViewManga;
+export default memo(WeeklyViewManga);

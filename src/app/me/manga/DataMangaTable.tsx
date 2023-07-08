@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -103,7 +103,7 @@ function DataMangaTable<TData, TValue>({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     {/* @ts-expect-error */}
-                    <Link href={`/me/manga/${row.original.id}/chapter`}>
+                    <Link href={`/me/manga/${row.original.id}`}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

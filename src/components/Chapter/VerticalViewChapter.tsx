@@ -1,12 +1,12 @@
-import type { Chapter, Manga } from "@prisma/client";
-import Image from "next/image";
-import { forwardRef, type MutableRefObject, memo } from "react";
+import type { Chapter, Manga } from '@prisma/client';
+import Image from 'next/image';
+import { forwardRef, type MutableRefObject, memo } from 'react';
 
 interface VerticalViewChapterProps {
   chapter: Chapter & {
-    manga: Pick<Manga, "name">;
+    manga: Pick<Manga, 'name'>;
   };
-  imageRef: MutableRefObject<HTMLImageElement | null>;
+  imageRef: (node: Element | null | undefined) => void;
 }
 
 const VerticalViewChapter = forwardRef<
@@ -56,6 +56,6 @@ const VerticalViewChapter = forwardRef<
   );
 });
 
-VerticalViewChapter.displayName = "VerticalViewChapter";
+VerticalViewChapter.displayName = 'VerticalViewChapter';
 
 export default memo(VerticalViewChapter);

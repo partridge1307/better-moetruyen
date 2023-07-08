@@ -1,17 +1,17 @@
-import { cn } from "@/lib/utils";
-import type { Chapter, Manga } from "@prisma/client";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { forwardRef, type MutableRefObject } from "react";
+import { cn } from '@/lib/utils';
+import type { Chapter, Manga } from '@prisma/client';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { forwardRef, type MutableRefObject } from 'react';
 
 interface HorizontalViewChapterProps {
   chapter: Chapter & {
-    manga: Pick<Manga, "name">;
+    manga: Pick<Manga, 'name'>;
   };
   slideLeft(): void;
   slideRight(): void;
-  imageRef: MutableRefObject<HTMLImageElement | null>;
+  imageRef: (node: Element | null | undefined) => void;
   currentImage: number;
 }
 
@@ -25,7 +25,7 @@ const HorizontalViewChapter = forwardRef<
       className="no-scrollbar flex h-full w-full overflow-auto scroll-smooth transition-transform"
     >
       {chapter.images.map((img, idx) => {
-        if (idx === Math.floor((chapter.images.length * 70) / 100)) {
+        if (idx === Math.floor(chapter.images.length * 0.7)) {
           return (
             <div
               id={`${idx}`}
@@ -70,8 +70,8 @@ const HorizontalViewChapter = forwardRef<
       <button
         onClick={slideLeft}
         className={cn(
-          "absolute left-0 h-full w-2/5 opacity-0",
-          currentImage <= 0 ? "hidden" : null
+          'absolute left-0 h-full w-2/5 opacity-0',
+          currentImage <= 0 ? 'hidden' : null
         )}
       >
         <ChevronLeft className="h-20 w-20" />
@@ -79,8 +79,8 @@ const HorizontalViewChapter = forwardRef<
       <button
         onClick={slideRight}
         className={cn(
-          "absolute right-0 h-full w-2/5 opacity-0",
-          currentImage + 1 >= chapter.images.length ? "hidden" : null
+          'absolute right-0 h-full w-2/5 opacity-0',
+          currentImage + 1 >= chapter.images.length ? 'hidden' : null
         )}
       >
         <ChevronRight className="h-20 w-20" />
@@ -89,6 +89,6 @@ const HorizontalViewChapter = forwardRef<
   );
 });
 
-HorizontalViewChapter.displayName = "HorizontalViewChapter";
+HorizontalViewChapter.displayName = 'HorizontalViewChapter';
 
 export default HorizontalViewChapter;

@@ -1,12 +1,12 @@
 'use client';
 
-import useOnScreen from '@/hooks/use-on-screen';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { Chapter } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { FC, useEffect, useRef, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
 import ChapterControll from './ChapterControll';
 import HorizontalViewChapter from './HorizontalViewChapter';
@@ -56,8 +56,9 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
   const slider = useRef<HTMLDivElement | null>(null);
   const currentImageRef = useRef<HTMLImageElement | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const imageRef = useRef<HTMLImageElement | null>(null);
-  const inView = useOnScreen(imageRef);
+  const { ref: imageRef, inView } = useInView({
+    threshold: 0,
+  });
 
   const ReadingModeHanlder = (mode: 'vertical' | 'horizontal') => {
     localStorage.setItem('readingMode', mode);

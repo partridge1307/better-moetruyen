@@ -1,14 +1,14 @@
-import { mangaChapterGroupByVolume } from "@/lib/query";
-import { formatTimeToNow } from "@/lib/utils";
-import { Clock } from "lucide-react";
-import Link from "next/link";
-import { FC } from "react";
+import { mangaChapterGroupByVolume } from '@/lib/query';
+import { formatTimeToNow } from '@/lib/utils';
+import { Clock } from 'lucide-react';
+import Link from 'next/link';
+import { FC } from 'react';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "../ui/Accordion";
+} from '../ui/Accordion';
 import parseJSON from 'date-fns/parseJSON';
 
 interface ChapterListProps {

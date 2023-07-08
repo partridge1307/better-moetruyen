@@ -1,8 +1,13 @@
-import DataMangaTable from "@/app/me/manga/DataMangaTable";
-import ForceSignOut from "@/components/ForceSignOut";
-import { getAuthSession } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { columns } from "./column";
+import ForceSignOut from '@/components/ForceSignOut';
+import { getAuthSession } from '@/lib/auth';
+import { db } from '@/lib/db';
+import { columns } from './column';
+import dynamic from 'next/dynamic';
+import { Loader2 } from 'lucide-react';
+const DataMangaTable = dynamic(() => import('@/app/me/manga/DataMangaTable'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
 
 const page = async () => {
   const session = await getAuthSession();
@@ -23,6 +28,7 @@ const page = async () => {
     .manga();
 
   return !!manga?.length ? (
+    // @ts-ignore
     <DataMangaTable columns={columns} data={manga} />
   ) : (
     <div>Bạn chưa có manga nào. Hãy upload một bộ ngay thôi nhé</div>

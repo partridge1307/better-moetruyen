@@ -1,8 +1,13 @@
-import EditManga from '@/components/Manage/EditManga';
 import { db } from '@/lib/db';
 import { tagGroupByCategory } from '@/lib/query';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
+import dynamic from 'next/dynamic';
+import { Loader2 } from 'lucide-react';
+const EditManga = dynamic(() => import('@/components/Manage/EditManga'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
 
 interface pageProps {
   params: {

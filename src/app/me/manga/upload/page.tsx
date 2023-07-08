@@ -1,10 +1,14 @@
-import ForceSignOut from "@/components/ForceSignOut";
-import MangaUpload from "@/components/Manage/MangaUpload";
-import { getAuthSession } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { tagGroupByCategory } from "@/lib/query";
-import { redirect } from "next/navigation";
-import { FC } from "react";
+import ForceSignOut from '@/components/ForceSignOut';
+import { getAuthSession } from '@/lib/auth';
+import { db } from '@/lib/db';
+import { tagGroupByCategory } from '@/lib/query';
+import { Loader2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { FC } from 'react';
+const MangaUpload = dynamic(() => import('@/components/Manage/MangaUpload'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
 
 interface pageProps {}
 

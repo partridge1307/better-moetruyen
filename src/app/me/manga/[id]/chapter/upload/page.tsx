@@ -1,8 +1,13 @@
-import ForceSignOut from "@/components/ForceSignOut";
-import ChapterUpload from "@/components/Manage/ChapterUpload";
-import { getAuthSession } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { notFound, redirect } from "next/navigation";
+import ForceSignOut from '@/components/ForceSignOut';
+import { getAuthSession } from '@/lib/auth';
+import { db } from '@/lib/db';
+import { notFound } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { Loader2 } from 'lucide-react';
+const ChapterUpload = dynamic(
+  () => import('@/components/Manage/ChapterUpload'),
+  { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
+);
 
 const page = async ({ params }: { params: { id: string } }) => {
   const session = await getAuthSession();

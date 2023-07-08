@@ -1,5 +1,5 @@
 import { ClassValue, clsx } from 'clsx';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, getHours } from 'date-fns';
 import locale from 'date-fns/locale/vi';
 import { twMerge } from 'tailwind-merge';
 import { View } from './query';
@@ -114,12 +114,17 @@ export const fbRegex =
 export const disRegex =
   /(https:\/\/)?(www)?discord.?(gg|com)?\/?(invite)?\/([^\/\?\&\%]*)\S/;
 
+type targetProps = {
+  time: number;
+  view: number;
+}[];
+
 export function filterView({
   target,
   timeRange,
   currentTime,
 }: {
-  target: View;
+  target: targetProps;
   timeRange: number[];
   currentTime: number;
 }) {
@@ -138,7 +143,9 @@ export function filterView({
   const timeRangeDistance = excludedTarget.map((t) =>
     Math.abs(viewTimeHolder - t.time)
   );
-  const inTimeRange = timeRangeDistance.map((td) => timeRange.find((tr) => td));
+  const inTimeRange = timeRangeDistance.map((td) =>
+    timeRange.find((tr) => tr >= td)
+  );
 
   for (let i = 1; i < timeRange.length; i++) {
     const spliceStart = inTimeRange.findIndex((tr) => tr === timeRange[i]);

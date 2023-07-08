@@ -28,9 +28,10 @@ export const tagGroupByCategory = () =>
 export type View = {
   time: number;
   view: number;
+  viewTimeCreatedAt: Date[];
 }[];
 export const dailyViewGroupByHour = (mangaId: number) =>
-  db.$queryRaw`SELECT DATE_PART('hour', "createdAt") as time, COUNT("id") as view FROM "DailyView" WHERE "mangaId" = ${mangaId} GROUP BY DATE_PART('hour', "createdAt")` as Promise<View>;
+  db.$queryRaw`SELECT DATE_PART('hour', "createdAt") as time, COUNT("id") as view, array_agg("createdAt") as "viewTimeCreatedAt" FROM "DailyView" WHERE "mangaId" = ${mangaId} GROUP BY DATE_PART('hour', "createdAt")` as Promise<View>;
 
 export const weeklyViewGroupByDay = (mangaId: number) =>
-  db.$queryRaw`SELECT DATE_PART('day', "createdAt") as time, COUNT("id") as view FROM "WeeklyView" WHERE "mangaId" = ${mangaId} GROUP BY DATE_PART('day', "createdAt")` as Promise<View>;
+  db.$queryRaw`SELECT DATE_PART('day', "createdAt") as time, COUNT("id") as view, array_agg("createdAt") as "viewTimeCreatedAt" FROM "WeeklyView" WHERE "mangaId" = ${mangaId} GROUP BY DATE_PART('day', "createdAt")` as Promise<View>;

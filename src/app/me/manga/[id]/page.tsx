@@ -7,7 +7,7 @@ import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { dailyViewGroupByHour, weeklyViewGroupByDay } from '@/lib/query';
 import { cn, filterView } from '@/lib/utils';
-import format from 'date-fns/format';
+import { format, getHours, getDay } from 'date-fns';
 import { ArrowUpRightFromCircle, Edit, Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -57,12 +57,18 @@ const page: FC<pageProps> = async ({ params }) => {
   const weeklyView = await weeklyViewGroupByDay(manga.id);
 
   const filteredDailyView = filterView({
-    target: dailyView,
+    target: dailyView.map((dv) => ({
+      time: getHours(dv.viewTimeCreatedAt[0]),
+      view: dv.view,
+    })),
     timeRange: [0, 1, 3, 6, 12, 22],
     currentTime: new Date(Date.now()).getHours(),
   });
   const filteredWeeklyView = filterView({
-    target: weeklyView,
+    target: weeklyView.map((wv) => ({
+      time: getDay(wv.viewTimeCreatedAt[0]),
+      view: wv.view,
+    })),
     timeRange: [0, 1, 3, 5, 7],
     currentTime: new Date(Date.now()).getDay(),
   });

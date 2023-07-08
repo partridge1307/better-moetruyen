@@ -3,6 +3,7 @@
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
 import { Tags } from '@/lib/query';
+import { disRegex, fbRegex } from '@/lib/utils';
 import {
   MangaUploadPayload,
   MangaUploadValidator,
@@ -11,49 +12,57 @@ import {
 } from '@/lib/validators/upload';
 import type EditorJS from '@editorjs/editorjs';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Manga, MangaAuthor, Tag } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import { useDebounce } from '@uidotdev/usehooks';
 import axios, { AxiosError } from 'axios';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { FC, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '../ui/Button';
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '../ui/Form';
 import { Input } from '../ui/Input';
-import MangaAuthorUpload, { type authorResultProps } from './MangaAuthorUpload';
+import MangaAuthorUpload, { authorResultProps } from './MangaAuthorUpload';
 import MangaImageUpload from './MangaImageUpload';
 import MangaTagUpload from './MangaTagUpload';
-import { useRouter } from 'next/navigation';
-import { disRegex, fbRegex } from '@/lib/utils';
 const Editor = dynamic(() => import('@/components/Editor'), {
   ssr: false,
   loading: () => <Loader2 className="h-6 w-6 animate-spin" />,
 });
 
-const MangaUpload = ({ tag }: { tag: Tags }) => {
-  const { verifyToast, notFoundToast, loginToast } = useCustomToast();
+interface EditMangaProps {
+  manga: Manga & {
+    author: MangaAuthor[];
+    tags: Tag[];
+  };
+  tags: Tags;
+}
+
+const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
+  const { loginToast, notFoundToast } = useCustomToast();
   const router = useRouter();
   const form = useForm<MangaUploadPayload>({
     resolver: zodResolver(MangaUploadValidator),
     defaultValues: {
-      image: undefined,
-      name: '',
+      image: manga.image,
+      name: manga.name,
       description: undefined,
-      author: [],
-      tag: [],
-      facebookLink: '',
-      discordLink: '',
+      author: manga.author,
+      tag: manga.tags,
+      facebookLink: manga.facebookLink ?? '',
+      discordLink: manga.discordLink ?? '',
     },
   });
-
   const {
     data: authorResult,
     mutate: FetchAuthor,
@@ -65,7 +74,7 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
       return data as authorResultProps;
     },
   });
-  const { mutate: Upload, isLoading: isUploadManga } = useMutation({
+  const { mutate: Update, isLoading: isUpdatingManga } = useMutation({
     mutationFn: async (values: MangaUploadPayload) => {
       const {
         image,
@@ -86,21 +95,12 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
       author.map((a) => form.append('author', JSON.stringify(a)));
       tag.map((t) => form.append('tag', JSON.stringify(t)));
 
-      const { data } = await axios.post('/api/manga/upload', form);
+      const { data } = await axios.patch(`/api/manga/${manga.id}/edit`, form);
 
       return data;
     },
     onError: (e) => {
       if (e instanceof AxiosError) {
-        if (e.response?.status === 409)
-          return toast({
-            title: 'Trùng lặp manga',
-            description: 'Bạn đã tạo manga này rồi',
-            variant: 'destructive',
-          });
-        if (e.response?.status === 400) {
-          return verifyToast();
-        }
         if (e.response?.status === 401) return loginToast();
         if (e.response?.status === 404) return notFoundToast();
         if (e.response?.status === 406)
@@ -118,33 +118,33 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
       });
     },
     onSuccess: () => {
-      router.push('/me/manga');
+      router.push(`/me/manga`);
       router.refresh();
+
       return toast({
         title: 'Thành công',
       });
     },
   });
-
-  const [previewImage, setPreviewImage] = useState<string>();
+  const [previewImage, setPreviewImage] = useState<string | undefined>(
+    manga.image
+  );
+  const [authorSelected, setAuthorSelected] = useState<authorInfoProps[]>(
+    manga.author
+  );
   const [authorInput, setAuthorInput] = useState<string>('');
+  const [tagSelect, setTagSelect] = useState<tagInfoProps[]>(manga.tags);
   const debouncedValue = useDebounce(authorInput, 300);
-  const [authorSelected, setAuthorSelected] = useState<authorInfoProps[]>([]);
-  const [tagSelect, setTagSelect] = useState<tagInfoProps[]>([]);
   const editorRef = useRef<EditorJS>();
 
   useEffect(() => {
     if (!!debouncedValue) FetchAuthor(debouncedValue);
   }, [FetchAuthor, debouncedValue]);
 
-  const onSubmitHandler = async (values: MangaUploadPayload) => {
+  async function onSubmitHandler(values: MangaUploadPayload) {
     const editor = await editorRef.current?.save();
-    if (!editor?.blocks.length) {
-      return form.setError('description', {
-        type: 'custom',
-        message: 'Mô tả không được bỏ trống',
-      });
-    }
+    const desc = editor?.blocks.length ? editor : manga.description;
+
     if (values.facebookLink && !fbRegex.test(values.facebookLink)) {
       return form.setError('facebookLink', {
         type: 'custom',
@@ -163,21 +163,21 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
       name: values.name,
       author: values.author,
       tag: values.tag,
-      description: editor,
+      description: desc,
       facebookLink: values.facebookLink,
       discordLink: values.discordLink,
     };
 
-    Upload(payload);
-  };
+    Update(payload);
+  }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-6">
         <MangaImageUpload
           form={form}
-          setPreviewImage={(value) => setPreviewImage(value)}
           previewImage={previewImage}
+          setPreviewImage={(value) => setPreviewImage(value)}
         />
 
         <FormField
@@ -185,11 +185,7 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tên truyện</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="Tên truyện" autoComplete="off" {...field} />
-              </FormControl>
+              <Input {...field} />
             </FormItem>
           )}
         />
@@ -206,7 +202,7 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
 
         <MangaTagUpload
           form={form}
-          tag={tag}
+          tag={tags}
           tagSelect={tagSelect}
           setTagSelect={(value) => setTagSelect(value)}
         />
@@ -217,6 +213,9 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
           render={() => (
             <FormItem>
               <FormLabel>Mô tả</FormLabel>
+              <FormDescription>
+                (Bỏ qua nếu không có chỉnh sửa gì)
+              </FormDescription>
               <FormMessage />
               <FormControl>
                 <Editor editorRef={editorRef} />
@@ -268,15 +267,15 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
 
         <Button
           type="submit"
-          isLoading={isUploadManga}
-          disabled={isUploadManga}
+          isLoading={isUpdatingManga}
+          disabled={isUpdatingManga}
           className="w-full"
         >
-          Đăng
+          Cập nhật
         </Button>
       </form>
     </Form>
   );
 };
 
-export default MangaUpload;
+export default EditManga;

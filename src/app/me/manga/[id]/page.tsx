@@ -1,13 +1,14 @@
 import EditorOutput from '@/components/EditorOutput';
 import ForceSignOut from '@/components/ForceSignOut';
 import MangaImage from '@/components/MangaImage';
+import { buttonVariants } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { dailyViewGroupByHour, weeklyViewGroupByDay } from '@/lib/query';
 import { cn, filterView } from '@/lib/utils';
 import format from 'date-fns/format';
-import { Loader2 } from 'lucide-react';
+import { ArrowUpRightFromCircle, Edit, Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -44,7 +45,9 @@ const page: FC<pageProps> = async ({ params }) => {
       creatorId: user.id,
     },
     include: {
-      chapter: true,
+      _count: {
+        select: { chapter: true },
+      },
       view: true,
     },
   });
@@ -83,29 +86,41 @@ const page: FC<pageProps> = async ({ params }) => {
             <dd className="font-semibold">{manga.name}</dd>
           </dl>
 
-          <dl className="flex gap-1">
-            <dt>Trạng thái:</dt>
-            <dd
-              className={cn(
-                'font-semibold',
-                manga.isPublished ? 'text-green-400' : 'text-red-500'
-              )}
-            >
-              {manga.isPublished ? 'Đã Publish' : 'Chờ Publish'}
-            </dd>
-          </dl>
-
-          <dl className="flex gap-1">
-            <dt>Chapter:</dt>
-            <dl>
-              <Link
-                href={`/me/manga/${manga.id}/chapter`}
-                className="text-sky-500"
+          <div className="max-sm:space-y-6 md:flex md:gap-12">
+            <dl className="flex gap-1">
+              <dt>Trạng thái:</dt>
+              <dd
+                className={cn(
+                  'font-semibold',
+                  manga.isPublished ? 'text-green-400' : 'text-red-500'
+                )}
               >
-                Bấm vào đây
-              </Link>
+                {manga.isPublished ? 'Đã Publish' : 'Chờ Publish'}
+              </dd>
             </dl>
-          </dl>
+
+            <dl className="flex gap-1">
+              <dt>Số lượng chapter:</dt>
+              <dl>{manga._count.chapter}</dl>
+            </dl>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Link
+              href={`/me/manga/${manga.id}/edit`}
+              className={cn(buttonVariants(), 'w-full flex gap-2')}
+            >
+              Chỉnh sửa
+              <Edit className="w-4 h-4" />
+            </Link>
+            <Link
+              href={`/manga/${manga.id}`}
+              className={cn(buttonVariants(), 'w-full flex items-center gap-1')}
+            >
+              Đến xem truyện
+              <ArrowUpRightFromCircle className="h-4 w-4" />
+            </Link>
+          </div>
 
           <dl className="space-y-1">
             <dt>Mô tả:</dt>

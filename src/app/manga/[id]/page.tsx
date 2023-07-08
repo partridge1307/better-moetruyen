@@ -1,4 +1,4 @@
-import ChapterList from "@/components/Chapter/ChapterList";
+import ChapterList from '@/components/Chapter/ChapterList';
 import EditorOutput from '@/components/EditorOutput';
 import MangaImage from '@/components/MangaImage';
 import UserAvatar from '@/components/User/UserAvatar';
@@ -11,6 +11,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
 import { FC, Suspense } from 'react';
+import 'server-only';
 
 interface pageProps {
   params: {
@@ -66,6 +67,11 @@ const page: FC<pageProps> = async ({ params }) => {
           image: true,
         },
       },
+      view: {
+        select: {
+          totalView: true,
+        },
+      },
     },
   });
   if (!manga) return notFound();
@@ -77,9 +83,9 @@ const page: FC<pageProps> = async ({ params }) => {
         await fetch(
           `https://discord.com/api/v10/invites/${manga.discordLink
             .split('/')
-            .pop()}?with_counts=true`,
+            .pop()}`,
           {
-            next: { revalidate: 300 },
+            cache: 'force-cache',
           }
         )
       ).json();
@@ -136,6 +142,11 @@ const page: FC<pageProps> = async ({ params }) => {
               ))}
             </TagWrapper>
           </div>
+
+          <dl className="flex gap-2">
+            <dt>Lượt xem:</dt>
+            <dd className="font-medium">{manga.view?.totalView}</dd>
+          </dl>
 
           <div className="space-y-2">
             <p className="font-semibold text-lg">Mô tả</p>

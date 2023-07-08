@@ -1,18 +1,18 @@
-import { type Dispatch, FC, type SetStateAction } from "react";
+import { type Dispatch, FC, type SetStateAction } from 'react';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/Form";
-import { Input } from "../ui/Input";
-import type { UseFormReturn } from "react-hook-form";
+} from '../ui/Form';
+import { Input } from '../ui/Input';
+import type { UseFormReturn } from 'react-hook-form';
 import type {
   MangaUploadPayload,
   authorInfoProps,
-} from "@/lib/validators/upload";
-import { Loader2, X } from "lucide-react";
+} from '@/lib/validators/upload';
+import { Loader2, X } from 'lucide-react';
 
 export type authorResultProps = {
   author: authorInfoProps[];
@@ -46,7 +46,7 @@ const MangaAuthorUpload: FC<MangaAuthorUploadProps> = ({
           <FormLabel>Tác giả</FormLabel>
           <FormMessage />
           <FormControl>
-            <div className="rounded-lg border">
+            <div className="rounded-lg border px-2 py-1">
               <ul className="flex gap-x-2">
                 {authorSelected.map((auth) => (
                   <li
@@ -61,7 +61,7 @@ const MangaAuthorUpload: FC<MangaAuthorUploadProps> = ({
                           ...authorSelected.filter((a) => a.name !== auth.name),
                         ];
                         setAuthorSelected(authorVal);
-                        form.setValue("author", authorVal);
+                        form.setValue('author', authorVal);
                       }}
                     />
                   </li>
@@ -86,11 +86,11 @@ const MangaAuthorUpload: FC<MangaAuthorUploadProps> = ({
                     key={auth.id}
                     className={`cursor-pointer rounded-md bg-slate-800 p-1 ${
                       authorSelected.some((a) => a.name === auth.name) &&
-                      "hidden"
+                      'hidden'
                     }`}
                     onClick={() => {
                       if (!authorSelected.includes(auth)) {
-                        form.setValue("author", [...authorSelected, auth]);
+                        form.setValue('author', [...authorSelected, auth]);
                         setAuthorSelected([...authorSelected, auth]);
                       }
                     }}
@@ -102,17 +102,17 @@ const MangaAuthorUpload: FC<MangaAuthorUploadProps> = ({
                   <li
                     className={`flex items-center gap-x-2 rounded-md ${
                       authorSelected.some((a) => a.name === authorInput) &&
-                      "hidden"
+                      'hidden'
                     }`}
                   >
-                    Thêm:{" "}
+                    Thêm:{' '}
                     <span
                       className="cursor-pointer bg-zinc-800 p-1"
                       onClick={() => {
                         if (
                           !authorSelected.some((a) => a.name === authorInput)
                         ) {
-                          form.setValue("author", [
+                          form.setValue('author', [
                             ...authorSelected,
                             { id: -1, name: authorInput },
                           ]);

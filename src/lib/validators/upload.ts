@@ -15,7 +15,7 @@ export type tagInfoProps = z.infer<typeof tagInfo>;
 
 export const MangaUploadValidator = z
   .object({
-    image: z.any() as ZodType<File>,
+    image: z.any() as ZodType<File | string>,
     name: z
       .string()
       .min(3, { message: 'Tối thiểu 3 kí tự' })

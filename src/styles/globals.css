@@ -168,7 +168,8 @@ button {
 
 .fb_iframe_widget iframe {
   @apply absolute rounded-md;
-  border: solid !important;
+  border-style: solid !important;
+  border-width: 1px !important;
 }
 
 :is(.dark) :where(.fb_iframe_widget) iframe {

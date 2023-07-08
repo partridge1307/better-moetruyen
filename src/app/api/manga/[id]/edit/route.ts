@@ -5,7 +5,7 @@ import { authorInfo, tagInfo } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
-import { z } from 'zod';
+import { ZodType, z } from 'zod';
 import { zfd } from 'zod-form-data';
 
 const blocksInfo = z.object({
@@ -21,7 +21,7 @@ const descriptionInfo = z.object({
 });
 
 const mangaFormValidator = zfd.formData({
-  image: zfd.file(),
+  image: zfd.file(z.any() as ZodType<File | string>),
   name: zfd.text(z.string().min(3).max(255)),
   description: zfd.json(descriptionInfo),
   author: zfd.repeatableOfType(zfd.json(authorInfo)),
@@ -30,7 +30,10 @@ const mangaFormValidator = zfd.formData({
   discord: zfd.text(z.string().optional()),
 });
 
-export async function POST(req: NextRequest) {
+export async function PATCH(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
@@ -40,14 +43,12 @@ export async function POST(req: NextRequest) {
         id: token.id,
       },
     });
-
-    const existedManga = await db.manga.findFirst({
+    const targetManga = await db.manga.findFirstOrThrow({
       where: {
+        id: +context.params.id,
         creatorId: user.id,
       },
     });
-    if (!user.verified && existedManga)
-      return new Response('Need verify', { status: 400 });
 
     const form = await req.formData();
     const {
@@ -60,27 +61,34 @@ export async function POST(req: NextRequest) {
       discord,
     } = mangaFormValidator.parse(form);
 
-    const image = await upload({ blobImage: img, retryCount: 5 });
+    let image: string;
+    if (typeof img === 'string') {
+      image = img;
+    } else {
+      image = await upload({ blobImage: img, retryCount: 5 });
+    }
 
     if (facebook && !fbRegex.test(facebook))
       return new Response('Invalid FB link', { status: 406 });
     if (discord && !disRegex.test(discord))
       return new Response('Invalid Discord link', { status: 406 });
 
-    await db.manga.create({
+    await db.manga.update({
+      where: {
+        id: targetManga.id,
+      },
       data: {
-        name,
-        description: description,
         image,
+        name,
+        description,
         facebookLink: !facebook ? null : facebook,
         discordLink: !discord ? null : discord,
-        creatorId: user.id,
         tags: {
-          connect: tag.map((t) => ({
-            id: t.id,
-          })),
+          set: [],
+          connect: tag.map((t) => ({ id: t.id })),
         },
         author: {
+          set: [],
           connectOrCreate: author.map((a) => ({
             where: { id: a.id },
             create: { name: a.name },
@@ -91,17 +99,12 @@ export async function POST(req: NextRequest) {
 
     return new Response('OK');
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return new Response(error.message, { status: 422 });
-    }
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P2002') {
-        return new Response('Duplicated manga', { status: 409 });
-      }
       if (error.code === 'P2025') {
         return new Response('Not found', { status: 404 });
       }
     }
+
     return new Response('Something went wrong', { status: 500 });
   }
 }

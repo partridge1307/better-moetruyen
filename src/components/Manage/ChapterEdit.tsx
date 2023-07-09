@@ -38,7 +38,7 @@ interface ChapterEditProps {
 }
 
 const reorder = (
-  list: { image: string; index: number }[],
+  list: { image: string; index: number; type: boolean }[],
   startIndex: number,
   endIndex: number
 ) => {
@@ -49,17 +49,19 @@ const reorder = (
   return result;
 };
 
-const UploadImage = (image: FileList): Promise<string[]> =>
-  new Promise(async (resolve) => {
-    let imageUrls: string[] = [];
-    for (let i = 0; i < image.length; i++) {
+const UploadImage = (
+  newImg: { image: File; blobImg: string }[]
+): Promise<{ image: string; blobImg: string }[]> =>
+  new Promise((resolve) => {
+    let imageUrls: { image: string; blobImg: string }[] = [];
+    newImg.map((img, i) => {
       const form = new FormData();
-      form.append('file', image.item(i)!);
+      form.append('file', img.image);
       axios.post('/api/image', form).then((res) => {
-        imageUrls.push(res.data);
-        if (i === image.length - 1) resolve(imageUrls);
+        imageUrls.push({ image: res.data, blobImg: img.blobImg });
+        if (i === newImg.length - 1) resolve(imageUrls);
       });
-    }
+    });
   });
 
 const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
@@ -74,30 +76,38 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
       image: chapter.images,
     },
   });
-  const [dndImg, setDndImg] = useState<{ image: string; index: number }[]>(
-    chapter.images.map((img, idx) => ({ image: img, index: idx }))
+  const [dndImg, setDndImg] = useState<
+    { image: string; index: number; type: boolean }[]
+  >(
+    chapter.images.map((img, idx) => ({ image: img, index: idx, type: false }))
   );
-  const [newImg, setNewImg] = useState<FileList>();
+  const [newImg, setNewImg] = useState<
+    {
+      image: File;
+      blobImg: string;
+    }[]
+  >([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { mutate: Edit, isLoading: isEditting } = useMutation({
     mutationFn: async (values: ChapterEditUploadPayload) => {
       const { image, ...payload } = ChapterEditUploadValidator.parse(values);
-      if (newImg) {
-        const newImageUrls = await UploadImage(newImg);
-        image.push(...newImageUrls);
+      if (newImg.length) {
+        const imgsAfterUploaded = await UploadImage(newImg);
+        imgsAfterUploaded.map(
+          (img) =>
+            (image[image.findIndex((i) => i === img.blobImg)] = img.image)
+        );
         const { data } = await axios.patch(`/api/chapter/${chapter.id}/edit`, {
           images: image,
           ...payload,
         });
-
         return data;
       } else {
         const { data } = await axios.patch(`/api/chapter/${chapter.id}/edit`, {
           images: image,
           ...payload,
         });
-
         return data;
       }
     },
@@ -137,27 +147,37 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
       'image',
       items.map((item) => item.image)
     );
-    setDndImg(items);
+
+    setDndImg(
+      items.map((item, idx) => ({
+        image: item.image,
+        index: idx,
+        type: item.type,
+      }))
+    );
   }
   function onRemoveItem(index: number) {
     const dndCopy = dndImg;
     dndCopy.splice(index, 1);
     form.setValue(
       'image',
-      dndCopy.map((item) => item.image)
+      dndCopy.map((d) => d.image)
     );
     setDndImg(dndCopy);
   }
   function onAddItem(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files?.length) {
-      let imgUrls: { image: string; index: number }[] = [];
+      let imgUrls: { image: string; index: number; type: boolean }[] = [];
       for (let i = 0; i < e.target.files.length; i++) {
+        const image = URL.createObjectURL(e.target.files.item(i)!);
         imgUrls.push({
-          image: URL.createObjectURL(e.target.files.item(i)!),
+          image,
           index: -1,
+          type: true,
         });
+        newImg.push({ image: e.target.files.item(i)!, blobImg: image });
+        setNewImg(newImg);
       }
-      setNewImg(e.target.files);
       setDndImg([...dndImg, ...imgUrls]);
     }
   }
@@ -293,7 +313,7 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
                                     'w-[90%] p-2 md:p-4 rounded-md m-2',
                                     snapshot.isDragging
                                       ? 'dark:bg-zinc-900'
-                                      : t.index === -1
+                                      : t.type
                                       ? 'dark:bg-green-600'
                                       : 'dark:bg-zinc-800'
                                   )}

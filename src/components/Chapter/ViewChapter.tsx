@@ -113,6 +113,16 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
       : localStorage.progressBar === 'fixed'
       ? setProgressBar('fixed')
       : null;
+
+    const handler = () => {
+      if (typeof window !== 'undefined' && slider.current !== null) {
+        console.log(window.scrollY);
+      }
+    };
+
+    slider.current?.addEventListener('scroll', handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => slider.current?.removeEventListener('scroll', handler);
   }, []);
   useEffect(() => {
     if (readingMode === 'vertical') {
@@ -150,9 +160,6 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
       localStorage.removeItem('startPage');
       IncreaseView();
     }
-  }
-  if (typeof window !== 'undefined' && slider.current !== null) {
-    slider.current.scrollIntoView({ behavior: 'instant' });
   }
 
   return (

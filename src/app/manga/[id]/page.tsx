@@ -37,7 +37,6 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
     },
     select: {
       name: true,
-      description: true,
     },
   });
   if (!manga)
@@ -65,6 +64,7 @@ const page: FC<pageProps> = async ({ params }) => {
         select: {
           name: true,
           image: true,
+          banner: true,
         },
       },
       view: {
@@ -162,15 +162,43 @@ const page: FC<pageProps> = async ({ params }) => {
               value="chapter"
               className="grid grid-cols-1 md:grid-cols-[.4fr_1fr] lg:grid-cols-[.3fr_1fr] gap-6"
             >
-              <div className="space-y-4">
-                <Card className="bg-transparent/10">
-                  <CardHeader>
-                    {!!manga.creator.image && (
-                      <UserAvatar user={manga.creator} />
-                    )}
-                    <CardTitle>{manga.creator.name}</CardTitle>
-                  </CardHeader>
-                </Card>
+              <div className="max-sm:order-last space-y-4">
+                <div>
+                  <p className="text-lg px-2 w-full">Uploader</p>
+                  <Card className="relative bg-transparent/10">
+                    <CardHeader className="max-sm:gap-12">
+                      <div className="relative">
+                        {manga.creator.image && (
+                          <div className="absolute left-2 h-[5.5rem] w-[5.5rem] border-8 rounded-full z-10 top-2/3">
+                            <div className="relative w-full h-full">
+                              <Image
+                                fill
+                                src={manga.creator.image}
+                                alt="User Avatar"
+                                className="rounded-full"
+                              />
+                            </div>
+                          </div>
+                        )}
+                        {manga.creator.banner && (
+                          <div className="relative w-full h-32 rounded-md">
+                            <Image
+                              fill
+                              sizes="0%"
+                              src={manga.creator.banner}
+                              alt="User Banner"
+                              className="rounded-md"
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      <p className="md:text-center font-semibold text-lg ml-3 md:ml-12">
+                        {manga.creator.name}
+                      </p>
+                    </CardHeader>
+                  </Card>
+                </div>
 
                 {discord.code && (
                   <div className="p-1">

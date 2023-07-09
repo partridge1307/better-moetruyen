@@ -116,7 +116,9 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
 
     const handler = () => {
       if (typeof window !== 'undefined' && slider.current !== null) {
-        console.log(window.scrollY);
+        if (window.scrollY < 200) {
+          slider.current.scrollIntoView({ behavior: 'instant' });
+        }
       }
     };
 

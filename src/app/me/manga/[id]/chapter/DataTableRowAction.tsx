@@ -104,7 +104,7 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
                 Publish
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent isCustomDialog={false}>
               <DialogHeader>
                 <DialogTitle>Xác nhận yêu cầu</DialogTitle>
                 <DialogDescription>

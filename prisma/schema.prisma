@@ -13,6 +13,7 @@ model User {
   password    String
   name        String?       @unique
   image       String?
+  banner      String?
   verified    Boolean       @default(false)
   manga       Manga[]
   comment     Comment[]
@@ -116,19 +117,19 @@ model View {
 }
 
 model DailyView {
-  id        Int     @id @default(autoincrement())
-  view      View    @relation(fields: [mangaId], references: [mangaId])
+  id        Int      @id @default(autoincrement())
+  view      View     @relation(fields: [mangaId], references: [mangaId])
   mangaId   Int
-  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapter   Chapter  @relation(fields: [chapterId], references: [id])
   chapterId Int
   createdAt DateTime @default(now())
 }
 
 model WeeklyView {
-  id        Int     @id @default(autoincrement())
-  view      View    @relation(fields: [mangaId], references: [mangaId])
+  id        Int      @id @default(autoincrement())
+  view      View     @relation(fields: [mangaId], references: [mangaId])
   mangaId   Int
-  chapter   Chapter @relation(fields: [chapterId], references: [id])
+  chapter   Chapter  @relation(fields: [chapterId], references: [id])
   chapterId Int
   createdAt DateTime @default(now())
 }

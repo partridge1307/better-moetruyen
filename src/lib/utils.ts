@@ -161,3 +161,17 @@ export function filterView({
 
   return res;
 }
+
+export function dataUrlToBlob(dataUrl: string) {
+  const splittedData = dataUrl.split(',');
+  const byteStr = atob(splittedData[1]);
+  const typeStr = splittedData[0].split(':')[1].split(';')[0];
+  const buffer = new ArrayBuffer(byteStr.length);
+  const dv = new DataView(buffer);
+
+  for (let i = 0; i < byteStr.length; i++) {
+    dv.setUint8(i, byteStr.charCodeAt(i));
+  }
+
+  return new Blob([buffer], { type: typeStr });
+}

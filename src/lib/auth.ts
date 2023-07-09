@@ -28,6 +28,12 @@ const CatNames = [
   'MoeItalia',
   'MoeVOZER',
   'MoeThoNgoc',
+  'MoeHutCan',
+  'MoeTeNan',
+  'MoeNghien',
+  'MeoPayLak',
+  'MoeVuiVe',
+  'MoeNgocNghech',
 ];
 
 const numberDictionary = NumberDictionary.generate({ min: 1, max: 9999 });
@@ -66,6 +72,7 @@ export const authOptions: AuthOptions = {
             id: userWithoutPass.id,
             name: userWithoutPass.name,
             image: userWithoutPass.image,
+            banner: userWithoutPass.banner,
           };
         } catch (error) {
           return null;
@@ -82,6 +89,7 @@ export const authOptions: AuthOptions = {
         session.user.id = token.id;
         session.user.name = token.name;
         session.user.image = token.picture;
+        session.user.banner = token.banner;
       }
 
       return session;
@@ -102,6 +110,7 @@ export const authOptions: AuthOptions = {
           id: user.id,
           name: user.name,
           picture: user.image,
+          banner: user.banner,
         };
       }
       return token;

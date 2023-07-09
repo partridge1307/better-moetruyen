@@ -8,7 +8,10 @@ import { signOut } from 'next-auth/react';
 const SignOutButton = () => {
   return (
     <DropdownMenuItem
-      className={cn(buttonVariants({ variant: 'destructive' }), 'w-full')}
+      className={cn(
+        buttonVariants({ variant: 'destructive' }),
+        'w-full cursor-pointer'
+      )}
       onClick={(e) => {
         e.preventDefault();
         return signOut({

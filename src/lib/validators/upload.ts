@@ -51,3 +51,24 @@ export const ChapterUploadValidator = z
     path: ['image'],
   });
 export type ChapterUploadPayload = z.infer<typeof ChapterUploadValidator>;
+
+export const ChapterEditUploadValidator = z
+  .object({
+    chapterIndex: z
+      .number()
+      .min(0, { message: 'Số thứ tự chapter phải lớn hơn 0' }),
+    chapterName: z
+      .string()
+      .min(3, { message: 'Tối thiểu 3 ký tự' })
+      .max(255, { message: 'Tối đa 255 ký tự' })
+      .optional(),
+    volume: z.number().min(1, { message: 'Volume phải là số dương' }),
+    image: z.any() as ZodType<string[]>,
+  })
+  .refine((schema) => schema.image.length >= 5, {
+    message: 'Phải chứa ít nhất 5 ảnh',
+    path: ['image'],
+  });
+export type ChapterEditUploadPayload = z.infer<
+  typeof ChapterEditUploadValidator
+>;

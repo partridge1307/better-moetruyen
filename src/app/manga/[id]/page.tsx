@@ -9,9 +9,9 @@ import { db } from '@/lib/db';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import Script from 'next/script';
 import { FC, Suspense } from 'react';
 import 'server-only';
+import FBEmbed from './FBEmbed';
 
 interface pageProps {
   params: {
@@ -189,30 +189,7 @@ const page: FC<pageProps> = async ({ params }) => {
                 )}
 
                 {manga.facebookLink && (
-                  <div className="p-1">
-                    <p className="text-lg px-1">Facebook</p>
-                    <div className="relative w-full">
-                      <div
-                        className="fb-page"
-                        data-href={manga.facebookLink}
-                        data-tabs="timeline"
-                        data-height="300"
-                        data-small-header="false"
-                        data-adapt-container-width="true"
-                        data-hide-cover="false"
-                        data-show-facepile="true"
-                      >
-                        <blockquote
-                          cite={manga.facebookLink}
-                          className="fb-xfbml-parse-ignore"
-                        >
-                          <a href={manga.facebookLink}>
-                            <Loader2 className="w-6 h-6 animate-spin" />
-                          </a>
-                        </blockquote>
-                      </div>
-                    </div>
-                  </div>
+                  <FBEmbed facebookLink={manga.facebookLink} />
                 )}
               </div>
 
@@ -223,13 +200,6 @@ const page: FC<pageProps> = async ({ params }) => {
           </Tabs>
         </div>
       </div>
-      <Script
-        strategy="lazyOnload"
-        async
-        defer
-        crossOrigin="anonymous"
-        src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v17.0"
-      />
     </>
   );
 };

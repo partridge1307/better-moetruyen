@@ -8,7 +8,7 @@ import { db } from '@/lib/db';
 import { dailyViewGroupByHour, weeklyViewGroupByDay } from '@/lib/query';
 import { cn, filterView } from '@/lib/utils';
 import { format, getHours, getDay } from 'date-fns';
-import { ArrowUpRightFromCircle, Edit, Loader2 } from 'lucide-react';
+import { ArrowUpRightFromCircle, Edit, Loader2, Newspaper } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -111,13 +111,23 @@ const page: FC<pageProps> = async ({ params }) => {
             </dl>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <Link
               href={`/me/manga/${manga.id}/edit`}
-              className={cn(buttonVariants(), 'w-full flex gap-2')}
+              className={cn(
+                buttonVariants(),
+                'w-full flex gap-2 max-sm:col-span-2'
+              )}
             >
               Chỉnh sửa
               <Edit className="w-4 h-4" />
+            </Link>
+            <Link
+              href={`/me/manga/${manga.id}/chapter`}
+              className={cn(buttonVariants(), 'w-full flex gap-2')}
+            >
+              Chapter
+              <Newspaper className="w-4 h-4" />
             </Link>
             <Link
               href={`/manga/${manga.id}`}

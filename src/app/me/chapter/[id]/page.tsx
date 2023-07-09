@@ -1,12 +1,11 @@
+import ForceSignOut from '@/components/ForceSignOut';
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { tagGroupByCategory } from '@/lib/query';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
-import ForceSignOut from '@/components/ForceSignOut';
-import { getAuthSession } from '@/lib/auth';
-const EditManga = dynamic(() => import('@/components/Manage/EditManga'), {
+const ChapterEdit = dynamic(() => import('@/components/Manage/ChapterEdit'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
 });
@@ -28,21 +27,17 @@ const page: FC<pageProps> = async ({ params }) => {
   });
   if (!user) return <ForceSignOut />;
 
-  const manga = await db.manga.findFirst({
+  const chapter = await db.chapter.findFirst({
     where: {
       id: +params.id,
-      creatorId: user.id,
-    },
-    include: {
-      author: true,
-      tags: true,
+      manga: {
+        creatorId: user.id,
+      },
     },
   });
-  if (!manga) return notFound();
+  if (!chapter) return notFound();
 
-  const tags = await tagGroupByCategory();
-
-  return <EditManga manga={manga} tags={tags} />;
+  return <ChapterEdit chapter={chapter} />;
 };
 
 export default page;

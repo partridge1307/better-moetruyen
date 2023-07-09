@@ -16,6 +16,7 @@
     "@editorjs/link": "^2.5.0",
     "@editorjs/quote": "^2.5.0",
     "@editorjs/simple-image": "^1.5.1",
+    "@hello-pangea/dnd": "^16.3.0",
     "@hookform/resolvers": "^3.1.1",
     "@prisma/client": "^4.16.2",
     "@radix-ui/react-accordion": "^1.1.2",

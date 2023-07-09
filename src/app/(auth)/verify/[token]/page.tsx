@@ -1,9 +1,10 @@
-import { db } from "@/lib/db";
-import { verifyToken } from "@/lib/jwt";
-import { AuthVeifyValidator } from "@/lib/validators/auth";
-import Link from "next/link";
-import { FC } from "react";
-import { z } from "zod";
+import { db } from '@/lib/db';
+import { verifyToken } from '@/lib/jwt';
+import { AuthVeifyValidator } from '@/lib/validators/auth';
+import { Prisma } from '@prisma/client';
+import Link from 'next/link';
+import { FC } from 'react';
+import { z } from 'zod';
 
 interface pageProps {
   params: {
@@ -29,16 +30,16 @@ const Page: FC<pageProps> = async ({ params }) => {
             Chúc mừng
           </h1>
           <p className="text-center">
-            Bạn đã tạo tài khoản{" "}
+            Bạn đã tạo tài khoản{' '}
             <Link href="/" className="underline underline-offset-4">
               Moetruyen
-            </Link>{" "}
+            </Link>{' '}
             thành công
             <br />
-            Cùng khám phá{" "}
+            Cùng khám phá{' '}
             <Link href="/" className="underline underline-offset-4">
               Moetruyen
-            </Link>{" "}
+            </Link>{' '}
             ngay thôi nhé
           </p>
         </div>
@@ -55,15 +56,36 @@ const Page: FC<pageProps> = async ({ params }) => {
             <p className="text-center">
               Có vẻ như token không hợp lệ mất rồi
               <br />
-              Hãy thử{" "}
+              Hãy thử{' '}
               <Link href="/sign-up" className="underline underline-offset-2">
                 đăng ký
-              </Link>{" "}
+              </Link>{' '}
               tài khoản lại nhé
             </p>
           </div>
         </div>
       );
+    }
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002')
+        return (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="h-fit max-w-2xl space-y-4">
+              <h1 className="text-center text-4xl font-bold tracking-tight text-red-500">
+                Xin lỗi
+              </h1>
+              <p className="text-center">
+                Bạn tạo tài khoản này rồi
+                <br />
+                Hãy quay về{' '}
+                <Link href="/" className="underline underline-offset-2">
+                  Moetruyen
+                </Link>{' '}
+                nhé
+              </p>
+            </div>
+          </div>
+        );
     }
     return (
       <div className="absolute inset-0 flex items-center justify-center">
@@ -74,10 +96,10 @@ const Page: FC<pageProps> = async ({ params }) => {
           <p className="text-center">
             Có vẻ như có người khác tạo tài khoản này rồi
             <br />
-            Hãy thử{" "}
+            Hãy thử{' '}
             <Link href="/sign-up" className="underline underline-offset-2">
               đăng ký
-            </Link>{" "}
+            </Link>{' '}
             tài khoản khác nhé
           </p>
         </div>

@@ -85,6 +85,18 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
             Sửa chapter
           </Link>
         </DropdownMenuItem>
+
+        {chapter.isPublished && (
+          <DropdownMenuItem>
+            <Link
+              href={`/chapter/${chapter.id}`}
+              className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
+            >
+              Xem chapter
+            </Link>
+          </DropdownMenuItem>
+        )}
+
         {!chapter.isPublished && (
           <Dialog>
             <DialogTrigger asChild>

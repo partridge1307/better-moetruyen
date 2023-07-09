@@ -23,6 +23,11 @@ const CatNames = [
   'MoePressing',
   'MoeMoeMoe',
   'MoeSimpMy',
+  'MoeNguoc',
+  'BLVAnhMoe',
+  'MoeItalia',
+  'MoeVOZER',
+  'MoeThoNgoc',
 ];
 
 const numberDictionary = NumberDictionary.generate({ min: 1, max: 9999 });

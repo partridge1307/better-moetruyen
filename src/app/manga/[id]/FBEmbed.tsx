@@ -14,6 +14,7 @@ const FBEmbed: FC<FBEmbedProps> = ({ facebookLink }) => {
         <div className="relative w-full">
           <div
             className="fb-page"
+            data-lazy="true"
             data-href={facebookLink}
             data-tabs="timeline"
             data-height="300"

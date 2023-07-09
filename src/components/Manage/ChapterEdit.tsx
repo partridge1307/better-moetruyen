@@ -140,12 +140,13 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
     setDndImg(items);
   }
   function onRemoveItem(index: number) {
-    const itemsAfterRemove = dndImg.toSpliced(index, 1);
+    const dndCopy = dndImg;
+    dndCopy.splice(index, 1);
     form.setValue(
       'image',
-      itemsAfterRemove.map((item) => item.image)
+      dndCopy.map((item) => item.image)
     );
-    setDndImg(itemsAfterRemove);
+    setDndImg(dndCopy);
   }
   function onAddItem(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files?.length) {

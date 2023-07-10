@@ -1,5 +1,8 @@
-import NotableManga from "@/components/Manga/NotableManga";
-import { db } from "@/lib/db";
+import { db } from '@/lib/db';
+import dynamic from 'next/dynamic';
+const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
+  ssr: false,
+});
 
 const Home = async () => {
   const manga = await db.manga.findMany({

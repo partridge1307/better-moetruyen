@@ -1,20 +1,20 @@
-import { type Dispatch, FC, type SetStateAction } from "react";
+import { FC } from 'react';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/Form";
-import { Input } from "../ui/Input";
-import Image from "next/image";
-import { ImagePlus } from "lucide-react";
-import type { MangaUploadPayload } from "@/lib/validators/upload";
-import type { UseFormReturn } from "react-hook-form";
+} from '../ui/Form';
+import { Input } from '../ui/Input';
+import Image from 'next/image';
+import { ImagePlus } from 'lucide-react';
+import type { MangaUploadPayload } from '@/lib/validators/upload';
+import type { UseFormReturn } from 'react-hook-form';
 
 interface MangaImageUploadProps {
   form: UseFormReturn<MangaUploadPayload>;
-  setPreviewImage: Dispatch<SetStateAction<string | undefined>>;
+  setPreviewImage: React.Dispatch<React.SetStateAction<string | undefined>>;
   previewImage?: string;
 }
 

@@ -1,6 +1,6 @@
 import type { Chapter, Manga } from '@prisma/client';
 import Image from 'next/image';
-import { forwardRef, type MutableRefObject, memo } from 'react';
+import { forwardRef, memo } from 'react';
 
 interface VerticalViewChapterProps {
   chapter: Chapter & {

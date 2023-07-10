@@ -2,21 +2,9 @@ import { cn } from '@/lib/utils';
 import { DialogClose } from '@radix-ui/react-dialog';
 import { useDebounce } from '@uidotdev/usehooks';
 import Image from 'next/image';
-import {
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-} from 'react';
-import {
-  ReactCrop,
-  centerCrop,
-  makeAspectCrop,
-  type Crop,
-  type PixelCrop,
-} from 'react-image-crop';
+import { forwardRef, useEffect, useRef, useState } from 'react';
+import type { Crop, PixelCrop } from 'react-image-crop';
+import { ReactCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import { buttonVariants } from './ui/Button';
 import { Dialog, DialogContent, DialogTrigger } from './ui/Dialog';
 import { Slider } from './ui/Slider';
@@ -28,11 +16,11 @@ interface ImageCropModalProps {
   } | null;
   setCancel: (type: 'avatar' | 'banner') => void;
   setDone: () => void;
-  setCompleteCrop: Dispatch<SetStateAction<PixelCrop | undefined>>;
+  setCompleteCrop: React.Dispatch<React.SetStateAction<PixelCrop | undefined>>;
   aspect: number;
   completeCrop: PixelCrop | undefined;
-  setDataUrl: Dispatch<
-    SetStateAction<{
+  setDataUrl: React.Dispatch<
+    React.SetStateAction<{
       type: 'avatar' | 'banner';
       data: string;
     } | null>

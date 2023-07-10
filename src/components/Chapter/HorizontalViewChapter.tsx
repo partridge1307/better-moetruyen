@@ -3,7 +3,7 @@ import type { Chapter, Manga } from '@prisma/client';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { forwardRef, type MutableRefObject } from 'react';
+import { forwardRef } from 'react';
 
 interface HorizontalViewChapterProps {
   chapter: Chapter & {

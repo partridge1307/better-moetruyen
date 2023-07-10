@@ -1,5 +1,5 @@
 import type { ChapterUploadPayload } from '@/lib/validators/upload';
-import { FC, type Dispatch, type SetStateAction } from 'react';
+import { FC } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
   FormControl,
@@ -20,7 +20,7 @@ import {
 
 interface ChapterIndexUploadProps {
   form: UseFormReturn<ChapterUploadPayload>;
-  setDisableChapterIndex: Dispatch<SetStateAction<boolean>>;
+  setDisableChapterIndex: React.Dispatch<React.SetStateAction<boolean>>;
   disaleChapterIndex: boolean;
 }
 

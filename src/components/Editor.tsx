@@ -1,15 +1,9 @@
 import '@/styles/editor.css';
 import type EditorJS from '@editorjs/editorjs';
-import {
-  FC,
-  useCallback,
-  useEffect,
-  useState,
-  type MutableRefObject,
-} from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 
 interface EditorProps {
-  editorRef: MutableRefObject<EditorJS | undefined>;
+  editorRef: React.MutableRefObject<EditorJS | undefined>;
 }
 
 const Editor: FC<EditorProps> = ({ editorRef }) => {

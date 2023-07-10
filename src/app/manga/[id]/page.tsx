@@ -1,8 +1,7 @@
 import ChapterList from '@/components/Chapter/ChapterList';
 import EditorOutput from '@/components/EditorOutput';
 import MangaImage from '@/components/MangaImage';
-import UserAvatar from '@/components/User/UserAvatar';
-import { Card, CardHeader, CardTitle } from '@/components/ui/Card';
+import { Card, CardHeader } from '@/components/ui/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';

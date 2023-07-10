@@ -1,14 +1,14 @@
-import { type Dispatch, FC, type SetStateAction } from "react";
+import { FC } from 'react';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/Form";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
-import { Check, X } from "lucide-react";
-import { Input } from "../ui/Input";
+} from '../ui/Form';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
+import { Check, X } from 'lucide-react';
+import { Input } from '../ui/Input';
 import {
   Command,
   CommandEmpty,
@@ -16,10 +16,10 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "../ui/Command";
-import type { MangaUploadPayload, tagInfoProps } from "@/lib/validators/upload";
-import type { UseFormReturn } from "react-hook-form";
-import { cn } from "@/lib/utils";
+} from '../ui/Command';
+import type { MangaUploadPayload, tagInfoProps } from '@/lib/validators/upload';
+import type { UseFormReturn } from 'react-hook-form';
+import { cn } from '@/lib/utils';
 
 type Tags = {
   category: string;
@@ -34,7 +34,7 @@ interface MangaTagUploadProps {
   tag: Tags[];
   tagSelect: tagInfoProps[];
   form: UseFormReturn<MangaUploadPayload>;
-  setTagSelect: Dispatch<SetStateAction<tagInfoProps[]>>;
+  setTagSelect: React.Dispatch<React.SetStateAction<tagInfoProps[]>>;
 }
 
 const MangaTagUpload: FC<MangaTagUploadProps> = ({
@@ -66,7 +66,7 @@ const MangaTagUpload: FC<MangaTagUploadProps> = ({
                       const tagValue = [
                         ...tagSelect.filter((ta) => ta.name !== t.name),
                       ];
-                      form.setValue("tag", tagValue);
+                      form.setValue('tag', tagValue);
                       setTagSelect(tagValue);
                     }}
                   >
@@ -105,7 +105,7 @@ const MangaTagUpload: FC<MangaTagUploadProps> = ({
                                     (T) => T.name.toLowerCase() === currVal
                                   ),
                                 ];
-                                form.setValue("tag", tagValue);
+                                form.setValue('tag', tagValue);
                                 setTagSelect(tagValue);
                               } else {
                                 const tagValue = [
@@ -113,17 +113,17 @@ const MangaTagUpload: FC<MangaTagUploadProps> = ({
                                     (T) => T.name.toLowerCase() !== currVal
                                   ),
                                 ];
-                                form.setValue("tag", tagValue);
+                                form.setValue('tag', tagValue);
                                 setTagSelect(tagValue);
                               }
                             }}
                           >
                             <div
                               className={cn(
-                                "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                                'mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
                                 tagSelect.includes(d)
-                                  ? "bg-primary text-primary-foreground"
-                                  : "opacity-50 [&_svg]:invisible"
+                                  ? 'bg-primary text-primary-foreground'
+                                  : 'opacity-50 [&_svg]:invisible'
                               )}
                             >
                               <Check className="h-4 w-4" />

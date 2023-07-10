@@ -1,4 +1,4 @@
-import { type Dispatch, FC, type SetStateAction } from 'react';
+import { FC } from 'react';
 import {
   FormControl,
   FormField,
@@ -21,9 +21,9 @@ export type authorResultProps = {
 interface MangaAuthorUploadProps {
   form: UseFormReturn<MangaUploadPayload>;
   authorSelected: authorInfoProps[];
-  setAuthorSelected: Dispatch<SetStateAction<authorInfoProps[]>>;
+  setAuthorSelected: React.Dispatch<React.SetStateAction<authorInfoProps[]>>;
   authorInput: string;
-  setAuthorInput: Dispatch<SetStateAction<string>>;
+  setAuthorInput: React.Dispatch<React.SetStateAction<string>>;
   isFetchingAuthor: boolean;
   authorResult?: authorResultProps;
 }

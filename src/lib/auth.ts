@@ -96,7 +96,7 @@ export const authOptions: AuthOptions = {
     },
     async jwt({ token, user }) {
       if (user) {
-        if (!user.name)
+        if (!user.name) {
           user = await db.user.update({
             where: {
               id: user.id,
@@ -105,6 +105,7 @@ export const authOptions: AuthOptions = {
               name: uniqueNamesGenerator(customConfig),
             },
           });
+        }
 
         return {
           id: user.id,
@@ -112,6 +113,26 @@ export const authOptions: AuthOptions = {
           picture: user.image,
           banner: user.banner,
         };
+      } else {
+        const dbUser = await db.user.findUnique({
+          where: {
+            id: token.id,
+          },
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            banner: true,
+          },
+        });
+
+        if (dbUser)
+          return {
+            id: dbUser.id,
+            name: dbUser.name,
+            picture: dbUser.image,
+            banner: dbUser.banner,
+          };
       }
       return token;
     },

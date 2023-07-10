@@ -57,7 +57,7 @@ const reducer = (state: StateProps, action: ActionState) => {
 const UserProfile: FC<UserProfileProps> = ({ user }) => {
   const { loginToast, notFoundToast } = useCustomToast();
   const router = useRouter();
-  const { data: session, update } = useSession();
+  const { update } = useSession();
   const [completeCrop, setCompleteCrop] = useState<PixelCrop>();
   const modalRef = useRef<HTMLButtonElement>(null);
   const [aspect, setAspect] = useState(1);
@@ -125,8 +125,9 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
       });
     },
     onSuccess: async () => {
+      update();
+      router.push('/');
       router.refresh();
-      await update();
 
       return toast({
         title: 'Thành công',
@@ -229,12 +230,12 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
               )
             )}
 
-            <div className="relative w-full h-full">
+            <div className="absolute top-0 w-full h-full rounded-full">
               <input
                 type="file"
                 title=""
                 accept=".jpg, .png, .jpeg"
-                className="absolute inset-0 opacity-0 cursor-pointer"
+                className="absolute inset-0 opacity-0 z-10 rounded-full cursor-pointer"
                 onChange={(e) => {
                   if (e.target.files?.length) {
                     setPreviewImage({
@@ -296,7 +297,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
               disabled={isEditting}
               className={cn(
                 'bg-green-600 hover:bg-green-800 w-20 px-2 py-1 rounded-md',
-                isEditting && 'flex items-center gap-1'
+                isEditting && 'flex items-center gap-2'
               )}
             >
               {isEditting && <Loader2 className="w-4 h-4 animate-spin" />}

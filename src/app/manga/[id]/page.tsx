@@ -11,6 +11,7 @@ import { notFound } from 'next/navigation';
 import { FC, Suspense } from 'react';
 import 'server-only';
 import FBEmbed from './FBEmbed';
+import { cn } from '@/lib/utils';
 
 interface pageProps {
   params: {
@@ -64,6 +65,7 @@ const page: FC<pageProps> = async ({ params }) => {
           name: true,
           image: true,
           banner: true,
+          color: true,
         },
       },
       view: {
@@ -168,7 +170,14 @@ const page: FC<pageProps> = async ({ params }) => {
                     <CardHeader className="max-sm:gap-12">
                       <div className="relative">
                         {manga.creator.image && (
-                          <div className="absolute left-2 h-[5.5rem] w-[5.5rem] border-8 rounded-full z-10 top-2/3">
+                          <div
+                            className={cn(
+                              'h-[5rem] w-[5rem] border-[6px] rounded-full z-10',
+                              manga.creator.banner
+                                ? 'absolute top-2/3 left-2'
+                                : 'mx-auto'
+                            )}
+                          >
                             <div className="relative w-full h-full">
                               <Image
                                 fill
@@ -192,7 +201,15 @@ const page: FC<pageProps> = async ({ params }) => {
                         )}
                       </div>
 
-                      <p className="md:text-center font-semibold text-lg ml-3 md:ml-12">
+                      <p
+                        className={cn(
+                          'md:text-center font-semibold text-lg',
+                          manga.creator.banner && 'text-center ml-3 md:ml-10'
+                        )}
+                        style={{
+                          color: manga.creator.color ? manga.creator.color : '',
+                        }}
+                      >
                         {manga.creator.name}
                       </p>
                     </CardHeader>

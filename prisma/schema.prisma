@@ -14,11 +14,22 @@ model User {
   name        String?       @unique
   image       String?
   banner      String?
+  badge       Badge[]
+  color       String?
   verified    Boolean       @default(false)
   manga       Manga[]
   comment     Comment[]
   commentVote CommentVote[]
   createAt    DateTime      @default(now())
+}
+
+model Badge {
+  id          Int    @id @default(autoincrement())
+  image       String
+  name        String
+  color       String
+  description String
+  user        User[]
 }
 
 model Manga {

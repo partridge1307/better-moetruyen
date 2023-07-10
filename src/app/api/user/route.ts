@@ -20,7 +20,7 @@ export async function PATCH(req: NextRequest) {
     });
 
     const form = await req.formData();
-    const { avatar, banner, name } = formValidator.parse(form);
+    const { avatar, banner, name, color } = formValidator.parse(form);
 
     let avatarUrl: string | null = null,
       bannerUrl: string | null = null;
@@ -35,6 +35,7 @@ export async function PATCH(req: NextRequest) {
         name,
         image: avatarUrl ? avatarUrl : user.image,
         banner: bannerUrl ? bannerUrl : user.banner,
+        color: color ? color : user.color,
       },
     });
 

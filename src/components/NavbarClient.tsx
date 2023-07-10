@@ -39,7 +39,7 @@ const NavbarClient: FC<NavbarClientProps> = ({ session }) => {
   return (
     <div
       className={cn(
-        'inset-x-0 top-0 z-20 h-fit border-b bg-slate-100 dark:bg-zinc-800',
+        'inset-x-0 top-0 z-30 h-fit border-b bg-slate-100 dark:bg-zinc-800',
         isFixed.current && 'fixed'
       )}
     >
@@ -63,14 +63,14 @@ const NavbarClient: FC<NavbarClientProps> = ({ session }) => {
 
           {session?.user ? (
             <DropdownMenuContent align="end" className="min-w-[300px] p-2">
-              <div className="relative w-full h-fit space-y-4 mb-6">
+              <div className="relative w-full h-fit space-y-3 mb-6">
                 <div>
                   {session.user.image && (
                     <div
                       className={cn(
                         'z-10 left-2 top-1/2',
                         session.user.banner
-                          ? 'absolute border-8 rounded-full'
+                          ? 'absolute border-[6px] rounded-full'
                           : 'flex justify-center'
                       )}
                     >
@@ -101,6 +101,9 @@ const NavbarClient: FC<NavbarClientProps> = ({ session }) => {
                     'text-center text-lg font-medium text-white',
                     session.user.image && session.user.banner && 'ml-5'
                   )}
+                  style={{
+                    color: session.user.color ? session.user.color : '',
+                  }}
                 >
                   {session.user.name}
                 </p>

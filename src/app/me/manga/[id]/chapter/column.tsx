@@ -40,8 +40,8 @@ export const columns: ColumnDef<Chapter>[] = [
     header: 'Trạng thái',
     cell: ({ row }) => {
       const formattedStatus = row.getValue('Trạng thái')
-        ? 'Đã publish'
-        : 'Chờ publish';
+        ? 'Đã đăng'
+        : 'Chờ đăng';
 
       return <div>{formattedStatus}</div>;
     },

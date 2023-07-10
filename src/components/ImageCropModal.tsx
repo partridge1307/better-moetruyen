@@ -1,8 +1,7 @@
 import { cn } from '@/lib/utils';
 import { DialogClose } from '@radix-ui/react-dialog';
-import { useDebounce } from '@uidotdev/usehooks';
 import Image from 'next/image';
-import { forwardRef, useEffect, useRef, useState } from 'react';
+import { forwardRef, useRef, useState } from 'react';
 import type { Crop, PixelCrop } from 'react-image-crop';
 import { ReactCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import { buttonVariants } from './ui/Button';
@@ -16,9 +15,7 @@ interface ImageCropModalProps {
   } | null;
   setCancel: (type: 'avatar' | 'banner') => void;
   setDone: () => void;
-  setCompleteCrop: React.Dispatch<React.SetStateAction<PixelCrop | undefined>>;
   aspect: number;
-  completeCrop: PixelCrop | undefined;
   setDataUrl: React.Dispatch<
     React.SetStateAction<{
       type: 'avatar' | 'banner';
@@ -85,18 +82,8 @@ function cropImage(image: HTMLImageElement, crop: PixelCrop) {
 }
 
 const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
-  (
-    {
-      previewImage,
-      setCancel,
-      setDone,
-      completeCrop,
-      setCompleteCrop,
-      aspect,
-      setDataUrl,
-    },
-    ref
-  ) => {
+  ({ previewImage, setCancel, setDone, aspect, setDataUrl }, ref) => {
+    const [completeCrop, setCompleteCrop] = useState<PixelCrop>();
     const [crop, setCrop] = useState<Crop>({
       unit: 'px',
       x: 0,
@@ -104,7 +91,6 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
       width: 0,
       height: 0,
     });
-    const debouncedCrop = useDebounce(completeCrop, 300);
     const imageRef = useRef<HTMLImageElement | null>(null);
     let mediaWidth = 0,
       mediaHeight = 0;
@@ -114,22 +100,18 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
       mediaHeight = imageRef.current.naturalHeight;
     }
 
-    useEffect(() => {
-      const handler = async () => {
-        if (
-          completeCrop?.width &&
-          completeCrop?.height &&
-          imageRef.current &&
-          previewImage
-        ) {
-          const dataUrl = cropImage(imageRef.current, completeCrop);
-          setDataUrl({ type: previewImage.type, data: dataUrl });
-        }
-      };
-
-      handler();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [completeCrop, debouncedCrop, previewImage]);
+    function onDoneHandler() {
+      if (
+        completeCrop?.width &&
+        completeCrop?.height &&
+        imageRef.current &&
+        previewImage
+      ) {
+        const dataUrl = cropImage(imageRef.current, completeCrop);
+        setDataUrl({ type: previewImage.type, data: dataUrl });
+        setDone();
+      }
+    }
 
     function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
       const { width, height } = e.currentTarget;
@@ -161,7 +143,7 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
                   src={previewImage.image}
                   alt="Profile Banner"
                   onLoad={onImageLoad}
-                  className="object-cover w-full h-1/3"
+                  className="object-fill w-full h-1/3"
                 />
               </ReactCrop>
             )}
@@ -170,7 +152,7 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
               <Slider
                 defaultValue={[aspect === 1 ? 55 : 75]}
                 min={aspect === 1 ? 25 : 50}
-                max={55}
+                max={aspect === 1 ? 55 : 100}
                 step={1}
                 onValueChange={(value) =>
                   setCrop(
@@ -203,7 +185,7 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
               </DialogClose>
               <DialogClose
                 className={cn(buttonVariants({ variant: 'default' }), 'w-20')}
-                onClick={() => setDone()}
+                onClick={() => onDoneHandler()}
               >
                 Xong
               </DialogClose>

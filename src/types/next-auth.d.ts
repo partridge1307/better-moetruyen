@@ -8,6 +8,7 @@ declare module 'next-auth/jwt' {
     id: UserId;
     name: string | null;
     banner: string | null;
+    color: string | null;
   }
 }
 
@@ -21,5 +22,6 @@ declare module 'next-auth' {
   interface User {
     name: string | null;
     banner: string | null;
+    color: string | null;
   }
 }

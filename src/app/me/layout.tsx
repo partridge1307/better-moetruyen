@@ -2,6 +2,7 @@ import { buttonVariants } from '@/components/ui/Button';
 import { getAuthSession } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
@@ -13,7 +14,41 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
     <div className="container h-full pt-20 md:pt-32">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-[.4fr_1fr]">
         <div className="h-fit rounded-lg space-y-2 dark:bg-zinc-900/75">
-          <p className="p-4 text-center font-semibold">{session.user.name}</p>
+          <div className="relative p-2 dark:hover:bg-zinc-700 rounded-md">
+            <Link href="/me">
+              {session.user.image && (
+                <div className="absolute z-10 top-1/2 left-4">
+                  <div className="relative h-20 w-20 border-4 rounded-full">
+                    <Image
+                      fill
+                      sizes="0%"
+                      src={session.user.image}
+                      alt="Profile Avatar"
+                      className="rounded-full"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {session.user.banner && (
+                <div className="relative w-full h-32">
+                  <Image
+                    fill
+                    sizes="0%"
+                    src={session.user.banner}
+                    alt="Profile Banner"
+                    className="rounded-md"
+                  />
+                </div>
+              )}
+              <p
+                className="px-4 pt-2 pb-4 text-lg ml-20 lg:ml-24 font-semibold"
+                style={{ color: session.user.color ? session.user.color : '' }}
+              >
+                {session.user.name}
+              </p>
+            </Link>
+          </div>
 
           <div className="space-y-4 p-4">
             <Link
@@ -26,7 +61,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
               href="/me/manga"
               className={cn(
                 buttonVariants({ variant: 'ghost' }),
-                'w-full py-6 ml-2 flex items-center gap-1'
+                'w-full py-6 pl-6 flex items-center gap-1'
               )}
             >
               Quản lý truyện

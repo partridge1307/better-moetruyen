@@ -73,6 +73,7 @@ export const authOptions: AuthOptions = {
             name: userWithoutPass.name,
             image: userWithoutPass.image,
             banner: userWithoutPass.banner,
+            color: userWithoutPass.color,
           };
         } catch (error) {
           return null;
@@ -90,6 +91,7 @@ export const authOptions: AuthOptions = {
         session.user.name = token.name;
         session.user.image = token.picture;
         session.user.banner = token.banner;
+        session.user.color = token.color;
       }
 
       return session;
@@ -112,6 +114,7 @@ export const authOptions: AuthOptions = {
           name: user.name,
           picture: user.image,
           banner: user.banner,
+          color: user.color,
         };
       } else {
         const dbUser = await db.user.findUnique({
@@ -123,6 +126,7 @@ export const authOptions: AuthOptions = {
             name: true,
             image: true,
             banner: true,
+            color: true,
           },
         });
 
@@ -132,6 +136,7 @@ export const authOptions: AuthOptions = {
             name: dbUser.name,
             picture: dbUser.image,
             banner: dbUser.banner,
+            color: dbUser.color,
           };
       }
       return token;

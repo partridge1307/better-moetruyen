@@ -57,22 +57,32 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
             >
               Đăng truyện
             </Link>
-            <Link
-              href="/me/manga"
-              className={cn(
-                buttonVariants({ variant: 'ghost' }),
-                'w-full py-6 pl-6 flex items-center gap-1'
-              )}
-            >
-              Quản lý truyện
-              <ChevronRight className="w-5 h-5" />
-            </Link>
+            <div className="space-y-2">
+              <Link
+                href="/me/manga"
+                className={cn(
+                  buttonVariants({ variant: 'ghost' }),
+                  'w-full py-6 pl-6 flex items-center gap-1'
+                )}
+              >
+                Quản lý truyện
+                <ChevronRight className="w-5 h-5" />
+              </Link>
+              <Link
+                href="/me/team"
+                className={cn(
+                  buttonVariants({ variant: 'ghost' }),
+                  'w-full py-6 pl-6 flex items-center gap-1'
+                )}
+              >
+                Quản lý team
+                <ChevronRight className="w-5 h-5" />
+              </Link>
+            </div>
           </div>
         </div>
 
-        <div className="min-h-[400px] rounded-lg p-2 dark:bg-zinc-900/75 md:min-h-[500px]">
-          {children}
-        </div>
+        <div className="rounded-lg p-2 dark:bg-zinc-900/75 ">{children}</div>
       </div>
     </div>
   );

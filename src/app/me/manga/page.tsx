@@ -27,11 +27,15 @@ const page = async () => {
     })
     .manga();
 
-  return !!manga?.length ? (
-    // @ts-ignore
-    <DataMangaTable columns={columns} data={manga} />
-  ) : (
-    <div>Bạn chưa có manga nào. Hãy upload một bộ ngay thôi nhé</div>
+  return (
+    <div className="min-h-[400px] md:min-h-[500px]">
+      {!!manga?.length ? (
+        // @ts-ignore
+        <DataMangaTable columns={columns} data={manga} />
+      ) : (
+        <div>Bạn chưa có manga nào. Hãy upload một bộ ngay thôi nhé</div>
+      )}
+    </div>
   );
 };
 

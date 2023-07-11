@@ -15,7 +15,6 @@ const Editor: FC<EditorProps> = ({ editorRef }) => {
     const CheckList = (await import('@editorjs/checklist')).default;
     const Quote = (await import('@editorjs/quote')).default;
     const LinkTool = (await import('@editorjs/link')).default;
-    const Delimiter = (await import('@editorjs/delimiter')).default;
 
     if (!editorRef.current) {
       const editor = new EditorJS({
@@ -30,7 +29,6 @@ const Editor: FC<EditorProps> = ({ editorRef }) => {
           header: Header,
           image: SimpleImage,
           quote: Quote,
-          delimiter: Delimiter,
           checklist: {
             class: CheckList,
             inlineToolbar: true,

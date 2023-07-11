@@ -31,29 +31,33 @@ const page = async ({ params }: { params: { id: string } }) => {
     },
   });
 
-  return !!chapter.length ? (
-    <div className="flex flex-col">
-      <Link
-        href={`/me/manga/${params.id}/chapter/upload`}
-        className={cn(
-          buttonVariants({ variant: 'outline' }),
-          'self-end rounded-lg'
-        )}
-      >
-        Thêm chapter
-      </Link>
-      {/* @ts-ignore */}
-      <DataChapterTable columns={columns} data={chapter} />
-    </div>
-  ) : (
-    <div className="flex h-full flex-col items-center justify-center gap-4">
-      <p>Truyện chưa có chapter nào cả</p>
-      <Link
-        href={`/me/manga/${params.id}/chapter/upload`}
-        className={buttonVariants()}
-      >
-        Thêm chapter
-      </Link>
+  return (
+    <div className="min-h-[400px] md:min-h-[500px]">
+      {!!chapter.length ? (
+        <div className="flex flex-col">
+          <Link
+            href={`/me/manga/${params.id}/chapter/upload`}
+            className={cn(
+              buttonVariants({ variant: 'outline' }),
+              'self-end rounded-lg max-sm:w-full'
+            )}
+          >
+            Thêm chapter
+          </Link>
+          {/* @ts-ignore */}
+          <DataChapterTable columns={columns} data={chapter} />
+        </div>
+      ) : (
+        <div className="flex h-full flex-col items-center justify-center gap-4">
+          <p>Truyện chưa có chapter nào cả</p>
+          <Link
+            href={`/me/manga/${params.id}/chapter/upload`}
+            className={buttonVariants()}
+          >
+            Thêm chapter
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

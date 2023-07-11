@@ -329,7 +329,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                         </div>
                       </HoverCardTrigger>
 
-                      <HoverCardContent className="grid grid-cols-2 gap-6 w-fit dark:bg-slate-950/50">
+                      <HoverCardContent className="grid grid-cols-2 gap-6 w-fit dark:bg-slate-800">
                         <div className="relative w-full h-full">
                           <Image
                             fill
@@ -365,7 +365,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                 dispatch({ type: ActionType.RESET, payload: '' });
                 setUsername(user.name!);
                 setBlobImg(null);
-                setColor('');
+                setColor(user.color ? user.color : '');
               }}
             >
               Reset

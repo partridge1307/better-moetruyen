@@ -8,19 +8,41 @@ datasource db {
 }
 
 model User {
-  id          String        @id @default(cuid())
-  email       String        @unique
-  password    String
-  name        String?       @unique
-  image       String?
-  banner      String?
-  badge       Badge[]
-  color       String?
-  verified    Boolean       @default(false)
-  manga       Manga[]
-  comment     Comment[]
-  commentVote CommentVote[]
-  createAt    DateTime      @default(now())
+  id           String        @id @default(cuid())
+  email        String        @unique
+  password     String
+  name         String?       @unique
+  image        String?
+  banner       String?
+  badge        Badge[]
+  color        String?
+  verified     Boolean       @default(false)
+  owner        Team?
+  memberOnTeam MemberOnTeam?
+  manga        Manga[]
+  comment      Comment[]
+  commentVote  CommentVote[]
+  createAt     DateTime      @default(now())
+}
+
+model MemberOnTeam {
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+  team   Team   @relation(fields: [teamId], references: [id])
+  teamId Int
+
+  @@unique([userId, teamId])
+}
+
+model Team {
+  id        Int            @id @default(autoincrement())
+  image     String?
+  name      String         @unique
+  owner     User           @relation(fields: [ownerId], references: [id])
+  ownerId   String         @unique
+  member    MemberOnTeam[]
+  chapter   Chapter[]
+  createdAt DateTime       @default(now())
 }
 
 model Badge {
@@ -77,6 +99,8 @@ model Chapter {
   volume       Int
   manga        Manga        @relation(fields: [mangaId], references: [id])
   mangaId      Int
+  team         Team?        @relation(fields: [teamId], references: [id])
+  teamId       Int?
   isPublished  Boolean      @default(false)
   comment      Comment[]
   dailyView    DailyView[]

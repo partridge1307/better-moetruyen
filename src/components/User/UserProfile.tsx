@@ -12,7 +12,6 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FC, useEffect, useReducer, useRef, useState } from 'react';
-import 'react-image-crop/dist/ReactCrop.css';
 import ImageCropModal from '../ImageCropModal';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
 import { Input } from '../ui/Input';
@@ -126,6 +125,12 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
       if (e instanceof AxiosError) {
         if (e.response?.status === 401) return loginToast();
         if (e.response?.status === 404) return notFoundToast();
+        if (e.response?.status === 422)
+          return toast({
+            title: 'Không hợp lệ',
+            description: 'Biểu mẫu không hợp lệ. Vui lòng thử lại',
+            variant: 'destructive',
+          });
       }
 
       return toast({
@@ -400,7 +405,14 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
         }}
         setDone={() => setPreviewImage(null)}
         aspect={aspect}
-        setDataUrl={(value) => setDataUrl(value)}
+        setDataUrl={(value) =>
+          setDataUrl(
+            value as {
+              type: 'avatar' | 'banner';
+              data: string;
+            } | null
+          )
+        }
       />
     </form>
   );

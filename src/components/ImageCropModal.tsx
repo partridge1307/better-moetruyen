@@ -7,21 +7,17 @@ import { ReactCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import { buttonVariants } from './ui/Button';
 import { Dialog, DialogContent, DialogTrigger } from './ui/Dialog';
 import { Slider } from './ui/Slider';
+import 'react-image-crop/dist/ReactCrop.css';
 
 interface ImageCropModalProps {
   previewImage: {
-    type: 'avatar' | 'banner';
+    type: string;
     image: string;
   } | null;
-  setCancel: (type: 'avatar' | 'banner') => void;
+  setCancel: (type: string) => void;
   setDone: () => void;
   aspect: number;
-  setDataUrl: React.Dispatch<
-    React.SetStateAction<{
-      type: 'avatar' | 'banner';
-      data: string;
-    } | null>
-  >;
+  setDataUrl: ({ type, data }: { type: string; data: string }) => void;
 }
 
 function centerAspectCrop(

@@ -1,15 +1,18 @@
 import { db } from '@/lib/db';
 import { upload } from '@/lib/discord';
-import { UserProfileEditValidator } from '@/lib/validators/user';
+import { TeamEditValidator } from '@/lib/validators/team';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
 
-const formValidator = zfd.formData(UserProfileEditValidator);
+const formValidator = zfd.formData(TeamEditValidator);
 
-export async function PATCH(req: NextRequest) {
+export async function PATCH(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
@@ -19,24 +22,26 @@ export async function PATCH(req: NextRequest) {
         id: token.id,
       },
     });
+    const team = await db.team.findFirstOrThrow({
+      where: {
+        id: +context.params.id,
+        ownerId: user.id,
+      },
+    });
 
     const form = await req.formData();
-    const { avatar, banner, name, color } = formValidator.parse(form);
+    const { image, name } = formValidator.parse(form);
+    let imageUrl: string | null = null;
 
-    let avatarUrl: string | null = null,
-      bannerUrl: string | null = null;
-    if (avatar) avatarUrl = await upload({ blobImage: avatar, retryCount: 5 });
-    if (banner) bannerUrl = await upload({ blobImage: banner, retryCount: 5 });
+    if (image) await upload({ blobImage: image, retryCount: 5 });
 
-    await db.user.update({
+    await db.team.update({
       where: {
-        id: user.id,
+        id: team.id,
       },
       data: {
-        name,
-        image: avatarUrl ? avatarUrl : user.image,
-        banner: bannerUrl ? bannerUrl : user.banner,
-        color: color ? color : user.color,
+        image: imageUrl ? imageUrl : team.image,
+        name: name,
       },
     });
 
@@ -46,10 +51,10 @@ export async function PATCH(req: NextRequest) {
       return new Response(error.message, { status: 422 });
     }
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P2025') {
+      if (error.code === 'P2025')
         return new Response('Not found', { status: 404 });
-      }
     }
+
     return new Response('Something went wrong', { status: 500 });
   }
 }

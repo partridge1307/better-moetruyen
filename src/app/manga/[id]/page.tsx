@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { FC, Suspense } from 'react';
 import 'server-only';
-import FBEmbed from './FBEmbed';
+import FBEmbed from '@/components/FBEmbed';
 import { cn } from '@/lib/utils';
 
 interface pageProps {

@@ -282,7 +282,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
 
           {user.badge.length && (
             <div>
-              <p>Màu tên</p>
+              <p>Chọn huy hiệu</p>
               <Select value={color} onValueChange={(value) => setColor(value)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -334,7 +334,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                         </div>
                       </HoverCardTrigger>
 
-                      <HoverCardContent className="grid grid-cols-2 gap-6 w-fit dark:bg-slate-800">
+                      <HoverCardContent className="grid grid-cols-2 gap-6 w-fit dark:bg-zinc-600">
                         <div className="relative w-full h-full">
                           <Image
                             fill

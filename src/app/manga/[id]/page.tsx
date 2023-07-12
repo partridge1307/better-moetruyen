@@ -1,7 +1,7 @@
 import ChapterList from '@/components/Chapter/ChapterList';
 import EditorOutput from '@/components/EditorOutput';
 import MangaImage from '@/components/MangaImage';
-import { Card, CardHeader } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';
@@ -66,6 +66,17 @@ const page: FC<pageProps> = async ({ params }) => {
           image: true,
           banner: true,
           color: true,
+          memberOnTeam: {
+            select: {
+              team: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
+                },
+              },
+            },
+          },
         },
       },
       view: {
@@ -161,7 +172,7 @@ const page: FC<pageProps> = async ({ params }) => {
             </TabsList>
             <TabsContent
               value="chapter"
-              className="grid grid-cols-1 md:grid-cols-[.4fr_1fr] lg:grid-cols-[.3fr_1fr] gap-6"
+              className="grid grid-cols-1 max-sm:gap-20 md:grid-cols-[.4fr_1fr] lg:grid-cols-[.3fr_1fr] gap-6"
             >
               <div className="max-sm:order-last space-y-4">
                 <div>
@@ -213,6 +224,26 @@ const page: FC<pageProps> = async ({ params }) => {
                         {manga.creator.name}
                       </p>
                     </CardHeader>
+                    {manga.creator.memberOnTeam && (
+                      <CardContent>
+                        <div className="flex px-2 gap-3">
+                          {manga.creator.memberOnTeam.team.image && (
+                            <div className="relative w-10 h-10">
+                              <Image
+                                fill
+                                sizes="0%"
+                                src={manga.creator.memberOnTeam.team.image}
+                                alt="Team Image"
+                                className="rounded-full"
+                              />
+                            </div>
+                          )}
+                          <p className="text-lg font-semibold">
+                            {manga.creator.memberOnTeam.team.name}
+                          </p>
+                        </div>
+                      </CardContent>
+                    )}
                   </Card>
                 </div>
 

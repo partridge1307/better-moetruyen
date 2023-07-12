@@ -10,6 +10,7 @@ import {
   AccordionTrigger,
 } from '../ui/Accordion';
 import parseJSON from 'date-fns/parseJSON';
+import Image from 'next/image';
 
 interface ChapterListProps {
   mangaId: number;
@@ -48,12 +49,38 @@ const ChapterList: FC<ChapterListProps> = async ({ mangaId }) => {
                             </p>
                           </div>
 
-                          <dl className="flex items-center gap-2">
-                            <dt>
-                              <Clock className="h-4 w-4" />
-                            </dt>
-                            <dd>{formatTimeToNow(parseJSON(d.createdAt))}</dd>
-                          </dl>
+                          <div className="flex max-sm:flex-col max-sm:items-start items-center gap-2 md:gap-4">
+                            {d.teamId && (
+                              <Link
+                                href={`/team/${d.teamId}`}
+                                className="flex items-center gap-1"
+                              >
+                                {d.teamImage && (
+                                  <div className="relative h-6 w-6">
+                                    <Image
+                                      fill
+                                      sizes="0%"
+                                      src={d.teamImage}
+                                      alt="Team Image"
+                                      className="rounded-full"
+                                    />
+                                  </div>
+                                )}
+                                {d.teamName && (
+                                  <p className="text-sm md:text-base font-medium">
+                                    {d.teamName}
+                                  </p>
+                                )}
+                              </Link>
+                            )}
+
+                            <dl className="flex items-center gap-2">
+                              <dt>
+                                <Clock className="h-4 w-4" />
+                              </dt>
+                              <dd>{formatTimeToNow(parseJSON(d.createdAt))}</dd>
+                            </dl>
+                          </div>
                         </Link>
                       </li>
                     );

@@ -5,4 +5,3 @@ declare module '@editorjs/checklist';
 declare module '@editorjs/quote';
 declare module '@editorjs/link';
 declare module '@editorjs/delimiter';
-declare module 'can-use-dom';

@@ -1,11 +1,11 @@
 'use client';
 
+import './Dialog.css';
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
-import { type } from 'os';
 
 const Dialog = DialogPrimitive.Root;
 
@@ -120,6 +120,26 @@ const DialogDescription = React.forwardRef<
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
 
+type Props = Readonly<{
+  'data-test-id'?: string;
+  children: React.ReactNode;
+}>;
+
+export function DialogButtonsList({ children }: Props): JSX.Element {
+  return <div className="DialogButtonsList">{children}</div>;
+}
+
+function DialogActions({
+  'data-test-id': dataTestId,
+  children,
+}: Props): JSX.Element {
+  return (
+    <div className="DialogActions" data-test-id={dataTestId}>
+      {children}
+    </div>
+  );
+}
+
 export {
   Dialog,
   DialogTrigger,
@@ -128,4 +148,5 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
+  DialogActions,
 };

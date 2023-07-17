@@ -1,55 +1,37 @@
 'use client';
 
 import '@/styles/mteditor.css';
-import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { CharacterLimitPlugin } from '@lexical/react/LexicalCharacterLimitPlugin';
+import {
+  InitialConfigType,
+  LexicalComposer,
+} from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { ImageNode } from './nodes/Image';
-import AutoLink from './plugins/AutoLink';
-import Toolbar from './plugins/Toolbar';
-import ImagesPlugin from './plugins/Image';
-import EmojisPlugin from './plugins/Emoji';
-import { EmojiNode } from './nodes/Emoji';
+import { nodes } from './Node';
+import { theme } from './Theme';
 import AutoEmbedPlugin from './plugins/AutoEmbed';
+import AutoLink from './plugins/AutoLink';
+import EmojisPlugin from './plugins/Emoji';
+import ImagesPlugin from './plugins/Image';
+import Submit from './plugins/Submit';
+import Toolbar from './plugins/Toolbar';
 import YouTubePlugin from './plugins/Youtube';
-import { YouTubeNode } from './nodes/Youtube';
-import { EmbedLinkNode } from './nodes/EmbedLink';
-import EmbedLinkPlugin from './plugins/EmbedLink';
+import { MaxLengthPlugin } from './plugins/MaxLength';
 
 function onError(error: Error): void {
   console.log(error);
 }
 
-const theme = {
-  text: {
-    bold: 'moetruyen-editor-bold',
-    italic: 'moetruyen-editor-italic',
-    underline: 'moetruyen-editor-underline',
-    strikethrough: 'moetruyen-editor-strikethrough',
-    underlineStrikethrough: 'moetruyen-editor-underlinestrikethrough',
-  },
-  link: 'moetruyen-editor-link',
-  paragraph: 'moetruyen-editor-paragraph',
-  image: 'moetruyen-editor-image',
-};
-
-const editorConfig = {
+const editorConfig: InitialConfigType = {
   namespace: 'MoetruyenEditor',
   theme,
   onError,
-  nodes: [
-    AutoLinkNode,
-    LinkNode,
-    ImageNode,
-    EmojiNode,
-    YouTubeNode,
-    EmbedLinkNode,
-  ],
+  nodes: [...nodes],
 };
 
 export default function Editor(): JSX.Element {
@@ -70,6 +52,7 @@ export default function Editor(): JSX.Element {
             />
           </div>
         </div>
+        <Submit />
         <HistoryPlugin />
         <AutoFocusPlugin />
         <LinkPlugin />
@@ -78,7 +61,8 @@ export default function Editor(): JSX.Element {
         <EmojisPlugin />
         <AutoEmbedPlugin />
         <YouTubePlugin />
-        <EmbedLinkPlugin />
+        <MaxLengthPlugin maxLength={50} />
+        <CharacterLimitPlugin charset="UTF-8" maxLength={50} />
       </LexicalComposer>
     </>
   );

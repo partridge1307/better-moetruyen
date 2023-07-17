@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/DropdownMenu';
 import Image from 'next/image';
+import { User2 } from 'lucide-react';
 
 interface NavbarClientProps {
   session?: Session | null;
@@ -57,7 +58,7 @@ const NavbarClient: FC<NavbarClientProps> = ({ session }) => {
             {session?.user ? (
               <UserAvatar user={session.user} />
             ) : (
-              <Icons.user className="h-7 w-7" />
+              <User2 className="h-7 w-7" />
             )}
           </DropdownMenuTrigger>
 

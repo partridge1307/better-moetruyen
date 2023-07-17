@@ -1,9 +1,9 @@
-import type { AvatarProps } from '@radix-ui/react-avatar';
-import type { User } from 'next-auth';
-import { FC } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/Avatar';
-import { Icons } from '@/components/Icons';
+import type {AvatarProps} from '@radix-ui/react-avatar';
+import { User2 } from 'lucide-react';
+import type { User } from 'next-auth';
 import Image from 'next/image';
+import { FC } from 'react';
 
 interface UserAvatarProps extends AvatarProps {
   user: Pick<User, 'image' | 'name'>;
@@ -26,7 +26,7 @@ const UserAvatar: FC<UserAvatarProps> = ({ user, ...props }) => {
       ) : (
         <AvatarFallback className="bg-transparent dark:hover:bg-transparent/20">
           <span className="sr-only">{user?.name}</span>
-          <Icons.user className="h-7 w-7 text-black dark:text-white" />
+          <User2 className="h-7 w-7 text-black dark:text-white" />
         </AvatarFallback>
       )}
     </Avatar>

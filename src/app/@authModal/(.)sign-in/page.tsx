@@ -1,5 +1,5 @@
-import SignIn from "@/components/Auth/SignIn";
-import CloseModal from "@/components/CloseModal";
+import SignIn from '@/components/Auth/SignIn';
+import CloseModal from '@/components/CloseModal';
 
 const Page = () => {
   return (

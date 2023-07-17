@@ -1,9 +1,17 @@
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/Dialog';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
+import { Input } from '@/components/ui/Input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/Select';
 import { cn } from '@/lib/utils';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -16,7 +24,6 @@ import {
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
   REDO_COMMAND,
-  SELECTION_CHANGE_COMMAND,
   UNDO_COMMAND,
 } from 'lexical';
 import {
@@ -24,7 +31,6 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
-  Image as ImageIcon,
   Italic,
   Link as LinkIcon,
   Redo,
@@ -34,16 +40,9 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { FloatingLinkEditor, getSelectedNode } from '../Link';
-import { Input } from '@/components/ui/Input';
 import { ImageInputBody } from '../Image';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/Select';
+import { FloatingLinkEditor, getSelectedNode } from '../Link';
+
 const voidPayload = void +'';
 const lowPriority = 1;
 
@@ -59,6 +58,8 @@ const Toolbar = () => {
   const [canRedo, setCanRedo] = useState<boolean>(false);
   const [selectedInlineStyle, setSelectedInlineStyle] = useState<string[]>([]);
   const [isLink, setIsLink] = useState<boolean>(false);
+  const [linkInput, setLinkInput] = useState<string>('');
+  const [isLinkDisabled, setIsLinkDisabled] = useState<boolean>(false);
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -81,6 +82,10 @@ const Toolbar = () => {
       updateInlineStyle(selection.hasFormat('strikethrough'), 'strikethrough');
 
       setSelectedInlineStyle(selectedInlineStyles);
+
+      selection.getTextContent() === ''
+        ? setIsLinkDisabled(true)
+        : setIsLinkDisabled(false);
 
       const node = getSelectedNode(selection);
       const parent = node.getParent();
@@ -116,112 +121,152 @@ const Toolbar = () => {
     );
   }, [editor, updateToolbar]);
 
-  const insertLink = useCallback(() => {
-    if (!isLink) {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
-    } else {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-    }
-  }, [editor, isLink]);
+  const insertLink = useCallback(
+    (link: string) => {
+      if (!isLink) {
+        editor.dispatchCommand(TOGGLE_LINK_COMMAND, link);
+      } else {
+        editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+      }
+    },
+    [editor, isLink]
+  );
 
   return (
-    <div className="overflow-auto flex gap-2 dark:bg-zinc-700">
-      <button
-        className={cn(
-          'p-1 rounded-md transition-colors',
-          selectedInlineStyle.includes('bold') ? 'dark:bg-zinc-900' : ''
-        )}
-        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')}
-      >
-        <Bold className="w-5 h-5" />
-      </button>
-      <button
-        className={cn(
-          'p-1 rounded-md transition-colors',
-          selectedInlineStyle.includes('italic') ? 'dark:bg-zinc-900' : ''
-        )}
-        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')}
-      >
-        <Italic className="w-5 h-5" />
-      </button>
-      <button
-        className={cn(
-          'p-1 rounded-md transition-colors',
-          selectedInlineStyle.includes('underline') ? 'dark:bg-zinc-900' : ''
-        )}
-        onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')}
-      >
-        <Underline className="w-5 h-5" />
-      </button>
-      <button
-        className={cn(
-          'p-1 rounded-md transition-colors',
-          selectedInlineStyle.includes('strikethrough')
-            ? 'dark:bg-zinc-900'
-            : ''
-        )}
-        onClick={() =>
-          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
-        }
-      >
-        <Strikethrough className="w-5 h-5" />
-      </button>
-      <Select defaultValue={'left-align'}>
-        <SelectTrigger className="w-fit">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem
-            value="left-align"
-            onMouseDown={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
-            }}
+    <div className="overflow-auto flex justify-between gap-2">
+      <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
+          <button
+            title="Ctrl + B"
+            className={cn(
+              'p-1 rounded-md transition-colors',
+              selectedInlineStyle.includes('bold') ? 'dark:bg-zinc-700' : ''
+            )}
+            onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')}
           >
-            <AlignLeft className="w-5 h-5" />
-          </SelectItem>
-          <SelectItem
-            value="center-align"
-            onMouseDown={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
-            }}
+            <Bold className="w-5 h-5" />
+          </button>
+          <button
+            title="Ctrl + I"
+            className={cn(
+              'p-1 rounded-md transition-colors',
+              selectedInlineStyle.includes('italic') ? 'dark:bg-zinc-700' : ''
+            )}
+            onClick={() =>
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')
+            }
           >
-            <AlignCenter className="w-5 h-5" />
-          </SelectItem>
-          <SelectItem
-            value="right-align"
-            onMouseDown={() => {
-              editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
-            }}
+            <Italic className="w-5 h-5" />
+          </button>
+          <button
+            title="Ctrl + U"
+            className={cn(
+              'p-1 rounded-md transition-colors',
+              selectedInlineStyle.includes('underline')
+                ? 'dark:bg-zinc-700'
+                : ''
+            )}
+            onClick={() =>
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')
+            }
           >
-            <AlignRight className="w-5 h-5" />
-          </SelectItem>
-        </SelectContent>
-      </Select>
-      <ImageInputBody editor={editor} />
-      <button
-        onClick={insertLink}
-        className={cn('p-1 rounded-md', isLink ? 'dark:bg-zinc-900' : '')}
-      >
-        <LinkIcon className="w-5 h-5" />
-      </button>
-      {isLink &&
-        createPortal(<FloatingLinkEditor editor={editor} />, document.body)}
-      <button
-        disabled={!canUndo}
-        className={cn(!canUndo && 'dark:text-gray-500')}
-        onClick={() => {
-          editor.dispatchCommand(UNDO_COMMAND, voidPayload);
-        }}
-      >
-        <Undo className="w-5 h-5" />
-      </button>
-      <button
-        disabled={!canRedo}
-        className={cn(!canRedo && 'dark:text-gray-500')}
-        onClick={() => editor.dispatchCommand(REDO_COMMAND, voidPayload)}
-      >
-        <Redo className="w-5 h-5" />
-      </button>
+            <Underline className="w-5 h-5" />
+          </button>
+          <button
+            className={cn(
+              'p-1 rounded-md transition-colors',
+              selectedInlineStyle.includes('strikethrough')
+                ? 'dark:bg-zinc-700'
+                : ''
+            )}
+            onClick={() =>
+              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
+            }
+          >
+            <Strikethrough className="w-5 h-5" />
+          </button>
+        </div>
+        <Select defaultValue={'left-align'}>
+          <SelectTrigger className="w-fit px-1 border-none">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem
+              value="left-align"
+              onMouseDown={() => {
+                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
+              }}
+            >
+              <AlignLeft className="w-5 h-5" />
+            </SelectItem>
+            <SelectItem
+              value="center-align"
+              onMouseDown={() => {
+                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
+              }}
+            >
+              <AlignCenter className="w-5 h-5" />
+            </SelectItem>
+            <SelectItem
+              value="right-align"
+              onMouseDown={() => {
+                editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
+              }}
+            >
+              <AlignRight className="w-5 h-5" />
+            </SelectItem>
+          </SelectContent>
+        </Select>
+        <ImageInputBody editor={editor} />
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className={cn('transition-opacity', isLinkDisabled && 'opacity-50')}
+            disabled={isLinkDisabled}
+          >
+            <LinkIcon className="w-5 h-5" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <div className="flex items-center p-1 gap-2">
+              <Input
+                placeholder="Điền Link..."
+                value={linkInput}
+                onChange={(e) => setLinkInput(e.target.value)}
+              />
+              <DropdownMenuItem
+                disabled={linkInput === ''}
+                onSelect={() => {
+                  insertLink(linkInput);
+                  setLinkInput('');
+                }}
+                className="dark:bg-white dark:text-black p-2"
+              >
+                Xong
+              </DropdownMenuItem>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        {isLink &&
+          createPortal(<FloatingLinkEditor editor={editor} />, document.body)}
+      </div>
+
+      <div className="flex items-center gap-2 pr-2">
+        <button
+          disabled={!canUndo}
+          className={cn('transition-opacity', !canUndo && 'opacity-50')}
+          onClick={() => {
+            editor.dispatchCommand(UNDO_COMMAND, voidPayload);
+          }}
+        >
+          <Undo className="w-5 h-5" />
+        </button>
+        <button
+          disabled={!canRedo}
+          className={cn('transition-opacity', !canRedo && 'opacity-50')}
+          onClick={() => editor.dispatchCommand(REDO_COMMAND, voidPayload)}
+        >
+          <Redo className="w-5 h-5" />
+        </button>
+      </div>
     </div>
   );
 };

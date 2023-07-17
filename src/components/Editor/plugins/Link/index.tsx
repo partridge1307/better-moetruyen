@@ -11,7 +11,7 @@ import {
   type NodeSelection,
   type RangeSelection,
 } from 'lexical';
-import { Check, Pencil, X } from 'lucide-react';
+import { Check, ExternalLink, Pencil, Unlink, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const lowPriority = 1;
@@ -148,12 +148,15 @@ export function FloatingLinkEditor({
   }, [isEditMode]);
 
   return (
-    <div ref={editorRef} className="moetruyen-link-editor">
+    <div
+      ref={editorRef}
+      className="absolute z-10 -mt-1 w-fit transition-opacity rounded-md dark:bg-zinc-800 p-1 px-2"
+    >
       {isEditMode ? (
-        <div className="relative">
+        <div className="flex items-center gap-2">
           <Input
             ref={inputRef}
-            className="moetruyen-link-input"
+            className="focus-visible:ring-transparent focus-visible:ring-offset-0 md:w-36 lg:w-48 dark:bg-zinc-700"
             value={linkUrl}
             onChange={(e) => {
               setLinkUrl(e.target.value);
@@ -173,8 +176,9 @@ export function FloatingLinkEditor({
               }
             }}
           />
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-1">
+          <div className="flex items-center gap-2">
             <div
+              className="p-1 dark:bg-zinc-700 rounded-full"
               onClick={() => {
                 if (lastSelection !== null) {
                   if (linkUrl !== '') {
@@ -187,6 +191,7 @@ export function FloatingLinkEditor({
               <Check className="w-5 h-5 cursor-pointer text-green-400" />
             </div>
             <div
+              className="p-1 dark:bg-zinc-700 rounded-full"
               onClick={() => {
                 setIsEditMode(false);
               }}
@@ -196,23 +201,29 @@ export function FloatingLinkEditor({
           </div>
         </div>
       ) : (
-        <>
-          <div className="moetruyen-link-input">
-            <a href={linkUrl} target="_blank" rel="noopener noreferrer">
-              {linkUrl}
-            </a>
+        <div className="flex max-sm:flex-col items-center gap-3 p-2">
+          <a href={linkUrl} target="_blank" rel="noopener noreferrer">
+            <ExternalLink className="w-5 h-5" />
+          </a>
 
-            <Pencil
-              role="button"
-              tabIndex={0}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={() => {
-                setIsEditMode(true);
-              }}
-              className="moetruyen-link-edit w-4 h-4 right-2 top-1/2 -translate-y-1/2"
-            />
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => {
+              setIsEditMode(true);
+            }}
+          >
+            <Pencil className="w-5 h-5" />
           </div>
-        </>
+
+          <div
+            role="button"
+            tabIndex={1}
+            onClick={() => editor.dispatchCommand(TOGGLE_LINK_COMMAND, null)}
+          >
+            <Unlink className="w-5 h-5" />
+          </div>
+        </div>
       )}
     </div>
   );

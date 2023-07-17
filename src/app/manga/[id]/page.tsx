@@ -1,17 +1,17 @@
 import ChapterList from '@/components/Chapter/ChapterList';
 import EditorOutput from '@/components/EditorOutput';
+import FBEmbed from '@/components/FBEmbed';
 import MangaImage from '@/components/MangaImage';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';
+import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { FC, Suspense } from 'react';
 import 'server-only';
-import FBEmbed from '@/components/FBEmbed';
-import { cn } from '@/lib/utils';
 
 interface pageProps {
   params: {
@@ -272,6 +272,8 @@ const page: FC<pageProps> = async ({ params }) => {
                 <ChapterList mangaId={manga.id} />
               </Suspense>
             </TabsContent>
+
+            <TabsContent value="comment"></TabsContent>
           </Tabs>
         </div>
       </div>

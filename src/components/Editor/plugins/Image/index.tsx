@@ -1,5 +1,14 @@
-import { Button } from '@/components/ui/Button';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/Dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogTrigger,
+} from '@/components/ui/AlertDialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import { Input } from '@/components/ui/Input';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $wrapNodeInElement, mergeRegister } from '@lexical/utils';
@@ -21,7 +30,7 @@ import {
   type LexicalCommand,
   type LexicalEditor,
 } from 'lexical';
-import { Image as ImageIcon } from 'lucide-react';
+import { FileImage, Image as ImageIcon, Link2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
   $createImageNode,
@@ -56,14 +65,14 @@ export function InsertURLImageUploaded({
         value={src}
         onChange={(e) => setSrc(e.target.value)}
       />
-      <Button
+      <AlertDialogAction
         disabled={isDisabled}
         onClick={() => {
           onClick({ src, altText: 'Image' });
         }}
       >
         Xong
-      </Button>
+      </AlertDialogAction>
     </>
   );
 }
@@ -97,12 +106,12 @@ export function InsertImageUploaded({
         accept=".jpg, .jpeg, .png"
         onChange={(e) => LoadImage(e.target.files)}
       />
-      <Button
+      <AlertDialogAction
         disabled={isDisabled}
         onClick={() => onClick({ src, altText: 'Image' })}
       >
         Xong
-      </Button>
+      </AlertDialogAction>
     </>
   );
 }
@@ -170,31 +179,32 @@ export function ImageInputBody({
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <button>
-          <ImageIcon className="w-5 h-5" />
-        </button>
-      </DialogTrigger>
-      <DialogContent>
-        <Dialog>
-          <DialogTrigger asChild>
-            <button>Link</button>
-          </DialogTrigger>
-          <DialogContent>
-            <InsertURLImageUploaded onClick={onClick} />
-          </DialogContent>
-        </Dialog>
-        <Dialog>
-          <DialogTrigger asChild>
-            <button>File</button>
-          </DialogTrigger>
-          <DialogContent>
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <ImageIcon className="w-5 h-5" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="flex flex-col items-center gap-3 p-2 dark:bg-zinc-900 text-white">
+        <AlertDialog>
+          <AlertDialogTrigger className="flex items-center gap-1">
+            <FileImage className="w-5 h-5" />
+            <p>Từ máy</p>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
             <InsertImageUploaded onClick={onClick} />
-          </DialogContent>
-        </Dialog>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <AlertDialog>
+          <AlertDialogTrigger className="flex items-center gap-1">
+            <Link2 className="w-5 h-5" />
+            <p>Từ Link</p>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <InsertURLImageUploaded onClick={onClick} />
+          </AlertDialogContent>
+        </AlertDialog>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -241,11 +251,6 @@ function getImageNodeInSelection(): ImageNode | null {
   const node = nodes[0];
   return $isImageNode(node) ? node : null;
 }
-
-const TRANSPARENT_IMAGE =
-  'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-const img = document.createElement('img');
-img.src = TRANSPARENT_IMAGE;
 
 function canDropImage(event: DragEvent): boolean {
   const target = event.target;
@@ -306,7 +311,6 @@ function onDragStart(event: DragEvent): boolean {
     return false;
   }
   dataTransfer.setData('text/plain', '_');
-  dataTransfer.setDragImage(img, 0, 0);
   dataTransfer.setData(
     'application/x-lexical-drag',
     JSON.stringify({

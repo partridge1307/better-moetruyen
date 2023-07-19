@@ -1,3 +1,4 @@
+import MoetruyenEditorOutput from '@/components/Editor/MoetruyenEditorOutput';
 import dynamic from 'next/dynamic';
 import { FC } from 'react';
 const MoetruyenEditor = dynamic(
@@ -11,6 +12,7 @@ const page: FC<pageProps> = ({}) => {
   return (
     <div className="pt-20 max-w-xl mx-auto">
       <MoetruyenEditor />
+      <MoetruyenEditorOutput />
     </div>
   );
 };

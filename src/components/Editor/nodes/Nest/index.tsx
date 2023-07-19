@@ -14,7 +14,6 @@ import {
   Spread,
   createEditor,
 } from 'lexical';
-import { $createEmbedLink, EmbedLinkNode } from '../EmbedLink';
 import NestComponent from './component';
 
 export type SerializedNestNode = Spread<

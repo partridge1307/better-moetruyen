@@ -21,16 +21,16 @@ function onError(error: Error): void {
   console.log(error);
 }
 
-function LoadContent() {
-  if (testContent.oEmbed)
-    return {
-      content: JSON.stringify(testContent.data),
-      oEmbed: testContent.oEmbed,
-    };
-  else return { content: JSON.stringify(testContent.data), oEmbed: null };
-}
+// function LoadContent() {
+//   if (testContent.oEmbed)
+//     return {
+//       content: JSON.stringify(testContent.data),
+//       oEmbed: testContent.oEmbed,
+//     };
+//   else return { content: JSON.stringify(testContent.data), oEmbed: null };
+// }
 const MoetruyenEditorOutput = () => {
-  const { content, oEmbed } = LoadContent();
+  // const { content, oEmbed } = LoadContent();
 
   const editorConfig: InitialConfigType = {
     namespace: 'MoetruyenEditor',
@@ -38,7 +38,7 @@ const MoetruyenEditorOutput = () => {
     theme,
     onError,
     nodes: [...nodes],
-    editorState: content,
+    editorState: JSON.stringify(testContent),
   };
 
   return (
@@ -56,10 +56,10 @@ const MoetruyenEditorOutput = () => {
           />
         </div>
       </div>
-      <div>
+      {/* <div>
         <p>{oEmbed?.link}</p>
         <p>{oEmbed?.meta.title}</p>
-      </div>
+      </div> */}
       <LinkPlugin />
       <AutoLink />
       <ImagesPlugin />

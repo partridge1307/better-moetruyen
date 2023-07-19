@@ -3,7 +3,6 @@ import { OverflowNode } from '@lexical/overflow';
 import { EmojiNode } from './nodes/Emoji';
 import { ImageNode } from './nodes/Image';
 import { YouTubeNode } from './nodes/Youtube';
-import { NestNode } from './nodes/Nest';
 
 export const nodes = [
   AutoLinkNode,
@@ -12,5 +11,4 @@ export const nodes = [
   EmojiNode,
   YouTubeNode,
   OverflowNode,
-  NestNode,
 ];

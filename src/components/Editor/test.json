@@ -1,55 +1,29 @@
 {
-  "data": {
-    "root": {
-      "children": [
-        {
-          "children": [
-            {
-              "children": [
-                {
-                  "detail": 0,
-                  "format": 0,
-                  "mode": "normal",
-                  "style": "",
-                  "text": "https://discord.gg/dongmoe",
-                  "type": "text",
-                  "version": 1
-                }
-              ],
-              "direction": "ltr",
-              "format": "",
-              "indent": 0,
-              "type": "autolink",
-              "version": 1,
-              "rel": null,
-              "target": null,
-              "title": null,
-              "url": "https://discord.gg/dongmoe"
-            }
-          ],
-          "direction": "ltr",
-          "format": "",
-          "indent": 0,
-          "type": "paragraph",
-          "version": 1
-        }
-      ],
-      "direction": "ltr",
-      "format": "",
-      "indent": 0,
-      "type": "root",
-      "version": 1
-    }
-  },
-
-  "oEmbed": {
-    "link": "https://discord.gg/dongmoe",
-    "meta": {
-      "title": "Động Mòe",
-      "description": "Nơi chuyên về Manga - Anime. Cộng đồng các nhóm dịch truyện tranh | 4118 members",
-      "image": {
-        "url": "https://cdn.discordapp.com/splashes/533169283375693844/4b97d544b0800cae3970956e4d0d1f81.jpg?size=512"
+  "root": {
+    "children": [
+      {
+        "children": [
+          {
+            "altText": "Image",
+            "height": 453.125,
+            "maxWidth": 500,
+            "src": "https://cdn.discordapp.com/emojis/1072968038594379826.webp?size=128&quality=lossless",
+            "type": "image",
+            "version": 1,
+            "width": 500
+          }
+        ],
+        "direction": null,
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
       }
-    }
+    ],
+    "direction": null,
+    "format": "",
+    "indent": 0,
+    "type": "root",
+    "version": 1
   }
 }

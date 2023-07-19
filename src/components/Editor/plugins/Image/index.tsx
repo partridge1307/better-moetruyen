@@ -14,18 +14,15 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $wrapNodeInElement, mergeRegister } from '@lexical/utils';
 import {
   $createParagraphNode,
-  $createRangeSelection,
   $getSelection,
   $insertNodes,
   $isNodeSelection,
   $isRootOrShadowRoot,
-  $setSelection,
   COMMAND_PRIORITY_EDITOR,
   COMMAND_PRIORITY_HIGH,
   COMMAND_PRIORITY_LOW,
   DRAGOVER_COMMAND,
   DRAGSTART_COMMAND,
-  DROP_COMMAND,
   createCommand,
   type LexicalCommand,
   type LexicalEditor,
@@ -116,11 +113,7 @@ export function InsertImageUploaded({
   );
 }
 
-export default function ImagesPlugin({
-  captionsEnabled,
-}: {
-  captionsEnabled?: boolean;
-}): JSX.Element | null {
+export default function ImagesPlugin(): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
@@ -155,16 +148,9 @@ export default function ImagesPlugin({
           return onDragover(event);
         },
         COMMAND_PRIORITY_LOW
-      ),
-      editor.registerCommand<DragEvent>(
-        DROP_COMMAND,
-        (event) => {
-          return onDrop(event, editor);
-        },
-        COMMAND_PRIORITY_HIGH
       )
     );
-  }, [captionsEnabled, editor]);
+  }, [editor]);
 
   return null;
 }
@@ -185,8 +171,8 @@ export function ImageInputBody({
       </DropdownMenuTrigger>
       <DropdownMenuContent className="flex flex-col items-center gap-3 p-2 dark:bg-zinc-900 text-white">
         <AlertDialog>
-          <AlertDialogTrigger className="flex items-center gap-1">
-            <FileImage className="w-5 h-5" />
+          <AlertDialogTrigger className="flex items-center justify-center gap-1 p-1 rounded-md text-base hover:dark:bg-zinc-800 w-full">
+            <FileImage className="w-[1.2rem] h-[1.2rem]" />
             <p>Từ máy</p>
           </AlertDialogTrigger>
           <AlertDialogContent>
@@ -195,7 +181,7 @@ export function ImageInputBody({
         </AlertDialog>
 
         <AlertDialog>
-          <AlertDialogTrigger className="flex items-center gap-1">
+          <AlertDialogTrigger className="flex items-center justify-center gap-1 p-1 rounded-md text-base hover:dark:bg-zinc-800 w-full">
             <Link2 className="w-5 h-5" />
             <p>Từ Link</p>
           </AlertDialogTrigger>
@@ -206,40 +192,6 @@ export function ImageInputBody({
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
-
-function onDragover(event: DragEvent): boolean {
-  const node = getImageNodeInSelection();
-  if (!node) {
-    return false;
-  }
-  if (!canDropImage(event)) {
-    event.preventDefault();
-  }
-  return true;
-}
-
-function onDrop(event: DragEvent, editor: LexicalEditor): boolean {
-  const node = getImageNodeInSelection();
-  if (!node) {
-    return false;
-  }
-  const data = getDragImageData(event);
-  if (!data) {
-    return false;
-  }
-  event.preventDefault();
-  if (canDropImage(event)) {
-    const range = getDragSelection(event);
-    node.remove();
-    const rangeSelection = $createRangeSelection();
-    if (range !== null && range !== undefined) {
-      rangeSelection.applyDOMRange(range);
-    }
-    $setSelection(rangeSelection);
-    editor.dispatchCommand(INSERT_IMAGE_COMMAND, data);
-  }
-  return true;
 }
 
 function getImageNodeInSelection(): ImageNode | null {
@@ -263,43 +215,16 @@ function canDropImage(event: DragEvent): boolean {
   );
 }
 
-function getDragImageData(event: DragEvent): null | InsertImagePayload {
-  const dragData = event.dataTransfer?.getData('application/x-lexical-drag');
-  if (!dragData) {
-    return null;
+function onDragover(event: DragEvent): boolean {
+  const node = getImageNodeInSelection();
+  if (!node) {
+    return false;
   }
-  const { type, data } = JSON.parse(dragData);
-  if (type !== 'image') {
-    return null;
+  if (!canDropImage(event)) {
+    event.preventDefault();
   }
-
-  return data;
+  return true;
 }
-
-function getDragSelection(event: DragEvent): Range | null | undefined {
-  let range;
-  const target = event.target as null | Element | Document;
-  const targetWindow =
-    target == null
-      ? null
-      : target.nodeType === 9
-      ? (target as Document).defaultView
-      : (target as Element).ownerDocument.defaultView;
-  const domSelection = getDOMSelection(targetWindow);
-  if (document.caretRangeFromPoint) {
-    range = document.caretRangeFromPoint(event.clientX, event.clientY);
-  } else if (event.rangeParent && domSelection !== null) {
-    domSelection.collapse(event.rangeParent, event.rangeOffset || 0);
-    range = domSelection.getRangeAt(0);
-  } else {
-    throw Error(`Cannot get the selection when dragging`);
-  }
-
-  return range;
-}
-
-const getDOMSelection = (targetWindow: Window | null): Selection | null =>
-  (targetWindow || window).getSelection();
 
 function onDragStart(event: DragEvent): boolean {
   const node = getImageNodeInSelection();
@@ -316,11 +241,9 @@ function onDragStart(event: DragEvent): boolean {
     JSON.stringify({
       data: {
         altText: node.__altText,
-        caption: node.__caption,
         height: node.__height,
         key: node.getKey(),
         maxWidth: node.__maxWidth,
-        showCaption: node.__showCaption,
         src: node.__src,
         width: node.__width,
       },

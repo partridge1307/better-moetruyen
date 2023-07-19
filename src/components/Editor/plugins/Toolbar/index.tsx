@@ -193,6 +193,7 @@ const Toolbar = () => {
           <SelectContent>
             <SelectItem
               value="left-align"
+              className="cursor-pointer"
               onMouseDown={() => {
                 editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
               }}
@@ -201,6 +202,7 @@ const Toolbar = () => {
             </SelectItem>
             <SelectItem
               value="center-align"
+              className="cursor-pointer"
               onMouseDown={() => {
                 editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
               }}
@@ -209,6 +211,7 @@ const Toolbar = () => {
             </SelectItem>
             <SelectItem
               value="right-align"
+              className="cursor-pointer"
               onMouseDown={() => {
                 editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
               }}
@@ -251,6 +254,7 @@ const Toolbar = () => {
 
       <div className="flex items-center gap-2 pr-2">
         <button
+          title="Ctrl + Z"
           disabled={!canUndo}
           className={cn('transition-opacity', !canUndo && 'opacity-50')}
           onClick={() => {

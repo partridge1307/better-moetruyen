@@ -40,12 +40,14 @@ function YouTubeComponent({
       nodeKey={nodeKey}
     >
       <iframe
-        width="560"
-        height="315"
+        height={315}
         src={`https://www.youtube-nocookie.com/embed/${videoID}`}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen={true}
         title="YouTube video"
+        style={{
+          width: '100%',
+        }}
       />
     </BlockWithAlignableContents>
   );
@@ -103,8 +105,6 @@ export class YouTubeNode extends DecoratorBlockNode {
   exportDOM(): DOMExportOutput {
     const element = document.createElement('iframe');
     element.setAttribute('data-lexical-youtube', this.__id);
-    element.setAttribute('width', '560');
-    element.setAttribute('height', '315');
     element.setAttribute(
       'src',
       `https://www.youtube-nocookie.com/embed/${this.__id}`
@@ -115,6 +115,8 @@ export class YouTubeNode extends DecoratorBlockNode {
     );
     element.setAttribute('allowfullscreen', 'true');
     element.setAttribute('title', 'YouTube video');
+    element.setAttribute('height', '315');
+    element.style.width = '100%';
     return { element };
   }
 

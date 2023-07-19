@@ -247,6 +247,10 @@ const page: FC<pageProps> = async ({ params }) => {
                   </Card>
                 </div>
 
+                {manga.facebookLink && (
+                  <FBEmbed facebookLink={manga.facebookLink} />
+                )}
+
                 {discord.code && (
                   <div className="p-1">
                     <p className="text-lg px-1 w-full">
@@ -261,10 +265,6 @@ const page: FC<pageProps> = async ({ params }) => {
                       className="w-full border dark:border-zinc-700 rounded-md"
                     />
                   </div>
-                )}
-
-                {manga.facebookLink && (
-                  <FBEmbed facebookLink={manga.facebookLink} />
                 )}
               </div>
 

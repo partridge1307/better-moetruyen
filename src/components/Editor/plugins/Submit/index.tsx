@@ -5,7 +5,6 @@ import { useMutation } from '@tanstack/react-query';
 
 export default function Submit(): JSX.Element {
   const [editor] = useLexicalComposerContext();
-  const editorState = editor.getEditorState();
   const {
     data: oEmbedData,
     mutate: Embed,
@@ -21,15 +20,17 @@ export default function Submit(): JSX.Element {
   });
 
   function onClick() {
-    editorState._nodeMap.forEach((V) => {
-      if (V instanceof AutoLinkNode) {
-        Embed(V.__url);
-      }
-    });
+    const editorState = editor.getEditorState();
+    console.log(JSON.stringify(editorState.toJSON()));
+
+    // editorState._nodeMap.forEach((V) => {
+    //   if (V instanceof AutoLinkNode) {
+    //     Embed(V.__url);
+    //   }
+    // });
   }
 
   if (typeof oEmbedData !== 'undefined' && !isFetchingOEmbed) {
-    console.log(JSON.stringify(editorState.toJSON()));
     console.log(JSON.stringify(oEmbedData));
   }
 

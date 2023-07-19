@@ -201,7 +201,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
             progressBar === 'hidden'
               ? 'opacity-0 hover:opacity-100'
               : progressBar === 'lightbar'
-              ? 'items-end p-0 dark:hover:bg-transparent'
+              ? 'items-end p-0 dark:hover:bg-transparent gap-1'
               : null
           )}
         >

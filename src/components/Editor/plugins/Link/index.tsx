@@ -178,7 +178,7 @@ export function FloatingLinkEditor({
           />
           <div className="flex items-center gap-2">
             <div
-              className="p-1 dark:bg-zinc-700 rounded-full"
+              className="p-1 dark:bg-zinc-700 rounded-full transition-colors hover:dark:bg-zinc-600"
               onClick={() => {
                 if (lastSelection !== null) {
                   if (linkUrl !== '') {
@@ -191,7 +191,7 @@ export function FloatingLinkEditor({
               <Check className="w-5 h-5 cursor-pointer text-green-400" />
             </div>
             <div
-              className="p-1 dark:bg-zinc-700 rounded-full"
+              className="p-1 dark:bg-zinc-700 rounded-full transition-colors hover:dark:bg-zinc-600"
               onClick={() => {
                 setIsEditMode(false);
               }}

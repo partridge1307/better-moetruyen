@@ -1,29 +1,29 @@
-import { cn } from "@/lib/utils";
-import { Chapter } from "@prisma/client";
-import Link from "next/link";
-import { FC } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/Popover";
-import { Separator } from "../ui/Separator";
+import { cn } from '@/lib/utils';
+import { Chapter } from '@prisma/client';
+import Link from 'next/link';
+import { FC } from 'react';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
+import { Separator } from '../ui/Separator';
 
 interface ChapterControllProps {
   currentImage: number;
-  chapter: Pick<Chapter, "name" | "chapterIndex" | "volume" | "images"> & {
+  chapter: Pick<Chapter, 'name' | 'chapterIndex' | 'volume' | 'images'> & {
     manga: {
       name: string;
       id: number;
     };
   };
   setCurrentImage(value: number): void;
-  readingMode: "vertical" | "horizontal";
-  setReadingMode(value: "vertical" | "horizontal"): void;
-  progressBar: "hidden" | "fixed" | "lightbar";
-  setProgressBar(value: "hidden" | "fixed" | "lightbar"): void;
+  readingMode: 'vertical' | 'horizontal';
+  setReadingMode(value: 'vertical' | 'horizontal'): void;
+  progressBar: 'hidden' | 'fixed' | 'lightbar';
+  setProgressBar(value: 'hidden' | 'fixed' | 'lightbar'): void;
 }
 
-const progressBarArr: Array<"hidden" | "fixed" | "lightbar"> = [
-  "hidden",
-  "fixed",
-  "lightbar",
+const progressBarArr: Array<'hidden' | 'fixed' | 'lightbar'> = [
+  'hidden',
+  'fixed',
+  'lightbar',
 ];
 
 const ChapterControll: FC<ChapterControllProps> = ({
@@ -43,14 +43,14 @@ const ChapterControll: FC<ChapterControllProps> = ({
     }
   }
   function onSubmitHandler() {
-    const idx = (document.getElementById("index-input") as HTMLInputElement)
+    const idx = (document.getElementById('index-input') as HTMLInputElement)
       .value;
     setCurrentImage(Number(idx) - 1);
   }
 
   function onProgressBarHandler() {
     const target = progressBarArr[progressBarArr.indexOf(progressBar) + 1];
-    setProgressBar(target ? target : "hidden");
+    setProgressBar(target ? target : 'hidden');
   }
 
   return (
@@ -111,11 +111,11 @@ const ChapterControll: FC<ChapterControllProps> = ({
               <div className="flex gap-8 max-sm:justify-center">
                 <div
                   className={cn(
-                    "cursor-pointer space-y-2 rounded-xl border-4 p-2 dark:border-zinc-800",
-                    readingMode === "vertical" ? "dark:border-orange-500" : null
+                    'cursor-pointer space-y-2 rounded-xl border-4 p-2 dark:border-zinc-800',
+                    readingMode === 'vertical' ? 'dark:border-orange-500' : null
                   )}
                   onClick={() => {
-                    setReadingMode("vertical");
+                    setReadingMode('vertical');
                   }}
                 >
                   <div className="mx-auto h-24 w-24 overflow-hidden md:h-32 md:w-32">
@@ -134,13 +134,13 @@ const ChapterControll: FC<ChapterControllProps> = ({
 
                 <div
                   className={cn(
-                    "cursor-pointer space-y-2 rounded-xl border-4 p-2 dark:border-zinc-800",
-                    readingMode === "horizontal"
-                      ? "dark:border-orange-500"
+                    'cursor-pointer space-y-2 rounded-xl border-4 p-2 dark:border-zinc-800',
+                    readingMode === 'horizontal'
+                      ? 'dark:border-orange-500'
                       : null
                   )}
                   onClick={() => {
-                    setReadingMode("horizontal");
+                    setReadingMode('horizontal');
                   }}
                 >
                   <div className="mx-auto h-24 w-24 overflow-hidden md:h-32 md:w-32">
@@ -167,12 +167,12 @@ const ChapterControll: FC<ChapterControllProps> = ({
                 className="w-full rounded-lg py-2 text-center text-lg transition-all dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-700/70 dark:hover:text-white/80"
                 onClick={() => onProgressBarHandler()}
               >
-                <p className={progressBar === "hidden" ? "" : "hidden"}>Ẩn</p>
-                <p className={progressBar === "fixed" ? "" : "hidden"}>
+                <p className={progressBar === 'hidden' ? '' : 'hidden'}>Ẩn</p>
+                <p className={progressBar === 'fixed' ? '' : 'hidden'}>
                   Luôn hiện
                 </p>
-                <p className={progressBar === "lightbar" ? "" : "hidden"}>
-                  Lightbar
+                <p className={progressBar === 'lightbar' ? '' : 'hidden'}>
+                  Làm mờ
                 </p>
               </button>
             </div>

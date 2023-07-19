@@ -116,7 +116,8 @@ enum VoteType {
 
 model Comment {
   id        Int           @id @default(autoincrement())
-  content   String
+  content   Json
+  oEmbed    Json?
   author    User          @relation(fields: [authorId], references: [id])
   authorId  String
   manga     Manga         @relation(fields: [mangaId], references: [id])

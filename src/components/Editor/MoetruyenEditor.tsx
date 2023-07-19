@@ -22,8 +22,16 @@ import Submit from './plugins/Submit';
 import Toolbar from './plugins/Toolbar';
 import YouTubePlugin from './plugins/Youtube';
 import { MaxLengthPlugin } from './plugins/MaxLength';
+import { toast } from '@/hooks/use-toast';
 
 function onError(error: Error): void {
+  toast({
+    title: 'Có lỗi xảy ra',
+    description: 'Có lỗi xảy ra với phần Text Editor',
+    variant: 'destructive',
+  });
+
+  // eslint-disable-next-line no-console
   console.log(error);
 }
 
@@ -34,16 +42,16 @@ const editorConfig: InitialConfigType = {
   nodes: [...nodes],
 };
 
-export default function Editor(): JSX.Element {
+export default function Editor({ id }: { id: string }): JSX.Element {
   return (
     <>
       <LexicalComposer initialConfig={editorConfig}>
-        <div className="moetruyen-editor-wrapper">
+        <div className="moetruyen-editor-wrapper space-y-3">
           <Toolbar />
           <div className="moetruyen-editor-inner">
             <RichTextPlugin
               contentEditable={
-                <ContentEditable className="moetruyen-editor-input" />
+                <ContentEditable className="moetruyen-editor-input rounded-lg focus:ring-1 focus-visible:ring-offset-1" />
               }
               placeholder={
                 <div className="moetruyen-placeholder">Nhập nội dung...</div>
@@ -51,8 +59,11 @@ export default function Editor(): JSX.Element {
               ErrorBoundary={LexicalErrorBoundary}
             />
           </div>
+          <div className="text-right">
+            <CharacterLimitPlugin charset="UTF-8" maxLength={1024} />
+          </div>
+          <Submit id={id} />
         </div>
-        <Submit />
         <HistoryPlugin />
         <AutoFocusPlugin />
         <LinkPlugin />
@@ -61,8 +72,7 @@ export default function Editor(): JSX.Element {
         <EmojisPlugin />
         <AutoEmbedPlugin />
         <YouTubePlugin />
-        <MaxLengthPlugin maxLength={50} />
-        <CharacterLimitPlugin charset="UTF-8" maxLength={50} />
+        <MaxLengthPlugin maxLength={1024} />
       </LexicalComposer>
     </>
   );

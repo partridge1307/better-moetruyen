@@ -12,6 +12,11 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { FC, Suspense } from 'react';
 import 'server-only';
+import dynamic from 'next/dynamic';
+const MoetruyenEditor = dynamic(
+  () => import('@/components/Editor/MoetruyenEditor'),
+  { ssr: false, loading: () => <Loader2 className="w-6 h-6" /> }
+);
 
 interface pageProps {
   params: {
@@ -273,7 +278,9 @@ const page: FC<pageProps> = async ({ params }) => {
               </Suspense>
             </TabsContent>
 
-            <TabsContent value="comment"></TabsContent>
+            <TabsContent value="comment">
+              <MoetruyenEditor id={params.id} />
+            </TabsContent>
           </Tabs>
         </div>
       </div>

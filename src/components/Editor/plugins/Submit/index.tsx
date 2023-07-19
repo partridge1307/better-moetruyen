@@ -1,10 +1,23 @@
 import { Button } from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
+import { CommentContentPayload } from '@/lib/validators/upload';
 import { AutoLinkNode } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import { useCallback, useEffect, useState } from 'react';
+import { $isImageNode, ImageNode } from '../../nodes/Image';
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { toast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import { startTransition } from 'react';
 
-export default function Submit(): JSX.Element {
+export default function Submit({ id }: { id: string }): JSX.Element {
   const [editor] = useLexicalComposerContext();
+  const [hasText, setHasText] = useState<boolean>(false);
+  const { loginToast, notFoundToast } = useCustomToast();
+  const router = useRouter();
+
   const {
     data: oEmbedData,
     mutate: Embed,
@@ -18,25 +31,74 @@ export default function Submit(): JSX.Element {
       return { link, meta };
     },
   });
+  const { mutate: Upload } = useMutation({
+    mutationFn: async (values: CommentContentPayload) => {
+      const { data } = await axios.put(`/api/comment/${id}/create`, values);
 
-  function onClick() {
+      return data as string;
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 401) return loginToast();
+        if (err.response?.status === 404) return notFoundToast();
+      }
+
+      return toast({
+        title: 'Có lỗi xảy ra',
+        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
+        variant: 'destructive',
+      });
+    },
+    onSuccess: () => {
+      startTransition(() => router.refresh());
+      return toast({
+        title: 'Thành công',
+      });
+    },
+  });
+
+  useEffect(() => {
+    editor.registerTextContentListener((text) => {
+      if (text) {
+        setHasText(true);
+      } else {
+        setHasText(false);
+      }
+    });
+  }, [editor]);
+
+  const onClick = useCallback(() => {
     const editorState = editor.getEditorState();
-    console.log(JSON.stringify(editorState.toJSON()));
+    let autoLink: AutoLinkNode | undefined, imageNode: ImageNode | undefined;
+    editorState._nodeMap.forEach((node) => {
+      if (node instanceof AutoLinkNode) {
+        autoLink = node;
+      } else if ($isImageNode(node)) {
+        imageNode = node;
+      }
+    });
 
-    // editorState._nodeMap.forEach((V) => {
-    //   if (V instanceof AutoLinkNode) {
-    //     Embed(V.__url);
-    //   }
-    // });
-  }
+    if (imageNode) {
+      Upload({ content: editorState.toJSON() });
+    } else {
+      if (autoLink) {
+        Embed(autoLink.__url);
+      }
+      Upload({ content: editorState.toJSON() });
+    }
+  }, [Embed, Upload, editor]);
 
   if (typeof oEmbedData !== 'undefined' && !isFetchingOEmbed) {
-    console.log(JSON.stringify(oEmbedData));
+    Upload({ content: editor.getEditorState().toJSON(), oEmbed: oEmbedData });
   }
 
   return (
-    <Button className="w-full" onClick={() => onClick()}>
-      Submit
+    <Button
+      disabled={!hasText}
+      className={cn('w-full transition-opacity', !hasText && 'opacity-50')}
+      onClick={() => onClick()}
+    >
+      Đăng
     </Button>
   );
 }

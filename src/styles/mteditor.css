@@ -1,7 +1,21 @@
+@media (min-width: 768px) {
+  .moetruyen-editor-wrapper {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (min-width: 1024px) {
+  .moetruyen-editor-wrapper {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 .moetruyen-editor-wrapper {
   position: relative;
-  border: 1px solid white;
-  border-radius: 4px;
   padding: 4px 4px;
 }
 
@@ -11,16 +25,16 @@
 }
 
 .moetruyen-editor-input {
-  padding: 2px 4px;
+  padding: 10px;
   outline-width: 0;
 }
 
 .moetruyen-placeholder {
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 10px;
+  left: 10px;
   z-index: -10;
-  opacity: 50%;
+  opacity: 70%;
 }
 
 .moetruyen-editor-bold {

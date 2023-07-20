@@ -1,16 +1,15 @@
 import { Button } from '@/components/ui/Button';
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { CommentContentPayload } from '@/lib/validators/upload';
 import { AutoLinkNode } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { useCallback, useEffect, useState } from 'react';
-import { $isImageNode, ImageNode } from '../../nodes/Image';
-import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { startTransition } from 'react';
+import { startTransition, useCallback, useEffect, useState } from 'react';
+import { $isImageNode, ImageNode } from '../../nodes/Image';
 
 export default function Submit({ id }: { id: string }): JSX.Element {
   const [editor] = useLexicalComposerContext();
@@ -31,9 +30,12 @@ export default function Submit({ id }: { id: string }): JSX.Element {
       return { link, meta };
     },
   });
-  const { mutate: Upload } = useMutation({
+  const { mutate: Upload, isLoading: isUpload } = useMutation({
     mutationFn: async (values: CommentContentPayload) => {
-      const { data } = await axios.put(`/api/comment/${id}/create`, values);
+      const { data } = await axios.put(
+        `/api/manga/${id}/comment/create`,
+        values
+      );
 
       return data as string;
     },
@@ -50,10 +52,11 @@ export default function Submit({ id }: { id: string }): JSX.Element {
       });
     },
     onSuccess: () => {
-      startTransition(() => router.refresh());
-      return toast({
+      toast({
         title: 'Thành công',
       });
+
+      return startTransition(() => router.refresh());
     },
   });
 
@@ -95,6 +98,7 @@ export default function Submit({ id }: { id: string }): JSX.Element {
   return (
     <Button
       disabled={!hasText}
+      isLoading={isUpload}
       className={cn('w-full transition-opacity', !hasText && 'opacity-50')}
       onClick={() => onClick()}
     >

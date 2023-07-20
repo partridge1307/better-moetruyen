@@ -1,4 +1,10 @@
+import type {
+  MangaUploadPayload,
+  authorInfoProps,
+} from '@/lib/validators/upload';
+import { Loader2, X } from 'lucide-react';
 import { FC } from 'react';
+import type { UseFormReturn } from 'react-hook-form';
 import {
   FormControl,
   FormField,
@@ -7,12 +13,6 @@ import {
   FormMessage,
 } from '../ui/Form';
 import { Input } from '../ui/Input';
-import type { UseFormReturn } from 'react-hook-form';
-import type {
-  MangaUploadPayload,
-  authorInfoProps,
-} from '@/lib/validators/upload';
-import { Loader2, X } from 'lucide-react';
 
 export type authorResultProps = {
   author: authorInfoProps[];
@@ -23,7 +23,7 @@ interface MangaAuthorUploadProps {
   authorSelected: authorInfoProps[];
   setAuthorSelected: React.Dispatch<React.SetStateAction<authorInfoProps[]>>;
   authorInput: string;
-  setAuthorInput: React.Dispatch<React.SetStateAction<string>>;
+  setAuthorInput: (value: string) => void;
   isFetchingAuthor: boolean;
   authorResult?: authorResultProps;
 }

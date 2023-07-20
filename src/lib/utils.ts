@@ -1,8 +1,7 @@
 import { ClassValue, clsx } from 'clsx';
-import { formatDistanceToNow, getHours } from 'date-fns';
+import { formatDistanceToNowStrict } from 'date-fns';
 import locale from 'date-fns/locale/vi';
 import { twMerge } from 'tailwind-merge';
-import { View } from './query';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -56,10 +55,13 @@ export const groupBy = <T>(
   array: T[],
   predicate: (value: T, index: number, array: T[]) => any
 ) =>
-  array.reduce((acc, value, index, array) => {
-    (acc[predicate(value, index, array)] ||= []).push(value);
-    return acc;
-  }, {} as { [key: string]: T[] });
+  array.reduce(
+    (acc, value, index, array) => {
+      (acc[predicate(value, index, array)] ||= []).push(value);
+      return acc;
+    },
+    {} as { [key: string]: T[] }
+  );
 
 const formatDistanceLocale = {
   lessThanXSeconds: 'vừa xong',
@@ -100,7 +102,7 @@ function formatDistance(token: string, count: number, options?: any): string {
 }
 
 export function formatTimeToNow(date: Date | number): string {
-  return formatDistanceToNow(date, {
+  return formatDistanceToNowStrict(date, {
     addSuffix: true,
     locale: {
       ...locale,

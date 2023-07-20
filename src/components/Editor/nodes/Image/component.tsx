@@ -21,9 +21,10 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
-
 import ImageResizer from '@/components/ui/ImageResizer';
 import { $isImageNode } from './index';
+import { cn } from '@/lib/utils';
+import { useMediaQuery } from '@mantine/hooks';
 
 const imageCache = new Set();
 
@@ -56,7 +57,8 @@ function LazyImage({
   width: 'inherit' | number;
 }): JSX.Element {
   useSuspenseImage(src);
-  return (
+  const matches = useMediaQuery('(max-width: 640px)');
+  return matches ? (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       className={className || undefined}
@@ -64,9 +66,23 @@ function LazyImage({
       alt={altText}
       ref={imageRef}
       style={{
+        maxWidth: '100%',
+        objectFit: 'contain',
+      }}
+      draggable="false"
+    />
+  ) : (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      className={className || undefined}
+      src={src}
+      alt={altText}
+      ref={imageRef}
+      style={{
+        width,
         height,
         maxWidth: '100%',
-        width,
+        objectFit: 'contain',
       }}
       draggable="false"
     />

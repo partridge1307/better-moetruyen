@@ -56,7 +56,7 @@ const NavbarClient: FC<NavbarClientProps> = ({ session }) => {
         <DropdownMenu>
           <DropdownMenuTrigger>
             {session?.user ? (
-              <UserAvatar user={session.user} />
+              <UserAvatar className="w-8 h-8" user={session.user} />
             ) : (
               <User2 className="h-7 w-7" />
             )}

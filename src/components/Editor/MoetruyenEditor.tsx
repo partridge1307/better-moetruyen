@@ -47,20 +47,24 @@ export default function Editor({ id }: { id: string }): JSX.Element {
     <>
       <LexicalComposer initialConfig={editorConfig}>
         <div className="moetruyen-editor-wrapper space-y-3">
-          <Toolbar />
-          <div className="moetruyen-editor-inner">
-            <RichTextPlugin
-              contentEditable={
-                <ContentEditable className="moetruyen-editor-input rounded-lg focus:ring-1 focus-visible:ring-offset-1" />
-              }
-              placeholder={
-                <div className="moetruyen-placeholder">Nhập nội dung...</div>
-              }
-              ErrorBoundary={LexicalErrorBoundary}
-            />
-          </div>
-          <div className="text-right">
-            <CharacterLimitPlugin charset="UTF-8" maxLength={1024} />
+          <div>
+            <Toolbar />
+            <div className="moetruyen-editor-inner">
+              <RichTextPlugin
+                contentEditable={
+                  <ContentEditable className="moetruyen-editor-input rounded-lg focus:ring-1 focus-visible:ring-offset-1" />
+                }
+                placeholder={
+                  <div className="moetruyen-placeholder">
+                    Nói lên cảm nghĩ của bạn...
+                  </div>
+                }
+                ErrorBoundary={LexicalErrorBoundary}
+              />
+            </div>
+            <div className="text-right">
+              <CharacterLimitPlugin charset="UTF-8" maxLength={1024} />
+            </div>
           </div>
           <Submit id={id} />
         </div>

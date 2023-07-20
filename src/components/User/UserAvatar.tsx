@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback } from '@/components/ui/Avatar';
-import type {AvatarProps} from '@radix-ui/react-avatar';
+import type { AvatarProps } from '@radix-ui/react-avatar';
 import { User2 } from 'lucide-react';
 import type { User } from 'next-auth';
 import Image from 'next/image';
@@ -20,7 +20,7 @@ const UserAvatar: FC<UserAvatarProps> = ({ user, ...props }) => {
             sizes="0%"
             src={user.image}
             alt="Profile picture"
-            className="rounded-full w-4/5 h-4/5"
+            className="rounded-full w-full h-full"
           />
         </div>
       ) : (

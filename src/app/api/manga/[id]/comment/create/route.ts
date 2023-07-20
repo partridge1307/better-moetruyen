@@ -3,6 +3,7 @@ import { CommentContentValidator } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
+import { z } from 'zod';
 
 export async function PUT(
   req: NextRequest,
@@ -35,6 +36,9 @@ export async function PUT(
       if (error.code === 'P2025') {
         return new Response('Not Found', { status: 404 });
       }
+    }
+    if (error instanceof z.ZodError) {
+      return new Response('Invalid', { status: 422 });
     }
 
     return new Response('Something went wrong', { status: 500 });

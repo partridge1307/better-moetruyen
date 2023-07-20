@@ -59,7 +59,7 @@
 
 .moetruyen-editor-link {
   text-decoration: none;
-  color: rgb(33, 111, 219);
+  color: rgb(59 130 246);
 }
 
 .moetruyen-editor-paragraph {
@@ -102,7 +102,6 @@
 }
 
 .moetruyen-editor-image img {
-  max-width: 100%;
   cursor: default;
 }
 

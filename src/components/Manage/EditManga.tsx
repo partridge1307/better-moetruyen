@@ -12,9 +12,9 @@ import {
 } from '@/lib/validators/upload';
 import type EditorJS from '@editorjs/editorjs';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDebouncedState } from '@mantine/hooks';
 import { Manga, MangaAuthor, Tag } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
-import { useDebounce } from '@uidotdev/usehooks';
 import axios, { AxiosError } from 'axios';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -132,14 +132,13 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
   const [authorSelected, setAuthorSelected] = useState<authorInfoProps[]>(
     manga.author
   );
-  const [authorInput, setAuthorInput] = useState<string>('');
   const [tagSelect, setTagSelect] = useState<tagInfoProps[]>(manga.tags);
-  const debouncedValue = useDebounce(authorInput, 300);
+  const [authorInput, setAuthorInput] = useDebouncedState('', 300);
   const editorRef = useRef<EditorJS>();
 
   useEffect(() => {
-    if (!!debouncedValue) FetchAuthor(debouncedValue);
-  }, [FetchAuthor, debouncedValue]);
+    if (authorInput) FetchAuthor(authorInput);
+  }, [FetchAuthor, authorInput]);
 
   async function onSubmitHandler(values: MangaUploadPayload) {
     const editor = await editorRef.current?.save();

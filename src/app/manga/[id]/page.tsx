@@ -5,16 +5,21 @@ import MangaImage from '@/components/MangaImage';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
+import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { FC, Suspense } from 'react';
 import 'server-only';
-import dynamic from 'next/dynamic';
 const MoetruyenEditor = dynamic(
   () => import('@/components/Editor/MoetruyenEditor'),
+  { ssr: false, loading: () => <Loader2 className="w-6 h-6" /> }
+);
+const CommentOutput = dynamic(
+  () => import('@/components/Comment/CommentOutput'),
   { ssr: false, loading: () => <Loader2 className="w-6 h-6" /> }
 );
 
@@ -57,6 +62,8 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 const page: FC<pageProps> = async ({ params }) => {
+  if (!params.id) return;
+
   const manga = await db.manga.findFirst({
     where: {
       id: +params.id,
@@ -92,6 +99,26 @@ const page: FC<pageProps> = async ({ params }) => {
     },
   });
   if (!manga) return notFound();
+
+  const comments = await db.comment.findMany({
+    where: {
+      mangaId: manga.id,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      author: {
+        select: {
+          name: true,
+          image: true,
+          color: true,
+        },
+      },
+      votes: true,
+    },
+    take: INFINITE_SCROLL_PAGINATION_RESULTS,
+  });
 
   let discord: discordProps = { code: false };
   if (manga.discordLink) {
@@ -280,6 +307,8 @@ const page: FC<pageProps> = async ({ params }) => {
 
             <TabsContent value="comment">
               <MoetruyenEditor id={params.id} />
+
+              <CommentOutput initialComments={comments} id={params.id} />
             </TabsContent>
           </Tabs>
         </div>

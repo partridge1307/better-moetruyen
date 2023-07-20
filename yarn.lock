@@ -364,6 +364,11 @@
   dependencies:
     "@lexical/offset" "0.11.2"
 
+"@mantine/hooks@^6.0.17":
+  version "6.0.17"
+  resolved "https://registry.npmjs.org/@mantine/hooks/-/hooks-6.0.17.tgz"
+  integrity sha512-7vf2w1NlzKlUynSuyI2DAIKoEOYKYC8k+tlSsk3BRdbzhbJAiWxcYzJy5seg5dFW1WIpKAZ0wiVdHXf/WRlRgg==
+
 "@mapbox/node-pre-gyp@^1.0.10":
   version "1.0.10"
   resolved "https://registry.npmjs.org/@mapbox/node-pre-gyp/-/node-pre-gyp-1.0.10.tgz"
@@ -381,7 +386,7 @@
 
 "@next/env@13.4.9":
   version "13.4.9"
-  resolved "https://registry.yarnpkg.com/@next/env/-/env-13.4.9.tgz#b77759514dd56bfa9791770755a2482f4d6ca93e"
+  resolved "https://registry.npmjs.org/@next/env/-/env-13.4.9.tgz"
   integrity sha512-vuDRK05BOKfmoBYLNi2cujG2jrYbEod/ubSSyqgmEx9n/W3eZaJQdRNhTfumO+qmq/QTzLurW487n/PM/fHOkw==
 
 "@next/eslint-plugin-next@13.4.10":
@@ -433,7 +438,7 @@
 
 "@next/swc-win32-x64-msvc@13.4.9":
   version "13.4.9"
-  resolved "https://registry.yarnpkg.com/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-13.4.9.tgz#0c2758164cccd61bc5a1c6cd8284fe66173e4a2b"
+  resolved "https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-13.4.9.tgz"
   integrity sha512-QbT03FXRNdpuL+e9pLnu+XajZdm/TtIXVYY4lA9t+9l0fLZbHXDYEKitAqxrOj37o3Vx5ufxiRAniaIebYDCgw==
 
 "@nodelib/fs.scandir@2.1.5":
@@ -551,7 +556,7 @@
 
 "@radix-ui/react-avatar@^1.0.3":
   version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@radix-ui/react-avatar/-/react-avatar-1.0.3.tgz#06a31d06bfb03be5e0d156a5af26a437dce96e7f"
+  resolved "https://registry.npmjs.org/@radix-ui/react-avatar/-/react-avatar-1.0.3.tgz"
   integrity sha512-9ToF7YNex3Ste45LrAeTlKtONI9yVRt/zOS158iilIkW5K/Apeyb/TUQlcEFTEFvWr8Kzdi2ZYrm1/suiXPajQ==
   dependencies:
     "@babel/runtime" "^7.13.10"
@@ -1355,11 +1360,6 @@
   dependencies:
     "@typescript-eslint/types" "5.60.0"
     eslint-visitor-keys "^3.3.0"
-
-"@uidotdev/usehooks@^2.0.1":
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/@uidotdev/usehooks/-/usehooks-2.0.1.tgz"
-  integrity sha512-rJXxE3Y8g9utRbOS9Pj9tIvrnOdaakHIhLbMxBlErV8HydnGD0DveD82aLBfVTh1hBp5IXqpeHpMrPE9WIT7vQ==
 
 abbrev@1:
   version "1.1.1"
@@ -3295,7 +3295,7 @@ next-auth@^4.22.1:
 
 next@13.4.9:
   version "13.4.9"
-  resolved "https://registry.yarnpkg.com/next/-/next-13.4.9.tgz#473de5997cb4c5d7a4fb195f566952a1cbffbeba"
+  resolved "https://registry.npmjs.org/next/-/next-13.4.9.tgz"
   integrity sha512-vtefFm/BWIi/eWOqf1GsmKG3cjKw1k3LjuefKRcL3iiLl3zWzFdPG3as6xtxrGO6gwTzzaO1ktL4oiHt/uvTjA==
   dependencies:
     "@next/env" "13.4.9"
@@ -4109,7 +4109,7 @@ source-map-js@^1.0.2:
 
 ssr-window@^4.0.2:
   version "4.0.2"
-  resolved "https://registry.yarnpkg.com/ssr-window/-/ssr-window-4.0.2.tgz#dc6b3ee37be86ac0e3ddc60030f7b3bc9b8553be"
+  resolved "https://registry.npmjs.org/ssr-window/-/ssr-window-4.0.2.tgz"
   integrity sha512-ISv/Ch+ig7SOtw7G2+qkwfVASzazUnvlDTwypdLoPoySv+6MqlOV10VwPSE6EWkGjhW50lUmghPmpYZXMu/+AQ==
 
 streamsearch@^1.1.0:
@@ -4262,7 +4262,7 @@ supports-preserve-symlinks-flag@^1.0.0:
 
 swiper@9.4.1:
   version "9.4.1"
-  resolved "https://registry.yarnpkg.com/swiper/-/swiper-9.4.1.tgz#2f48bcd6ab4b4fcf4ae93eaee53980531d42fd42"
+  resolved "https://registry.npmjs.org/swiper/-/swiper-9.4.1.tgz"
   integrity sha512-1nT2T8EzUpZ0FagEqaN/YAhRj33F2x/lN6cyB0/xoYJDMf8KwTFT3hMOeoB8Tg4o3+P/CKqskP+WX0Df046fqA==
   dependencies:
     ssr-window "^4.0.2"

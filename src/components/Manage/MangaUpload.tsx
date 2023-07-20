@@ -3,6 +3,7 @@
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
 import { Tags } from '@/lib/query';
+import { disRegex, fbRegex } from '@/lib/utils';
 import {
   MangaUploadPayload,
   MangaUploadValidator,
@@ -11,11 +12,12 @@ import {
 } from '@/lib/validators/upload';
 import type EditorJS from '@editorjs/editorjs';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDebouncedState } from '@mantine/hooks';
 import { useMutation } from '@tanstack/react-query';
-import { useDebounce } from '@uidotdev/usehooks';
 import axios, { AxiosError } from 'axios';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '../ui/Button';
@@ -31,8 +33,6 @@ import { Input } from '../ui/Input';
 import MangaAuthorUpload, { type authorResultProps } from './MangaAuthorUpload';
 import MangaImageUpload from './MangaImageUpload';
 import MangaTagUpload from './MangaTagUpload';
-import { useRouter } from 'next/navigation';
-import { disRegex, fbRegex } from '@/lib/utils';
 const Editor = dynamic(() => import('@/components/Editor'), {
   ssr: false,
   loading: () => <Loader2 className="h-6 w-6 animate-spin" />,
@@ -127,15 +127,14 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
   });
 
   const [previewImage, setPreviewImage] = useState<string>();
-  const [authorInput, setAuthorInput] = useState<string>('');
-  const debouncedValue = useDebounce(authorInput, 300);
+  const [authorInput, setAuthorInput] = useDebouncedState('', 300);
   const [authorSelected, setAuthorSelected] = useState<authorInfoProps[]>([]);
   const [tagSelect, setTagSelect] = useState<tagInfoProps[]>([]);
   const editorRef = useRef<EditorJS>();
 
   useEffect(() => {
-    if (!!debouncedValue) FetchAuthor(debouncedValue);
-  }, [FetchAuthor, debouncedValue]);
+    if (authorInput) FetchAuthor(authorInput);
+  }, [FetchAuthor, authorInput]);
 
   const onSubmitHandler = async (values: MangaUploadPayload) => {
     const editor = await editorRef.current?.save();

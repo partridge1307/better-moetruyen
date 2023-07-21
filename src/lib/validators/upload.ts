@@ -86,5 +86,6 @@ export const CommentContentValidator = z.object({
       }),
     })
     .optional(),
+  commentId: z.number().optional(),
 });
 export type CommentContentPayload = z.infer<typeof CommentContentValidator>;

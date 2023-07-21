@@ -9,19 +9,14 @@ import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { FC, Suspense } from 'react';
+import { FC, Suspense, lazy } from 'react';
 import 'server-only';
-const MoetruyenEditor = dynamic(
-  () => import('@/components/Editor/MoetruyenEditor'),
-  { ssr: false, loading: () => <Loader2 className="w-6 h-6" /> }
+const MoetruyenEditor = lazy(
+  () => import('@/components/Editor/MoetruyenEditor')
 );
-const CommentOutput = dynamic(
-  () => import('@/components/Comment/CommentOutput'),
-  { ssr: false, loading: () => <Loader2 className="w-6 h-6" /> }
-);
+const CommentOutput = lazy(() => import('@/components/Comment/CommentOutput'));
 
 interface pageProps {
   params: {
@@ -34,6 +29,8 @@ type discordProps = {
   id?: string;
   name?: string;
 };
+
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   if (!params.id)
@@ -62,8 +59,6 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 const page: FC<pageProps> = async ({ params }) => {
-  if (!params.id) return;
-
   const manga = await db.manga.findFirst({
     where: {
       id: +params.id,
@@ -103,6 +98,7 @@ const page: FC<pageProps> = async ({ params }) => {
   const comments = await db.comment.findMany({
     where: {
       mangaId: manga.id,
+      replyToId: null,
     },
     orderBy: {
       createdAt: 'desc',
@@ -116,6 +112,11 @@ const page: FC<pageProps> = async ({ params }) => {
         },
       },
       votes: true,
+      _count: {
+        select: {
+          replies: true,
+        },
+      },
     },
     take: INFINITE_SCROLL_PAGINATION_RESULTS,
   });
@@ -306,9 +307,10 @@ const page: FC<pageProps> = async ({ params }) => {
             </TabsContent>
 
             <TabsContent value="comment">
-              <MoetruyenEditor id={params.id} />
-
-              <CommentOutput initialComments={comments} id={params.id} />
+              <Suspense fallback={<Loader2 className="w-6 h-6 animate-spin" />}>
+                <MoetruyenEditor id={params.id} />
+                <CommentOutput initialComments={comments} id={params.id} />
+              </Suspense>
             </TabsContent>
           </Tabs>
         </div>

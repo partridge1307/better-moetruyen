@@ -70,7 +70,7 @@ const MangaAuthorUpload: FC<MangaAuthorUploadProps> = ({
               <Input
                 ref={field.ref}
                 placeholder="Tác giả"
-                value={authorInput}
+                defaultValue={authorInput}
                 onChange={(e) => {
                   setAuthorInput(e.target.value);
                 }}

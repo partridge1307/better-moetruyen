@@ -42,7 +42,13 @@ const editorConfig: InitialConfigType = {
   nodes: [...nodes],
 };
 
-export default function Editor({ id }: { id: string }): JSX.Element {
+export default function Editor({
+  id,
+  commentId,
+}: {
+  id: string;
+  commentId?: number;
+}): JSX.Element {
   return (
     <>
       <LexicalComposer initialConfig={editorConfig}>
@@ -66,7 +72,7 @@ export default function Editor({ id }: { id: string }): JSX.Element {
               <CharacterLimitPlugin charset="UTF-8" maxLength={1024} />
             </div>
           </div>
-          <Submit id={id} />
+          <Submit id={id} commentId={commentId} />
         </div>
         <HistoryPlugin />
         <AutoFocusPlugin />

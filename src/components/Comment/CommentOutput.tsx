@@ -7,15 +7,21 @@ import { Comment, CommentVote, User } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import dynamic from 'next/dynamic';
 import { FC, useEffect, useRef } from 'react';
 import UserAvatar from '../User/UserAvatar';
 import CommentContent from './CommentContent';
-import { useSession } from 'next-auth/react';
-import CommentVoteClient from '../Vote/CommentVoteClient';
+import SubComment from './SubComment';
+const CommentFunc = dynamic(() => import('./CommentFunc'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6" />,
+});
 
 type ExtendedComment = Comment & {
   author: Pick<User, 'name' | 'image' | 'color'>;
   votes: CommentVote[];
+  _count: { replies: number };
 };
 
 interface CommentOutputProps {
@@ -114,8 +120,8 @@ const CommentOutput: FC<CommentOutputProps> = ({ initialComments, id }) => {
                             alt="OEmbed Image"
                           />
                         )}
-                        <div className="flex flex-col overflow-hidden p-2 px-3">
-                          <span className="moetruyen-editor-link">
+                        <div className="flex flex-col overflow-clip md:p-2 px-3">
+                          <span className="moetruyen-editor-link line-clamp-1">
                             {/* @ts-ignore */}
                             {new URL(comment.oEmbed.link).host}
                           </span>
@@ -138,12 +144,21 @@ const CommentOutput: FC<CommentOutputProps> = ({ initialComments, id }) => {
                       </a>
                     )}
 
-                    <CommentVoteClient
+                    <CommentFunc
+                      mangaId={id}
                       commentId={comment.id}
                       currentVote={currentVote}
                       voteAmt={voteAmt}
                     />
                   </div>
+
+                  {comment._count.replies !== 0 ? (
+                    <SubComment
+                      session={session}
+                      subCommentLength={comment._count.replies}
+                      commentId={comment.id}
+                    />
+                  ) : null}
                 </div>
               </li>
             );
@@ -188,8 +203,8 @@ const CommentOutput: FC<CommentOutputProps> = ({ initialComments, id }) => {
                             alt="OEmbed Image"
                           />
                         )}
-                        <div className="flex flex-col overflow-hidden p-2 px-3">
-                          <span className="moetruyen-editor-link">
+                        <div className="flex flex-col overflow-clip md:p-2 px-3">
+                          <span className="moetruyen-editor-link line-clamp-1">
                             {/* @ts-ignore */}
                             {new URL(comment.oEmbed.link).host}
                           </span>
@@ -212,12 +227,21 @@ const CommentOutput: FC<CommentOutputProps> = ({ initialComments, id }) => {
                       </a>
                     )}
 
-                    <CommentVoteClient
+                    <CommentFunc
+                      mangaId={id}
                       commentId={comment.id}
                       currentVote={currentVote}
                       voteAmt={voteAmt}
                     />
                   </div>
+
+                  {comment._count.replies !== 0 ? (
+                    <SubComment
+                      session={session}
+                      subCommentLength={comment._count.replies}
+                      commentId={comment.id}
+                    />
+                  ) : null}
                 </div>
               </li>
             );

@@ -5,7 +5,7 @@ import { VoteType } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { Heart, HeartOff } from 'lucide-react';
-import { FC, useEffect, useState } from 'react';
+import { FC, memo, useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
 import { CommentVotePayload } from '@/lib/validators/vote';
 import { cn } from '@/lib/utils';
@@ -21,7 +21,7 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
   currentVote: initialVote,
   voteAmt: initialVoteAmt,
 }) => {
-  const { loginToast } = useCustomToast();
+  const { loginToast, notFoundToast } = useCustomToast();
   const [voteAmt, setVoteAmt] = useState<number>(initialVoteAmt);
   const [currentVote, setCurrentVote] = useState(initialVote);
   const prevVote = usePrevious(currentVote);
@@ -43,6 +43,7 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
 
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) return loginToast();
+        if (err.response?.status === 404) return notFoundToast();
       }
 
       return toast({
@@ -101,4 +102,4 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
   );
 };
 
-export default CommentVoteClient;
+export default memo(CommentVoteClient);

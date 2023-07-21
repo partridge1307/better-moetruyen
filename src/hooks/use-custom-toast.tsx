@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { toast } from './use-toast';
 import { buttonVariants } from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
 
 export const useCustomToast = () => {
   const loginToast = () => {
@@ -30,7 +31,7 @@ export const useCustomToast = () => {
         <Link
           href="https://discord.gg/dongmoe"
           target="_blank"
-          className={buttonVariants({ variant: 'outline' })}
+          className={cn(buttonVariants({ variant: 'outline' }))}
           onClick={() => dismiss()}
         >
           Xác thực

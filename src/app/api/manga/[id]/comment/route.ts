@@ -20,6 +20,7 @@ export async function GET(req: Request, context: { params: { id: string } }) {
     const comments = await db.comment.findMany({
       where: {
         mangaId: parseInt(mangaId),
+        replyToId: null,
       },
       include: {
         author: {
@@ -30,6 +31,11 @@ export async function GET(req: Request, context: { params: { id: string } }) {
           },
         },
         votes: true,
+        _count: {
+          select: {
+            replies: true,
+          },
+        },
       },
       orderBy: {
         createdAt: 'desc',

@@ -17,18 +17,35 @@ export async function PUT(
       where: {
         id: token.id,
       },
-    });
-
-    const { content, oEmbed } = CommentContentValidator.parse(await req.json());
-
-    await db.comment.create({
-      data: {
-        content: { ...content },
-        oEmbed,
-        authorId: user.id,
-        mangaId: +context.params.id,
+      select: {
+        id: true,
       },
     });
+
+    const { content, oEmbed, commentId } = CommentContentValidator.parse(
+      await req.json()
+    );
+
+    if (commentId) {
+      await db.comment.create({
+        data: {
+          content: { ...content },
+          oEmbed,
+          authorId: user.id,
+          mangaId: +context.params.id,
+          replyToId: commentId,
+        },
+      });
+    } else {
+      await db.comment.create({
+        data: {
+          content: { ...content },
+          oEmbed,
+          authorId: user.id,
+          mangaId: +context.params.id,
+        },
+      });
+    }
 
     return new Response('OK');
   } catch (error) {

@@ -11,7 +11,13 @@ import { useRouter } from 'next/navigation';
 import { startTransition, useCallback, useEffect, useState } from 'react';
 import { $isImageNode, ImageNode } from '../../nodes/Image';
 
-export default function Submit({ id }: { id: string }): JSX.Element {
+export default function Submit({
+  id,
+  commentId,
+}: {
+  id: string;
+  commentId?: number;
+}): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [hasText, setHasText] = useState<boolean>(false);
   const { loginToast, notFoundToast } = useCustomToast();
@@ -82,17 +88,21 @@ export default function Submit({ id }: { id: string }): JSX.Element {
     });
 
     if (imageNode) {
-      Upload({ content: editorState.toJSON() });
+      Upload({ content: editorState.toJSON(), commentId });
     } else {
       if (autoLink) {
         Embed(autoLink.__url);
       }
-      Upload({ content: editorState.toJSON() });
+      Upload({ content: editorState.toJSON(), commentId });
     }
-  }, [Embed, Upload, editor]);
+  }, [Embed, Upload, commentId, editor]);
 
   if (typeof oEmbedData !== 'undefined' && !isFetchingOEmbed) {
-    Upload({ content: editor.getEditorState().toJSON(), oEmbed: oEmbedData });
+    Upload({
+      content: editor.getEditorState().toJSON(),
+      oEmbed: oEmbedData,
+      commentId,
+    });
   }
 
   return (

@@ -1,6 +1,6 @@
 import { toast } from '@/hooks/use-toast';
 import { formatTimeToNow } from '@/lib/utils';
-import { Comment, CommentVote, User } from '@prisma/client';
+import type { Comment, CommentVote, Prisma, User } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
@@ -8,6 +8,8 @@ import { useSession } from 'next-auth/react';
 import { FC } from 'react';
 import UserAvatar from '../User/UserAvatar';
 import CommentVoteClient from '../Vote/CommentVoteClient';
+import CommentOEmbed from './CommentOEmbed';
+import DeleteComment from './DeleteComment';
 import SubCommentContent from './SubCommentContent';
 
 interface SubCommentContentProps {
@@ -16,7 +18,7 @@ interface SubCommentContentProps {
 
 type ExtendedSubComment = Pick<
   Comment,
-  'id' | 'content' | 'oEmbed' | 'createdAt'
+  'id' | 'content' | 'oEmbed' | 'authorId' | 'createdAt'
 > & {
   author: Pick<User, 'name' | 'image' | 'color'>;
   votes: CommentVote[];
@@ -78,53 +80,36 @@ const SubCommentOutput: FC<SubCommentContentProps> = ({ commentId }) => {
               <div className="space-y-2">
                 <SubCommentContent index={index} content={comment.content} />
 
-                {comment.oEmbed && (
-                  <a
-                    target="_blank"
-                    // @ts-ignore
-                    href={comment.oEmbed.link}
-                    className="flex items-center w-fit rounded-lg dark:bg-zinc-800"
-                  >
-                    {/* @ts-ignore */}
-                    {comment.oEmbed.meta.image.url && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        className="w-24 h-24 rounded-l-lg object-cover"
-                        loading="lazy"
-                        // @ts-ignore
-                        src={comment.oEmbed.meta.image.url}
-                        alt="OEmbed Image"
-                      />
-                    )}
-                    <div className="flex flex-col overflow-clip md:p-2 px-3">
-                      <span className="moetruyen-editor-link line-clamp-1">
-                        {/* @ts-ignore */}
-                        {new URL(comment.oEmbed.link).host}
-                      </span>
-                      <dl>
-                        {/* @ts-ignore */}
-                        {comment.oEmbed.meta.title && (
-                          <dt className="line-clamp-2">
-                            {/* @ts-ignore */}
-                            {comment.oEmbed.meta.title}
-                          </dt>
-                        )}
-                        {/* @ts-ignore */}
-
-                        {comment.oEmbed.meta.description && (
-                          // @ts-ignore
-                          <dd>{comment.oEmbed.meta.description}</dd>
-                        )}
-                      </dl>
-                    </div>
-                  </a>
-                )}
-
-                <CommentVoteClient
-                  commentId={comment.id}
-                  currentVote={currentVote}
-                  voteAmt={voteAmt}
+                <CommentOEmbed
+                  oEmbed={
+                    comment.oEmbed as
+                      | (Prisma.JsonValue & {
+                          link: string;
+                          meta: {
+                            title?: string;
+                            description?: string;
+                            image: {
+                              url?: string;
+                            };
+                          };
+                        })
+                      | null
+                  }
                 />
+
+                <div className="flex items-center gap-4">
+                  <CommentVoteClient
+                    commentId={comment.id}
+                    currentVote={currentVote}
+                    voteAmt={voteAmt}
+                  />
+
+                  <DeleteComment
+                    session={session}
+                    authorId={comment.authorId}
+                    commentId={comment.id}
+                  />
+                </div>
               </div>
             </div>
           </li>

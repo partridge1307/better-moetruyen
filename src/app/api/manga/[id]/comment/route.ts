@@ -27,6 +27,7 @@ export async function GET(req: Request, context: { params: { id: string } }) {
         content: true,
         oEmbed: true,
         createdAt: true,
+        authorId: true,
         author: {
           select: {
             name: true,

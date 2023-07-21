@@ -124,7 +124,7 @@ model Comment {
   mangaId   Int
   chapter   Chapter?      @relation(fields: [chapterId], references: [id])
   chapterId Int?
-  replyTo   Comment?      @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replyTo   Comment?      @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: Cascade)
   replyToId Int?
   replies   Comment[]     @relation("ReplyTo")
   votes     CommentVote[]
@@ -134,7 +134,7 @@ model Comment {
 model CommentVote {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
-  comment   Comment  @relation(fields: [commentId], references: [id])
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId Int
   type      VoteType
 

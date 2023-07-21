@@ -3,7 +3,7 @@
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
 import { formatTimeToNow } from '@/lib/utils';
 import { useIntersection } from '@mantine/hooks';
-import { Comment, CommentVote, User } from '@prisma/client';
+import type { Comment, CommentVote, Prisma, User } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
@@ -12,6 +12,7 @@ import dynamic from 'next/dynamic';
 import { FC, useEffect, useRef } from 'react';
 import UserAvatar from '../User/UserAvatar';
 import CommentContent from './CommentContent';
+import CommentOEmbed from './CommentOEmbed';
 import SubComment from './SubComment';
 const CommentFunc = dynamic(() => import('./CommentFunc'), {
   ssr: false,
@@ -20,7 +21,7 @@ const CommentFunc = dynamic(() => import('./CommentFunc'), {
 
 type ExtendedComment = Pick<
   Comment,
-  'id' | 'content' | 'oEmbed' | 'createdAt'
+  'id' | 'content' | 'oEmbed' | 'authorId' | 'createdAt'
 > & {
   author: Pick<User, 'name' | 'image' | 'color'>;
   votes: CommentVote[];
@@ -87,7 +88,8 @@ const CommentOutput: FC<CommentOutputProps> = ({ initialComments, id }) => {
             return (
               <li key={idx} ref={ref} className="flex gap-3 md:gap-6">
                 <UserAvatar className="mt-2 w-12 h-12" user={comment.author} />
-                <div className="space-y-2">
+
+                <div className="space-y-1">
                   <div className="flex items-end gap-2">
                     <p
                       className="text-lg"
@@ -102,52 +104,29 @@ const CommentOutput: FC<CommentOutputProps> = ({ initialComments, id }) => {
                     </p>
                   </div>
 
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     <CommentContent index={idx} content={comment.content} />
 
-                    {comment.oEmbed && (
-                      <a
-                        target="_blank"
-                        // @ts-ignore
-                        href={comment.oEmbed.link}
-                        className="flex items-center w-fit rounded-lg dark:bg-zinc-800"
-                      >
-                        {/* @ts-ignore */}
-                        {comment.oEmbed.meta.image.url && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            className="w-24 h-24 rounded-l-lg object-cover"
-                            loading="lazy"
-                            // @ts-ignore
-                            src={comment.oEmbed.meta.image.url}
-                            alt="OEmbed Image"
-                          />
-                        )}
-                        <div className="flex flex-col overflow-clip md:p-2 px-3">
-                          <span className="moetruyen-editor-link line-clamp-1">
-                            {/* @ts-ignore */}
-                            {new URL(comment.oEmbed.link).host}
-                          </span>
-                          <dl>
-                            {/* @ts-ignore */}
-                            {comment.oEmbed.meta.title && (
-                              <dt className="line-clamp-2">
-                                {/* @ts-ignore */}
-                                {comment.oEmbed.meta.title}
-                              </dt>
-                            )}
-                            {/* @ts-ignore */}
-
-                            {comment.oEmbed.meta.description && (
-                              // @ts-ignore
-                              <dd>{comment.oEmbed.meta.description}</dd>
-                            )}
-                          </dl>
-                        </div>
-                      </a>
-                    )}
+                    <CommentOEmbed
+                      oEmbed={
+                        comment.oEmbed as
+                          | (Prisma.JsonValue & {
+                              link: string;
+                              meta: {
+                                title?: string;
+                                description?: string;
+                                image: {
+                                  url?: string;
+                                };
+                              };
+                            })
+                          | null
+                      }
+                    />
 
                     <CommentFunc
+                      session={session}
+                      authorId={comment.authorId}
                       mangaId={id}
                       commentId={comment.id}
                       currentVote={currentVote}
@@ -187,49 +166,26 @@ const CommentOutput: FC<CommentOutputProps> = ({ initialComments, id }) => {
                   <div className="space-y-2">
                     <CommentContent index={idx} content={comment.content} />
 
-                    {comment.oEmbed && (
-                      <a
-                        target="_blank"
-                        // @ts-ignore
-                        href={comment.oEmbed.link}
-                        className="flex items-center w-fit rounded-lg dark:bg-zinc-800"
-                      >
-                        {/* @ts-ignore */}
-                        {comment.oEmbed.meta.image.url && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            className="w-24 h-24 rounded-l-lg object-cover"
-                            loading="lazy"
-                            // @ts-ignore
-                            src={comment.oEmbed.meta.image.url}
-                            alt="OEmbed Image"
-                          />
-                        )}
-                        <div className="flex flex-col overflow-clip md:p-2 px-3">
-                          <span className="moetruyen-editor-link line-clamp-1">
-                            {/* @ts-ignore */}
-                            {new URL(comment.oEmbed.link).host}
-                          </span>
-                          <dl>
-                            {/* @ts-ignore */}
-                            {comment.oEmbed.meta.title && (
-                              <dt className="line-clamp-2">
-                                {/* @ts-ignore */}
-                                {comment.oEmbed.meta.title}
-                              </dt>
-                            )}
-                            {/* @ts-ignore */}
-
-                            {comment.oEmbed.meta.description && (
-                              // @ts-ignore
-                              <dd>{comment.oEmbed.meta.description}</dd>
-                            )}
-                          </dl>
-                        </div>
-                      </a>
-                    )}
+                    <CommentOEmbed
+                      oEmbed={
+                        comment.oEmbed as
+                          | (Prisma.JsonValue & {
+                              link: string;
+                              meta: {
+                                title?: string;
+                                description?: string;
+                                image: {
+                                  url?: string;
+                                };
+                              };
+                            })
+                          | null
+                      }
+                    />
 
                     <CommentFunc
+                      session={session}
+                      authorId={comment.authorId}
                       mangaId={id}
                       commentId={comment.id}
                       currentVote={currentVote}

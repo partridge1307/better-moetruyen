@@ -12,6 +12,7 @@ export async function GET(req: Request, context: { params: { id: string } }) {
             id: true,
             content: true,
             oEmbed: true,
+            authorId: true,
             createdAt: true,
             votes: true,
             author: {

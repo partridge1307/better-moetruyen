@@ -1,5 +1,5 @@
 import { CornerDownRight } from 'lucide-react';
-import { FC, memo, useState } from 'react';
+import { FC, useState } from 'react';
 import SubCommentOutput from './SubCommentOutput';
 
 interface SubCommentProps {
@@ -30,4 +30,4 @@ const SubComment: FC<SubCommentProps> = ({ subCommentLength, commentId }) => {
   );
 };
 
-export default memo(SubComment);
+export default SubComment;

@@ -1,15 +1,19 @@
-import { VoteType } from '@prisma/client';
-import { FC, useState } from 'react';
+import type { VoteType } from '@prisma/client';
+import { Loader2, MessageSquare } from 'lucide-react';
+import type { Session } from 'next-auth';
+import dynamic from 'next/dynamic';
+import { FC, memo, useState } from 'react';
 import CommentVoteClient from '../Vote/CommentVoteClient';
 import { Button } from '../ui/Button';
-import { Loader2, MessageSquare } from 'lucide-react';
-import dynamic from 'next/dynamic';
+import DeleteComment from './DeleteComment';
 const MoetruyenEditor = dynamic(
   () => import('@/components/Editor/MoetruyenEditor'),
   { ssr: false, loading: () => <Loader2 className="w-6 h-6" /> }
 );
 
 interface CommentFuncProps {
+  session: Session | null;
+  authorId: string;
   mangaId: string;
   commentId: number;
   currentVote?: VoteType | null;
@@ -17,6 +21,8 @@ interface CommentFuncProps {
 }
 
 const CommentFunc: FC<CommentFuncProps> = ({
+  session,
+  authorId,
   mangaId,
   commentId,
   currentVote,
@@ -32,6 +38,7 @@ const CommentFunc: FC<CommentFuncProps> = ({
           currentVote={currentVote}
           voteAmt={voteAmt}
         />
+
         <Button
           onClick={() => setShowEditor((prev) => !prev)}
           variant={'ghost'}
@@ -39,10 +46,16 @@ const CommentFunc: FC<CommentFuncProps> = ({
         >
           <MessageSquare className="w-5 h-5" />
         </Button>
+
+        <DeleteComment
+          session={session}
+          authorId={authorId}
+          commentId={commentId}
+        />
       </div>
       {showEditor && <MoetruyenEditor id={mangaId} commentId={commentId} />}
     </div>
   );
 };
 
-export default CommentFunc;
+export default memo(CommentFunc);

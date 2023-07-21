@@ -7,7 +7,7 @@ import {
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { ChevronsDown, ChevronsUp } from 'lucide-react';
 import { FC, useRef, useState } from 'react';
 import { theme } from '../Editor/Theme';

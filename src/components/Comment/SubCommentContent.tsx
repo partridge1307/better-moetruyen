@@ -6,8 +6,8 @@ import {
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { Prisma } from '@prisma/client';
-import { FC } from 'react';
+import type { Prisma } from '@prisma/client';
+import { FC, memo } from 'react';
 import { theme } from '../Editor/Theme';
 import { ImageNode } from '../Editor/nodes/Image';
 import { YouTubeNode } from '../Editor/nodes/Youtube';
@@ -51,4 +51,4 @@ const SubCommentContent: FC<SubCommentContentProps> = ({ index, content }) => {
   );
 };
 
-export default SubCommentContent;
+export default memo(SubCommentContent);

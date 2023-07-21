@@ -108,6 +108,7 @@ const page: FC<pageProps> = async ({ params }) => {
       content: true,
       oEmbed: true,
       createdAt: true,
+      authorId: true,
       author: {
         select: {
           name: true,

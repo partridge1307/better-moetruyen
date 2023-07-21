@@ -13,6 +13,7 @@ import { FC, useRef, useState } from 'react';
 import { theme } from '../Editor/Theme';
 import { ImageNode } from '../Editor/nodes/Image';
 import { YouTubeNode } from '../Editor/nodes/Youtube';
+import { toast } from '@/hooks/use-toast';
 
 interface CommentProps {
   index: number;
@@ -22,6 +23,11 @@ interface CommentProps {
 function onError(err: Error): void {
   // eslint-disable-next-line no-console
   console.log(err);
+  toast({
+    title: 'Có lỗi xảy ra',
+    description: 'Có lỗi xảy ra khi load Comment',
+    variant: 'destructive',
+  });
 }
 
 const CommentContent: FC<CommentProps> = ({ index, content }): JSX.Element => {

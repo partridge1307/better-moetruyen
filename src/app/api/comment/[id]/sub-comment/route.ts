@@ -2,22 +2,30 @@ import { db } from '@/lib/db';
 
 export async function GET(req: Request, context: { params: { id: string } }) {
   try {
-    const subComment = await db.comment.findMany({
+    const subComment = await db.comment.findUnique({
       where: {
-        replyToId: +context.params.id,
+        id: +context.params.id,
       },
-      orderBy: {
-        createdAt: 'asc',
-      },
-      include: {
-        author: {
+      select: {
+        replies: {
           select: {
-            name: true,
-            color: true,
-            image: true,
+            id: true,
+            content: true,
+            oEmbed: true,
+            createdAt: true,
+            votes: true,
+            author: {
+              select: {
+                image: true,
+                name: true,
+                color: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'asc',
           },
         },
-        votes: true,
       },
     });
 

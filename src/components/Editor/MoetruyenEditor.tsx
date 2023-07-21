@@ -27,7 +27,7 @@ import { toast } from '@/hooks/use-toast';
 function onError(error: Error): void {
   toast({
     title: 'Có lỗi xảy ra',
-    description: 'Có lỗi xảy ra với phần Text Editor',
+    description: 'Có lỗi xảy ra với Text Editor',
     variant: 'destructive',
   });
 

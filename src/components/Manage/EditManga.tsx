@@ -68,6 +68,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
     mutate: FetchAuthor,
     isLoading: isFetchingAuthor,
   } = useMutation({
+    mutationKey: ['fetch-author'],
     mutationFn: async (inputValue: string) => {
       const { data } = await axios.get(`/api/manga/author/${inputValue}`);
 
@@ -75,6 +76,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
     },
   });
   const { mutate: Update, isLoading: isUpdatingManga } = useMutation({
+    mutationKey: ['update-manga'],
     mutationFn: async (values: MangaUploadPayload) => {
       const {
         image,

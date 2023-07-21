@@ -1,25 +1,19 @@
 import { CornerDownRight } from 'lucide-react';
-import { FC, useState } from 'react';
-import SubCommentContent from './SubCommentOutput';
-import type { Session } from 'next-auth';
+import { FC, memo, useState } from 'react';
+import SubCommentOutput from './SubCommentOutput';
 
 interface SubCommentProps {
   subCommentLength: number;
   commentId: number;
-  session: Session | null;
 }
 
-const SubComment: FC<SubCommentProps> = ({
-  subCommentLength,
-  commentId,
-  session,
-}) => {
+const SubComment: FC<SubCommentProps> = ({ subCommentLength, commentId }) => {
   const [showReplies, setShowReplies] = useState<boolean>(false);
 
   return (
     <div>
       {showReplies ? (
-        <SubCommentContent session={session} commentId={commentId} />
+        <SubCommentOutput commentId={commentId} />
       ) : (
         <button
           aria-label="commentreplies"
@@ -36,4 +30,4 @@ const SubComment: FC<SubCommentProps> = ({
   );
 };
 
-export default SubComment;
+export default memo(SubComment);

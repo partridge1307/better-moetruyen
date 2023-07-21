@@ -4,32 +4,32 @@ import { Comment, CommentVote, User } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 import { FC } from 'react';
 import UserAvatar from '../User/UserAvatar';
-import SubCommentContent from './SubCommentContent';
 import CommentVoteClient from '../Vote/CommentVoteClient';
-import type { Session } from 'next-auth';
+import SubCommentContent from './SubCommentContent';
 
 interface SubCommentContentProps {
   commentId: number;
-  session: Session | null;
 }
 
-type ExtendedSubComment = Comment & {
+type ExtendedSubComment = Pick<
+  Comment,
+  'id' | 'content' | 'oEmbed' | 'createdAt'
+> & {
   author: Pick<User, 'name' | 'image' | 'color'>;
   votes: CommentVote[];
 };
 
-const SubCommentOutput: FC<SubCommentContentProps> = ({
-  commentId,
-  session,
-}) => {
+const SubCommentOutput: FC<SubCommentContentProps> = ({ commentId }) => {
+  const { data: session } = useSession();
   const { data: subComment, isLoading: isFetchSubComment } = useQuery({
-    queryKey: ['sub-comment-query'],
+    queryKey: [`sub-comment-query`, `${commentId}`],
     queryFn: async () => {
       const { data } = await axios.get(`/api/comment/${commentId}/sub-comment`);
 
-      return data as ExtendedSubComment[];
+      return data.replies as ExtendedSubComment[];
     },
     onError: () => {
       return toast({
@@ -42,7 +42,7 @@ const SubCommentOutput: FC<SubCommentContentProps> = ({
 
   return isFetchSubComment ? (
     <p>
-      <Loader2 className="w-6 h-6" />
+      <Loader2 className="w-6 h-6 animate-spin" />
     </p>
   ) : subComment ? (
     <ul className="mt-8 space-y-6">
@@ -75,8 +75,51 @@ const SubCommentOutput: FC<SubCommentContentProps> = ({
                   {formatTimeToNow(new Date(comment.createdAt))}
                 </p>
               </div>
-              <div>
+              <div className="space-y-2">
                 <SubCommentContent index={index} content={comment.content} />
+
+                {comment.oEmbed && (
+                  <a
+                    target="_blank"
+                    // @ts-ignore
+                    href={comment.oEmbed.link}
+                    className="flex items-center w-fit rounded-lg dark:bg-zinc-800"
+                  >
+                    {/* @ts-ignore */}
+                    {comment.oEmbed.meta.image.url && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        className="w-24 h-24 rounded-l-lg object-cover"
+                        loading="lazy"
+                        // @ts-ignore
+                        src={comment.oEmbed.meta.image.url}
+                        alt="OEmbed Image"
+                      />
+                    )}
+                    <div className="flex flex-col overflow-clip md:p-2 px-3">
+                      <span className="moetruyen-editor-link line-clamp-1">
+                        {/* @ts-ignore */}
+                        {new URL(comment.oEmbed.link).host}
+                      </span>
+                      <dl>
+                        {/* @ts-ignore */}
+                        {comment.oEmbed.meta.title && (
+                          <dt className="line-clamp-2">
+                            {/* @ts-ignore */}
+                            {comment.oEmbed.meta.title}
+                          </dt>
+                        )}
+                        {/* @ts-ignore */}
+
+                        {comment.oEmbed.meta.description && (
+                          // @ts-ignore
+                          <dd>{comment.oEmbed.meta.description}</dd>
+                        )}
+                      </dl>
+                    </div>
+                  </a>
+                )}
+
                 <CommentVoteClient
                   commentId={comment.id}
                   currentVote={currentVote}

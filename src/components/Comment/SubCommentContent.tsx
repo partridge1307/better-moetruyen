@@ -11,6 +11,7 @@ import { FC } from 'react';
 import { theme } from '../Editor/Theme';
 import { ImageNode } from '../Editor/nodes/Image';
 import { YouTubeNode } from '../Editor/nodes/Youtube';
+import { toast } from '@/hooks/use-toast';
 
 interface SubCommentContentProps {
   index: number;
@@ -18,12 +19,18 @@ interface SubCommentContentProps {
 }
 
 function onError(err: Error): void {
+  // eslint-disable-next-line no-console
   console.log(err);
+  toast({
+    title: 'Có lỗi xảy ra',
+    description: 'Có lỗi xảy ra khi load Sub Comment',
+    variant: 'destructive',
+  });
 }
 
 const SubCommentContent: FC<SubCommentContentProps> = ({ index, content }) => {
   const initialConfig: InitialConfigType = {
-    namespace: `MTComment-${index}`,
+    namespace: `MTSubComment-${index}`,
     onError,
     theme,
     editable: false,

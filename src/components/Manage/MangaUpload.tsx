@@ -59,6 +59,7 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
     mutate: FetchAuthor,
     isLoading: isFetchingAuthor,
   } = useMutation({
+    mutationKey: ['fetch-author'],
     mutationFn: async (inputValue: string) => {
       const { data } = await axios.get(`/api/manga/author/${inputValue}`);
 
@@ -66,6 +67,7 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
     },
   });
   const { mutate: Upload, isLoading: isUploadManga } = useMutation({
+    mutationKey: ['upload-author'],
     mutationFn: async (values: MangaUploadPayload) => {
       const {
         image,

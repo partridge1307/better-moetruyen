@@ -22,7 +22,11 @@ export async function GET(req: Request, context: { params: { id: string } }) {
         mangaId: parseInt(mangaId),
         replyToId: null,
       },
-      include: {
+      select: {
+        id: true,
+        content: true,
+        oEmbed: true,
+        createdAt: true,
         author: {
           select: {
             name: true,

@@ -103,7 +103,11 @@ const page: FC<pageProps> = async ({ params }) => {
     orderBy: {
       createdAt: 'desc',
     },
-    include: {
+    select: {
+      id: true,
+      content: true,
+      oEmbed: true,
+      createdAt: true,
       author: {
         select: {
           name: true,

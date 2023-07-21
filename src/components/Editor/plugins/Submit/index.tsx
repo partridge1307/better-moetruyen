@@ -28,6 +28,7 @@ export default function Submit({
     mutate: Embed,
     isLoading: isFetchingOEmbed,
   } = useMutation({
+    mutationKey: ['oembed-query'],
     mutationFn: async (linkUrl: string) => {
       const { link, meta } = await (
         await fetch(`/api/link?url=${linkUrl}`)
@@ -37,6 +38,7 @@ export default function Submit({
     },
   });
   const { mutate: Upload, isLoading: isUpload } = useMutation({
+    mutationKey: ['comment-request-query'],
     mutationFn: async (values: CommentContentPayload) => {
       const { data } = await axios.put(
         `/api/manga/${id}/comment/create`,
@@ -58,11 +60,11 @@ export default function Submit({
       });
     },
     onSuccess: () => {
+      startTransition(() => router.refresh());
+
       toast({
         title: 'Thành công',
       });
-
-      return startTransition(() => router.refresh());
     },
   });
 
@@ -78,6 +80,8 @@ export default function Submit({
 
   const onClick = useCallback(() => {
     const editorState = editor.getEditorState();
+    editor.setEditable(false);
+
     let autoLink: AutoLinkNode | undefined, imageNode: ImageNode | undefined;
     editorState._nodeMap.forEach((node) => {
       if (node instanceof AutoLinkNode) {
@@ -92,18 +96,21 @@ export default function Submit({
     } else {
       if (autoLink) {
         Embed(autoLink.__url);
+      } else {
+        Upload({ content: editorState.toJSON(), commentId });
       }
-      Upload({ content: editorState.toJSON(), commentId });
     }
   }, [Embed, Upload, commentId, editor]);
 
-  if (typeof oEmbedData !== 'undefined' && !isFetchingOEmbed) {
-    Upload({
-      content: editor.getEditorState().toJSON(),
-      oEmbed: oEmbedData,
-      commentId,
-    });
-  }
+  useEffect(() => {
+    if (typeof oEmbedData !== 'undefined' && !isFetchingOEmbed) {
+      Upload({
+        content: editor.getEditorState().toJSON(),
+        oEmbed: oEmbedData,
+        commentId,
+      });
+    }
+  }, [Upload, commentId, editor, isFetchingOEmbed, oEmbedData]);
 
   return (
     <Button

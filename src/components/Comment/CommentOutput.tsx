@@ -18,7 +18,10 @@ const CommentFunc = dynamic(() => import('./CommentFunc'), {
   loading: () => <Loader2 className="w-6 h-6" />,
 });
 
-type ExtendedComment = Comment & {
+type ExtendedComment = Pick<
+  Comment,
+  'id' | 'content' | 'oEmbed' | 'createdAt'
+> & {
   author: Pick<User, 'name' | 'image' | 'color'>;
   votes: CommentVote[];
   _count: { replies: number };
@@ -42,7 +45,7 @@ const CommentOutput: FC<CommentOutputProps> = ({ initialComments, id }) => {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    ['comment-query'],
+    ['comment-infinite-query'],
     async ({ pageParam = 1 }) => {
       const query = `/api/manga/${id}/comment/?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}`;
 
@@ -154,7 +157,6 @@ const CommentOutput: FC<CommentOutputProps> = ({ initialComments, id }) => {
 
                   {comment._count.replies !== 0 ? (
                     <SubComment
-                      session={session}
                       subCommentLength={comment._count.replies}
                       commentId={comment.id}
                     />
@@ -237,7 +239,6 @@ const CommentOutput: FC<CommentOutputProps> = ({ initialComments, id }) => {
 
                   {comment._count.replies !== 0 ? (
                     <SubComment
-                      session={session}
                       subCommentLength={comment._count.replies}
                       commentId={comment.id}
                     />

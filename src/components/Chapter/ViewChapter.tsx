@@ -95,7 +95,8 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
       const target = document.getElementById(`${idx}`) as HTMLImageElement;
       currentImageRef.current = target;
       currentImageRef.current.scrollIntoView({ behavior: 'instant' });
-      if (readingMode === 'vertical') setCurrentImage(idx);
+
+      setCurrentImage(idx);
     }
   };
   const progressBarHandler = (mode: 'hidden' | 'fixed' | 'lightbar') => {

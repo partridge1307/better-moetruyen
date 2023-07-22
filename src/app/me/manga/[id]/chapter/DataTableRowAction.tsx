@@ -1,34 +1,39 @@
-import { Button, buttonVariants } from '@/components/ui/Button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/Dialog';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTrigger,
+} from '@/components/ui/AlertDialog';
+import { Button, buttonVariants } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { Chapter } from '@prisma/client';
-import { DialogClose } from '@radix-ui/react-dialog';
 import { useMutation } from '@tanstack/react-query';
 import type { Row } from '@tanstack/react-table';
 import axios, { AxiosError } from 'axios';
-import { MoreHorizontal } from 'lucide-react';
+import { Loader2, MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
-import { startTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
+import { startTransition } from 'react';
 
 interface DataTableRowActionProps {
-  row: Row<Chapter>;
+  row: Row<
+    Pick<
+      Chapter,
+      'id' | 'name' | 'images' | 'isPublished' | 'mangaId' | 'updatedAt'
+    >
+  >;
 }
 
 function DataTableRowAction({ row }: DataTableRowActionProps) {
@@ -98,37 +103,38 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
         )}
 
         {!chapter.isPublished && (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="ghost" className="w-full">
-                Publish
-              </Button>
-            </DialogTrigger>
-            <DialogContent isCustomDialog={false}>
-              <DialogHeader>
-                <DialogTitle>Xác nhận yêu cầu</DialogTitle>
-                <DialogDescription>
+          <AlertDialog>
+            <AlertDialogTrigger disabled={isPublishLoading} asChild>
+              {isPublishLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Button variant="ghost" className="w-full">
+                  Publish
+                </Button>
+              )}
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogHeader>Xác nhận yêu cầu</AlertDialogHeader>
+                <AlertDialogDescription>
                   Bạn đã chắc chắn muốn publish chapter này hay chưa?
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <DialogClose
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel
                   className={cn(
                     buttonVariants(),
                     'bg-red-500 hover:bg-red-400 dark:text-white'
                   )}
                 >
                   Cho tôi suy nghĩ thêm
-                </DialogClose>
-                <Button
-                  isLoading={isPublishLoading}
-                  onClick={() => publish(chapter.id)}
-                >
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={() => publish(chapter.id)}>
                   Tôi chắc chắn
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

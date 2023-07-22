@@ -1,7 +1,7 @@
-import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
-import { getToken } from "next-auth/jwt";
-import { NextRequest } from "next/server";
+import { db } from '@/lib/db';
+import { Prisma } from '@prisma/client';
+import { getToken } from 'next-auth/jwt';
+import { NextRequest } from 'next/server';
 
 export async function PATCH(
   req: NextRequest,
@@ -9,11 +9,14 @@ export async function PATCH(
 ) {
   try {
     const token = await getToken({ req });
-    if (!token) return new Response("Unauthorized", { status: 401 });
+    if (!token) return new Response('Unauthorized', { status: 401 });
 
     const user = await db.user.findFirstOrThrow({
       where: {
         id: token.id,
+      },
+      select: {
+        id: true,
       },
     });
 
@@ -24,13 +27,20 @@ export async function PATCH(
           creatorId: user.id,
         },
       },
+      select: {
+        id: true,
+        mangaId: true,
+      },
     });
     const manga = await db.manga.findFirst({
       where: {
         id: targetChapter.mangaId,
       },
+      select: {
+        isPublished: true,
+      },
     });
-    if (!manga?.isPublished) return new Response("Forbidden", { status: 400 });
+    if (!manga?.isPublished) return new Response('Forbidden', { status: 400 });
 
     await db.chapter.update({
       where: {
@@ -41,13 +51,13 @@ export async function PATCH(
       },
     });
 
-    return new Response("OK");
+    return new Response('OK');
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2025") {
-        return new Response("Not found", { status: 404 });
+      if (error.code === 'P2025') {
+        return new Response('Not found', { status: 404 });
       }
     }
-    return new Response("Something went wrong", { status: 500 });
+    return new Response('Something went wrong', { status: 500 });
   }
 }

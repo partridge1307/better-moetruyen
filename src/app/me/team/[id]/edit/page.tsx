@@ -24,6 +24,9 @@ const page: FC<pageProps> = async ({ params }) => {
     where: {
       id: session.user.id,
     },
+    select: {
+      id: true,
+    },
   });
   if (!user) return <ForceSignOut />;
 
@@ -31,6 +34,11 @@ const page: FC<pageProps> = async ({ params }) => {
     where: {
       id: +params.id,
       ownerId: user.id,
+    },
+    select: {
+      id: true,
+      name: true,
+      image: true,
     },
   });
   if (!team) return notFound();

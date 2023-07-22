@@ -36,6 +36,9 @@ const page: FC<pageProps> = async ({ params }) => {
     where: {
       id: session.user.id,
     },
+    select: {
+      id: true,
+    },
   });
   if (!user) return <ForceSignOut />;
 
@@ -44,11 +47,20 @@ const page: FC<pageProps> = async ({ params }) => {
       id: +params.id,
       creatorId: user.id,
     },
-    include: {
+    select: {
       _count: {
         select: { chapter: true },
       },
       view: true,
+      id: true,
+      isPublished: true,
+      name: true,
+      image: true,
+      discordLink: true,
+      facebookLink: true,
+      description: true,
+      createdAt: true,
+      updatedAt: true,
     },
   });
   if (!manga) return notFound();

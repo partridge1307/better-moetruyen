@@ -41,7 +41,10 @@ const Editor = dynamic(() => import('@/components/Editor'), {
 });
 
 interface EditMangaProps {
-  manga: Manga & {
+  manga: Pick<
+    Manga,
+    'id' | 'name' | 'description' | 'image' | 'facebookLink' | 'discordLink'
+  > & {
     author: MangaAuthor[];
     tags: Tag[];
   };

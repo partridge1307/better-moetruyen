@@ -39,11 +39,18 @@ export async function POST(req: NextRequest) {
       where: {
         id: token.id,
       },
+      select: {
+        id: true,
+        verified: true,
+      },
     });
 
     const existedManga = await db.manga.findFirst({
       where: {
         creatorId: user.id,
+      },
+      select: {
+        id: true,
       },
     });
     if (!user.verified && existedManga)

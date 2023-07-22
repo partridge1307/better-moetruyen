@@ -64,7 +64,13 @@ const page: FC<pageProps> = async ({ params }) => {
       id: +params.id,
       isPublished: true,
     },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      description: true,
+      facebookLink: true,
+      discordLink: true,
       author: true,
       tags: true,
       creator: {

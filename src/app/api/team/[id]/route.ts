@@ -21,11 +21,18 @@ export async function PATCH(
       where: {
         id: token.id,
       },
+      select: {
+        id: true,
+      },
     });
     const team = await db.team.findFirstOrThrow({
       where: {
         id: +context.params.id,
         ownerId: user.id,
+      },
+      select: {
+        id: true,
+        image: true,
       },
     });
 

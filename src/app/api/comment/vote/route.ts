@@ -28,11 +28,17 @@ export async function PATCH(req: NextRequest) {
         userId: user.id,
         commentId,
       },
+      select: {
+        type: true,
+      },
     });
 
     await db.comment.findUniqueOrThrow({
       where: {
         id: commentId,
+      },
+      select: {
+        id: true,
       },
     });
 

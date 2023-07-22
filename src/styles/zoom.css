@@ -1,0 +1,10 @@
+.custom-zoom [data-rmiz-btn-unzoom] {
+  outline-offset: 0px;
+  box-shadow: 0 0 0;
+  background-color: rgba(0, 0, 0, 0);
+  padding: 3px;
+}
+
+.custom-zoom [data-rmiz-modal-overlay='visible'] {
+  background-color: rgba(0, 0, 0, 0.7);
+}

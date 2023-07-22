@@ -60,6 +60,14 @@ export const authOptions: AuthOptions = {
             where: {
               email,
             },
+            select: {
+              id: true,
+              name: true,
+              image: true,
+              banner: true,
+              color: true,
+              password: true,
+            },
           });
 
           if (!userExists) return null;

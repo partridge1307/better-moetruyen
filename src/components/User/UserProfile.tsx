@@ -24,7 +24,7 @@ import {
 } from '../ui/Select';
 
 interface UserProfileProps {
-  user: User & {
+  user: Pick<User, 'name' | 'color' | 'image' | 'banner'> & {
     badge: Badge[];
   };
 }

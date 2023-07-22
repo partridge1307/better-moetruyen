@@ -1,15 +1,16 @@
-"use client";
+'use client';
 
-import type { ExtendedManga } from "@/types/db";
-import Image from "next/image";
-import Link from "next/link";
-import { FC } from "react";
-import { Autoplay, EffectCoverflow, Navigation, Pagination } from "swiper";
-import "swiper/css";
-import "swiper/css/effect-coverflow";
-import "swiper/css/navigation";
-import type { SwiperProps } from "swiper/react";
-import { Swiper, SwiperSlide } from "swiper/react";
+import '@/styles/swiper.css';
+import type { ExtendedManga } from '@/types/db';
+import Image from 'next/image';
+import Link from 'next/link';
+import { FC } from 'react';
+import { Autoplay, EffectCoverflow, Navigation, Pagination } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/navigation';
+import type { SwiperProps } from 'swiper/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 interface NotableMangaProps extends SwiperProps {
   manga: ExtendedManga[];

@@ -2,11 +2,13 @@
 
 import { DataTableColumnHeader } from '@/components/DataColumnHeader';
 import { formatTimeToNow } from '@/lib/utils';
-import { Manga } from '@prisma/client';
+import type { Manga } from '@prisma/client';
 import type { ColumnDef } from '@tanstack/react-table';
 import DataTableRowAction from './DataTableRowAction';
 
-export const columns: ColumnDef<Manga>[] = [
+export const columns: ColumnDef<
+  Pick<Manga, 'id' | 'name' | 'isPublished' | 'updatedAt'>
+>[] = [
   {
     id: 'ID',
     accessorKey: 'id',

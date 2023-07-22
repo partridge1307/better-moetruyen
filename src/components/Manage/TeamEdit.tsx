@@ -15,7 +15,7 @@ import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
 interface TeamEditProps {
-  team: Team;
+  team: Pick<Team, 'id' | 'name' | 'image'>;
 }
 
 const TeamEdit: FC<TeamEditProps> = ({ team }) => {

@@ -1,3 +1,4 @@
+import '@/styles/facebook.css';
 import { Loader2 } from 'lucide-react';
 import Script from 'next/script';
 import { FC, memo } from 'react';
@@ -31,6 +32,7 @@ const FBEmbed: FC<FBEmbedProps> = ({ facebookLink }) => {
           </div>
         </div>
       </div>
+
       <Script
         strategy="lazyOnload"
         async

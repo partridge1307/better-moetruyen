@@ -12,7 +12,7 @@ import {
   Droppable,
 } from '@hello-pangea/dnd';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Chapter } from '@prisma/client';
+import type { Chapter } from '@prisma/client';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { FC, useRef, useState } from 'react';
@@ -34,7 +34,10 @@ import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 
 interface ChapterEditProps {
-  chapter: Chapter;
+  chapter: Pick<
+    Chapter,
+    'id' | 'chapterIndex' | 'name' | 'volume' | 'images' | 'mangaId'
+  >;
 }
 
 const reorder = (

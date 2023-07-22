@@ -23,7 +23,11 @@ export async function PATCH(
       where: {
         id: token.id,
       },
+      select: {
+        id: true,
+      },
     });
+
     await db.manga.findFirstOrThrow({
       where: {
         creatorId: user.id,
@@ -32,6 +36,9 @@ export async function PATCH(
             id: +context.params.chapterId,
           },
         },
+      },
+      select: {
+        id: true,
       },
     });
 

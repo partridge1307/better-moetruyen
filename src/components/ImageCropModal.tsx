@@ -1,13 +1,18 @@
 import { cn } from '@/lib/utils';
-import { DialogClose } from '@radix-ui/react-dialog';
 import Image from 'next/image';
 import { forwardRef, useRef, useState } from 'react';
 import type { Crop, PixelCrop } from 'react-image-crop';
 import { ReactCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
-import { buttonVariants } from './ui/Button';
-import { Dialog, DialogContent, DialogTrigger } from './ui/Dialog';
-import { Slider } from './ui/Slider';
 import 'react-image-crop/dist/ReactCrop.css';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogTrigger,
+} from './ui/AlertDialog';
+import { buttonVariants } from './ui/Button';
+import { Slider } from './ui/Slider';
 
 interface ImageCropModalProps {
   previewImage: {
@@ -115,11 +120,11 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
     }
 
     return (
-      <Dialog>
-        <DialogTrigger ref={ref} className="hidden">
+      <AlertDialog>
+        <AlertDialogTrigger ref={ref} className="hidden">
           Cropper
-        </DialogTrigger>
-        <DialogContent isCustomDialog={true}>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
           <div className="relative w-[1280x] h-fit space-y-10">
             {previewImage && (
               <ReactCrop
@@ -168,7 +173,7 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
             )}
 
             <div className="w-full flex items-center justify-end gap-6">
-              <DialogClose
+              <AlertDialogCancel
                 className={cn(
                   buttonVariants({ variant: 'destructive' }),
                   'bg-red-600 w-20'
@@ -178,17 +183,17 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
                 }}
               >
                 Hủy
-              </DialogClose>
-              <DialogClose
+              </AlertDialogCancel>
+              <AlertDialogAction
                 className={cn(buttonVariants({ variant: 'default' }), 'w-20')}
                 onClick={() => onDoneHandler()}
               >
                 Xong
-              </DialogClose>
+              </AlertDialogAction>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   }
 );

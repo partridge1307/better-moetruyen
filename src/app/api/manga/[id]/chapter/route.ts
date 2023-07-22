@@ -23,12 +23,18 @@ export async function POST(
       where: {
         id: token.id,
       },
+      select: {
+        id: true,
+      },
     });
 
     const manga = await db.manga.findFirstOrThrow({
       where: {
         id: +context.params.id,
         creatorId: user.id,
+      },
+      select: {
+        id: true,
       },
     });
 
@@ -49,6 +55,9 @@ export async function POST(
           orderBy: {
             chapterIndex: 'desc',
           },
+          select: {
+            chapterIndex: true,
+          },
         })
       )?.chapterIndex;
 
@@ -63,6 +72,9 @@ export async function POST(
         where: {
           mangaId: manga.id,
           chapterIndex: index,
+        },
+        select: {
+          id: true,
         },
       })
     )

@@ -19,6 +19,9 @@ const page = async ({ params }: { params: { id: string } }) => {
     where: {
       id: session.user.id,
     },
+    select: {
+      id: true,
+    },
   });
   if (!user) return <ForceSignOut />;
 
@@ -28,6 +31,14 @@ const page = async ({ params }: { params: { id: string } }) => {
       manga: {
         creatorId: user.id,
       },
+    },
+    select: {
+      id: true,
+      name: true,
+      isPublished: true,
+      updatedAt: true,
+      mangaId: true,
+      images: true,
     },
   });
 

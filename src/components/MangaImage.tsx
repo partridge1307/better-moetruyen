@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { cn } from '@/lib/utils';
 import { Maximize2 } from 'lucide-react';
@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { FC, useCallback, useState } from 'react';
 import { Controlled as Zoom } from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import '@/styles/zoom.css';
 
 interface MangaCardProps extends React.HTMLAttributes<HTMLImageElement> {
   image: string;

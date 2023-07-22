@@ -9,9 +9,12 @@ const Home = async () => {
     where: {
       isPublished: true,
     },
-    include: {
+    select: {
       tags: true,
       author: true,
+      id: true,
+      name: true,
+      image: true,
     },
     take: 10,
   });

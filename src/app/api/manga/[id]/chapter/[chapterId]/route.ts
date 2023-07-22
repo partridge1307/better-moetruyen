@@ -1,5 +1,5 @@
-import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
+import { db } from '@/lib/db';
+import { Prisma } from '@prisma/client';
 
 export async function POST(
   req: Request,
@@ -10,6 +10,10 @@ export async function POST(
       where: {
         id: +context.params.chapterId,
         mangaId: +context.params.id,
+      },
+      select: {
+        id: true,
+        mangaId: true,
       },
     });
 
@@ -30,13 +34,13 @@ export async function POST(
       },
     });
 
-    return new Response("OK");
+    return new Response('OK');
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2025") {
-        return new Response("Not found", { status: 404 });
+      if (error.code === 'P2025') {
+        return new Response('Not found', { status: 404 });
       }
     }
-    return new Response("Something went wrong", { status: 500 });
+    return new Response('Something went wrong', { status: 500 });
   }
 }

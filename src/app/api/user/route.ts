@@ -18,6 +18,12 @@ export async function PATCH(req: NextRequest) {
       where: {
         id: token.id,
       },
+      select: {
+        id: true,
+        image: true,
+        banner: true,
+        color: true,
+      },
     });
 
     const form = await req.formData();

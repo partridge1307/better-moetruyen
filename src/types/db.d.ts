@@ -1,4 +1,4 @@
-import {
+import type {
   Chapter,
   DailyView,
   Manga,
@@ -7,7 +7,7 @@ import {
   WeeklyView,
 } from '@prisma/client';
 
-export type ExtendedManga = Manga & {
+export type ExtendedManga = Pick<Manga, 'id' | 'name' | 'image'> & {
   chapter?: Chapter[];
   author?: MangaAuthor[];
   tags?: Tag[];

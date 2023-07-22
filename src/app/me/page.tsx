@@ -20,8 +20,12 @@ const page: FC<pageProps> = async ({}) => {
     where: {
       id: session.user.id,
     },
-    include: {
+    select: {
       badge: true,
+      name: true,
+      color: true,
+      image: true,
+      banner: true,
     },
   });
   if (!user) return <ForceSignOut />;

@@ -22,6 +22,9 @@ model User {
   manga        Manga[]
   comment      Comment[]
   commentVote  CommentVote[]
+  followTo     User?         @relation("followTo", fields: [followToId], references: [id])
+  followToId   String?
+  follows      User[]        @relation("followTo")
   createAt     DateTime      @default(now())
 }
 

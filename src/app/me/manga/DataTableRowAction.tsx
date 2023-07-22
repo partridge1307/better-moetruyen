@@ -1,13 +1,15 @@
-import { Button, buttonVariants } from '@/components/ui/Button';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/Dialog';
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/AlertDialog';
+import { Button, buttonVariants } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +20,6 @@ import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { Manga } from '@prisma/client';
-import { DialogClose } from '@radix-ui/react-dialog';
 import { useMutation } from '@tanstack/react-query';
 import type { Row } from '@tanstack/react-table';
 import axios, { AxiosError } from 'axios';
@@ -28,7 +29,7 @@ import { useRouter } from 'next/navigation';
 import { startTransition } from 'react';
 
 interface DataTableRowActionProps {
-  row: Row<Manga>;
+  row: Row<Pick<Manga, 'id' | 'name' | 'isPublished' | 'updatedAt'>>;
 }
 
 function DataTableRowAction({ row }: DataTableRowActionProps) {
@@ -94,37 +95,34 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
           </Link>
         </DropdownMenuItem>
         {!manga.isPublished && (
-          <Dialog>
-            <DialogTrigger asChild>
+          <AlertDialog>
+            <AlertDialogTrigger disabled={isPublishLoading} asChild>
               <Button variant="ghost" className="w-full">
                 Publish
               </Button>
-            </DialogTrigger>
-            <DialogContent isCustomDialog={false}>
-              <DialogHeader>
-                <DialogTitle>Xác nhận yêu cầu</DialogTitle>
-                <DialogDescription>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Xác nhận yêu cầu</AlertDialogTitle>
+                <AlertDialogDescription>
                   Bạn đã chắc chắn muốn publish bộ này hay chưa?
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <DialogClose
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel
                   className={cn(
                     buttonVariants(),
                     'bg-red-500 hover:bg-red-400 dark:text-white'
                   )}
                 >
                   Cho tôi suy nghĩ thêm
-                </DialogClose>
-                <Button
-                  isLoading={isPublishLoading}
-                  onClick={() => publish(manga.id)}
-                >
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={() => publish(manga.id)}>
                   Tôi chắc chắn
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

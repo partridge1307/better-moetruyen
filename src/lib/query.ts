@@ -4,7 +4,7 @@ export type Chapters = {
   volume: number;
   data: {
     id: number;
-    name: string;
+    name: string | null;
     index: number;
     isPublished: boolean;
     teamId: string | null;

@@ -1,6 +1,8 @@
 import { mangaChapterGroupByVolume } from '@/lib/query';
 import { formatTimeToNow } from '@/lib/utils';
+import parseJSON from 'date-fns/parseJSON';
 import { Clock } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 import {
@@ -9,26 +11,24 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '../ui/Accordion';
-import parseJSON from 'date-fns/parseJSON';
-import Image from 'next/image';
 
-interface ChapterListProps {
+interface ListTreeChapterProps {
   mangaId: number;
 }
 
-const ChapterList: FC<ChapterListProps> = async ({ mangaId }) => {
-  const chapters = await mangaChapterGroupByVolume(mangaId);
+const ListTreeChapter: FC<ListTreeChapterProps> = async ({ mangaId }) => {
+  const volumes = await mangaChapterGroupByVolume(mangaId);
 
   return (
     <Accordion type="multiple">
-      {chapters.map((c, idx) => (
-        <AccordionItem key={`${idx}`} value={`${c.volume}`}>
+      {volumes.map((v, idx) => (
+        <AccordionItem key={`${idx}`} value={`${v.volume}`}>
           <AccordionTrigger className="hover:no-underline">
-            Volume {c.volume}
+            Volume {v.volume}
           </AccordionTrigger>
           <AccordionContent>
             <ul className="space-y-4">
-              {c.data
+              {v.data
                 .sort((a, b) => b.index - a.index)
                 .map((d, i) => {
                   if (d.isPublished) {
@@ -41,12 +41,14 @@ const ChapterList: FC<ChapterListProps> = async ({ mangaId }) => {
                           <div className="flex gap-2">
                             <p>Chap. {d.index}</p>
                             <p>-</p>
-                            <p
-                              title={d.name ? d.name : `Chapter ${d.index}`}
-                              className="line-clamp-2 capitalize md:line-clamp-3"
-                            >
-                              {d.name}
-                            </p>
+                            {d.name !== null && (
+                              <p
+                                title={`Chapter ${d.index}`}
+                                className="line-clamp-2 capitalize md:line-clamp-3"
+                              >
+                                {d.name}
+                              </p>
+                            )}
                           </div>
 
                           <div className="flex max-sm:flex-col max-sm:items-start items-center gap-2 md:gap-4">
@@ -74,7 +76,7 @@ const ChapterList: FC<ChapterListProps> = async ({ mangaId }) => {
                               </Link>
                             )}
 
-                            <dl className="flex items-center gap-2">
+                            <dl className="flex items-center gap-1">
                               <dt>
                                 <Clock className="h-4 w-4" />
                               </dt>
@@ -94,4 +96,4 @@ const ChapterList: FC<ChapterListProps> = async ({ mangaId }) => {
   );
 };
 
-export default ChapterList;
+export default ListTreeChapter;

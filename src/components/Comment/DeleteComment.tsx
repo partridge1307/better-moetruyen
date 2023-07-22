@@ -1,3 +1,9 @@
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { toast } from '@/hooks/use-toast';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import { Loader2, X } from 'lucide-react';
+import type { Session } from 'next-auth';
 import { FC } from 'react';
 import {
   AlertDialog,
@@ -10,12 +16,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/AlertDialog';
-import { Loader2, X } from 'lucide-react';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import { toast } from '@/hooks/use-toast';
-import { useCustomToast } from '@/hooks/use-custom-toast';
-import type { Session } from 'next-auth';
 
 interface DeleteCommentProps {
   commentId: number;

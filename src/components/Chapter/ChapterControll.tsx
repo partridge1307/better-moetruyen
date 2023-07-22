@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Chapter } from '@prisma/client';
+import type { Chapter } from '@prisma/client';
 import Link from 'next/link';
 import { FC } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';

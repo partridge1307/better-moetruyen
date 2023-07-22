@@ -28,7 +28,14 @@ const page = async () => {
         id: user.id,
       },
     })
-    .manga();
+    .manga({
+      select: {
+        id: true,
+        name: true,
+        isPublished: true,
+        updatedAt: true,
+      },
+    });
 
   return (
     <div className="min-h-[400px] md:min-h-[500px]">

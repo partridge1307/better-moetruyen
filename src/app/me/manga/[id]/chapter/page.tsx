@@ -25,26 +25,27 @@ const page = async ({ params }: { params: { id: string } }) => {
   });
   if (!user) return <ForceSignOut />;
 
-  const chapter = await db.chapter.findMany({
-    where: {
-      mangaId: +params.id,
-      manga: {
+  const chapters = await db.manga
+    .findUnique({
+      where: {
+        id: +params.id,
         creatorId: user.id,
       },
-    },
-    select: {
-      id: true,
-      name: true,
-      isPublished: true,
-      updatedAt: true,
-      mangaId: true,
-      images: true,
-    },
-  });
+    })
+    .chapter({
+      select: {
+        id: true,
+        name: true,
+        isPublished: true,
+        mangaId: true,
+        updatedAt: true,
+        images: true,
+      },
+    });
 
   return (
     <div className="min-h-[400px] md:min-h-[500px]">
-      {!!chapter.length ? (
+      {chapters && chapters.length ? (
         <div className="flex flex-col">
           <Link
             href={`/me/manga/${params.id}/chapter/upload`}

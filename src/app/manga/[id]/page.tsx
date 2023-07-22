@@ -1,4 +1,5 @@
-import ChapterList from '@/components/Chapter/ChapterList';
+import ListChapter from '@/components/Chapter/ListChapter';
+import ListTreeChapter from '@/components/Chapter/ListTreeChapter';
 import EditorOutput from '@/components/EditorOutput';
 import FBEmbed from '@/components/FBEmbed';
 import MangaImage from '@/components/MangaImage';
@@ -8,11 +9,10 @@ import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
+import { List, ListTree, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { FC, Suspense, lazy } from 'react';
-import 'server-only';
 const MoetruyenEditor = lazy(
   () => import('@/components/Editor/MoetruyenEditor')
 );
@@ -157,7 +157,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
   return (
     <>
-      <div className="container mx-auto h-full pt-20 space-y-14">
+      <div className="container max-sm:px-2 mx-auto h-full pt-20 space-y-14">
         <div className="relative h-max">
           <div className="p-4 max-sm:space-y-4 md:flex md:gap-10">
             <MangaImage className="h-48 w-full md:w-40" image={manga.image} />
@@ -218,7 +218,7 @@ const page: FC<pageProps> = async ({ params }) => {
               value="chapter"
               className="grid grid-cols-1 max-sm:gap-20 md:grid-cols-[.4fr_1fr] lg:grid-cols-[.3fr_1fr] gap-6"
             >
-              <div className="max-sm:order-last space-y-4">
+              <div className="space-y-4">
                 <div>
                   <p className="text-lg px-2 w-full">Uploader</p>
                   <Card className="relative bg-transparent/10">
@@ -312,9 +312,34 @@ const page: FC<pageProps> = async ({ params }) => {
                 )}
               </div>
 
-              <Suspense fallback={<Loader2 className="h-6 w-6 animate-spin" />}>
-                <ChapterList mangaId={manga.id} />
-              </Suspense>
+              <Tabs defaultValue="list">
+                <div className="md:w-full md:flex md:justify-end">
+                  <TabsList className="space-x-2 dark:bg-zinc-800 max-sm:grid max-sm:grid-cols-2">
+                    <TabsTrigger value="list">
+                      <List className="max-sm:w-5 max-sm:h-5" />
+                    </TabsTrigger>
+                    <TabsTrigger value="group">
+                      <ListTree className="max-sm:w-5 max-sm:h-5" />
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+
+                <TabsContent value="group">
+                  <Suspense
+                    fallback={<Loader2 className="w-6 h-6 animate-spin" />}
+                  >
+                    <ListTreeChapter mangaId={manga.id} />
+                  </Suspense>
+                </TabsContent>
+
+                <TabsContent value="list">
+                  <Suspense
+                    fallback={<Loader2 className="w-6 h-6 animate-spin" />}
+                  >
+                    <ListChapter mangaId={manga.id} />
+                  </Suspense>
+                </TabsContent>
+              </Tabs>
             </TabsContent>
 
             <TabsContent value="comment">

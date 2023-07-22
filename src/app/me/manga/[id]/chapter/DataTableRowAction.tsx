@@ -53,7 +53,7 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
         if (e.response?.status === 400)
           return toast({
             title: 'Manga chưa publish',
-            description: 'Yêu cầu Manga đã publish để thực hiện tính năng này',
+            description: 'Yêu cầu Manga đã publish để thực hiện',
             variant: 'destructive',
           });
         if (e.response?.status === 404) return notFoundToast();

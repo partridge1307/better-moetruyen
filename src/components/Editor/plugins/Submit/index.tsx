@@ -7,8 +7,7 @@ import { AutoLinkNode } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { useRouter } from 'next/navigation';
-import { startTransition, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { $isImageNode, ImageNode } from '../../nodes/Image';
 
 export default function Submit({
@@ -21,7 +20,6 @@ export default function Submit({
   const [editor] = useLexicalComposerContext();
   const [hasText, setHasText] = useState<boolean>(false);
   const { loginToast, notFoundToast } = useCustomToast();
-  const router = useRouter();
 
   const {
     data: oEmbedData,
@@ -60,7 +58,7 @@ export default function Submit({
       });
     },
     onSuccess: () => {
-      startTransition(() => router.refresh());
+      location.reload();
 
       toast({
         title: 'Thành công',

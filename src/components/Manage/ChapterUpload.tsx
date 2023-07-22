@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useCustomToast } from "@/hooks/use-custom-toast";
-import { toast } from "@/hooks/use-toast";
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { toast } from '@/hooks/use-toast';
 import {
   ChapterUploadValidator,
   type ChapterUploadPayload,
-} from "@/lib/validators/upload";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
-import Image from "next/image";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Button } from "../ui/Button";
+} from '@/lib/validators/upload';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import Image from 'next/image';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Button } from '../ui/Button';
 import {
   Form,
   FormControl,
@@ -20,11 +20,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/Form";
-import { Input } from "../ui/Input";
-import { Progress } from "../ui/Progress";
-import ChapterImageUpload, { type previewImage } from "./ChapterImageUpload";
-import ChapterIndexUpload from "./ChapterIndexUpload";
+} from '../ui/Form';
+import { Input } from '../ui/Input';
+import { Progress } from '../ui/Progress';
+import ChapterImageUpload, { type previewImage } from './ChapterImageUpload';
+import ChapterIndexUpload from './ChapterIndexUpload';
 import { useRouter } from 'next/navigation';
 
 const ChapterUpload = ({ id }: { id: string }) => {
@@ -97,8 +97,9 @@ const ChapterUpload = ({ id }: { id: string }) => {
       });
     },
     onSuccess: () => {
-      router.push(`me/manga/${id}/chapter`);
+      router.push(`/me/manga/${id}/chapter`);
       router.refresh();
+
       return toast({
         title: 'Thành công',
       });

@@ -10,7 +10,6 @@ import axios, { AxiosError } from 'axios';
 import { Edit as EditIcon, Loader2, Pencil } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { FC, useEffect, useReducer, useRef, useState } from 'react';
 import ImageCropModal from '../ImageCropModal';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
@@ -64,7 +63,6 @@ const reducer = (state: StateProps, action: ActionState) => {
 
 const UserProfile: FC<UserProfileProps> = ({ user }) => {
   const { loginToast, notFoundToast } = useCustomToast();
-  const router = useRouter();
   const { update } = useSession();
   const modalRef = useRef<HTMLButtonElement>(null);
   const [aspect, setAspect] = useState(1);
@@ -141,8 +139,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
     },
     onSuccess: async () => {
       update();
-      router.push('/');
-      router.refresh();
+      location.reload();
 
       return toast({
         title: 'Thành công',

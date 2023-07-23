@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { forwardRef, memo } from 'react';
 
 interface VerticalViewChapterProps {
-  chapter: Chapter & {
+  chapter: Pick<Chapter, 'images'> & {
     manga: Pick<Manga, 'name'>;
   };
   imageRef: (node: Element | null | undefined) => void;

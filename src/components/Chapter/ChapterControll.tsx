@@ -4,6 +4,15 @@ import Link from 'next/link';
 import { FC } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
 import { Separator } from '../ui/Separator';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '../ui/Command';
+import { ChevronDown } from 'lucide-react';
 
 interface ChapterControllProps {
   currentImage: number;
@@ -13,6 +22,9 @@ interface ChapterControllProps {
       id: number;
     };
   };
+  chapterList:
+    | Pick<Chapter, 'id' | 'chapterIndex' | 'name' | 'volume' | 'isPublished'>[]
+    | null;
   setCurrentImage(value: number): void;
   readingMode: 'vertical' | 'horizontal';
   setReadingMode(value: 'vertical' | 'horizontal'): void;
@@ -29,6 +41,7 @@ const progressBarArr: Array<'hidden' | 'fixed' | 'lightbar'> = [
 const ChapterControll: FC<ChapterControllProps> = ({
   currentImage,
   chapter,
+  chapterList,
   setCurrentImage,
   readingMode,
   setReadingMode,
@@ -68,14 +81,49 @@ const ChapterControll: FC<ChapterControllProps> = ({
         </Link>
       </div>
 
-      <div className="grid grid-cols-[1fr_.8fr_1fr] gap-x-4">
-        <p className="rounded-md py-1 text-center dark:bg-zinc-900">
-          Vol. {chapter.volume} Ch. {chapter.chapterIndex}
-        </p>
+      <div className="grid grid-cols-[1fr_.8fr_1fr] gap-x-2 md:gap-x-4">
+        <Popover>
+          <PopoverTrigger className="rounded-md py-1 dark:bg-zinc-900">
+            <p className="flex justify-center items-center gap-1 max-sm:text-sm">
+              Vol. {chapter.volume} Ch. {chapter.chapterIndex}
+              <ChevronDown className="max-sm:hidden w-5 h-5" />
+            </p>
+          </PopoverTrigger>
+
+          <PopoverContent>
+            <Command>
+              <CommandInput placeholder="Chapter..." />
+
+              <CommandList>
+                <CommandEmpty>Không tìm thấy chapter</CommandEmpty>
+                {chapterList && (
+                  <CommandGroup>
+                    {chapterList.map((chapter, idx) => {
+                      if (chapter.isPublished) {
+                        return (
+                          <CommandItem key={idx}>
+                            <Link href={`/chapter/${chapter.id}`}>
+                              Vol. {chapter.volume} Ch. {chapter.chapterIndex}
+                            </Link>
+                          </CommandItem>
+                        );
+                      }
+                    })}
+                  </CommandGroup>
+                )}
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
 
         <Popover>
-          <PopoverTrigger className="rounded-md py-1 text-center dark:bg-zinc-900">
-            <span>Tr. {currentImage + 1}</span> / {chapter.images.length}
+          <PopoverTrigger className="rounded-md py-1 dark:bg-zinc-900">
+            <p className="flex items-center justify-center md:gap-1 max-sm:text-sm">
+              <span>
+                Tr. {currentImage + 1} / {chapter.images.length}
+              </span>
+              <ChevronDown className="max-sm:hidden w-5 h-5" />
+            </p>
           </PopoverTrigger>
           <PopoverContent className="flex w-fit items-center rounded-xl dark:bg-zinc-900 dark:text-white">
             <form
@@ -102,8 +150,11 @@ const ChapterControll: FC<ChapterControllProps> = ({
         </Popover>
 
         <Popover>
-          <PopoverTrigger className="rounded-md py-1 text-center dark:bg-zinc-900">
-            Menu
+          <PopoverTrigger className="rounded-md py-1 dark:bg-zinc-900">
+            <p className="flex justify-center items-center gap-1">
+              Menu
+              <ChevronDown className="max-sm:hidden w-5 h-5" />
+            </p>
           </PopoverTrigger>
           <PopoverContent className="min-w-max p-6 dark:bg-zinc-900">
             <div className="space-y-4">

@@ -1,7 +1,7 @@
-import ViewChapter from "@/components/Chapter/ViewChapter";
-import { db } from "@/lib/db";
-import { notFound } from "next/navigation";
-import { FC } from "react";
+import ViewChapter from '@/components/Chapter/ViewChapter';
+import { db } from '@/lib/db';
+import { notFound } from 'next/navigation';
+import { FC } from 'react';
 
 interface pageProps {
   params: {
@@ -13,8 +13,9 @@ const page: FC<pageProps> = async ({ params }) => {
   const chapter = await db.chapter.findFirst({
     where: {
       id: +params.chapterId,
+      isPublished: true,
     },
-    include: {
+    select: {
       manga: {
         select: {
           name: true,
@@ -22,29 +23,34 @@ const page: FC<pageProps> = async ({ params }) => {
           isPublished: true,
         },
       },
+      id: true,
+      name: true,
+      chapterIndex: true,
+      images: true,
+      volume: true,
     },
   });
   if (!chapter || !chapter.manga.isPublished) return notFound();
-  const mangaChapterList = await db.manga.findFirst({
-    where: {
-      id: chapter.manga.id,
-    },
-    select: {
-      chapter: {
-        select: {
-          id: true,
-          chapterIndex: true,
-          volume: true,
-          name: true,
-        },
+
+  const chapterList = await db.manga
+    .findUnique({
+      where: {
+        id: chapter.manga.id,
       },
-    },
-  });
-  if (!mangaChapterList) return notFound();
+    })
+    .chapter({
+      select: {
+        id: true,
+        chapterIndex: true,
+        name: true,
+        volume: true,
+        isPublished: true,
+      },
+    });
 
   return (
     <div className="mt-8 h-full">
-      <ViewChapter chapter={chapter} mangaChapterList={mangaChapterList} />
+      <ViewChapter chapter={chapter} chapterList={chapterList} />
     </div>
   );
 };

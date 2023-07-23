@@ -13,23 +13,21 @@ import HorizontalViewChapter from './HorizontalViewChapter';
 import VerticalViewChapter from './VerticalViewChapter';
 
 interface ViewChapterProps {
-  chapter: Chapter & {
+  chapter: Pick<
+    Chapter,
+    'id' | 'name' | 'chapterIndex' | 'volume' | 'images'
+  > & {
     manga: {
       name: string;
       id: number;
     };
   };
-  mangaChapterList: {
-    chapter: {
-      id: number;
-      chapterIndex: number;
-      volume: number;
-      name: string | null;
-    }[];
-  };
+  chapterList:
+    | Pick<Chapter, 'id' | 'chapterIndex' | 'name' | 'volume' | 'isPublished'>[]
+    | null;
 }
 
-const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
+const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
   const { mutate: IncreaseView } = useMutation({
     mutationFn: async () => {
       const { data } = await axios.post(
@@ -55,7 +53,6 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
   >('hidden');
   const slider = useRef<HTMLDivElement | null>(null);
   const currentImageRef = useRef<HTMLImageElement | null>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
   const { ref: imageRef, inView } = useInView({
     threshold: 0,
   });
@@ -71,6 +68,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
       ) as HTMLImageElement;
       currentImageRef.current = target;
       currentImageRef.current.scrollIntoView({ behavior: 'smooth' });
+      setCurrentImage(currentImage - 1);
     }
   };
   const slideRight = () => {
@@ -78,8 +76,10 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
       const target = document.getElementById(
         `${currentImage + 1}`
       ) as HTMLImageElement;
+
       currentImageRef.current = target;
       currentImageRef.current.scrollIntoView({ behavior: 'smooth' });
+      setCurrentImage(currentImage + 1);
     }
   };
   const IndexInputHandler = (idx: number) => {
@@ -114,22 +114,10 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
       : localStorage.progressBar === 'fixed'
       ? setProgressBar('fixed')
       : null;
-
-    const handler = () => {
-      if (typeof window !== 'undefined' && slider.current !== null) {
-        if (window.scrollY < 150) {
-          slider.current.scrollIntoView({ behavior: 'instant' });
-        }
-      }
-    };
-
-    slider.current?.addEventListener('scroll', handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    return () => slider.current?.removeEventListener('scroll', handler);
   }, []);
   useEffect(() => {
     if (readingMode === 'vertical') {
-      observerRef.current = new IntersectionObserver(
+      const observer = new IntersectionObserver(
         ([entry]) => {
           if (entry.isIntersecting) {
             setCurrentImage(Number(entry.target.id));
@@ -137,27 +125,30 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
         },
         { threshold: 0.4 }
       );
-    } else {
-      observerRef.current = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            setCurrentImage(Number(entry.target.id));
-          }
-        },
-        { threshold: 1 }
-      );
-    }
-  }, [readingMode]);
-  useEffect(() => {
-    chapter.images.map((_, idx) => {
-      const target = document.getElementById(`${idx}`) as HTMLImageElement;
-      observerRef.current?.observe(target);
 
-      return () => {
-        observerRef.current?.unobserve(target);
+      chapter.images.map((_, idx) => {
+        const target = document.getElementById(`${idx}`) as HTMLImageElement;
+        observer.observe(target);
+
+        return () => {
+          observer.unobserve(target);
+        };
+      });
+
+      const handler = () => {
+        if (typeof window !== 'undefined' && slider.current !== null) {
+          if (window.scrollY < 150) {
+            slider.current.scrollIntoView({ behavior: 'instant' });
+          }
+        }
       };
-    });
+
+      slider.current?.addEventListener('scroll', handler);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      return () => slider.current?.removeEventListener('scroll', handler);
+    }
   }, [chapter.images, readingMode]);
+
   if (typeof window !== 'undefined' && inView && 'startPage' in localStorage) {
     if (Date.now() - +localStorage.startPage > 30 * 1000) {
       localStorage.removeItem('startPage');
@@ -171,6 +162,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
         <ChapterControll
           currentImage={currentImage}
           chapter={chapter}
+          chapterList={chapterList}
           setCurrentImage={IndexInputHandler}
           readingMode={readingMode}
           setReadingMode={ReadingModeHanlder}
@@ -202,7 +194,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, mangaChapterList }) => {
             progressBar === 'hidden'
               ? 'opacity-0 hover:opacity-100'
               : progressBar === 'lightbar'
-              ? 'items-end p-0 dark:hover:bg-transparent gap-1'
+              ? 'items-end p-0 dark:hover:bg-transparent gap-[0.15rem] h-6'
               : null
           )}
         >

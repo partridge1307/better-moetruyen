@@ -1,12 +1,9 @@
-import { cn } from '@/lib/utils';
 import type { Chapter, Manga } from '@prisma/client';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { forwardRef } from 'react';
 
 interface HorizontalViewChapterProps {
-  chapter: Chapter & {
+  chapter: Pick<Chapter, 'images'> & {
     manga: Pick<Manga, 'name'>;
   };
   slideLeft(): void;
@@ -63,28 +60,17 @@ const HorizontalViewChapter = forwardRef<
         }
       })}
 
-      {currentImage + 1 >= chapter.images.length && (
-        <Link href={`/chapter/`}></Link>
-      )}
-
       <button
         onClick={slideLeft}
-        className={cn(
-          'absolute left-0 h-full w-2/5 opacity-0',
-          currentImage <= 0 ? 'hidden' : null
-        )}
-      >
-        <ChevronLeft className="h-20 w-20" />
-      </button>
+        disabled={currentImage <= 0}
+        className="absolute left-0 h-full w-2/5 opacity-0"
+      />
+
       <button
         onClick={slideRight}
-        className={cn(
-          'absolute right-0 h-full w-2/5 opacity-0',
-          currentImage + 1 >= chapter.images.length ? 'hidden' : null
-        )}
-      >
-        <ChevronRight className="h-20 w-20" />
-      </button>
+        disabled={currentImage + 1 >= chapter.images.length}
+        className="absolute right-0 h-full w-2/5 opacity-0"
+      />
     </div>
   );
 });

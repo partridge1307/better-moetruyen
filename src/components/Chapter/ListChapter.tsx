@@ -4,8 +4,8 @@ import parseJSON from 'date-fns/parseJSON';
 import { Clock } from 'lucide-react';
 import Link from 'next/link';
 import { FC } from 'react';
-import { ScrollArea } from '../ui/ScrollArea';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 const ChapterTeam = dynamic(() => import('./ChapterTeam'), { ssr: false });
 
 interface ListChapterProps {
@@ -38,14 +38,17 @@ const ListChapter: FC<ListChapterProps> = async ({ mangaId }) => {
 
   return (
     chapters?.length && (
-      <ScrollArea>
+      <ul>
         {chapters.map((chapter, idx) => (
-          <div key={idx}>
+          <li
+            key={idx}
+            className="dark:bg-zinc-800 px-3 py-2 md:py-3 rounded-lg space-y-1 md:space-y-2"
+          >
             <Link
               href={`/chapter/${chapter.id}`}
-              className="flex items-center justify-between rounded-lg bg-zinc-800 p-2 py-5 max-sm:flex-wrap max-sm:gap-2"
+              className="flex items-center justify-between max-sm:flex-col max-sm:items-start"
             >
-              <div className="flex gap-2">
+              <div className="flex items-center gap-1 max-sm:text-sm">
                 <p>Vol. {chapter.volume}</p>
                 <p>Ch. {chapter.chapterIndex}</p>
                 <p>-</p>
@@ -59,19 +62,39 @@ const ListChapter: FC<ListChapterProps> = async ({ mangaId }) => {
                 )}
               </div>
 
-              <div className="flex max-sm:flex-col max-sm:items-start items-center gap-2 md:gap-4">
-                <ChapterTeam teamId={chapter.teamId} team={chapter.team} />
-                <dl className="flex items-center gap-1">
-                  <dt>
-                    <Clock className="h-4 w-4" />
-                  </dt>
-                  <dd>{formatTimeToNow(parseJSON(chapter.createdAt))}</dd>
-                </dl>
-              </div>
+              <dl className="flex items-center gap-1 max-sm:text-sm">
+                <dt>
+                  <Clock className="h-4 w-4" />
+                </dt>
+                <dd>{formatTimeToNow(parseJSON(chapter.createdAt))}</dd>
+              </dl>
             </Link>
-          </div>
+
+            {chapter.team && (
+              <Link
+                href={`/team/${chapter.teamId}`}
+                className="flex items-center gap-1"
+              >
+                {chapter.team.image && (
+                  <div className="relative h-5 w-5 md:h-6 md:w-6">
+                    <Image
+                      fill
+                      sizes="0%"
+                      src={chapter.team.image}
+                      alt="Team Image"
+                      className="rounded-full"
+                    />
+                  </div>
+                )}
+
+                <p className="text-sm md:text-base font-medium">
+                  {chapter.team.name}
+                </p>
+              </Link>
+            )}
+          </li>
         ))}
-      </ScrollArea>
+      </ul>
     )
   );
 };

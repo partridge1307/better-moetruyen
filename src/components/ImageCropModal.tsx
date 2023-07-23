@@ -151,9 +151,9 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
 
             {mediaWidth !== 0 && mediaHeight !== 0 && (
               <Slider
-                defaultValue={[aspect === 1 ? 55 : 75]}
+                defaultValue={[aspect === 1 ? 100 : 75]}
                 min={aspect === 1 ? 25 : 50}
-                max={aspect === 1 ? 55 : 100}
+                max={aspect === 1 ? 100 : 100}
                 step={1}
                 onValueChange={(value) =>
                   setCrop(

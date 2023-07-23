@@ -9,6 +9,7 @@ import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { $isImageNode, ImageNode } from '../../nodes/Image';
+import { createEditor } from 'lexical';
 
 export default function Submit({
   id,
@@ -58,9 +59,7 @@ export default function Submit({
       });
     },
     onSuccess: () => {
-      location.reload();
-
-      toast({
+      return toast({
         title: 'Thành công',
       });
     },
@@ -78,7 +77,7 @@ export default function Submit({
 
   const onClick = useCallback(() => {
     const editorState = editor.getEditorState();
-    editor.setEditable(false);
+    if (editor.isEditable()) editor.setEditable(false);
 
     let autoLink: AutoLinkNode | undefined, imageNode: ImageNode | undefined;
     editorState._nodeMap.forEach((node) => {

@@ -124,7 +124,6 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
     },
     onSuccess: () => {
       router.push(`/me/manga`);
-      router.refresh();
 
       return toast({
         title: 'Thành công',

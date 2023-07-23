@@ -31,7 +31,7 @@ const SubCommentOutput: FC<SubCommentContentProps> = ({ commentId }) => {
     queryFn: async () => {
       const { data } = await axios.get(`/api/comment/${commentId}/sub-comment`);
 
-      return data.replies as ExtendedSubComment[];
+      return data as ExtendedSubComment[];
     },
     onError: () => {
       return toast({

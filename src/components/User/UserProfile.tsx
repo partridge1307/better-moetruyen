@@ -10,6 +10,7 @@ import axios, { AxiosError } from 'axios';
 import { Edit as EditIcon, Loader2, Pencil } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { FC, useEffect, useReducer, useRef, useState } from 'react';
 import ImageCropModal from '../ImageCropModal';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
@@ -137,7 +138,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
         variant: 'destructive',
       });
     },
-    onSuccess: async () => {
+    onSuccess: () => {
       update();
       location.reload();
 

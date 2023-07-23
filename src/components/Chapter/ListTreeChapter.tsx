@@ -33,12 +33,15 @@ const ListTreeChapter: FC<ListTreeChapterProps> = async ({ mangaId }) => {
                 .map((d, i) => {
                   if (d.isPublished) {
                     return (
-                      <li key={`${i}`}>
+                      <li
+                        key={i}
+                        className="dark:bg-zinc-800 px-3 py-2 md:py-3 rounded-lg space-y-1 md:space-y-2"
+                      >
                         <Link
                           href={`/chapter/${d.id}`}
-                          className="flex items-center justify-between rounded-lg bg-zinc-800 p-2 py-5 max-sm:flex-wrap max-sm:gap-2"
+                          className="flex items-center justify-between max-sm:flex-col max-sm:items-start"
                         >
-                          <div className="flex gap-2">
+                          <div className="flex items-center gap-1 max-sm:text-sm text-base">
                             <p>Chap. {d.index}</p>
                             <p>-</p>
                             {d.name !== null && (
@@ -51,39 +54,37 @@ const ListTreeChapter: FC<ListTreeChapterProps> = async ({ mangaId }) => {
                             )}
                           </div>
 
-                          <div className="flex max-sm:flex-col max-sm:items-start items-center gap-2 md:gap-4">
-                            {d.teamId && (
-                              <Link
-                                href={`/team/${d.teamId}`}
-                                className="flex items-center gap-1"
-                              >
-                                {d.teamImage && (
-                                  <div className="relative h-6 w-6">
-                                    <Image
-                                      fill
-                                      sizes="0%"
-                                      src={d.teamImage}
-                                      alt="Team Image"
-                                      className="rounded-full"
-                                    />
-                                  </div>
-                                )}
-                                {d.teamName && (
-                                  <p className="text-sm md:text-base font-medium">
-                                    {d.teamName}
-                                  </p>
-                                )}
-                              </Link>
-                            )}
-
-                            <dl className="flex items-center gap-1">
-                              <dt>
-                                <Clock className="h-4 w-4" />
-                              </dt>
-                              <dd>{formatTimeToNow(parseJSON(d.createdAt))}</dd>
-                            </dl>
-                          </div>
+                          <dl className="flex items-center gap-1 max-sm:text-sm text-base">
+                            <dt>
+                              <Clock className="h-4 w-4" />
+                            </dt>
+                            <dd>{formatTimeToNow(parseJSON(d.createdAt))}</dd>
+                          </dl>
                         </Link>
+
+                        {d.teamId && (
+                          <Link
+                            href={`/team/${d.teamId}`}
+                            className="flex items-center gap-1"
+                          >
+                            {d.teamImage && (
+                              <div className="relative h-5 w-5 md:h-6 md:w-6">
+                                <Image
+                                  fill
+                                  sizes="0%"
+                                  src={d.teamImage}
+                                  alt="Team Image"
+                                  className="rounded-full"
+                                />
+                              </div>
+                            )}
+                            {d.teamName && (
+                              <p className="text-sm md:text-base font-medium">
+                                {d.teamName}
+                              </p>
+                            )}
+                          </Link>
+                        )}
                       </li>
                     );
                   }

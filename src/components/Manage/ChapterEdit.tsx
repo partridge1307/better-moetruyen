@@ -128,7 +128,6 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
     },
     onSuccess: () => {
       router.push(`/me/manga/${chapter.mangaId}/chapter`);
-      router.refresh();
 
       return toast({
         title: 'Thành công',

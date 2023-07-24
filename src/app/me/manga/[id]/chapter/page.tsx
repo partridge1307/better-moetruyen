@@ -57,7 +57,7 @@ const page = async ({ params }: { params: { id: string } }) => {
             Thêm chapter
           </Link>
           {/* @ts-ignore */}
-          <DataChapterTable columns={columns} data={chapter} />
+          <DataChapterTable columns={columns} data={chapters} />
         </div>
       ) : (
         <div className="flex h-full flex-col items-center justify-center gap-4">

@@ -62,7 +62,7 @@ const CommentContent: FC<CommentProps> = ({ index, content }): JSX.Element => {
         <div
           role="button"
           onClick={() => setisCollapsed((prev) => !prev)}
-          className="absolute bottom-0 inset-x-0 flex justify-center items-end h-10 bg-gradient-to-t dark:from-zinc-900 to-transparent cursor-pointer transition-colors hover:dark:from-zinc-800"
+          className="absolute bottom-0 inset-x-0 flex justify-center items-end h-10 bg-gradient-to-t dark:from-zinc-900 cursor-pointer transition-colors hover:dark:from-zinc-800"
         >
           {isCollapsed ? (
             <p className="flex items-center justify-center gap-1">

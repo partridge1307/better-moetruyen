@@ -6,7 +6,6 @@ import MangaImage from '@/components/MangaImage';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
-import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
 import { List, ListTree, Loader2 } from 'lucide-react';
@@ -16,7 +15,7 @@ import { FC, Suspense, lazy } from 'react';
 const MoetruyenEditor = lazy(
   () => import('@/components/Editor/MoetruyenEditor')
 );
-const CommentOutput = lazy(() => import('@/components/Comment/CommentOutput'));
+const Comment = lazy(() => import('@/components/Comment'));
 
 interface pageProps {
   params: {
@@ -100,37 +99,6 @@ const page: FC<pageProps> = async ({ params }) => {
     },
   });
   if (!manga) return notFound();
-
-  const comments = await db.comment.findMany({
-    where: {
-      mangaId: manga.id,
-      replyToId: null,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    select: {
-      id: true,
-      content: true,
-      oEmbed: true,
-      createdAt: true,
-      authorId: true,
-      author: {
-        select: {
-          name: true,
-          image: true,
-          color: true,
-        },
-      },
-      votes: true,
-      _count: {
-        select: {
-          replies: true,
-        },
-      },
-    },
-    take: INFINITE_SCROLL_PAGINATION_RESULTS,
-  });
 
   let discord: discordProps = { code: false };
   if (manga.discordLink) {
@@ -345,7 +313,7 @@ const page: FC<pageProps> = async ({ params }) => {
             <TabsContent value="comment">
               <Suspense fallback={<Loader2 className="w-6 h-6 animate-spin" />}>
                 <MoetruyenEditor id={params.id} />
-                <CommentOutput initialComments={comments} id={params.id} />
+                <Comment id={params.id} />
               </Suspense>
             </TabsContent>
           </Tabs>

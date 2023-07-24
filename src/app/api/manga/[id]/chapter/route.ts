@@ -65,32 +65,59 @@ export async function POST(
       else index++;
     } else {
       index = chapterIndex;
+
+      if (
+        await db.chapter.findFirst({
+          where: {
+            mangaId: manga.id,
+            chapterIndex: index,
+          },
+          select: {
+            id: true,
+          },
+        })
+      )
+        return new Response('Forbidden', { status: 403 });
     }
 
-    if (
-      await db.chapter.findFirst({
-        where: {
-          mangaId: manga.id,
-          chapterIndex: index,
-        },
-        select: {
-          id: true,
-        },
-      })
-    )
-      return new Response('Forbidden', { status: 403 });
-
-    await db.chapter.create({
-      data: {
-        chapterIndex: index,
-        name,
-        volume,
-        images: [...images],
-        manga: {
-          connect: { id: manga.id },
-        },
+    const team = await db.memberOnTeam.findFirst({
+      where: {
+        userId: user.id,
+      },
+      select: {
+        teamId: true,
       },
     });
+
+    if (team) {
+      await db.chapter.create({
+        data: {
+          chapterIndex: index,
+          name,
+          volume,
+          images: [...images],
+          manga: {
+            connect: { id: manga.id },
+          },
+          team: {
+            connect: { id: team.teamId },
+          },
+        },
+      });
+    } else {
+      await db.chapter.create({
+        data: {
+          chapterIndex: index,
+          name,
+          volume,
+          images: [...images],
+          manga: {
+            connect: { id: manga.id },
+          },
+        },
+      });
+    }
+
     return new Response('OK');
   } catch (error) {
     if (error instanceof z.ZodError)

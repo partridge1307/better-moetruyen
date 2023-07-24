@@ -36,7 +36,7 @@ const TeamMangaList: FC<TeamMangaListProps> = ({ chapter }) => {
             <div
               className={cn(
                 'absolute z-10 inset-0 flex items-end justify-center',
-                'bg-gradient-to-t dark:from-zinc-900 to-transparent',
+                'bg-gradient-to-t dark:from-zinc-900',
                 'md:opacity-0 md:hover:opacity-100 transition-opacity'
               )}
             >

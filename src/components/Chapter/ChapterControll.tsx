@@ -172,10 +172,10 @@ const ChapterControll: FC<ChapterControllProps> = ({
                   <div className="mx-auto h-24 w-24 overflow-hidden md:h-32 md:w-32">
                     <div className="h-full w-full animate-up-down space-y-3">
                       <div className="relative mx-auto h-20 w-24 dark:bg-zinc-800">
-                        <div className="absolute h-1/2 w-full bg-gradient-to-b to-transparent dark:from-zinc-900" />
+                        <div className="absolute h-1/2 w-full bg-gradient-to-b dark:from-zinc-900" />
                       </div>
                       <div className="relative mx-auto h-20 w-24 dark:bg-zinc-800">
-                        <div className="absolute h-full w-full bg-gradient-to-t to-transparent dark:from-zinc-900" />
+                        <div className="absolute h-full w-full bg-gradient-to-t dark:from-zinc-900" />
                       </div>
                     </div>
                   </div>
@@ -197,10 +197,10 @@ const ChapterControll: FC<ChapterControllProps> = ({
                   <div className="mx-auto h-24 w-24 overflow-hidden md:h-32 md:w-32">
                     <div className="flex h-full w-full animate-left-right items-center">
                       <div className="relative left-0 h-28 w-32 dark:bg-zinc-800">
-                        <div className="absolute h-full w-full bg-gradient-to-r to-transparent dark:from-zinc-900/70" />
+                        <div className="absolute h-full w-full bg-gradient-to-r dark:from-zinc-900/70" />
                       </div>
                       <div className="relative -right-3 h-28 w-20 dark:bg-zinc-800">
-                        <div className="absolute h-full w-full bg-gradient-to-l to-transparent dark:from-zinc-900" />
+                        <div className="absolute h-full w-full bg-gradient-to-l dark:from-zinc-900" />
                       </div>
                     </div>
                   </div>

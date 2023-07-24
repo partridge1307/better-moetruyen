@@ -9,14 +9,15 @@ import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { $isImageNode, ImageNode } from '../../nodes/Image';
-import { createEditor } from 'lexical';
 
 export default function Submit({
   id,
   commentId,
+  chapterId,
 }: {
   id: string;
   commentId?: number;
+  chapterId?: number;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [hasText, setHasText] = useState<boolean>(false);
@@ -39,12 +40,15 @@ export default function Submit({
   const { mutate: Upload, isLoading: isUpload } = useMutation({
     mutationKey: ['comment-request-query'],
     mutationFn: async (values: CommentContentPayload) => {
-      const { data } = await axios.put(
-        `/api/manga/${id}/comment/create`,
-        values
-      );
-
-      return data as string;
+      if (chapterId) {
+        const payload = {
+          ...values,
+          id,
+        };
+        await axios.put(`/api/chapter/${chapterId}/comment/create`, payload);
+      } else {
+        await axios.put(`/api/manga/${id}/comment/create`, values);
+      }
     },
     onError: (err) => {
       if (err instanceof AxiosError) {

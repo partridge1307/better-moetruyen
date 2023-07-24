@@ -45,9 +45,11 @@ const editorConfig: InitialConfigType = {
 export default function Editor({
   id,
   commentId,
+  chapterId,
 }: {
   id: string;
   commentId?: number;
+  chapterId?: number;
 }): JSX.Element {
   return (
     <>
@@ -72,7 +74,7 @@ export default function Editor({
               <CharacterLimitPlugin charset="UTF-8" maxLength={1024} />
             </div>
           </div>
-          <Submit id={id} commentId={commentId} />
+          <Submit id={id} commentId={commentId} chapterId={chapterId} />
         </div>
         <HistoryPlugin />
         <AutoFocusPlugin />

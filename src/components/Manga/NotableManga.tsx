@@ -41,7 +41,7 @@ const NotableManga: FC<NotableMangaProps> = ({ manga, ...props }) => {
               className="object-cover"
             />
             <Link href={`/manga/${m.id}`}>
-              <div className="absolute bottom-0 flex min-h-full w-full items-end bg-gradient-to-t from-slate-100 to-transparent p-4 pb-10 dark:from-zinc-900">
+              <div className="absolute bottom-0 flex min-h-full w-full items-end p-4 pb-10 bg-gradient-to-t from-slate-100 dark:from-zinc-900">
                 <div className="flex w-full items-center justify-between">
                   <div className="flex max-w-[50%] flex-col gap-x-5">
                     <div className="flex flex-wrap items-center gap-x-2 text-xl">

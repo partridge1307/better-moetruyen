@@ -78,7 +78,7 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-[200px]">
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem>
           <Link
             href={`/me/manga/${manga.id}/chapter`}
             className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
@@ -86,7 +86,7 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
             Xem chapter
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem>
           <Link
             href={`/me/manga/${manga.id}`}
             className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}

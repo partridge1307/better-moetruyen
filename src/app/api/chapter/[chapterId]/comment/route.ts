@@ -2,25 +2,28 @@ import { db } from '@/lib/db';
 import { ZodError, z } from 'zod';
 
 const CommentQuery = z.object({
-  mangaId: z.string(),
   limit: z.string(),
   page: z.string(),
+  chapterId: z.string(),
 });
 
-export async function GET(req: Request, context: { params: { id: string } }) {
+export async function GET(
+  req: Request,
+  context: { params: { chapterId: string } }
+) {
   const url = new URL(req.url);
 
   try {
-    const { limit, page, mangaId } = CommentQuery.parse({
+    const { limit, page, chapterId } = CommentQuery.parse({
       limit: url.searchParams.get('limit'),
       page: url.searchParams.get('page'),
-      mangaId: context.params.id,
+      chapterId: context.params.chapterId,
     });
 
     const comments = await db.comment.findMany({
       where: {
-        mangaId: parseInt(mangaId),
         replyToId: null,
+        chapterId: parseInt(chapterId),
       },
       select: {
         id: true,
@@ -28,12 +31,6 @@ export async function GET(req: Request, context: { params: { id: string } }) {
         oEmbed: true,
         createdAt: true,
         authorId: true,
-        chapter: {
-          select: {
-            id: true,
-            chapterIndex: true,
-          },
-        },
         author: {
           select: {
             name: true,

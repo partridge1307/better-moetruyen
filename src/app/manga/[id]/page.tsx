@@ -1,6 +1,3 @@
-import ListChapter from '@/components/Chapter/ListChapter';
-import ListTreeChapter from '@/components/Chapter/ListTreeChapter';
-import EditorOutput from '@/components/EditorOutput';
 import FBEmbed from '@/components/FBEmbed';
 import MangaImage from '@/components/MangaImage';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
@@ -9,13 +6,29 @@ import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
 import { List, ListTree, Loader2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { FC, Suspense, lazy } from 'react';
-const MoetruyenEditor = lazy(
-  () => import('@/components/Editor/MoetruyenEditor')
+import { FC } from 'react';
+const MoetruyenEditor = dynamic(
+  () => import('@/components/Editor/MoetruyenEditor'),
+  { ssr: false, loading: () => <Loader2 className="w-6 h-6" /> }
 );
-const Comment = lazy(() => import('@/components/Comment'));
+const Comment = dynamic(() => import('@/components/Comment'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
+const EditorOutput = dynamic(() => import('@/components/EditorOutput'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
+const ListChapter = dynamic(() => import('@/components/Chapter/ListChapter'), {
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
+const ListTreeChapter = dynamic(
+  () => import('@/components/Chapter/ListTreeChapter'),
+  { loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
+);
 
 interface pageProps {
   params: {
@@ -28,8 +41,6 @@ type discordProps = {
   id?: string;
   name?: string;
 };
-
-export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   if (!params.id)
@@ -293,28 +304,18 @@ const page: FC<pageProps> = async ({ params }) => {
                 </div>
 
                 <TabsContent value="group">
-                  <Suspense
-                    fallback={<Loader2 className="w-6 h-6 animate-spin" />}
-                  >
-                    <ListTreeChapter mangaId={manga.id} />
-                  </Suspense>
+                  <ListTreeChapter mangaId={manga.id} />
                 </TabsContent>
 
                 <TabsContent value="list">
-                  <Suspense
-                    fallback={<Loader2 className="w-6 h-6 animate-spin" />}
-                  >
-                    <ListChapter mangaId={manga.id} />
-                  </Suspense>
+                  <ListChapter mangaId={manga.id} />
                 </TabsContent>
               </Tabs>
             </TabsContent>
 
             <TabsContent value="comment">
-              <Suspense fallback={<Loader2 className="w-6 h-6 animate-spin" />}>
-                <MoetruyenEditor id={params.id} />
-                <Comment id={params.id} />
-              </Suspense>
+              <MoetruyenEditor id={params.id} />
+              <Comment id={params.id} />
             </TabsContent>
           </Tabs>
         </div>

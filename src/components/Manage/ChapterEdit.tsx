@@ -28,7 +28,7 @@ import {
 } from '../ui/Form';
 import { Input } from '../ui/Input';
 import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
@@ -55,16 +55,18 @@ const reorder = (
 const UploadImage = (
   newImg: { image: File; blobImg: string }[]
 ): Promise<{ image: string; blobImg: string }[]> =>
-  new Promise((resolve) => {
-    let imageUrls: { image: string; blobImg: string }[] = [];
-    newImg.map((img, i) => {
+  new Promise(async (resolve) => {
+    let imagePromise: Promise<AxiosResponse>[] = [];
+    newImg.map((img) => {
       const form = new FormData();
       form.append('file', img.image);
-      axios.post('/api/image', form).then((res) => {
-        imageUrls.push({ image: res.data, blobImg: img.blobImg });
-        if (i === newImg.length - 1) resolve(imageUrls);
-      });
+      imagePromise.push(axios.post('/api/image', form));
     });
+
+    const imageUrl = await Promise.all(imagePromise).then((res) =>
+      res.map((r, idx) => ({ image: r.data, blobImg: newImg[idx].blobImg }))
+    );
+    resolve(imageUrl);
   });
 
 const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
@@ -99,8 +101,10 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
         const imgsAfterUploaded = await UploadImage(newImg);
         imgsAfterUploaded.map(
           (img) =>
-            (image[image.findIndex((i) => i === img.blobImg)] = img.image)
+            (image[dndImg.findIndex((i) => i.image === img.blobImg)] =
+              img.image)
         );
+
         const { data } = await axios.patch(`/api/chapter/${chapter.id}/edit`, {
           images: image,
           ...payload,

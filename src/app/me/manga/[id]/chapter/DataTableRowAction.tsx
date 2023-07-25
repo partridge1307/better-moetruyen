@@ -6,9 +6,10 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
+  AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/AlertDialog';
-import { Button, buttonVariants } from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +18,6 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
 import type { Chapter } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import type { Row } from '@tanstack/react-table';
@@ -25,7 +25,6 @@ import axios, { AxiosError } from 'axios';
 import { Loader2, MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { startTransition } from 'react';
 
 interface DataTableRowActionProps {
   row: Row<
@@ -38,8 +37,8 @@ interface DataTableRowActionProps {
 
 function DataTableRowAction({ row }: DataTableRowActionProps) {
   const chapter = row.original;
-  const router = useRouter();
   const { loginToast, notFoundToast } = useCustomToast();
+  const { refresh } = useRouter();
 
   const { mutate: publish, isLoading: isPublishLoading } = useMutation({
     mutationFn: async (id: number) => {
@@ -66,6 +65,7 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
       });
     },
     onSuccess: () => {
+      refresh();
       return toast({
         title: 'Thành công',
       });
@@ -80,60 +80,57 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-[200px] space-y-2 p-2">
-        <DropdownMenuItem className="p-0">
+        <DropdownMenuItem>
           <Link
-            href={`/me/chapter/${chapter.mangaId}`}
-            className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
+            href={`/me/chapter/${chapter.id}`}
+            className="w-full text-center"
           >
             Sửa chapter
           </Link>
         </DropdownMenuItem>
 
-        {chapter.isPublished && (
-          <DropdownMenuItem className="p-0">
+        {chapter.isPublished ? (
+          <DropdownMenuItem>
             <Link
               href={`/chapter/${chapter.id}`}
-              className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
+              className="w-full text-center"
             >
               Xem chapter
             </Link>
           </DropdownMenuItem>
-        )}
+        ) : (
+          <AlertDialog>
+            <AlertDialogTrigger
+              disabled={isPublishLoading}
+              className="w-full flex items-center justify-center px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              {isPublishLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <p>Publish</p>
+              )}
+            </AlertDialogTrigger>
 
-        {!chapter.isPublished && (
-          <DropdownMenuItem asChild>
-            <AlertDialog>
-              <AlertDialogTrigger disabled={isPublishLoading} asChild>
-                {isPublishLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <button className="w-full p-1">Publish</button>
-                )}
-              </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Xác nhận lại yêu cầu</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Bạn đã chắc chắn muốn{' '}
+                  <span className="font-bold">publish</span> chapter này hay
+                  chưa?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
 
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogHeader>Xác nhận yêu cầu</AlertDialogHeader>
-                  <AlertDialogDescription>
-                    Bạn đã chắc chắn muốn publish chapter này hay chưa?
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel
-                    className={cn(
-                      buttonVariants(),
-                      'bg-red-500 hover:bg-red-400 dark:text-white'
-                    )}
-                  >
-                    Cho tôi suy nghĩ thêm
-                  </AlertDialogCancel>
-                  <AlertDialogAction onClick={() => publish(chapter.id)}>
-                    Tôi chắc chắn
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </DropdownMenuItem>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-red-500 hover:bg-red-700 transition-colors">
+                  Chờ chút đã
+                </AlertDialogCancel>
+                <AlertDialogAction onClick={() => publish(chapter.id)}>
+                  Tôi chắc chắn
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

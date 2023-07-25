@@ -8,7 +8,7 @@ import {
 } from '@/lib/validators/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import Image from 'next/image';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -43,13 +43,13 @@ const ChapterUpload = ({ id }: { id: string }) => {
     },
   });
   const imgUpload = (image: FileList) =>
-    new Promise((resolve) => {
-      let imageURL: any = [];
+    new Promise(async (resolve) => {
+      let imagePromise: Promise<AxiosResponse>[] = [];
       for (let i = 0; i < image.length; i++) {
         const form = new FormData();
         form.append('file', image.item(i)!);
-        axios
-          .post('/api/image', form, {
+        imagePromise.push(
+          axios.post('/api/image', form, {
             onUploadProgress: (progessEvent) => {
               const percentCompleted = Math.floor(
                 (progessEvent.loaded * 100) / progessEvent.total!
@@ -58,13 +58,12 @@ const ChapterUpload = ({ id }: { id: string }) => {
               setInputImage([inputImage[i], ...inputImage]);
             },
           })
-          .then((res) => {
-            imageURL.push(res.data);
-            inputImage[i].done = true;
-            setInputImage([inputImage[i], ...inputImage]);
-            if (i === image.length - 1) resolve(imageURL);
-          });
+        );
       }
+      const imageUrl = await Promise.all(imagePromise).then((res) =>
+        res.map((r) => r.data)
+      );
+      resolve(imageUrl);
     });
   const { mutate: upload, isLoading: isImageUpload } = useMutation({
     mutationFn: async (values: ChapterUploadPayload) => {
@@ -143,6 +142,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
               <FormControl>
                 <Input
                   type="number"
+                  min={0}
                   onChange={(e) => field.onChange(e.target.valueAsNumber)}
                   onBlur={field.onBlur}
                 />
@@ -157,36 +157,37 @@ const ChapterUpload = ({ id }: { id: string }) => {
         />
 
         <ul className="scrollbar dark:scrollbar--dark flex max-h-[300px] w-full flex-col gap-4 overflow-y-auto">
-          {inputImage.length &&
-            inputImage.map((img, i) => (
-              <li
-                key={i}
-                className="relative flex items-center gap-10 rounded-md bg-slate-300 p-2 dark:bg-zinc-800"
-              >
-                <div className="relative h-12 w-12">
-                  <Image
-                    fill
-                    src={img.link}
-                    alt="Preview Image"
-                    className="object-cover"
-                  />
-                </div>
-                <div className="flex w-full items-center justify-between text-sm">
-                  <div>
-                    <p>Tên: {img.name}</p>
-                    <p>Định dạng: {img.type}</p>
+          {inputImage.length
+            ? inputImage.map((img, i) => (
+                <li
+                  key={i}
+                  className="relative flex items-center gap-10 rounded-md bg-slate-300 p-2 dark:bg-zinc-800"
+                >
+                  <div className="relative h-12 w-12">
+                    <Image
+                      fill
+                      src={img.link}
+                      alt="Preview Image"
+                      className="object-cover"
+                    />
                   </div>
-                  <p>Kích cỡ: {img.size}KB</p>
-                </div>
-                {img.progress && (
-                  <Progress
-                    value={img.progress}
-                    className="w-1/2"
-                    indicatorClassName={`${img.done && 'bg-green-500'}`}
-                  />
-                )}
-              </li>
-            ))}
+                  <div className="flex w-full items-center justify-between text-sm">
+                    <div>
+                      <p>Tên: {img.name}</p>
+                      <p>Định dạng: {img.type}</p>
+                    </div>
+                    <p>Kích cỡ: {img.size}KB</p>
+                  </div>
+                  {img.progress ? (
+                    <Progress
+                      value={img.progress}
+                      className="w-1/2"
+                      indicatorClassName={`${img.done && 'bg-green-500'}`}
+                    />
+                  ) : null}
+                </li>
+              ))
+            : null}
         </ul>
 
         <Button

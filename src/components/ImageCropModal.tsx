@@ -1,6 +1,5 @@
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
-import { forwardRef, useRef, useState } from 'react';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 import type { Crop, PixelCrop } from 'react-image-crop';
 import { ReactCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -19,9 +18,11 @@ interface ImageCropModalProps {
     type: string;
     image: string;
   } | null;
+  // eslint-disable-next-line no-unused-vars
   setCancel: (type: string) => void;
   setDone: () => void;
   aspect: number;
+  // eslint-disable-next-line no-unused-vars
   setDataUrl: ({ type, data }: { type: string; data: string }) => void;
 }
 
@@ -93,13 +94,18 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
       height: 0,
     });
     const imageRef = useRef<HTMLImageElement | null>(null);
-    let mediaWidth = 0,
-      mediaHeight = 0;
+    let mediaWidth = useRef<number>(0),
+      mediaHeight = useRef<number>(0);
+    const [slider, setSlider] = useState<boolean>(false);
 
-    if (imageRef.current) {
-      mediaWidth = imageRef.current.naturalWidth;
-      mediaHeight = imageRef.current.naturalHeight;
-    }
+    useEffect(() => {
+      if (imageRef.current) {
+        mediaWidth.current = imageRef.current.naturalWidth;
+        mediaHeight.current = imageRef.current.naturalHeight;
+        setSlider(true);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [aspect, imageRef.current]);
 
     function onDoneHandler() {
       if (
@@ -115,7 +121,7 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
     }
 
     function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
-      const { width, height } = e.currentTarget;
+      const { height, width } = e.currentTarget;
       setCrop(centerAspectCrop(width, height, aspect));
     }
 
@@ -125,52 +131,55 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
           Cropper
         </AlertDialogTrigger>
         <AlertDialogContent>
-          <div className="relative w-[1280x] h-fit space-y-10">
+          <div className="space-y-10">
             {previewImage && (
-              <ReactCrop
-                locked
-                crop={crop}
-                onChange={(_, percentCrop) => setCrop(percentCrop)}
-                onComplete={(c) => setCompleteCrop(c)}
-                aspect={aspect}
-                circularCrop={aspect === 1}
-              >
-                <Image
-                  ref={imageRef}
-                  width={0}
-                  height={0}
-                  sizes="0%"
-                  priority
-                  src={previewImage.image}
-                  alt="Profile Banner"
-                  onLoad={onImageLoad}
-                  className="object-fill w-full h-1/3"
-                />
-              </ReactCrop>
+              <div className="flex justify-center">
+                <ReactCrop
+                  locked
+                  crop={crop}
+                  onChange={(_, percentCrop) => setCrop(percentCrop)}
+                  onComplete={(c) => setCompleteCrop(c)}
+                  aspect={aspect}
+                  circularCrop={aspect === 1}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    ref={imageRef}
+                    src={previewImage.image}
+                    alt="Profile Banner"
+                    onLoad={onImageLoad}
+                    style={{
+                      maxHeight: '70vh',
+                    }}
+                  />
+                </ReactCrop>
+              </div>
             )}
 
-            {mediaWidth !== 0 && mediaHeight !== 0 && (
-              <Slider
-                defaultValue={[aspect === 1 ? 100 : 75]}
-                min={aspect === 1 ? 25 : 50}
-                max={aspect === 1 ? 100 : 100}
-                step={1}
-                onValueChange={(value) =>
-                  setCrop(
-                    centerCrop(
-                      makeAspectCrop(
-                        { unit: '%', width: value[0] },
-                        aspect,
-                        mediaWidth,
-                        mediaHeight
-                      ),
-                      mediaWidth,
-                      mediaHeight
+            {slider &&
+              mediaWidth.current !== 0 &&
+              mediaHeight.current !== 0 && (
+                <Slider
+                  defaultValue={[aspect === 1 ? 100 : 75]}
+                  min={aspect === 1 ? 25 : 50}
+                  max={aspect === 1 ? 100 : 100}
+                  step={1}
+                  onValueChange={(value) =>
+                    setCrop(
+                      centerCrop(
+                        makeAspectCrop(
+                          { unit: '%', width: value[0] },
+                          aspect,
+                          mediaWidth.current,
+                          mediaHeight.current
+                        ),
+                        mediaWidth.current,
+                        mediaHeight.current
+                      )
                     )
-                  )
-                }
-              />
-            )}
+                  }
+                />
+              )}
 
             <div className="w-full flex items-center justify-end gap-6">
               <AlertDialogCancel

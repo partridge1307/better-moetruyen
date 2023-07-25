@@ -1,7 +1,9 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import type { Session } from 'next-auth';
+import { Loader2, User2 } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FC, useMemo, useRef } from 'react';
@@ -17,16 +19,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/DropdownMenu';
-import Image from 'next/image';
-import { User2 } from 'lucide-react';
 
-interface NavbarClientProps {
-  session?: Session | null;
-}
+interface NavbarClientProps {}
 
 const viewChapterRegex = /^(\/chapter\/\d+$)/;
 
-const NavbarClient: FC<NavbarClientProps> = ({ session }) => {
+const NavbarClient: FC<NavbarClientProps> = ({}) => {
+  const { data: session, status } = useSession();
+
   const pathname = usePathname();
   const isFixed = useRef(true);
   useMemo(() => {
@@ -40,7 +40,7 @@ const NavbarClient: FC<NavbarClientProps> = ({ session }) => {
   return (
     <div
       className={cn(
-        'inset-x-0 top-0 z-30 h-fit border-b bg-slate-100 dark:bg-zinc-800',
+        'inset-x-0 top-0 p-2 z-30 h-fit border-b bg-slate-100 dark:bg-zinc-800',
         isFixed.current && 'fixed'
       )}
     >
@@ -54,9 +54,11 @@ const NavbarClient: FC<NavbarClientProps> = ({ session }) => {
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger>
+          <DropdownMenuTrigger disabled={status === 'loading'}>
             {session?.user ? (
               <UserAvatar className="w-8 h-8" user={session.user} />
+            ) : status === 'loading' ? (
+              <Loader2 className="w-7 h-7 animate-spin" />
             ) : (
               <User2 className="h-7 w-7" />
             )}
@@ -78,6 +80,7 @@ const NavbarClient: FC<NavbarClientProps> = ({ session }) => {
                       <div className="relative w-20 h-20">
                         <Image
                           fill
+                          sizes="0%"
                           src={session.user.image}
                           alt="User Avatar"
                           className="rounded-full"
@@ -89,6 +92,7 @@ const NavbarClient: FC<NavbarClientProps> = ({ session }) => {
                     <div className="relative w-full h-32">
                       <Image
                         fill
+                        sizes="0%"
                         src={session.user.banner}
                         alt="User Banner"
                         className="rounded-md"

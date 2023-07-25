@@ -102,7 +102,10 @@ const ChapterControll: FC<ChapterControllProps> = ({
                       if (chapter.isPublished) {
                         return (
                           <CommandItem key={idx}>
-                            <Link href={`/chapter/${chapter.id}`}>
+                            <Link
+                              href={`/chapter/${chapter.id}`}
+                              className="w-full"
+                            >
                               Vol. {chapter.volume} Ch. {chapter.chapterIndex}
                             </Link>
                           </CommandItem>

@@ -10,7 +10,6 @@ import axios, { AxiosError } from 'axios';
 import { Edit as EditIcon, Loader2, Pencil } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { FC, useEffect, useReducer, useRef, useState } from 'react';
 import ImageCropModal from '../ImageCropModal';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
@@ -84,7 +83,9 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
     banner: Blob | undefined;
   } | null>(null);
   const [username, setUsername] = useState<string>(user.name!);
-  const [color, setColor] = useState<string>(user.color ? user.color : '');
+  const [color, setColor] = useState<string | null>(
+    user.color ? user.color : null
+  );
 
   useEffect(() => {
     const handler = async () => {
@@ -278,10 +279,13 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
             <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 -z-10" />
           </div>
 
-          {user.badge.length && (
+          {user.badge.length ? (
             <div>
               <p>Chọn huy hiệu</p>
-              <Select value={color} onValueChange={(value) => setColor(value)}>
+              <Select
+                value={color !== null ? color : undefined}
+                onValueChange={(value: string) => setColor(value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -304,9 +308,9 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                 </SelectContent>
               </Select>
             </div>
-          )}
+          ) : null}
 
-          {user.badge.length && (
+          {user.badge.length ? (
             <div className="space-y-4">
               <p className="text-lg font-semibold">Huy hiệu</p>
               <ul className="flex flex-wrap items-center gap-3">
@@ -352,7 +356,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                 ))}
               </ul>
             </div>
-          )}
+          ) : null}
         </div>
 
         {(state.avatar ||
@@ -368,7 +372,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                 dispatch({ type: ActionType.RESET, payload: '' });
                 setUsername(user.name!);
                 setBlobImg(null);
-                setColor(user.color ? user.color : '');
+                setColor(user.color ? user.color : null);
               }}
             >
               Reset

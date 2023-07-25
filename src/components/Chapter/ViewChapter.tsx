@@ -127,32 +127,18 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
       );
 
       chapter.images.map((_, idx) => {
-        if (idx === chapter.images.length - 1) {
-          const target = document.getElementById(`${idx}`) as HTMLImageElement;
-          observer.observe(target);
+        const target = document.getElementById(`${idx}`) as HTMLImageElement;
+        observer.observe(target);
 
-          const chapterEndTarget = document.getElementById(
-            `${chapter.images.length}`
-          ) as HTMLDivElement;
-          observer.observe(chapterEndTarget);
-
-          return () => {
-            observer.unobserve(target);
-            observer.unobserve(chapterEndTarget);
-          };
-        } else {
-          const target = document.getElementById(`${idx}`) as HTMLImageElement;
-          observer.observe(target);
-
-          return () => {
-            observer.unobserve(target);
-          };
-        }
+        return () => {
+          observer.unobserve(target);
+        };
       });
 
       const handler = () => {
         if (typeof window !== 'undefined' && slider.current !== null) {
           if (window.scrollY < 150) {
+            console.log(slider.current.scrollHeight);
             slider.current?.scrollIntoView({ behavior: 'instant' });
           }
         }
@@ -178,7 +164,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
 
   return (
     <div className="h-full space-y-16">
-      <div className="container mx-auto space-y-4 px-3">
+      <div id="chapter-wrapper" className="container mx-auto space-y-4 px-3">
         <ChapterControll
           currentImage={currentImage}
           chapter={chapter}

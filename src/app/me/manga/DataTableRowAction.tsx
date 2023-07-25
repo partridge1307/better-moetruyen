@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/AlertDialog';
-import { Button, buttonVariants } from '@/components/ui/Button';
+import { Button } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,15 +18,13 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
 import type { Manga } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import type { Row } from '@tanstack/react-table';
 import axios, { AxiosError } from 'axios';
-import { MoreHorizontal } from 'lucide-react';
+import { Loader2, MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { startTransition } from 'react';
 
 interface DataTableRowActionProps {
   row: Row<Pick<Manga, 'id' | 'name' | 'isPublished' | 'updatedAt'>>;
@@ -34,7 +32,7 @@ interface DataTableRowActionProps {
 
 function DataTableRowAction({ row }: DataTableRowActionProps) {
   const manga = row.original;
-  const router = useRouter();
+  const { refresh } = useRouter();
   const { loginToast, notFoundToast } = useCustomToast();
 
   const { mutate: publish, isLoading: isPublishLoading } = useMutation({
@@ -62,7 +60,7 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
       });
     },
     onSuccess: () => {
-      startTransition(() => router.refresh());
+      refresh();
 
       return toast({
         title: 'Thành công',
@@ -77,45 +75,47 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="max-w-[200px]">
+      <DropdownMenuContent className="max-w-[200px] space-y-2 p-2">
         <DropdownMenuItem>
           <Link
             href={`/me/manga/${manga.id}/chapter`}
-            className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
+            className="w-full text-center"
           >
             Xem chapter
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link
-            href={`/me/manga/${manga.id}`}
-            className={cn(buttonVariants({ variant: 'ghost' }), 'w-full')}
-          >
+          <Link href={`/me/manga/${manga.id}`} className="w-full text-center">
             Thông tin truyện
           </Link>
         </DropdownMenuItem>
+
         {!manga.isPublished && (
           <AlertDialog>
-            <AlertDialogTrigger disabled={isPublishLoading} asChild>
-              <Button variant="ghost" className="w-full">
-                Publish
-              </Button>
+            <AlertDialogTrigger
+              disabled={isPublishLoading}
+              className="w-full flex items-center justify-center px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              {isPublishLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <p>Publish</p>
+              )}
             </AlertDialogTrigger>
+
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Xác nhận yêu cầu</AlertDialogTitle>
+                <AlertDialogTitle>Xác nhận lại yêu cầu</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Bạn đã chắc chắn muốn publish bộ này hay chưa?
+                  Bạn đã chắc chắn muốn{' '}
+                  <span className="font-bold">publish</span> chapter này hay
+                  chưa?
                 </AlertDialogDescription>
               </AlertDialogHeader>
+
               <AlertDialogFooter>
-                <AlertDialogCancel
-                  className={cn(
-                    buttonVariants(),
-                    'bg-red-500 hover:bg-red-400 dark:text-white'
-                  )}
-                >
-                  Cho tôi suy nghĩ thêm
+                <AlertDialogCancel className="bg-red-500 hover:bg-red-700 transition-colors">
+                  Chờ chút đã
                 </AlertDialogCancel>
                 <AlertDialogAction onClick={() => publish(manga.id)}>
                   Tôi chắc chắn

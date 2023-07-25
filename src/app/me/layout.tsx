@@ -42,7 +42,10 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
                 </div>
               )}
               <p
-                className="px-4 pt-2 pb-4 text-lg ml-20 lg:ml-24 font-semibold"
+                className={cn(
+                  'px-4 pt-2 pb-4 text-lg font-semibold',
+                  session.user.image && 'ml-20 lg:ml-24'
+                )}
                 style={{ color: session.user.color ? session.user.color : '' }}
               >
                 {session.user.name}

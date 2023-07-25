@@ -21,7 +21,10 @@ const ListTreeChapter: FC<ListTreeChapterProps> = async ({ mangaId }) => {
 
   return (
     volumes && (
-      <Accordion type="multiple">
+      <Accordion
+        type="multiple"
+        defaultValue={volumes.map((v) => `${v.volume}`)}
+      >
         {volumes.map((v, idx) => (
           <AccordionItem key={`${idx}`} value={`${v.volume}`}>
             <AccordionTrigger className="hover:no-underline">

@@ -1,3 +1,4 @@
+import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import {
@@ -13,7 +14,6 @@ import { FC, useRef, useState } from 'react';
 import { theme } from '../Editor/Theme';
 import { ImageNode } from '../Editor/nodes/Image';
 import { YouTubeNode } from '../Editor/nodes/Youtube';
-import { toast } from '@/hooks/use-toast';
 
 interface CommentProps {
   index: number;

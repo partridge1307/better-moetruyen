@@ -1,17 +1,17 @@
-import Navbar from "@/components/Navbar";
-import Providers from "@/components/Providers";
-import { Toaster } from "@/components/ui/Toaster";
-import { cn } from "@/lib/utils";
-import "@/styles/globals.css";
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import NavbarClient from '@/components/NavbarClient';
+import Providers from '@/components/Providers';
+import { Toaster } from '@/components/ui/Toaster';
+import { cn } from '@/lib/utils';
+import '@/styles/globals.css';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 
 export const metadata: Metadata = {
-  title: "Moetruyen",
-  description: "Powered by Yuri",
+  title: 'Moetruyen',
+  description: 'Powered by Yuri',
 };
 
-const inter = Inter({ subsets: ["vietnamese"] });
+const inter = Inter({ subsets: ['vietnamese'] });
 
 export default function RootLayout({
   children,
@@ -24,14 +24,14 @@ export default function RootLayout({
     <html lang="vi" className="dark">
       <body
         className={cn(
-          "h-screen antialiased dark:bg-zinc-800 dark:text-slate-50",
+          'h-screen antialiased dark:bg-zinc-800 dark:text-slate-50',
           inter.className
         )}
       >
         <Providers>
           {authModal}
 
-          <Navbar />
+          <NavbarClient />
           {children}
         </Providers>
         <Toaster />

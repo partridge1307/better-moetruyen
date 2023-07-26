@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/AlertDialog';
-import { Button } from '@/components/ui/Button';
+import { Button, buttonVariants } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -81,20 +81,14 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-[200px] space-y-2 p-2">
         <DropdownMenuItem>
-          <Link
-            href={`/me/chapter/${chapter.id}`}
-            className="w-full text-center"
-          >
+          <Link href={`/me/chapter/${chapter.id}`} className="w-full">
             Sửa chapter
           </Link>
         </DropdownMenuItem>
 
         {chapter.isPublished ? (
           <DropdownMenuItem>
-            <Link
-              href={`/chapter/${chapter.id}`}
-              className="w-full text-center"
-            >
+            <Link href={`/chapter/${chapter.id}`} className="w-full">
               Xem chapter
             </Link>
           </DropdownMenuItem>
@@ -102,7 +96,7 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
           <AlertDialog>
             <AlertDialogTrigger
               disabled={isPublishLoading}
-              className="w-full flex items-center justify-center px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground transition-colors"
+              className="w-full flex items-center px-2 py-1.5 text-sm rounded-sm hover:bg-accent hover:text-accent-foreground transition-colors"
             >
               {isPublishLoading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -122,7 +116,9 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
               </AlertDialogHeader>
 
               <AlertDialogFooter>
-                <AlertDialogCancel className="bg-red-500 hover:bg-red-700 transition-colors">
+                <AlertDialogCancel
+                  className={buttonVariants({ variant: 'destructive' })}
+                >
                   Chờ chút đã
                 </AlertDialogCancel>
                 <AlertDialogAction onClick={() => publish(chapter.id)}>

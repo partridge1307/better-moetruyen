@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '../ui/AlertDialog';
+import { buttonVariants } from '../ui/Button';
 
 interface DeleteCommentProps {
   commentId: number;
@@ -76,7 +77,9 @@ const DeleteComment: FC<DeleteCommentProps> = ({
           </AlertDialogHeader>
 
           <AlertDialogFooter>
-            <AlertDialogCancel className="bg-red-500 text-white hover:bg-red-700">
+            <AlertDialogCancel
+              className={buttonVariants({ variant: 'destructive' })}
+            >
               Hủy
             </AlertDialogCancel>
             <AlertDialogAction onClick={() => Delete()}>Xóa</AlertDialogAction>

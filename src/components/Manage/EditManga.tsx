@@ -257,7 +257,10 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
             <FormItem>
               <FormLabel>
                 Link Discord (nếu có){' '}
-                <span className="text-red-500" title="Chỉ nhận link Invite">
+                <span
+                  className="text-red-500"
+                  title="Chỉ nhận link Invite. Yêu cầu phải bật Widget, khuyên để link không hết hạn"
+                >
                   *
                 </span>
               </FormLabel>

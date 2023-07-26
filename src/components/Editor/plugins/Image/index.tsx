@@ -1,6 +1,7 @@
 import {
   AlertDialog,
   AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogTrigger,
 } from '@/components/ui/AlertDialog';
@@ -35,6 +36,7 @@ import {
   ImageNode,
   ImagePayload,
 } from '../../nodes/Image';
+import { buttonVariants } from '@/components/ui/Button';
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> =
@@ -62,14 +64,21 @@ export function InsertURLImageUploaded({
         value={src}
         onChange={(e) => setSrc(e.target.value)}
       />
-      <AlertDialogAction
-        disabled={isDisabled}
-        onClick={() => {
-          onClick({ src, altText: 'Image' });
-        }}
-      >
-        Xong
-      </AlertDialogAction>
+      <div className="flex items-center justify-end gap-4">
+        <AlertDialogCancel
+          className={buttonVariants({ variant: 'destructive' })}
+        >
+          Hủy
+        </AlertDialogCancel>
+        <AlertDialogAction
+          disabled={isDisabled}
+          onClick={() => {
+            onClick({ src, altText: 'Image' });
+          }}
+        >
+          Xong
+        </AlertDialogAction>
+      </div>
     </>
   );
 }
@@ -100,15 +109,23 @@ export function InsertImageUploaded({
     <>
       <Input
         type="file"
+        className="file:dark:bg-white file:rounded-md"
         accept=".jpg, .jpeg, .png"
         onChange={(e) => LoadImage(e.target.files)}
       />
-      <AlertDialogAction
-        disabled={isDisabled}
-        onClick={() => onClick({ src, altText: 'Image' })}
-      >
-        Xong
-      </AlertDialogAction>
+      <div className="flex items-center justify-end gap-4">
+        <AlertDialogCancel
+          className={buttonVariants({ variant: 'destructive' })}
+        >
+          Hủy
+        </AlertDialogCancel>
+        <AlertDialogAction
+          disabled={isDisabled}
+          onClick={() => onClick({ src, altText: 'Image' })}
+        >
+          Xong
+        </AlertDialogAction>
+      </div>
     </>
   );
 }

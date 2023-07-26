@@ -48,6 +48,7 @@ export async function PATCH(
       images,
       volume,
     } = chapterValidator.parse(await req.json());
+    if (!images.length) return new Response('Invalid', { status: 422 });
 
     await db.chapter.update({
       where: {

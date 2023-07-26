@@ -1,4 +1,3 @@
-.dark .ce-block--selected .ce-block__content,
 .dark .ce-inline-toolbar,
 .dark .codex-editor--narrow .ce-toolbox,
 .dark .ce-conversion-toolbar,
@@ -11,6 +10,10 @@
   background: theme('colors.popover.DEFAULT');
   color: inherit;
   border-color: theme('colors.border');
+}
+
+.dark .ce-block--selected .ce-block__content {
+  background-color: theme('colors.zinc.800');
 }
 
 .dark .ce-popover-item__title {

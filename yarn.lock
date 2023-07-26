@@ -2027,6 +2027,11 @@ ecdsa-sig-formatter@1.0.11:
   dependencies:
     safe-buffer "^5.0.1"
 
+editorjs-drag-drop@^1.1.13:
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/editorjs-drag-drop/-/editorjs-drag-drop-1.1.13.tgz#273a5b36084226beb21503b104800ead6eefcc66"
+  integrity sha512-/82RIXP8/zix6Y8/Mnonk1z7XljFvKmsIFbCrP6JTbdWztqoApyUCsnouHTZ4tF51/BTszYV3Z9ennQrXrHCzA==
+
 editorjs-react-renderer@^3.5.1:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/editorjs-react-renderer/-/editorjs-react-renderer-3.5.1.tgz#18200f082afd2c01f609b8e3d842445b93eb29b4"

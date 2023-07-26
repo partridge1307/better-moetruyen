@@ -122,6 +122,7 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
     onSuccess: () => {
       router.push('/me/manga');
       router.refresh();
+
       return toast({
         title: 'Thành công',
       });

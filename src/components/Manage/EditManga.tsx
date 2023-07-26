@@ -25,7 +25,6 @@ import { Button } from '../ui/Button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -123,7 +122,8 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
       });
     },
     onSuccess: () => {
-      router.push(`/me/manga`);
+      router.push(`/me/manga/${manga.id}`);
+      router.refresh();
 
       return toast({
         title: 'Thành công',
@@ -146,7 +146,11 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
 
   async function onSubmitHandler(values: MangaUploadPayload) {
     const editor = await editorRef.current?.save();
-    const desc = editor?.blocks.length ? editor : manga.description;
+    if (!editor?.blocks.length)
+      return form.setError('description', {
+        type: 'custom',
+        message: 'Phải có mô tả',
+      });
 
     if (values.facebookLink && !fbRegex.test(values.facebookLink)) {
       return form.setError('facebookLink', {
@@ -166,7 +170,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
       name: values.name,
       author: values.author,
       tag: values.tag,
-      description: desc,
+      description: editor,
       facebookLink: values.facebookLink,
       discordLink: values.discordLink,
     };
@@ -216,12 +220,9 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
           render={() => (
             <FormItem>
               <FormLabel>Mô tả</FormLabel>
-              <FormDescription>
-                (Bỏ qua nếu không có chỉnh sửa gì)
-              </FormDescription>
               <FormMessage />
               <FormControl>
-                <Editor editorRef={editorRef} />
+                <Editor editorRef={editorRef} initialData={manga.description} />
               </FormControl>
             </FormItem>
           )}

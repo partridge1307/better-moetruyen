@@ -79,6 +79,7 @@ const TeamEdit: FC<TeamEditProps> = ({ team }) => {
     },
     onSuccess: () => {
       router.push(`/me/team`);
+      router.refresh();
 
       return toast({
         title: 'Thành công',

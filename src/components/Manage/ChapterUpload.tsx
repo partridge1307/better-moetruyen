@@ -9,9 +9,11 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import Image from 'next/image';
+import { ImagePlus, PlusCircle, Trash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import DnDChapterImage from '../DragAndDrop/ChapterImage';
 import { Button } from '../ui/Button';
 import {
   Form,
@@ -22,16 +24,15 @@ import {
   FormMessage,
 } from '../ui/Form';
 import { Input } from '../ui/Input';
-import { Progress } from '../ui/Progress';
-import ChapterImageUpload, { type previewImage } from './ChapterImageUpload';
 import ChapterIndexUpload from './ChapterIndexUpload';
-import { useRouter } from 'next/navigation';
 
 const ChapterUpload = ({ id }: { id: string }) => {
   const { loginToast, notFoundToast } = useCustomToast();
   const router = useRouter();
-  const [inputImage, setInputImage] = useState<previewImage[]>([]);
   const [disaleChapterIndex, setDisableChapterIndex] = useState<boolean>(true);
+  const [images, setImages] = useState<
+    { src: string; name: string; progress?: number }[]
+  >([]);
 
   const form = useForm<ChapterUploadPayload>({
     resolver: zodResolver(ChapterUploadValidator),
@@ -42,34 +43,42 @@ const ChapterUpload = ({ id }: { id: string }) => {
       image: undefined,
     },
   });
-  const imgUpload = (image: FileList) =>
+
+  const imgUpload = (): Promise<string[]> =>
     new Promise(async (resolve) => {
       let imagePromise: Promise<AxiosResponse>[] = [];
-      for (let i = 0; i < image.length; i++) {
-        const form = new FormData();
-        form.append('file', image.item(i)!);
-        imagePromise.push(
-          axios.post('/api/image', form, {
-            onUploadProgress: (progessEvent) => {
-              const percentCompleted = Math.floor(
-                (progessEvent.loaded * 100) / progessEvent.total!
-              );
-              inputImage[i].progress = percentCompleted;
-              setInputImage([inputImage[i], ...inputImage]);
-            },
-          })
-        );
-      }
-      const imageUrl = await Promise.all(imagePromise).then((res) =>
+
+      await Promise.all(
+        images.map(async (img, index) => {
+          const blob = await fetch(img.src).then((res) => res.blob());
+          const form = new FormData();
+          form.append('file', blob);
+          imagePromise.push(
+            axios.post('/api/image', form, {
+              onUploadProgress: (progressEvent) => {
+                const percentCompleted = Math.floor(
+                  (progressEvent.loaded * 100) / progressEvent.total!
+                );
+                images[index].progress = percentCompleted;
+                setImages([...images]);
+              },
+            })
+          );
+        })
+      );
+
+      const imageUrl: string[] = await Promise.all(imagePromise).then((res) =>
         res.map((r) => r.data)
       );
       resolve(imageUrl);
     });
-  const { mutate: upload, isLoading: isImageUpload } = useMutation({
+  const { mutate: upload, isLoading: isChapterUpload } = useMutation({
     mutationFn: async (values: ChapterUploadPayload) => {
-      const { image, ...payload } = ChapterUploadValidator.parse(values);
+      // eslint-disable-next-line no-unused-vars
+      const { image, ...payload } = values;
 
-      const imageURL = await imgUpload(image);
+      const imageURL = await imgUpload();
+
       const { data } = await axios.post(`/api/manga/${id}/chapter`, {
         images: imageURL,
         ...payload,
@@ -106,6 +115,11 @@ const ChapterUpload = ({ id }: { id: string }) => {
   });
 
   const onSubmitHandler = (values: ChapterUploadPayload) => {
+    if (images.length < 5)
+      return form.setError('image', {
+        type: 'custom',
+        message: 'Tối thiểu 5 ảnh',
+      });
     upload(values);
   };
 
@@ -151,49 +165,104 @@ const ChapterUpload = ({ id }: { id: string }) => {
           )}
         />
 
-        <ChapterImageUpload
-          form={form}
-          setInputImage={(value) => setInputImage(value)}
-        />
+        <FormField
+          control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Ảnh</FormLabel>
+              <FormMessage />
 
-        <ul className="scrollbar dark:scrollbar--dark flex max-h-[300px] w-full flex-col gap-4 overflow-y-auto">
-          {inputImage.length
-            ? inputImage.map((img, i) => (
-                <li
-                  key={i}
-                  className="relative flex items-center gap-10 rounded-md bg-slate-300 p-2 dark:bg-zinc-800"
+              {images.length ? (
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="button"
+                    className="flex items-center justify-center gap-1"
+                    onClick={(e) => {
+                      e.preventDefault();
+
+                      const target = document.getElementById(
+                        'add-image'
+                      ) as HTMLInputElement;
+                      target.click();
+                    }}
+                  >
+                    <PlusCircle className="w-4 h-4" />
+                    Thêm ảnh
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={'destructive'}
+                    className="flex items-center justify-center gap-1"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setImages([]);
+                    }}
+                  >
+                    <Trash className="w-4 h-4" />
+                    Xóa toàn bộ
+                  </Button>
+                </div>
+              ) : null}
+
+              {images.length ? (
+                <DnDChapterImage
+                  isUpload={isChapterUpload}
+                  items={images}
+                  setItems={setImages}
+                />
+              ) : (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const target = document.getElementById(
+                      'add-image'
+                    ) as HTMLInputElement;
+                    target.click();
+                  }}
+                  className="w-40 h-52 rounded-md border-2 border-dashed flex items-center justify-center"
                 >
-                  <div className="relative h-12 w-12">
-                    <Image
-                      fill
-                      src={img.link}
-                      alt="Preview Image"
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="flex w-full items-center justify-between text-sm">
-                    <div>
-                      <p>Tên: {img.name}</p>
-                      <p>Định dạng: {img.type}</p>
-                    </div>
-                    <p>Kích cỡ: {img.size}KB</p>
-                  </div>
-                  {img.progress ? (
-                    <Progress
-                      value={img.progress}
-                      className="w-1/2"
-                      indicatorClassName={`${img.done && 'bg-green-500'}`}
-                    />
-                  ) : null}
-                </li>
-              ))
-            : null}
-        </ul>
+                  <ImagePlus className="w-8 h-8 opacity-50" />
+                </button>
+              )}
+
+              <FormControl>
+                <input
+                  id="add-image"
+                  ref={field.ref}
+                  multiple
+                  type="file"
+                  accept=".jpg, .png, .jpeg"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files?.length) {
+                      let arr: {
+                        src: string;
+                        name: string;
+                      }[] = [];
+                      for (let i = 0; i < e.target.files.length; i++) {
+                        const imageUrl = URL.createObjectURL(
+                          e.target.files.item(i)!
+                        );
+                        arr.push({
+                          src: imageUrl,
+                          name: e.target.files.item(i)!.name,
+                        });
+                      }
+                      e.target.value = '';
+                      setImages((prev) => [...prev, ...arr]);
+                    }
+                  }}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
         <Button
           type="submit"
-          isLoading={isImageUpload}
-          disabled={isImageUpload}
+          isLoading={isChapterUpload}
+          disabled={isChapterUpload}
           className="w-full"
         >
           Đăng

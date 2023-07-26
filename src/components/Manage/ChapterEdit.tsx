@@ -1,21 +1,13 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import {
-  ChapterEditUploadPayload,
-  ChapterEditUploadValidator,
-} from '@/lib/validators/upload';
-import {
-  DragDropContext,
-  Draggable,
-  DropResult,
-  Droppable,
-} from '@hello-pangea/dnd';
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { toast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Chapter } from '@prisma/client';
-import { PlusCircle, Trash2 } from 'lucide-react';
-import Image from 'next/image';
-import { FC, useRef, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import { useRouter } from 'next/navigation';
+import { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '../ui/Button';
 import {
@@ -27,11 +19,12 @@ import {
   FormMessage,
 } from '../ui/Form';
 import { Input } from '../ui/Input';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
+import {
+  ChapterUploadPayload,
+  ChapterUploadValidator,
+} from '@/lib/validators/upload';
+import DnDChapterImage from '../DragAndDrop/ChapterImage';
+import { ImagePlus, PlusCircle, Trash } from 'lucide-react';
 
 interface ChapterEditProps {
   chapter: Pick<
@@ -40,73 +33,78 @@ interface ChapterEditProps {
   >;
 }
 
-const reorder = (
-  list: { image: string; index: number; type: boolean }[],
-  startIndex: number,
-  endIndex: number
-) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
-};
-
-const UploadImage = (
-  newImg: { image: File; blobImg: string }[]
-): Promise<{ image: string; blobImg: string }[]> =>
-  new Promise(async (resolve) => {
-    let imagePromise: Promise<AxiosResponse>[] = [];
-    newImg.map((img) => {
-      const form = new FormData();
-      form.append('file', img.image);
-      imagePromise.push(axios.post('/api/image', form));
-    });
-
-    const imageUrl = await Promise.all(imagePromise).then((res) =>
-      res.map((r, idx) => ({ image: r.data, blobImg: newImg[idx].blobImg }))
-    );
-    resolve(imageUrl);
-  });
-
 const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
   const { loginToast, notFoundToast } = useCustomToast();
   const router = useRouter();
-  const form = useForm<ChapterEditUploadPayload>({
-    resolver: zodResolver(ChapterEditUploadValidator),
+  const [images, setImages] = useState<
+    { src: string; name: string; progress?: number }[]
+  >(
+    chapter.images.map((img, index) => ({
+      src: img,
+      name: `Trang ${index + 1}`,
+    }))
+  );
+
+  const form = useForm<ChapterUploadPayload>({
+    resolver: zodResolver(ChapterUploadValidator),
     defaultValues: {
       chapterIndex: chapter.chapterIndex,
       chapterName: chapter.name ?? '',
       volume: chapter.volume,
-      image: chapter.images,
+      image: [],
     },
   });
-  const [dndImg, setDndImg] = useState<
-    { image: string; index: number; type: boolean }[]
-  >(
-    chapter.images.map((img, idx) => ({ image: img, index: idx, type: false }))
-  );
-  const [newImg, setNewImg] = useState<
-    {
-      image: File;
-      blobImg: string;
-    }[]
-  >([]);
-  const inputRef = useRef<HTMLInputElement | null>(null);
 
+  const imgUpload = (
+    blobStrArr: { src: string; index: number }[]
+  ): Promise<{ src: string; index: number }[]> =>
+    new Promise(async (resolve) => {
+      let imagePromise: Promise<AxiosResponse>[] = [];
+
+      await Promise.all(
+        blobStrArr.map(async (img) => {
+          const blob = await fetch(img.src).then((res) => res.blob());
+          const form = new FormData();
+          form.append('file', blob);
+          imagePromise.push(
+            axios.post('/api/image', form, {
+              onUploadProgress: (progressEvent) => {
+                const percentCompleted = Math.floor(
+                  (progressEvent.loaded * 100) / progressEvent.total!
+                );
+                images[img.index].progress = percentCompleted;
+                setImages([...images]);
+              },
+            })
+          );
+        })
+      );
+
+      const imageUrl: { src: string; index: number }[] = await Promise.all(
+        imagePromise
+      ).then((res) =>
+        res.map((r, idx) => {
+          blobStrArr[idx].src = r.data;
+          return blobStrArr[idx];
+        })
+      );
+      resolve(imageUrl);
+    });
   const { mutate: Edit, isLoading: isEditting } = useMutation({
-    mutationFn: async (values: ChapterEditUploadPayload) => {
-      const { image, ...payload } = ChapterEditUploadValidator.parse(values);
-      if (newImg.length) {
-        const imgsAfterUploaded = await UploadImage(newImg);
-        imgsAfterUploaded.map(
-          (img) =>
-            (image[dndImg.findIndex((i) => i.image === img.blobImg)] =
-              img.image)
+    mutationFn: async (values: ChapterUploadPayload) => {
+      const { image, ...payload } = values;
+      const blobStrArr = images.flatMap((img, index) =>
+        img.src.startsWith('blob') ? { src: img.src, index } : []
+      );
+
+      if (blobStrArr.length) {
+        const imageRes = await imgUpload(blobStrArr);
+        await Promise.all(
+          imageRes.map((img) => (images[img.index].src = img.src))
         );
 
         const { data } = await axios.patch(`/api/chapter/${chapter.id}/edit`, {
-          images: image,
+          images: images.map((img) => img.src),
           ...payload,
         });
         return data;
@@ -132,6 +130,7 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
     },
     onSuccess: () => {
       router.push(`/me/manga/${chapter.mangaId}/chapter`);
+      router.refresh();
 
       return toast({
         title: 'Thành công',
@@ -139,56 +138,12 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
     },
   });
 
-  function onDragEnd(result: DropResult) {
-    if (!result.destination) {
-      return;
-    }
-
-    const items = reorder(
-      dndImg,
-      result.source.index,
-      result.destination.index
-    );
-    form.setValue(
-      'image',
-      items.map((item) => item.image)
-    );
-
-    setDndImg(
-      items.map((item, idx) => ({
-        image: item.image,
-        index: idx,
-        type: item.type,
-      }))
-    );
-  }
-  function onRemoveItem(index: number) {
-    const dndCopy = dndImg;
-    dndCopy.splice(index, 1);
-    form.setValue(
-      'image',
-      dndCopy.map((d) => d.image)
-    );
-    setDndImg(dndCopy);
-  }
-  function onAddItem(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files?.length) {
-      let imgUrls: { image: string; index: number; type: boolean }[] = [];
-      for (let i = 0; i < e.target.files.length; i++) {
-        const image = URL.createObjectURL(e.target.files.item(i)!);
-        imgUrls.push({
-          image,
-          index: -1,
-          type: true,
-        });
-        newImg.push({ image: e.target.files.item(i)!, blobImg: image });
-        setNewImg(newImg);
-      }
-      setDndImg([...dndImg, ...imgUrls]);
-    }
-  }
-
-  function onSubmitHandler(values: ChapterEditUploadPayload) {
+  function onSubmitHandler(values: ChapterUploadPayload) {
+    if (images.length < 5)
+      return form.setError('image', {
+        type: 'custom',
+        message: 'Tối thiểu 5 ảnh',
+      });
     Edit(values);
   }
 
@@ -246,6 +201,7 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
                 <Input
                   ref={field.ref}
                   type="number"
+                  min={0}
                   value={field.value}
                   onChange={(e) => {
                     if (e.target.valueAsNumber) {
@@ -264,100 +220,92 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
         <FormField
           control={form.control}
           name="image"
-          render={() => (
-            <FormItem className="space-y-4">
-              <FormLabel>Ảnh chapter</FormLabel>
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Ảnh</FormLabel>
               <FormMessage />
-              <div>
-                <Button
-                  className="flex gap-1 max-sm:w-full"
+
+              {images.length ? (
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="button"
+                    className="flex items-center justify-center gap-1"
+                    onClick={(e) => {
+                      e.preventDefault();
+
+                      const target = document.getElementById(
+                        'add-image'
+                      ) as HTMLInputElement;
+                      target.click();
+                    }}
+                  >
+                    <PlusCircle className="w-4 h-4" />
+                    Thêm ảnh
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={'destructive'}
+                    className="flex items-center justify-center gap-1"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setImages([]);
+                    }}
+                  >
+                    <Trash className="w-4 h-4" />
+                    Xóa toàn bộ
+                  </Button>
+                </div>
+              ) : (
+                <button
                   onClick={(e) => {
                     e.preventDefault();
-                    inputRef.current?.click();
+                    const target = document.getElementById(
+                      'add-image'
+                    ) as HTMLInputElement;
+                    target.click();
                   }}
+                  className="w-40 h-52 rounded-md border-2 border-dashed flex items-center justify-center"
                 >
-                  <PlusCircle className="w-4 h-4" />
-                  Thêm ảnh
-                </Button>
-                <input
-                  ref={inputRef}
-                  type="file"
-                  accept=".jpg, .jpeg, .png"
-                  className="hidden"
-                  multiple
-                  onChange={onAddItem}
+                  <ImagePlus className="w-8 h-8 opacity-50" />
+                </button>
+              )}
+
+              {images.length ? (
+                <DnDChapterImage
+                  isUpload={isEditting}
+                  items={images}
+                  setItems={setImages}
                 />
-              </div>
+              ) : null}
+
               <FormControl>
-                <DragDropContext onDragEnd={onDragEnd}>
-                  <Droppable droppableId="droppable">
-                    {(provided, snapshot) => (
-                      <div
-                        ref={provided.innerRef}
-                        className={cn(
-                          'w-full max-h-[500px] overflow-auto no-scrollbar rounded-md py-4 flex flex-col items-center',
-                          snapshot.isDraggingOver
-                            ? 'dark:bg-zinc-700'
-                            : 'dark:bg-zinc-900'
-                        )}
-                        {...provided.droppableProps}
-                      >
-                        {dndImg.length ? (
-                          dndImg.map((t, idx) => (
-                            <Draggable
-                              key={idx}
-                              draggableId={`${idx}`}
-                              index={idx}
-                            >
-                              {(provided, snapshot) => (
-                                <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  style={{ ...provided.draggableProps.style }}
-                                  className={cn(
-                                    'w-[90%] p-2 md:p-4 rounded-md m-2',
-                                    snapshot.isDragging
-                                      ? 'dark:bg-zinc-900'
-                                      : t.type
-                                      ? 'dark:bg-green-600'
-                                      : 'dark:bg-zinc-800'
-                                  )}
-                                >
-                                  <div className="flex justify-between items-center">
-                                    <div className="flex items-center gap-2 md:gap-4">
-                                      <p className="text-4xl">=</p>
-                                      <div className="flex gap-4 md:gap-6">
-                                        <div className="relative h-24 w-16 md:h-28 md:w-24">
-                                          <Image
-                                            fill
-                                            sizes="0%"
-                                            priority
-                                            src={t.image}
-                                            alt={`Image-${idx}`}
-                                            className="rounded-md object-contain"
-                                          />
-                                        </div>
-                                        <p>Trang {t.index + 1}</p>
-                                      </div>
-                                    </div>
-                                    <Trash2
-                                      className="h-6 w-6 md:w-8 md:h-8 text-red-600 cursor-pointer"
-                                      onClick={() => onRemoveItem(idx)}
-                                    />
-                                  </div>
-                                </div>
-                              )}
-                            </Draggable>
-                          ))
-                        ) : (
-                          <div>Không có ảnh</div>
-                        )}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </Droppable>
-                </DragDropContext>
+                <input
+                  ref={field.ref}
+                  id="add-image"
+                  type="file"
+                  multiple
+                  accept=".jpg, .png, .jpeg"
+                  className="hidden"
+                  onChange={(e) => {
+                    if (e.target.files?.length) {
+                      let arr: {
+                        src: string;
+                        name: string;
+                      }[] = [];
+                      for (let i = 0; i < e.target.files.length; i++) {
+                        const imageUrl = URL.createObjectURL(
+                          e.target.files.item(i)!
+                        );
+                        arr.push({
+                          src: imageUrl,
+                          name: e.target.files.item(i)!.name,
+                        });
+                      }
+                      e.target.value = '';
+                      setImages((prev) => [...prev, ...arr]);
+                    }
+                  }}
+                />
               </FormControl>
             </FormItem>
           )}

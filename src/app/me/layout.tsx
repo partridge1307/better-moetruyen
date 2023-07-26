@@ -11,7 +11,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   if (!session?.user) redirect('/sign-in');
 
   return (
-    <div className="container h-full pt-20 md:pt-32">
+    <div className="container max-sm:px-2 h-full pt-20 md:pt-32">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-[.4fr_1fr]">
         <div className="h-fit rounded-lg space-y-2 dark:bg-zinc-900/75">
           <div className="relative p-2 dark:hover:bg-zinc-700 rounded-md">

@@ -2,7 +2,7 @@ import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
-import { z } from 'zod';
+import { ZodError, z } from 'zod';
 
 const chapterValidator = z.object({
   images: z.string().array(),
@@ -63,6 +63,9 @@ export async function PATCH(
 
     return new Response('OK');
   } catch (error) {
+    if (error instanceof ZodError) {
+      return new Response(error.message, { status: 422 });
+    }
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2025') {
         return new Response('Not found', { status: 404 });

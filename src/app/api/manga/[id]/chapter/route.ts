@@ -45,6 +45,8 @@ export async function POST(
       volume,
     } = chapterValidator.parse(await req.json());
 
+    if (!images.length) return new Response('Invalid', { status: 422 });
+
     let index;
     if (chapterIndex === 0) {
       index = (

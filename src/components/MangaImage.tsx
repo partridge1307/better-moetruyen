@@ -36,6 +36,7 @@ const MangaImage: FC<MangaCardProps> = ({ image, className }) => {
           className="rounded-md object-cover"
         />
         <div
+          role="button"
           className="absolute flex inset-0 cursor-zoom-in items-center justify-center rounded-md opacity-0 hover:bg-black/50 hover:opacity-100"
           onClick={() => setIsZoomed(true)}
         >

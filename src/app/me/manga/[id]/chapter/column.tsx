@@ -38,6 +38,7 @@ export const columns: ColumnDef<
     cell: ({ row }) => {
       return <div className="text-center">{row.original.images.length}</div>;
     },
+    enableSorting: false,
   },
   {
     id: 'Trạng thái',

@@ -9,6 +9,7 @@ import { FC, memo, useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
 import { CommentVotePayload } from '@/lib/validators/vote';
 import { cn } from '@/lib/utils';
+import { socket } from '@/lib/socket';
 
 interface CommentVoteClientProps {
   commentId: number;
@@ -59,9 +60,10 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
         else if (type === 'DOWN_VOTE') setVoteAmt((prev) => prev + 1);
       } else {
         setCurrentVote(type);
-        if (type === 'UP_VOTE')
+        if (type === 'UP_VOTE') {
           setVoteAmt((prev) => prev + (currentVote ? 2 : 1));
-        else if (type === 'DOWN_VOTE')
+          socket.emit('notify', { type: 0, payload: commentId });
+        } else if (type === 'DOWN_VOTE')
           setVoteAmt((prev) => prev - (currentVote ? 2 : 1));
       }
     },

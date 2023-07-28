@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/Select';
+import { socket } from '@/lib/socket';
 
 interface UserProfileProps {
   user: Pick<User, 'name' | 'color' | 'image' | 'banner'> & {

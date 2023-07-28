@@ -60,7 +60,7 @@ const page = async ({ params }: { params: { id: string } }) => {
           <DataChapterTable columns={columns} data={chapters} />
         </div>
       ) : (
-        <div className="flex h-full flex-col items-center justify-center gap-4">
+        <div className="min-h-[400px] md:min-h-[500px] flex h-full flex-col items-center justify-center gap-4">
           <p>Truyện chưa có chapter nào cả</p>
           <Link
             href={`/me/manga/${params.id}/chapter/upload`}

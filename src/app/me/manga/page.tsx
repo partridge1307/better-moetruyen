@@ -43,7 +43,9 @@ const page = async () => {
         // @ts-ignore
         <DataMangaTable columns={columns} data={manga} />
       ) : (
-        <div>Bạn chưa có manga nào. Hãy upload một bộ ngay thôi nhé</div>
+        <div className="min-h-[400px] md:min-h-[500px] flex items-center justify-center">
+          Bạn chưa có manga nào. Hãy upload một bộ ngay thôi nhé
+        </div>
       )}
     </div>
   );

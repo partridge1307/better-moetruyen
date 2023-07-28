@@ -64,7 +64,7 @@ export function InsertURLImageUploaded({
         value={src}
         onChange={(e) => setSrc(e.target.value)}
       />
-      <div className="flex items-center justify-end gap-4">
+      <div className="flex items-stretch justify-end gap-4">
         <AlertDialogCancel
           className={buttonVariants({ variant: 'destructive' })}
         >
@@ -113,7 +113,7 @@ export function InsertImageUploaded({
         accept=".jpg, .jpeg, .png"
         onChange={(e) => LoadImage(e.target.files)}
       />
-      <div className="flex items-center justify-end gap-4">
+      <div className="flex items-stretch justify-end gap-4">
         <AlertDialogCancel
           className={buttonVariants({ variant: 'destructive' })}
         >

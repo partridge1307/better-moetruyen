@@ -11,10 +11,9 @@ const CustomImage = ({ data }: { data: any }) => {
           data.withBorder && 'dark:bg-zinc-800'
         )}
       >
-        <Image
-          width={0}
-          height={0}
-          sizes="0%"
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          loading="lazy"
           src={data.url}
           alt={data.caption ? data.caption : 'Manga Description Image'}
           className={cn(

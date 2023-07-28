@@ -39,7 +39,7 @@ const CommentOutput: FC<CommentOutputProps> = ({ id }) => {
   } = useInfiniteQuery(
     ['comment-infinite-query'],
     async ({ pageParam = 1 }) => {
-      const query = `/api/manga/${id}/comment/?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}`;
+      const query = `/api/manga/${id}/comment?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}`;
 
       const { data } = await axios.get(query);
       return data as ExtendedComment[];

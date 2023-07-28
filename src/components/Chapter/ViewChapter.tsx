@@ -135,18 +135,19 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
         };
       });
 
-      const handler = () => {
-        if (typeof window !== 'undefined' && slider.current !== null) {
-          if (window.scrollY < 150) {
-            console.log(slider.current.scrollHeight);
+      const init = () => {
+        const handler = () => {
+          if (window.scrollY <= 200) {
             slider.current?.scrollIntoView({ behavior: 'instant' });
           }
-        }
+        };
+
+        slider.current?.addEventListener('scroll', handler);
+
+        return () => slider.current?.removeEventListener('scroll', handler);
       };
 
-      slider.current?.addEventListener('scroll', handler);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      return () => slider.current?.removeEventListener('scroll', handler);
+      init();
     }
   }, [chapter.images, readingMode]);
   useEffect(() => {

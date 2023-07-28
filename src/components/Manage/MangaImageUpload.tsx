@@ -32,12 +32,12 @@ const MangaImageUpload: FC<MangaImageUploadProps> = ({
           <FormLabel>Ảnh bìa</FormLabel>
           <FormMessage />
           <FormControl>
-            <div className="relative h-40 w-40 rounded-lg border">
+            <div className="relative h-40 md:h-56 w-full rounded-lg border">
               <Input
                 ref={field.ref}
                 type="file"
                 accept=".jpg, .jpeg, .png"
-                className="absolute z-10 h-full w-full opacity-0"
+                className="absolute z-10 h-full w-full opacity-0 cursor-pointer"
                 onChange={(e) => {
                   if (e.target.files?.length) {
                     field.onChange(e.target.files[0]);
@@ -48,6 +48,7 @@ const MangaImageUpload: FC<MangaImageUploadProps> = ({
               {!!previewImage ? (
                 <Image
                   fill
+                  sizes="0%"
                   src={previewImage!}
                   alt="Preview Manga Image"
                   className="rounded-lg object-cover"

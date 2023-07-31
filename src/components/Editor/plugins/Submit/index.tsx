@@ -10,6 +10,7 @@ import axios, { AxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { $isImageNode, ImageNode } from '../../nodes/Image';
 import { socket } from '@/lib/socket';
+import { CLEAR_EDITOR_COMMAND } from 'lexical';
 
 export default function Submit({
   id,
@@ -50,7 +51,7 @@ export default function Submit({
       } else {
         await axios.put(`/api/manga/${id}/comment/create`, values);
         if (commentId) {
-          socket.emit('notify', { type: 1, payload: commentId });
+          socket.emit('notify', { type: 'COMMENT', payload: commentId });
         }
       }
     },
@@ -67,6 +68,9 @@ export default function Submit({
       });
     },
     onSuccess: () => {
+      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, void +'');
+      if (!editor.isEditable()) editor.setEditable(true);
+
       return toast({
         title: 'Thành công',
       });

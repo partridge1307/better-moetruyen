@@ -1,7 +1,7 @@
 import ForceSignOut from '@/components/ForceSignOut';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
 const ChapterUpload = dynamic(
@@ -11,7 +11,7 @@ const ChapterUpload = dynamic(
 
 const page = async ({ params }: { params: { id: string } }) => {
   const session = await getAuthSession();
-  if (!session) return <ForceSignOut />;
+  if (!session) return redirect('/sign-in');
   const user = await db.user.findFirst({
     where: {
       id: session.user.id,

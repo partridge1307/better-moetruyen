@@ -160,7 +160,7 @@ function SortableItem({
         ) : null}
 
         <div className="absolute inset-x-0 bottom-2 mx-2 text-sm">
-          <p className="line-clamp-1 p-1 px-2 text-center dark:bg-zinc-900/75 w-fit rounded-full">
+          <p className="p-1 px-2 text-center text-xs dark:bg-zinc-900/75 line-clamp-1 w-full rounded-full">
             {img.name}
           </p>
         </div>

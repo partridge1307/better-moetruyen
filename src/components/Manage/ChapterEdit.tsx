@@ -110,7 +110,7 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
         return data;
       } else {
         const { data } = await axios.patch(`/api/chapter/${chapter.id}/edit`, {
-          images: image,
+          images: images.map((img) => img.src),
           ...payload,
         });
         return data;

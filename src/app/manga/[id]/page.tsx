@@ -1,10 +1,12 @@
 import FBEmbed from '@/components/FBEmbed';
 import MangaImage from '@/components/MangaImage';
+import UserAvatar from '@/components/User/UserAvatar';
+import UserBanner from '@/components/User/UserBanner';
+import Username from '@/components/User/Username';
 import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';
-import { cn } from '@/lib/utils';
 import { List, ListTree, Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -136,7 +138,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
   return (
     <>
-      <div className="container max-sm:px-2 mx-auto h-full pt-20 space-y-14">
+      <main className="container max-sm:px-2 mx-auto h-full pt-20 space-y-14">
         <div className="relative h-max">
           <div className="p-4 max-sm:space-y-4 md:flex md:gap-10">
             <MangaImage className="h-48 w-full md:w-40" image={manga.image} />
@@ -203,49 +205,11 @@ const page: FC<pageProps> = async ({ params }) => {
                   <Card className="relative bg-transparent/10">
                     <CardHeader className="max-sm:gap-12">
                       <div className="relative">
-                        {manga.creator.image && (
-                          <div
-                            className={cn(
-                              'h-[5rem] w-[5rem] border-[6px] rounded-full z-10',
-                              manga.creator.banner
-                                ? 'absolute top-2/3 left-2'
-                                : 'mx-auto'
-                            )}
-                          >
-                            <div className="relative w-full h-full">
-                              <Image
-                                fill
-                                src={manga.creator.image}
-                                alt="User Avatar"
-                                className="rounded-full"
-                              />
-                            </div>
-                          </div>
-                        )}
-                        {manga.creator.banner && (
-                          <div className="relative w-full h-32 rounded-md">
-                            <Image
-                              fill
-                              sizes="0%"
-                              src={manga.creator.banner}
-                              alt="User Banner"
-                              className="rounded-md"
-                            />
-                          </div>
-                        )}
+                        <UserAvatar user={manga.creator} />
+                        <UserBanner user={manga.creator} />
                       </div>
 
-                      <p
-                        className={cn(
-                          'md:text-center font-semibold text-lg',
-                          manga.creator.banner && 'text-center ml-3 md:ml-10'
-                        )}
-                        style={{
-                          color: manga.creator.color ? manga.creator.color : '',
-                        }}
-                      >
-                        {manga.creator.name}
-                      </p>
+                      <Username user={manga.creator} />
                     </CardHeader>
                     {manga.creator.memberOnTeam && (
                       <CardContent>
@@ -319,7 +283,7 @@ const page: FC<pageProps> = async ({ params }) => {
             </TabsContent>
           </Tabs>
         </div>
-      </div>
+      </main>
     </>
   );
 };

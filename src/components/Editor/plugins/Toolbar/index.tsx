@@ -43,7 +43,6 @@ import { createPortal } from 'react-dom';
 import { ImageInputBody } from '../Image';
 import { FloatingLinkEditor, getSelectedNode } from '../Link';
 
-const voidPayload = void +'';
 const lowPriority = 1;
 
 export function FillURL() {
@@ -258,7 +257,7 @@ const Toolbar = () => {
           disabled={!canUndo}
           className={cn('transition-opacity', !canUndo && 'opacity-50')}
           onClick={() => {
-            editor.dispatchCommand(UNDO_COMMAND, voidPayload);
+            editor.dispatchCommand(UNDO_COMMAND, void +'');
           }}
         >
           <Undo className="w-5 h-5" />
@@ -266,7 +265,7 @@ const Toolbar = () => {
         <button
           disabled={!canRedo}
           className={cn('transition-opacity', !canRedo && 'opacity-50')}
-          onClick={() => editor.dispatchCommand(REDO_COMMAND, voidPayload)}
+          onClick={() => editor.dispatchCommand(REDO_COMMAND, void +'')}
         >
           <Redo className="w-5 h-5" />
         </button>

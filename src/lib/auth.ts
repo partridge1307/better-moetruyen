@@ -81,7 +81,13 @@ export const authOptions: AuthOptions = {
             name: userWithoutPass.name,
             image: userWithoutPass.image,
             banner: userWithoutPass.banner,
-            color: userWithoutPass.color,
+            color: userWithoutPass.color as
+              | {
+                  from: string;
+                  to: string;
+                }
+              | { color: string }
+              | null,
           };
         } catch (error) {
           return null;
@@ -107,14 +113,35 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         if (!user.name) {
-          user = await db.user.update({
-            where: {
-              id: user.id,
-            },
-            data: {
-              name: uniqueNamesGenerator(customConfig),
-            },
-          });
+          user = await db.user
+            .update({
+              where: {
+                id: user.id,
+              },
+              data: {
+                name: uniqueNamesGenerator(customConfig),
+              },
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                banner: true,
+                color: true,
+              },
+            })
+            .then((res) => ({
+              id: res.id,
+              name: res.name,
+              image: res.image,
+              banner: res.banner,
+              color: res.color as
+                | {
+                    from: string;
+                    to: string;
+                  }
+                | { color: string }
+                | null,
+            }));
         }
 
         return {
@@ -144,7 +171,13 @@ export const authOptions: AuthOptions = {
             name: dbUser.name,
             picture: dbUser.image,
             banner: dbUser.banner,
-            color: dbUser.color,
+            color: dbUser.color as
+              | {
+                  from: string;
+                  to: string;
+                }
+              | { color: string }
+              | null,
           };
       }
       return token;

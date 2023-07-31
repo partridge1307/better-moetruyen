@@ -42,7 +42,7 @@ export async function PATCH(req: NextRequest) {
         name,
         image: avatarUrl ? avatarUrl : user.image,
         banner: bannerUrl ? bannerUrl : user.banner,
-        color: color ? color : user.color,
+        color: color ? JSON.parse(color) : user.color,
       },
     });
 

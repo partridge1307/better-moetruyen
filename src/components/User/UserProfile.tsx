@@ -21,7 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/Select';
-import { socket } from '@/lib/socket';
+import { AspectRatio } from '../ui/AspectRatio';
+import { useRouter } from 'next/navigation';
 
 interface UserProfileProps {
   user: Pick<User, 'name' | 'color' | 'image' | 'banner'> & {
@@ -64,8 +65,11 @@ const reducer = (state: StateProps, action: ActionState) => {
 
 const UserProfile: FC<UserProfileProps> = ({ user }) => {
   const { loginToast, notFoundToast } = useCustomToast();
+  const { push } = useRouter();
   const { update } = useSession();
   const modalRef = useRef<HTMLButtonElement>(null);
+  const avatarRef = useRef<HTMLInputElement>(null);
+  const bannerRef = useRef<HTMLInputElement>(null);
   const [aspect, setAspect] = useState(1);
   const [previewImage, setPreviewImage] = useState<{
     type: 'avatar' | 'banner';
@@ -84,8 +88,22 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
     banner: Blob | undefined;
   } | null>(null);
   const [username, setUsername] = useState<string>(user.name!);
-  const [color, setColor] = useState<string | null>(
-    user.color ? user.color : null
+  const [color, setColor] = useState<
+    | {
+        from: string;
+        to: string;
+      }
+    | { color: string }
+    | null
+  >(
+    user.color
+      ? (user.color as
+          | {
+              from: string;
+              to: string;
+            }
+          | { color: string })
+      : null
   );
 
   useEffect(() => {
@@ -112,6 +130,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
   const { mutate: Edit, isLoading: isEditting } = useMutation({
     mutationFn: async (values: UserProfileEditPayload) => {
       const { avatar, banner, name, color } = values;
+
       const form = new FormData();
       form.append('avatar', avatar ? avatar : '');
       form.append('banner', banner ? banner : '');
@@ -126,12 +145,6 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
       if (e instanceof AxiosError) {
         if (e.response?.status === 401) return loginToast();
         if (e.response?.status === 404) return notFoundToast();
-        if (e.response?.status === 422)
-          return toast({
-            title: 'Không hợp lệ',
-            description: 'Biểu mẫu không hợp lệ. Vui lòng thử lại',
-            variant: 'destructive',
-          });
       }
 
       return toast({
@@ -142,7 +155,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
     },
     onSuccess: () => {
       update();
-      location.reload();
+      push('/');
 
       return toast({
         title: 'Thành công',
@@ -155,7 +168,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
       avatar: blobImg?.avatar,
       banner: blobImg?.banner,
       name: username,
-      color: color,
+      color: JSON.stringify(color),
     };
 
     Edit(payload);
@@ -170,108 +183,80 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
       id="profile-update"
     >
       <div className="relative min-h-[75vh] w-full h-full p-2">
-        <div className="relative rounded-md cursor-pointer dark:border-zinc-900 w-full h-44 md:h-52 dark:bg-zinc-700/40">
-          {state.banner ? (
-            <div className="relative w-full h-full">
-              <Image
-                fill
-                sizes="0%"
-                priority
-                src={state.banner}
-                alt="Preview Banner"
-                className="rounded-md"
-              />
-            </div>
-          ) : (
-            user.banner && (
-              <div className="relative w-full h-full">
-                <Image
-                  fill
-                  sizes="0%"
-                  priority
-                  src={user.banner}
-                  alt="User Banner"
-                  className="rounded-md"
-                />
-              </div>
-            )
-          )}
-
+        <div className="relative">
           <div
-            className={cn(
-              'absolute w-32 h-32 md:w-36 md:h-36 z-20 rounded-full border-8 dark:border-zinc-900 max-sm:left-1/2 max-sm:-translate-x-1/2 md:left-3 top-2/3',
-              !user.image && 'dark:bg-zinc-700'
-            )}
+            className="rounded-md cursor-pointer dark:border-zinc-900 dark:bg-zinc-700/40"
+            onClick={() => bannerRef.current?.click()}
           >
-            {state.avatar ? (
-              <div className="relative w-full h-full">
-                <Image
-                  fill
-                  sizes="0%"
-                  priority
-                  src={state.avatar}
-                  alt="Preview Avatar"
-                  className="rounded-full"
-                />
-              </div>
-            ) : (
-              user.image && (
+            <AspectRatio ratio={16 / 9}>
+              {state.banner ? (
                 <div className="relative w-full h-full">
                   <Image
                     fill
                     sizes="0%"
                     priority
-                    src={user.image}
+                    src={state.banner}
+                    alt="Preview Banner"
+                    className="rounded-md"
+                  />
+                </div>
+              ) : (
+                user.banner && (
+                  <div className="relative w-full h-full">
+                    <Image
+                      fill
+                      sizes="0%"
+                      priority
+                      src={user.banner}
+                      alt="User Banner"
+                      className="rounded-md"
+                    />
+                  </div>
+                )
+              )}
+            </AspectRatio>
+            <EditIcon className="absolute max-sm:w-4 max-sm:h-4 top-2 right-2 opacity-60" />
+          </div>
+
+          <div
+            className="absolute left-4 max-sm:top-1/2 top-2/3 translate-y-1/3 cursor-pointer w-28 h-28 md:w-36 md:h-36 lg:w-48 lg:h-48 border-4 lg:border-8 rounded-full"
+            onClick={() => avatarRef.current?.click()}
+          >
+            <AspectRatio ratio={1 / 1}>
+              {state.avatar ? (
+                <div className="relative w-full h-full">
+                  <Image
+                    fill
+                    sizes="0%"
+                    priority
+                    src={state.avatar}
                     alt="Preview Avatar"
                     className="rounded-full"
                   />
                 </div>
-              )
-            )}
+              ) : (
+                user.image && (
+                  <div className="relative w-full h-full">
+                    <Image
+                      fill
+                      sizes="0%"
+                      priority
+                      src={user.image}
+                      alt="Preview Avatar"
+                      className="rounded-full"
+                    />
+                  </div>
+                )
+              )}
+            </AspectRatio>
 
-            <input
-              type="file"
-              title=""
-              accept=".jpg, .png, .jpeg"
-              className="absolute inset-0 opacity-0 file:cursor-pointer rounded-full cursor-pointer"
-              onChange={(e) => {
-                if (e.target.files?.length) {
-                  setPreviewImage({
-                    type: 'avatar',
-                    image: URL.createObjectURL(e.target.files[0]),
-                  });
-                  setAspect(1);
-                  e.target.value = '';
-                  modalRef.current?.click();
-                }
-              }}
-            />
-            <div className="absolute right-0 -top-2 p-2 md:p-2 rounded-full dark:bg-zinc-900/70">
+            <div className="absolute right-0 lg:right-4 top-0 p-2 md:p-2 rounded-full dark:bg-zinc-900/70">
               <EditIcon className="w-3 h-3 md:w-4 md:h-4" />
             </div>
           </div>
-
-          <input
-            type="file"
-            title=""
-            accept=".jpg, .png, .jpeg"
-            className="absolute inset-0 opacity-0 file:cursor-pointer cursor-pointer"
-            onChange={(e) => {
-              if (e.target.files?.length) {
-                setPreviewImage({
-                  type: 'banner',
-                  image: URL.createObjectURL(e.target.files[0]),
-                });
-                setAspect(16 / 9);
-                e.target.value = '';
-                modalRef.current?.click();
-              }
-            }}
-          />
-          <EditIcon className="absolute max-sm:w-4 max-sm:h-4 top-2 right-2 opacity-60" />
         </div>
 
-        <div className="relative space-y-6 mt-20 md:mt-24">
+        <div className="relative space-y-6 mt-24 md:mt-32">
           <div className="relative">
             <Input
               value={username}
@@ -284,8 +269,8 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
             <div>
               <p>Chọn huy hiệu</p>
               <Select
-                value={color !== null ? color : undefined}
-                onValueChange={(value: string) => setColor(value)}
+                value={color !== null ? JSON.stringify(color) : undefined}
+                onValueChange={(value: string) => setColor(JSON.parse(value))}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -294,13 +279,28 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                   {user.badge.map((b, idx) => (
                     <SelectItem
                       key={idx}
-                      value={b.color}
+                      value={JSON.stringify(b.color)}
                       className="cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
                         <div
-                          className="w-4 h-4 rounded-full"
-                          style={{ backgroundColor: b.color ? b.color : '' }}
+                          className="w-4 h-4 rounded-full animate-rainbow"
+                          style={{
+                            backgroundImage: b.color
+                              ? // @ts-ignore
+                                b.color.from || b.color.to
+                                ? // @ts-ignore
+                                  `linear-gradient(to right, ${b.color.from}, ${b.color.to})`
+                                : ''
+                              : '',
+                            backgroundColor: b.color
+                              ? // @ts-ignore
+                                b.color.color
+                                ? // @ts-ignore
+                                  b.color.color
+                                : ''
+                              : '',
+                          }}
                         />{' '}
                         <p>{b.name}</p>
                       </div>
@@ -328,17 +328,33 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                               alt="Badge Image"
                             />
                           </div>
-                          <p
-                            className="text-sm cursor-default font-medium"
-                            style={{ color: b.color ? b.color : '' }}
+
+                          <h5
+                            className="text-sm font-medium bg-clip-text text-transparent animate-rainbow"
+                            style={{
+                              backgroundImage: b.color
+                                ? // @ts-ignore
+                                  b.color.from || b.color.to
+                                  ? // @ts-ignore
+                                    `linear-gradient(to right, ${b.color.from}, ${b.color.to})`
+                                  : ''
+                                : '',
+                              backgroundColor: b.color
+                                ? // @ts-ignore
+                                  b.color.color
+                                  ? // @ts-ignore
+                                    b.color.color
+                                  : ''
+                                : '',
+                            }}
                           >
                             {b.name}
-                          </p>
+                          </h5>
                         </div>
                       </HoverCardTrigger>
 
-                      <HoverCardContent className="grid grid-cols-2 gap-6 w-fit dark:bg-zinc-600">
-                        <div className="relative w-full h-full">
+                      <HoverCardContent className="flex items-center gap-6 w-fit dark:bg-zinc-600">
+                        <div className="relative w-10 h-10">
                           <Image
                             fill
                             sizes="0%"
@@ -347,7 +363,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                             className="object-contain"
                           />
                         </div>
-                        <div className="text-white space-y-1">
+                        <div className="dark:text-white space-y-1">
                           <p>{b.name}</p>
                           <p className="text-xs">{b.description}</p>
                         </div>
@@ -373,7 +389,15 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                 dispatch({ type: ActionType.RESET, payload: '' });
                 setUsername(user.name!);
                 setBlobImg(null);
-                setColor(user.color ? user.color : null);
+                setColor(
+                  user.color
+                    ? (user.color as {
+                        gradient: boolean;
+                        from: string;
+                        to: string;
+                      })
+                    : null
+                );
               }}
             >
               Reset
@@ -416,6 +440,41 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
             } | null
           )
         }
+      />
+
+      <input
+        ref={avatarRef}
+        type="file"
+        accept=".jpg, .png, .jpeg"
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files?.length) {
+            setPreviewImage({
+              type: 'avatar',
+              image: URL.createObjectURL(e.target.files[0]),
+            });
+            setAspect(1);
+            e.target.value = '';
+            modalRef.current?.click();
+          }
+        }}
+      />
+      <input
+        ref={bannerRef}
+        type="file"
+        accept=".jpg, .png, .jpeg"
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files?.length) {
+            setPreviewImage({
+              type: 'banner',
+              image: URL.createObjectURL(e.target.files[0]),
+            });
+            setAspect(16 / 9);
+            e.target.value = '';
+            modalRef.current?.click();
+          }
+        }}
       />
     </form>
   );

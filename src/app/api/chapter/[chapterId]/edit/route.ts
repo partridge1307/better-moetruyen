@@ -55,10 +55,10 @@ export async function PATCH(
         id: +context.params.chapterId,
       },
       data: {
-        chapterIndex: chapterIndex,
+        chapterIndex,
         name,
-        images,
         volume,
+        images,
       },
     });
 

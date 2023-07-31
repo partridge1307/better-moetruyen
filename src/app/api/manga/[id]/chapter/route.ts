@@ -97,7 +97,7 @@ export async function POST(
           chapterIndex: index,
           name,
           volume,
-          images: [...images],
+          images,
           manga: {
             connect: { id: manga.id },
           },
@@ -112,7 +112,7 @@ export async function POST(
           chapterIndex: index,
           name,
           volume,
-          images: [...images],
+          images,
           manga: {
             connect: { id: manga.id },
           },

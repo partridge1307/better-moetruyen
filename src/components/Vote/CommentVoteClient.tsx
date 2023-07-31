@@ -62,7 +62,7 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
         setCurrentVote(type);
         if (type === 'UP_VOTE') {
           setVoteAmt((prev) => prev + (currentVote ? 2 : 1));
-          socket.emit('notify', { type: 0, payload: commentId });
+          socket.emit('notify', { type: 'LIKE', payload: commentId });
         } else if (type === 'DOWN_VOTE')
           setVoteAmt((prev) => prev - (currentVote ? 2 : 1));
       }

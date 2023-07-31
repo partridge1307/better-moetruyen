@@ -1,5 +1,8 @@
 import ForceSignOut from '@/components/ForceSignOut';
 import TeamMangaList from '@/components/Team/TeamMangaList';
+import UserAvatar from '@/components/User/UserAvatar';
+import UserBanner from '@/components/User/UserBanner';
+import Username from '@/components/User/Username';
 import { buttonVariants } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { getAuthSession } from '@/lib/auth';
@@ -9,7 +12,7 @@ import { Clock, Edit, Loader2, Upload, Users2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
 const TeamChapterList = dynamic(
   () => import('@/components/Team/TeamChapterList'),
   { loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
@@ -17,7 +20,7 @@ const TeamChapterList = dynamic(
 
 const page = async () => {
   const session = await getAuthSession();
-  if (!session) return notFound();
+  if (!session) return redirect('/sign-in');
 
   const user = await db.user.findFirst({
     where: {
@@ -116,27 +119,8 @@ const page = async () => {
                 <div className="space-y-1">
                   <p className="text-sm max-sm:hidden">Owner:</p>
                   <div className="flex justify-center items-center w-fit gap-4 dark:bg-zinc-700 px-3 py-2 rounded-xl">
-                    {memberOnTeam.team.owner.image && (
-                      <div className="relative w-10 h-10">
-                        <Image
-                          fill
-                          sizes="0%"
-                          priority
-                          src={memberOnTeam.team.owner.image}
-                          alt="Owner Image"
-                          className="rounded-full"
-                        />
-                      </div>
-                    )}
-                    <p
-                      style={{
-                        color: memberOnTeam.team.owner.color
-                          ? memberOnTeam.team.owner.color
-                          : '',
-                      }}
-                    >
-                      {memberOnTeam.team.owner.name}
-                    </p>
+                    <UserAvatar user={memberOnTeam.team.owner} />
+                    <Username user={memberOnTeam.team.owner} />
                   </div>
                 </div>
               </div>
@@ -188,43 +172,9 @@ const page = async () => {
                   href={`/user/${mem.user.id}`}
                   className="relative p-3 dark:bg-zinc-800 hover:dark:bg-zinc-700 transition-colors rounded-md"
                 >
-                  {mem.user.image && (
-                    <div
-                      className={cn(
-                        mem.user.banner
-                          ? 'absolute z-10 top-1/2 left-4'
-                          : 'flex justify-center'
-                      )}
-                    >
-                      <div className="relative border-4 rounded-full w-16 h-16">
-                        <Image
-                          fill
-                          sizes="0%"
-                          src={mem.user.image}
-                          alt="Member Avatar"
-                          className="rounded-full"
-                        />
-                      </div>
-                    </div>
-                  )}
-                  {mem.user.banner && (
-                    <div className="relative w-full h-24">
-                      <Image
-                        fill
-                        sizes="0%"
-                        priority
-                        src={mem.user.banner}
-                        alt="Member Banner"
-                        className="rounded-md"
-                      />
-                    </div>
-                  )}
-                  <p
-                    className="text-center text-lg font-semibold"
-                    style={{ color: mem.user.color ? mem.user.color : '' }}
-                  >
-                    {mem.user.name}
-                  </p>
+                  <UserAvatar user={mem.user} />
+                  <UserBanner user={mem.user} />
+                  <Username user={mem.user} />
                 </Link>
               ))}
             </div>

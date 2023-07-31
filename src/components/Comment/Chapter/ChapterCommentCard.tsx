@@ -8,6 +8,7 @@ import SubComment from '../SubComment';
 import { ExtendedComment } from '.';
 import type { Prisma } from '@prisma/client';
 import type { Session } from 'next-auth';
+import Username from '@/components/User/Username';
 
 interface ChapterCommentCardProps {
   comment: ExtendedComment;
@@ -40,14 +41,7 @@ const ChapterCommentCard: FC<ChapterCommentCardProps> = ({
 
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <p
-            className="text-lg"
-            style={{
-              color: comment.author.color ? comment.author.color : '',
-            }}
-          >
-            {comment.author.name}
-          </p>
+          <Username user={comment.author} />
           <p className="text-sm">
             {formatTimeToNow(new Date(comment.createdAt))}
           </p>

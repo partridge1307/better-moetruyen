@@ -2,7 +2,7 @@
 
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import type { Chapter } from '@prisma/client';
+import type { Chapter, Manga } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { FC, useEffect, useRef, useState } from 'react';
@@ -15,12 +15,9 @@ import VerticalViewChapter from './VerticalViewChapter';
 interface ViewChapterProps {
   chapter: Pick<
     Chapter,
-    'id' | 'name' | 'chapterIndex' | 'volume' | 'images'
+    'id' | 'name' | 'chapterIndex' | 'images' | 'volume'
   > & {
-    manga: {
-      name: string;
-      id: number;
-    };
+    manga: Pick<Manga, 'id' | 'name'>;
   };
   chapterList:
     | Pick<Chapter, 'id' | 'chapterIndex' | 'name' | 'volume' | 'isPublished'>[]
@@ -44,6 +41,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
       });
     },
   });
+
   const [currentImage, setCurrentImage] = useState(0);
   const [readingMode, setReadingMode] = useState<'vertical' | 'horizontal'>(
     'vertical'
@@ -105,7 +103,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
   };
 
   useEffect(() => {
-    localStorage.setItem('startPage', `${Date.now()}`);
+    sessionStorage.setItem('startPage', `${Date.now()}`);
     localStorage.readingMode === 'horizontal'
       ? setReadingMode('horizontal')
       : null;
@@ -154,10 +152,13 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
     if (
       typeof window !== 'undefined' &&
       inView &&
-      'startPage' in localStorage
+      'startPage' in sessionStorage
     ) {
-      if (Date.now() - +localStorage.startPage > 30 * 1000) {
-        localStorage.removeItem('startPage');
+      if (
+        Date.now() - parseInt(sessionStorage.getItem('startPage')!) >
+        30 * 1000
+      ) {
+        sessionStorage.removeItem('startPage');
         IncreaseView();
       }
     }

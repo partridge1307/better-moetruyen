@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { tagGroupByCategory } from '@/lib/query';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import { redirect } from 'next/navigation';
 import { FC } from 'react';
 const MangaUpload = dynamic(() => import('@/components/Manage/MangaUpload'), {
   ssr: false,
@@ -14,7 +15,7 @@ interface pageProps {}
 
 const page: FC<pageProps> = async ({}) => {
   const session = await getAuthSession();
-  if (!session) return <ForceSignOut />;
+  if (!session) return redirect('/sign-in');
   const user = await db.user.findFirst({
     where: {
       id: session.user.id,

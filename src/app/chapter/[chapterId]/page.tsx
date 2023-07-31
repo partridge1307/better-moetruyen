@@ -23,10 +23,10 @@ const page: FC<pageProps> = async ({ params }) => {
           isPublished: true,
         },
       },
+      images: true,
       id: true,
       name: true,
       chapterIndex: true,
-      images: true,
       volume: true,
     },
   });

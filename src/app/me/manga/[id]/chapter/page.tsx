@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { columns } from './column';
 import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
+import { redirect } from 'next/navigation';
 const DataChapterTable = dynamic(() => import('./DataChapterTable'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
@@ -14,7 +15,7 @@ const DataChapterTable = dynamic(() => import('./DataChapterTable'), {
 
 const page = async ({ params }: { params: { id: string } }) => {
   const session = await getAuthSession();
-  if (!session) return <ForceSignOut />;
+  if (!session) return redirect('/sign-in');
   const user = await db.user.findFirst({
     where: {
       id: session.user.id,

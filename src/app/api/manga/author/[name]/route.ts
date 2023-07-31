@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db } from '@/lib/db';
 
 export async function GET(req: Request, context: { params: { name: string } }) {
   try {
@@ -6,7 +6,7 @@ export async function GET(req: Request, context: { params: { name: string } }) {
       where: {
         name: {
           contains: context.params.name,
-          mode: "insensitive",
+          mode: 'insensitive',
         },
       },
     });
@@ -15,6 +15,6 @@ export async function GET(req: Request, context: { params: { name: string } }) {
       status: 200,
     });
   } catch (error) {
-    return new Response("Không thể tìm tên tác giả", { status: 500 });
+    return new Response('Không thể tìm tên tác giả', { status: 500 });
   }
 }

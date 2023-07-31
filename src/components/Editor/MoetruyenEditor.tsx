@@ -1,7 +1,7 @@
 'use client';
 
+import { toast } from '@/hooks/use-toast';
 import '@/styles/mteditor.css';
-import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { CharacterLimitPlugin } from '@lexical/react/LexicalCharacterLimitPlugin';
 import {
   InitialConfigType,
@@ -18,11 +18,10 @@ import AutoEmbedPlugin from './plugins/AutoEmbed';
 import AutoLink from './plugins/AutoLink';
 import EmojisPlugin from './plugins/Emoji';
 import ImagesPlugin from './plugins/Image';
+import { MaxLengthPlugin } from './plugins/MaxLength';
 import Submit from './plugins/Submit';
 import Toolbar from './plugins/Toolbar';
 import YouTubePlugin from './plugins/Youtube';
-import { MaxLengthPlugin } from './plugins/MaxLength';
-import { toast } from '@/hooks/use-toast';
 
 function onError(error: Error): void {
   toast({
@@ -77,7 +76,6 @@ export default function Editor({
           <Submit id={id} commentId={commentId} chapterId={chapterId} />
         </div>
         <HistoryPlugin />
-        <AutoFocusPlugin />
         <LinkPlugin />
         <AutoLink />
         <ImagesPlugin />

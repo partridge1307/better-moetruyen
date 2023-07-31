@@ -90,11 +90,9 @@ export async function PATCH(
         facebookLink: !facebook ? null : facebook,
         discordLink: !discord ? null : discord,
         tags: {
-          set: [],
           connect: tag.map((t) => ({ id: t.id })),
         },
         author: {
-          set: [],
           connectOrCreate: author.map((a) => ({
             where: { id: a.id },
             create: { name: a.name },

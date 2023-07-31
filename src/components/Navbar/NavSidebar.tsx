@@ -2,9 +2,10 @@ import { cn } from '@/lib/utils';
 import { Book, Menu, Pin, SunMoon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Sheet, SheetContent, SheetTrigger } from './ui/Sheet';
-import { SwitchWithIcon } from './ui/Switch';
+import { useEffect, useMemo, useState } from 'react';
+import { Sheet, SheetContent, SheetTrigger } from '../ui/Sheet';
+import { SwitchWithIcon } from '../ui/Switch';
+import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 
 interface NavContentProps {
   icon: JSX.Element;
@@ -15,72 +16,77 @@ interface NavContentProps {
   }[];
 }
 
-const NavContent: NavContentProps[] = [
-  {
-    icon: <Book />,
-    title: 'Manga',
-    subMenu: [
-      {
-        title: 'Mới cập nhật',
-        link: '/manga/latest',
-      },
-      {
-        title: 'Tìm kiếm nâng cao',
-        link: '/magna/advanced-search',
-      },
-      {
-        title: 'Ngẫu nhiên',
-        link: '/manga/random',
-      },
-    ],
-  },
-  {
-    icon: <Pin />,
-    title: 'Thông tin',
-    subMenu: [
-      {
-        title: 'Luật của web',
-        link: '/rule',
-      },
-      {
-        title: 'Về Moetruyen',
-        link: '/about',
-      },
-      {
-        title: 'Chính sách điều khoản',
-        link: '/tos',
-      },
-    ],
-  },
-];
-
 const NavSidebar = () => {
-  const [isChecked, setChecked] = useState<boolean>(true);
+  const [isChecked, setChecked] = useState<boolean>(false);
   const pathname = usePathname();
+  const colorScheme = useColorScheme();
+  const [colorTheme, setColorTheme] = useLocalStorage({ key: 'theme' });
+
+  const NavContent: NavContentProps[] = useMemo(
+    () => [
+      {
+        icon: <Book />,
+        title: 'Manga',
+        subMenu: [
+          {
+            title: 'Mới cập nhật',
+            link: '/manga/latest',
+          },
+          {
+            title: 'Tìm kiếm nâng cao',
+            link: '/magna/advanced-search',
+          },
+          {
+            title: 'Ngẫu nhiên',
+            link: '/manga/random',
+          },
+        ],
+      },
+      {
+        icon: <Pin />,
+        title: 'Thông tin',
+        subMenu: [
+          {
+            title: 'Luật của web',
+            link: '/rule',
+          },
+          {
+            title: 'Về Moetruyen',
+            link: '/about',
+          },
+          {
+            title: 'Chính sách điều khoản',
+            link: '/tos',
+          },
+        ],
+      },
+    ],
+    []
+  );
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (colorTheme) {
       if (
-        localStorage.theme === 'dark' ||
-        (!('theme' in localStorage) &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches)
+        colorTheme === 'dark' ||
+        (!('theme' in localStorage) && colorScheme === 'dark')
       ) {
         document.documentElement.classList.add('dark');
+        setChecked(true);
       } else {
         document.documentElement.classList.remove('dark');
         setChecked(false);
       }
     }
-  }, []);
+  }, [colorScheme, colorTheme]);
 
   function handleSwitch(checked: boolean) {
     if (checked) {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      setColorTheme('dark');
       setChecked(true);
     } else {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      setColorTheme('light');
       setChecked(false);
     }
   }
@@ -133,7 +139,11 @@ const NavSidebar = () => {
             <p>©Moetruyen</p>
             <p>Version: 0.0.3</p>
           </div>
-          <SwitchWithIcon checked={isChecked} onCheckedChange={handleSwitch}>
+          <SwitchWithIcon
+            defaultChecked={true}
+            checked={isChecked}
+            onCheckedChange={handleSwitch}
+          >
             <SunMoon />
           </SwitchWithIcon>
         </div>

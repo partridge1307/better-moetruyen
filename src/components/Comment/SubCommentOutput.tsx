@@ -11,6 +11,7 @@ import CommentVoteClient from '../Vote/CommentVoteClient';
 import CommentOEmbed from './CommentOEmbed';
 import DeleteComment from './DeleteComment';
 import SubCommentContent from './SubCommentContent';
+import Username from '../User/Username';
 
 interface SubCommentContentProps {
   commentId: number;
@@ -65,14 +66,7 @@ const SubCommentOutput: FC<SubCommentContentProps> = ({ commentId }) => {
 
             <div className="space-y-1">
               <div className="flex items-end gap-2">
-                <p
-                  className="text-lg"
-                  style={{
-                    color: comment.author.color ? comment.author.color : '',
-                  }}
-                >
-                  {comment.author.name}
-                </p>
+                <Username user={comment.author} />
                 <p className="text-sm">
                   {formatTimeToNow(new Date(comment.createdAt))}
                 </p>

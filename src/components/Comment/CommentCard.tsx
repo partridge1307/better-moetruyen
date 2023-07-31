@@ -10,6 +10,7 @@ import UserAvatar from '../User/UserAvatar';
 import CommentContent from './CommentContent';
 import CommentOEmbed from './CommentOEmbed';
 import SubComment from './SubComment';
+import Username from '../User/Username';
 const CommentFunc = dynamic(() => import('./CommentFunc'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6" />,
@@ -39,19 +40,12 @@ const CommentCard: FC<CommentCardProps> = ({ comment, id, index, session }) => {
 
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <p
-            className="text-lg"
-            style={{
-              color: comment.author.color ? comment.author.color : '',
-            }}
-          >
-            {comment.author.name}
-          </p>
+          <Username user={comment.author} />
           <p className="text-sm">
             {formatTimeToNow(new Date(comment.createdAt))}
           </p>
 
-          {comment.chapter !== null && (
+          {comment.chapter && (
             <>
               <span>•</span>
               <Link

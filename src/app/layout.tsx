@@ -1,17 +1,17 @@
-import NavbarClient from '@/components/NavbarClient';
+import NavbarClient from '@/components/Navbar/NavbarClient';
 import Providers from '@/components/Providers';
 import { Toaster } from '@/components/ui/Toaster';
 import { cn } from '@/lib/utils';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Roboto } from 'next/font/google';
 
 export const metadata: Metadata = {
   title: 'Moetruyen',
   description: 'Powered by Yuri',
 };
 
-const inter = Inter({ subsets: ['vietnamese'] });
+const roboto = Roboto({ subsets: ['vietnamese'], weight: '400' });
 
 export default function RootLayout({
   children,
@@ -25,7 +25,7 @@ export default function RootLayout({
       <body
         className={cn(
           'h-screen antialiased dark:bg-zinc-800 dark:text-slate-50',
-          inter.className
+          roboto.className
         )}
       >
         <Providers>

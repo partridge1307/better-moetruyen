@@ -10,6 +10,7 @@ import 'react-image-gallery/styles/css/image-gallery.css';
 import { TagContent, TagWrapper } from '../ui/Tag';
 import LeftNav from './Swiper/LeftNav';
 import RightNav from './Swiper/RightNav';
+import { useMediaQuery } from '@mantine/hooks';
 
 type ExtendedManga = Pick<Manga, 'id' | 'name' | 'image'> & {
   tags: Pick<Tag, 'name' | 'description'>[];
@@ -21,6 +22,8 @@ interface NotableMangaProps {
 }
 
 const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
+  const matches = useMediaQuery('(min-width: 768px)');
+
   return mangas.length ? (
     <ImageGallery
       items={mangas.map((manga) => ({
@@ -79,9 +82,7 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
       autoPlay
       showPlayButton={false}
       showFullscreenButton={false}
-      thumbnailPosition={
-        window.matchMedia('(min-width: 768px)').matches ? 'right' : 'bottom'
-      }
+      thumbnailPosition={matches ? 'right' : 'bottom'}
       slideInterval={15000}
       renderLeftNav={(onClick, disabled) => (
         <LeftNav onClick={onClick} disabled={disabled} />

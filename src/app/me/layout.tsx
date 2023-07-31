@@ -1,55 +1,34 @@
+import UserAvatar from '@/components/User/UserAvatar';
+import UserBanner from '@/components/User/UserBanner';
+import Username from '@/components/User/Username';
 import { buttonVariants } from '@/components/ui/Button';
 import { getAuthSession } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { ChevronRight } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await getAuthSession();
-  if (!session?.user) redirect('/sign-in');
+  if (!session) redirect('/sign-in');
 
   return (
-    <div className="container max-sm:px-2 h-full pt-20 md:pt-32">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-[.4fr_1fr]">
+    <main className="container max-sm:px-2 h-full pt-20 md:pt-32">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-[.5fr_1fr] lg:grid-cols-[.4fr_1fr]">
         <div className="h-fit rounded-lg space-y-2 dark:bg-zinc-900/75">
-          <div className="relative p-2 dark:hover:bg-zinc-700 rounded-md">
+          <div className="relative p-2 pb-20 dark:hover:bg-zinc-700 rounded-md">
             <Link href="/me">
-              {session.user.image && (
-                <div className="absolute z-10 top-1/2 left-4">
-                  <div className="relative h-20 w-20 border-4 rounded-full">
-                    <Image
-                      fill
-                      sizes="0%"
-                      src={session.user.image}
-                      alt="Profile Avatar"
-                      className="rounded-full"
-                    />
-                  </div>
-                </div>
-              )}
+              <UserBanner user={session.user} />
 
-              {session.user.banner && (
-                <div className="relative w-full h-32">
-                  <Image
-                    fill
-                    sizes="0%"
-                    src={session.user.banner}
-                    alt="Profile Banner"
-                    className="rounded-md"
-                  />
+              <div className="absolute inset-x-4 left-4 top-1/2 translate-y-[20%] flex items-center gap-4">
+                <UserAvatar
+                  user={session.user}
+                  className="w-24 h-24 lg:w-28 lg:h-28 z-10 border-4"
+                />
+                <div className="relative max-w-[80%] max-h-10 overflow-auto md:scrollbar md:dark:scrollbar--dark">
+                  <Username user={session.user} className="-pb-2 text-lg" />
                 </div>
-              )}
-              <p
-                className={cn(
-                  'px-4 pt-2 pb-4 text-lg font-semibold',
-                  session.user.image && 'ml-20 lg:ml-24'
-                )}
-                style={{ color: session.user.color ? session.user.color : '' }}
-              >
-                {session.user.name}
-              </p>
+              </div>
             </Link>
           </div>
 
@@ -87,7 +66,7 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
 
         <div className="rounded-lg p-2 dark:bg-zinc-900/75 ">{children}</div>
       </div>
-    </div>
+    </main>
   );
 };
 

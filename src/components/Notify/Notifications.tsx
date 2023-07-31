@@ -1,11 +1,12 @@
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
 import { socket } from '@/lib/socket';
-import type { Notify, User } from '@prisma/client';
+import type { Notify, Prisma, User } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Bell } from 'lucide-react';
+import { Bell, Loader2 } from 'lucide-react';
 import type { Session } from 'next-auth';
-import { FC, useEffect, useReducer, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { Button } from '../ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,41 +19,25 @@ import General from './General';
 interface NotificationsProps {
   session: Session;
 }
-export type ExtendedNotify = Pick<Notify, 'type' | 'createdAt' | 'content'> & {
+export type ExtendedNotify = Pick<
+  Notify,
+  'id' | 'type' | 'createdAt' | 'content' | 'isRead'
+> & {
   fromUser: Pick<User, 'name'>;
 };
 
-type NotifyAction = {
-  type: 'LIKE' | 'COMMENT' | 'MENTION' | 'FOLLOW' | 'SYSTEM';
-  payload: any;
-};
-
-function reducer(state: any, action: NotifyAction) {
-  const { type, payload } = action;
-
-  switch (type) {
-    case 'LIKE':
-    case 'COMMENT':
-    case 'MENTION': {
-      return;
-    }
-
-    case 'FOLLOW': {
-      return;
-    }
-
-    case 'SYSTEM': {
-      return;
-    }
-
-    default:
-      return state;
-  }
+export enum notifyType {
+  LIKE = 'LIKE',
+  COMMENT = 'COMMENT',
+  MENTION = 'MENTION',
+  FOLLOW = 'FOLLOW',
+  SYSTEM = 'SYSTEM',
 }
 
 const Notifications: FC<NotificationsProps> = ({ session }) => {
-  const [onlineUsers, setOnlineUsers] = useState(0);
-  const [state, dispatch] = useReducer(reducer, {});
+  const [generalNotify, setGeneralNotify] = useState<ExtendedNotify[]>([]);
+  const [isClear, setIsClear] = useState<boolean>(true);
+
   const {
     data: notifyData,
     fetchNextPage,
@@ -79,44 +64,108 @@ const Notifications: FC<NotificationsProps> = ({ session }) => {
   }, [session.user]);
 
   useEffect(() => {
-    socket.on('onlineUsers', (usersLen) => setOnlineUsers(usersLen));
+    socket.on(
+      'notify',
+      (data: {
+        type: notifyType;
+        data: {
+          id: number;
+          fromUser: Pick<User, 'name'>;
+          mangaId?: number;
+          chapterId?: number | null;
+        };
+      }) => {
+        const { id, fromUser, mangaId, chapterId } = data.data;
+
+        if (
+          data.type === notifyType.LIKE ||
+          data.type === notifyType.MENTION ||
+          data.type === notifyType.COMMENT
+        ) {
+          setGeneralNotify((prev) => [
+            {
+              id,
+              type: data.type,
+              createdAt: new Date(Date.now()),
+              fromUser: fromUser,
+              isRead: false,
+              content: {
+                mangaId,
+                chapterId,
+              } as Prisma.JsonValue,
+            },
+            ...prev,
+          ]);
+        }
+
+        setIsClear(false);
+      }
+    );
+
     return () => {
-      // socket.off('notify');
-      socket.off('onlineUsers');
+      socket.off('notify');
     };
   }, []);
 
   useEffect(() => {
     let notifications = notifyData?.pages.flatMap((page) => page);
 
-    notifications = [];
+    if (notifications?.length) {
+      setGeneralNotify(
+        notifications?.filter(
+          (noti) => noti.type !== 'SYSTEM' && noti.type !== 'FOLLOW'
+        )
+      );
+
+      notifications.some((noti) => noti.isRead === false) && setIsClear(false);
+    }
   }, [notifyData?.pages]);
 
   return (
-    <>
-      <p>{onlineUsers}</p>
-      <DropdownMenu>
-        <DropdownMenuTrigger>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <div className="relative">
           <Bell className="w-7 h-7" />
-        </DropdownMenuTrigger>
+          {!isClear ? (
+            <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full animate-pulse" />
+          ) : null}
+        </div>
+      </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="end" className="dark:bg-zinc-800 px-0">
-          <DropdownMenuLabel className="text-center text-lg dark:text-white">
-            Thông báo
-          </DropdownMenuLabel>
+      <DropdownMenuContent
+        align="end"
+        className="dark:bg-zinc-800 p-1 space-y-2"
+      >
+        <DropdownMenuLabel className="text-center text-lg dark:text-white">
+          Thông báo
+        </DropdownMenuLabel>
 
-          <Tabs defaultValue="general">
-            <TabsList className="dark:bg-zinc-900 grid grid-cols-3 gap-2">
-              <TabsTrigger value="general">Chung</TabsTrigger>
-              <TabsTrigger value="follow">Theo dõi</TabsTrigger>
-              <TabsTrigger value="system">Hệ thống</TabsTrigger>
-            </TabsList>
+        <Tabs defaultValue="general">
+          <TabsList className="dark:bg-zinc-900 grid grid-cols-3 gap-2">
+            <TabsTrigger value="general">Chung</TabsTrigger>
+            <TabsTrigger value="follow">Theo dõi</TabsTrigger>
+            <TabsTrigger value="system">Hệ thống</TabsTrigger>
+          </TabsList>
 
-            {/* <General general={generalNotify} /> */}
-          </Tabs>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+          <General general={generalNotify} />
+        </Tabs>
+
+        <Button
+          disabled={isFetchingNextPage}
+          isLoading={isFetchingNextPage}
+          size={'sm'}
+          variant={'ghost'}
+          className="w-full hover:dark:bg-zinc-900"
+          onClick={() => fetchNextPage()}
+        >
+          {isFetchingNextPage ? (
+            <Loader2 className="w-6 h-6 animate-spin" />
+          ) : (
+            'Tải thêm'
+          )}
+        </Button>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

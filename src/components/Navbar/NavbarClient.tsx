@@ -1,25 +1,26 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Loader2, User2 } from 'lucide-react';
+import { Loader2, MessageCircle, User2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo, useRef } from 'react';
-import SignOutButton from './Auth/SignOutButton';
-import { Icons } from './Icons';
-import NavSidebar from './NavSidebar';
-import Notifications from './Notify/Notifications';
-import UserAvatar from './User/UserAvatar';
-import { buttonVariants } from './ui/Button';
+import SignOutButton from '../Auth/SignOutButton';
+import { Icons } from '../Icons';
+import Notifications from '../Notify/Notifications';
+import UserAvatar from '../User/UserAvatar';
+import UserBanner from '../User/UserBanner';
+import Username from '../User/Username';
+import { buttonVariants } from '../ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/DropdownMenu';
+} from '../ui/DropdownMenu';
+import NavSidebar from './NavSidebar';
 
 const viewChapterRegex = /^(\/chapter\/\d+$)/;
 
@@ -37,7 +38,7 @@ const NavbarClient = () => {
   }, [pathname]);
 
   return (
-    <div
+    <nav
       className={cn(
         'inset-x-0 top-0 p-2 z-30 h-fit border-b bg-slate-100 dark:bg-zinc-800',
         isFixed.current && 'fixed'
@@ -67,53 +68,25 @@ const NavbarClient = () => {
             </DropdownMenuTrigger>
 
             {session?.user ? (
-              <DropdownMenuContent align="end" className="min-w-[300px] p-2">
-                <div className="relative w-full h-fit space-y-3 mb-6">
-                  <div>
-                    {session.user.image && (
-                      <div
-                        className={cn(
-                          'z-10 left-2 top-1/2',
-                          session.user.banner
-                            ? 'absolute border-[6px] rounded-full'
-                            : 'flex justify-center'
-                        )}
-                      >
-                        <div className="relative w-20 h-20">
-                          <Image
-                            fill
-                            sizes="0%"
-                            src={session.user.image}
-                            alt="User Avatar"
-                            className="rounded-full"
-                          />
-                        </div>
-                      </div>
-                    )}
-                    {session.user.banner && (
-                      <div className="relative w-full h-32">
-                        <Image
-                          fill
-                          sizes="0%"
-                          src={session.user.banner}
-                          alt="User Banner"
-                          className="rounded-md"
-                        />
-                      </div>
-                    )}
-                  </div>
+              <DropdownMenuContent
+                align="end"
+                className="min-w-[300px] sm:max-w-sm md:max-w-md lg:max-w-lg p-2"
+              >
+                <div className="relative w-full h-fit mb-16">
+                  <UserBanner user={session.user} />
 
-                  <p
-                    className={cn(
-                      'text-center text-lg font-medium text-white',
-                      session.user.image && session.user.banner && 'ml-5'
-                    )}
-                    style={{
-                      color: session.user.color ? session.user.color : '',
-                    }}
-                  >
-                    {session.user.name}
-                  </p>
+                  <div className="absolute left-2 top-2/3 translate-y-1/4 flex items-end gap-2">
+                    <UserAvatar
+                      user={session.user}
+                      className="z-10 w-20 h-20 border-4"
+                    />
+                    <div className="relative max-w-[80%] max-h-10 overflow-auto md:scrollbar md:dark:scrollbar--dark">
+                      <Username
+                        user={session.user}
+                        className="pb-4 self-end line-clamp-2"
+                      />
+                    </div>
+                  </div>
                 </div>
                 <DropdownMenuSeparator />
                 <div className="space-y-2">
@@ -134,6 +107,16 @@ const NavbarClient = () => {
                     </Link>
                   </DropdownMenuItem>
                 </div>
+                <DropdownMenuSeparator className="mt-2" />
+
+                <Link
+                  href="/chat"
+                  className={cn(buttonVariants(), 'w-full cursor-pointer')}
+                >
+                  <MessageCircle className="w-5 h-5" />
+                  Trò chuyện
+                </Link>
+
                 <DropdownMenuSeparator className="mt-2" />
                 <DropdownMenuItem asChild>
                   <Link
@@ -173,7 +156,7 @@ const NavbarClient = () => {
           </DropdownMenu>
         </div>
       </div>
-    </div>
+    </nav>
   );
 };
 

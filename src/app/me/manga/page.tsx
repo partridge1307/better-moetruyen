@@ -4,6 +4,7 @@ import { db } from '@/lib/db';
 import { columns } from './column';
 import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
+import { redirect } from 'next/navigation';
 const DataMangaTable = dynamic(() => import('@/app/me/manga/DataMangaTable'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
@@ -11,7 +12,7 @@ const DataMangaTable = dynamic(() => import('@/app/me/manga/DataMangaTable'), {
 
 const page = async () => {
   const session = await getAuthSession();
-  if (!session) return <ForceSignOut />;
+  if (!session) return redirect('/sign-in');
   const user = await db.user.findFirst({
     where: {
       id: session.user.id,

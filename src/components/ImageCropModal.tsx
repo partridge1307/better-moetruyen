@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 import type { Crop, PixelCrop } from 'react-image-crop';
 import { ReactCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -137,8 +137,12 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
                 <ReactCrop
                   locked
                   crop={crop}
-                  onChange={(_, percentCrop) => setCrop(percentCrop)}
-                  onComplete={(c) => setCompleteCrop(c)}
+                  onChange={(_, percentCrop) => {
+                    setCrop(percentCrop);
+                  }}
+                  onComplete={(c) => {
+                    setCompleteCrop(c);
+                  }}
                   aspect={aspect}
                   circularCrop={aspect === 1}
                 >
@@ -156,30 +160,28 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
               </div>
             )}
 
-            {slider &&
-              mediaWidth.current !== 0 &&
-              mediaHeight.current !== 0 && (
-                <Slider
-                  defaultValue={[aspect === 1 ? 100 : 75]}
-                  min={aspect === 1 ? 25 : 50}
-                  max={aspect === 1 ? 100 : 100}
-                  step={1}
-                  onValueChange={(value) =>
-                    setCrop(
-                      centerCrop(
-                        makeAspectCrop(
-                          { unit: '%', width: value[0] },
-                          aspect,
-                          mediaWidth.current,
-                          mediaHeight.current
-                        ),
+            {slider && mediaWidth.current !== 0 && mediaHeight.current !== 0 ? (
+              <Slider
+                defaultValue={[aspect === 1 ? 100 : 75]}
+                min={aspect === 1 ? 25 : 50}
+                max={aspect === 1 ? 100 : 100}
+                step={1}
+                onValueChange={(value) =>
+                  setCrop(
+                    centerCrop(
+                      makeAspectCrop(
+                        { unit: '%', width: value[0] },
+                        aspect,
                         mediaWidth.current,
                         mediaHeight.current
-                      )
+                      ),
+                      mediaWidth.current,
+                      mediaHeight.current
                     )
-                  }
-                />
-              )}
+                  )
+                }
+              />
+            ) : null}
 
             <div className="w-full flex items-center justify-end gap-6">
               <AlertDialogCancel

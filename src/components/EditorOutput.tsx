@@ -31,7 +31,7 @@ const EditorOutput: FC<EditorOutputProps> = ({ content }) => {
     <div
       ref={ref}
       className={cn(
-        'relative max-h-20 overflow-clip dark:bg-zinc-700 p-2 rounded-md',
+        'relative max-h-20 overflow-hidden dark:bg-zinc-700 p-2 rounded-md',
         !isCollapsed && 'max-h-fit pb-10'
       )}
     >

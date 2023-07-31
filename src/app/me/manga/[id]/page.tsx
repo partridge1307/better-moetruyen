@@ -11,7 +11,7 @@ import { format, getHours, getDay } from 'date-fns';
 import { ArrowUpRightFromCircle, Edit, Loader2, Newspaper } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { FC } from 'react';
 const DailyViewManga = dynamic(() => import('./DailyViewManga'), {
   ssr: false,
@@ -30,7 +30,7 @@ interface pageProps {
 
 const page: FC<pageProps> = async ({ params }) => {
   const session = await getAuthSession();
-  if (!session) return <ForceSignOut />;
+  if (!session) return redirect('/sign-in');
 
   const user = await db.user.findFirst({
     where: {

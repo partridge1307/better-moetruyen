@@ -1,9 +1,9 @@
 import type { Chapter, Manga } from '@prisma/client';
+import { Loader2, MessagesSquare } from 'lucide-react';
 import Image from 'next/image';
-import { forwardRef, Suspense, lazy, memo } from 'react';
+import { Suspense, forwardRef, lazy, memo } from 'react';
 import NextChapterButton from './NextChapterButton';
 import PrevChapterButton from './PrevChapterButton';
-import { Loader2, MessagesSquare } from 'lucide-react';
 const Comment = lazy(() => import('@/components/Comment/Chapter'));
 const MoetruyenEditor = lazy(
   () => import('@/components/Editor/MoetruyenEditor')

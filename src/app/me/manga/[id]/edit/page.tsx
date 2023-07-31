@@ -1,6 +1,6 @@
 import { db } from '@/lib/db';
 import { tagGroupByCategory } from '@/lib/query';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { FC } from 'react';
 import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
@@ -19,7 +19,7 @@ interface pageProps {
 
 const page: FC<pageProps> = async ({ params }) => {
   const session = await getAuthSession();
-  if (!session) return <ForceSignOut />;
+  if (!session) return redirect('/sign-in');
 
   const user = await db.user.findFirst({
     where: {

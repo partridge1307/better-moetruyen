@@ -1,15 +1,24 @@
+'use client';
+
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { toast } from '@/hooks/use-toast';
+import { socket } from '@/lib/socket';
 import { ChatPayload, ChatValidator } from '@/lib/validators/chat';
 import { zodResolver } from '@hookform/resolvers/zod';
+import type { Conversation } from '@prisma/client';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
 import { SendHorizonal } from 'lucide-react';
 import { FC, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormField, FormItem } from '../ui/Form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from '../ui/Form';
 import { Input } from '../ui/Input';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import type { Conversation } from '@prisma/client';
-import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
 
 interface ChatFormProps {
   conversation: Pick<Conversation, 'id'>;
@@ -23,16 +32,16 @@ const ChatForm: FC<ChatFormProps> = ({ conversation }) => {
     resolver: zodResolver(ChatValidator),
     defaultValues: {
       content: '',
-      conversationId: -1,
+      conversationId: conversation.id,
     },
   });
   const { mutate: createMessage, isLoading } = useMutation({
     mutationFn: async (values: ChatPayload) => {
-      const { content } = values;
+      const { content, conversationId } = values;
 
-      await axios.post('/api/message', {
+      await axios.post('/api/conversation/message/create', {
         content,
-        conversationId: conversation.id,
+        conversationId,
       });
     },
     onError: (err) => {
@@ -47,7 +56,10 @@ const ChatForm: FC<ChatFormProps> = ({ conversation }) => {
         variant: 'destructive',
       });
     },
-    onSuccess: () => {
+    onSuccess: (_, values) => {
+      const { content, conversationId } = values;
+      socket.emit('message', { content, conversationId });
+
       form.setValue('content', '');
     },
   });
@@ -69,24 +81,28 @@ const ChatForm: FC<ChatFormProps> = ({ conversation }) => {
           name="content"
           control={form.control}
           render={({ field }) => (
-            <FormItem className="flex items-center justify-center h-10 gap-4 px-2 space-y-0">
-              <FormControl>
-                <Input
-                  ref={(e) => {
-                    field.ref(e);
-                    inputRef.current = e;
-                  }}
-                  className="focus-visible:ring-1 dark:border-white dark:focus-visible:ring-offset-0 dark:focus-visible:ring-white"
-                  autoComplete="off"
-                  value={field.value}
-                  onChange={(e) => field.onChange(e)}
-                  onBlur={() => field.onBlur()}
-                />
-              </FormControl>
+            <FormItem>
+              <FormMessage className="text-red-500" />
+              <div className="flex items-center justify-center gap-4 p-2">
+                <FormControl>
+                  <Input
+                    ref={(e) => {
+                      field.ref(e);
+                      inputRef.current = e;
+                    }}
+                    autoComplete="off"
+                    placeholder="Nhập nội dung"
+                    value={field.value}
+                    onChange={(e) => field.onChange(e)}
+                    onBlur={() => field.onBlur()}
+                    className="focus-visible:ring-1 dark:border-white dark:focus-visible:ring-offset-0 dark:focus-visible:ring-white"
+                  />
+                </FormControl>
 
-              <button disabled={isLoading} type="submit">
-                <SendHorizonal className="w-8 h-8" />
-              </button>
+                <button disabled={isLoading} type="submit">
+                  <SendHorizonal className="w-8 h-8" />
+                </button>
+              </div>
             </FormItem>
           )}
         />

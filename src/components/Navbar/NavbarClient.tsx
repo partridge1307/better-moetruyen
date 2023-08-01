@@ -44,7 +44,7 @@ const NavbarClient = () => {
         isFixed.current && 'fixed'
       )}
     >
-      <div className="container mx-auto flex items-center justify-between px-0 max-sm:px-4">
+      <div className="container mx-auto flex items-center justify-between px-0 max-sm:px-1">
         <div className="flex items-center gap-4">
           <NavSidebar />
           <Link href="/" className="flex items-center gap-2">

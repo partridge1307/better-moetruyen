@@ -1,66 +1,140 @@
 'use client';
 
-import { formatTimeToNow } from '@/lib/utils';
+import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
+import { socket } from '@/lib/socket';
+import { useIntersection } from '@mantine/hooks';
 import type { Conversation, Message, User } from '@prisma/client';
-import { FC } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { FC, useEffect, useRef, useState } from 'react';
 import UserAvatar from '../User/UserAvatar';
-import ChatForm from './ChatForm';
+import { ScrollArea } from '../ui/ScrollArea';
+import MessageCard from './MessageCard';
+import { Loader2 } from 'lucide-react';
 
-type ExtendedConversation = Pick<Conversation, 'id'> & {
-  users: Pick<User, 'id' | 'name' | 'color'>[];
-  messages: (Pick<Message, 'id' | 'content' | 'createdAt'> & {
-    sender: Pick<User, 'id' | 'name' | 'color' | 'image'>;
-  })[];
+type ExtendedMessage = Pick<Message, 'content' | 'createdAt'> & {
+  sender: Pick<User, 'id' | 'name' | 'image' | 'color'>;
 };
 
 interface MessageListProps {
-  conversation: ExtendedConversation;
+  conversation: Pick<Conversation, 'id'> & {
+    users: Pick<User, 'id' | 'name' | 'color'>[];
+    messages: ExtendedMessage[];
+  };
   me: Pick<User, 'id'>;
 }
 
 const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
+  const [messages, setMessages] = useState(conversation.messages);
+  const firstMessageRef = useRef<HTMLLIElement | null>(null);
+  const { ref, entry } = useIntersection({
+    threshold: 1,
+    root: firstMessageRef.current,
+  });
+
+  const {
+    data: messageData,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery(
+    ['infinite-message-query'],
+    async ({ pageParam = 1 }) => {
+      const query = `/api/conversation/message?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}&id=${conversation.id}`;
+
+      const { data } = await axios.get(query);
+      return data as ExtendedMessage[];
+    },
+    {
+      getNextPageParam: (_, pages) => {
+        return pages.length + 1;
+      },
+    }
+  );
+
+  useEffect(() => {
+    socket.on(
+      'message',
+      (data: {
+        content: string;
+        sender: Pick<User, 'id' | 'name' | 'color' | 'image'>;
+      }) => {
+        const { content, sender } = data;
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            content,
+            createdAt: new Date(Date.now()),
+            sender,
+          },
+        ]);
+      }
+    );
+
+    return () => {
+      socket.off('message');
+    };
+  }, []);
+  useEffect(() => {
+    if (entry?.isIntersecting) {
+      fetchNextPage();
+    }
+  }, [entry, fetchNextPage]);
+  useEffect(() => {
+    const msgData = messageData?.pages.flatMap((page) => page);
+
+    if (msgData?.length) {
+      setMessages(msgData.reverse());
+    }
+  }, [messageData?.pages]);
+
   return (
-    <div className="relative h-full flex flex-col pb-2">
-      <ul className="flex flex-col gap-2 h-full overflow-auto p-2">
-        {conversation.messages.map((message, index) => {
+    <ScrollArea type="scroll" className="flex-1 overflow-y-auto">
+      {isFetchingNextPage && (
+        <div className="flex justify-center">
+          <Loader2 className="w-6 h-6 animate-spin" />
+        </div>
+      )}
+      <ul className="flex flex-col gap-4 p-2 px-4">
+        {messages.map((message, index) => {
           const sender = message.sender;
 
-          if (sender.id === me.id) {
-            return (
-              <li key={index} className="flex gap-2 self-end">
-                <div className="flex flex-col items-end gap-1">
-                  <p className="p-1 px-3 rounded-full rounded-br-none dark:bg-zinc-800 w-fit">
-                    {message.content}
-                  </p>
+          if (index === 0) {
+            if (sender.id === me.id) {
+              return (
+                <li ref={ref} key={index} className="flex gap-2">
+                  <MessageCard message={message} className="items-end" />
+                </li>
+              );
+            } else {
+              return (
+                <li ref={ref} key={index} className="flex gap-2">
+                  {sender.image ? <UserAvatar user={sender} /> : null}
 
-                  <p className="text-xs">
-                    {formatTimeToNow(new Date(message.createdAt))}
-                  </p>
-                </div>
-              </li>
-            );
+                  <MessageCard message={message} className="items-start" />
+                </li>
+              );
+            }
           } else {
-            return (
-              <li key={index} className="flex gap-3">
-                {sender.image ? <UserAvatar user={sender} /> : null}
+            if (sender.id === me.id) {
+              return (
+                <li key={index} className="flex gap-2">
+                  <MessageCard message={message} className="items-end" />
+                </li>
+              );
+            } else {
+              return (
+                <li key={index} className="flex gap-2">
+                  {sender.image ? <UserAvatar user={sender} /> : null}
 
-                <div className="flex flex-col items-start gap-1 mt-2">
-                  <p className="p-1 px-3 rounded-full rounded-tl-none dark:bg-zinc-800 w-fit">
-                    {message.content}
-                  </p>
-
-                  <p className="text-xs">
-                    {formatTimeToNow(new Date(message.createdAt))}
-                  </p>
-                </div>
-              </li>
-            );
+                  <MessageCard message={message} className="items-start" />
+                </li>
+              );
+            }
           }
         })}
       </ul>
-
-      <ChatForm conversation={conversation} />
-    </div>
+    </ScrollArea>
   );
 };
 

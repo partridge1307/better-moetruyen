@@ -34,7 +34,7 @@ model User {
 
   @@index([followToId])
   @@index([email], type: Hash)
-  @@index([name], type: Hash)
+  @@index([name])
 }
 
 model MemberOnTeam {
@@ -224,7 +224,7 @@ model Message {
   conversationId Int
   senderId       String
   createdAt      DateTime     @default(now())
-  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([conversationId])

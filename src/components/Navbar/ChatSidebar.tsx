@@ -11,11 +11,11 @@ export type ExtendedConversation = Conversation & {
 };
 
 interface ChatSidebarProps {
-  conversation?: ExtendedConversation[];
+  conversation: ExtendedConversation[] | null;
 }
 export const ConversationContext = createContext<
-  ExtendedConversation[] | undefined
->(undefined);
+  ExtendedConversation[] | null
+>(null);
 
 const ChatSidebar: FC<ChatSidebarProps> = ({ conversation }) => {
   const matches = useMediaQuery('(max-width: 640px)');

@@ -6,6 +6,7 @@ import { notFound, redirect } from 'next/navigation';
 import { FC } from 'react';
 import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
+import ChatForm from '@/components/Chat/ChatForm';
 const MessageList = dynamic(() => import('@/components/Chat/MessageList'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
@@ -63,7 +64,6 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       },
       messages: {
         select: {
-          id: true,
           content: true,
           createdAt: true,
           sender: {
@@ -78,7 +78,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         orderBy: {
           createdAt: 'asc',
         },
-        take: 10,
+        take: -10,
       },
     },
   });
@@ -89,11 +89,12 @@ const page: FC<pageProps> = async ({ searchParams }) => {
 
   return (
     <div className="relative h-full flex flex-col">
-      <div className="p-2 dark:bg-zinc-800">
+      <div className="p-2 flex justify-center items-center dark:bg-zinc-800">
         <Username user={toUser} className="md:text-start text-lg" />
       </div>
 
       <MessageList me={user} conversation={conversation} />
+      <ChatForm conversation={conversation} />
     </div>
   );
 };

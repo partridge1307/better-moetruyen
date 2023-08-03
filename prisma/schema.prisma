@@ -245,6 +245,8 @@ model History {
   manga     Manga    @relation(fields: [mangaId], references: [id])
 
   @@unique([userId, mangaId])
+  @@index([userId])
+  @@index([mangaId])
 }
 
 enum VoteType {

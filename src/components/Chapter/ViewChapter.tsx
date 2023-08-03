@@ -138,14 +138,26 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
           if (window.scrollY <= 200) {
             slider.current?.scrollIntoView({ behavior: 'instant' });
           }
+
+          if (slider.current?.scrollTop === 0) {
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+          }
         };
 
         slider.current?.addEventListener('scroll', handler);
 
         return () => slider.current?.removeEventListener('scroll', handler);
       };
-
       init();
+
+      const target = document.getElementById(
+        `${chapter.images.length}`
+      ) as HTMLDivElement;
+      observer.observe(target);
+
+      return () => {
+        observer.unobserve(target);
+      };
     }
   }, [chapter.images, readingMode]);
   useEffect(() => {

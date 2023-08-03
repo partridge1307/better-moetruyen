@@ -177,3 +177,9 @@ export function dataUrlToBlob(dataUrl: string) {
 
   return new Blob([buffer], { type: typeStr });
 }
+
+export const groupArray = <T>(array: T[]) =>
+  array.reduce(
+    (acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc),
+    {} as any
+  );

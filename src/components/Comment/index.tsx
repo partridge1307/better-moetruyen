@@ -52,7 +52,7 @@ const CommentOutput: FC<CommentOutputProps> = ({ id }) => {
   );
 
   useEffect(() => {
-    if (entry.isIntersecting) {
+    if (entry?.isIntersecting) {
       fetchNextPage();
     }
   }, [entry, fetchNextPage]);

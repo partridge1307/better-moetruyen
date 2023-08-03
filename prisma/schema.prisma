@@ -31,6 +31,7 @@ model User {
   follows       User[]         @relation("followTo")
   badge         Badge[]        @relation("BadgeToUser")
   conversation  Conversation[] @relation("ConversationToUser")
+  history       History[]
 
   @@index([followToId])
   @@index([email], type: Hash)
@@ -72,8 +73,9 @@ model Badge {
 model Manga {
   id           Int           @id @default(autoincrement())
   name         String
-  description  Json
   image        String
+  description  Json
+  review       String?
   facebookLink String?
   discordLink  String?
   creatorId    String
@@ -86,6 +88,7 @@ model Manga {
   view         View?
   author       MangaAuthor[] @relation("MangaToMangaAuthor")
   tags         Tag[]         @relation("MangaToTag")
+  history      History[]
 
   @@unique([name, creatorId])
   @@index([creatorId])
@@ -126,6 +129,7 @@ model Chapter {
 
   @@index([mangaId])
   @@index([teamId])
+  @@index([isPublished], type: Hash)
 }
 
 model Comment {
@@ -229,6 +233,18 @@ model Message {
 
   @@index([conversationId])
   @@index([senderId])
+}
+
+model History {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  mangaId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  manga     Manga    @relation(fields: [mangaId], references: [id])
+
+  @@unique([userId, mangaId])
 }
 
 enum VoteType {

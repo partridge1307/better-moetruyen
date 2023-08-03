@@ -21,7 +21,7 @@ const ChatTab: FC<ChatTabProps> = ({}) => {
         <ChatList />
       </TabsContent>
 
-      <TabsContent value="add">
+      <TabsContent value="add" className="relative overflow-y-auto">
         <ChatRequest />
       </TabsContent>
     </Tabs>

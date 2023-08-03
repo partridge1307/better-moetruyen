@@ -2,13 +2,19 @@
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
+import {
+  ChapterUploadPayload,
+  ChapterUploadValidator,
+} from '@/lib/validators/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Chapter } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { ImagePlus, PlusCircle, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import DnDChapterImage from '../DragAndDrop';
 import { Button } from '../ui/Button';
 import {
   Form,
@@ -19,12 +25,6 @@ import {
   FormMessage,
 } from '../ui/Form';
 import { Input } from '../ui/Input';
-import {
-  ChapterUploadPayload,
-  ChapterUploadValidator,
-} from '@/lib/validators/upload';
-import DnDChapterImage from '../DragAndDrop/ChapterImage';
-import { ImagePlus, PlusCircle, Trash } from 'lucide-react';
 
 interface ChapterEditProps {
   chapter: Pick<
@@ -51,7 +51,7 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
       chapterIndex: chapter.chapterIndex,
       chapterName: chapter.name ?? '',
       volume: chapter.volume,
-      image: [],
+      image: chapter.images,
     },
   });
 

@@ -68,8 +68,8 @@ export default function Submit({
       });
     },
     onSuccess: () => {
-      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, void +'');
       if (!editor.isEditable()) editor.setEditable(true);
+      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
 
       return toast({
         title: 'Thành công',

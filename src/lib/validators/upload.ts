@@ -22,6 +22,7 @@ export const MangaUploadValidator = z
       .min(3, { message: 'Tối thiểu 3 kí tự' })
       .max(255, { message: 'Tối đa 255 kí tự' }),
     description: z.any(),
+    review: z.string().min(5, 'Tối thiểu 5 kí tự').max(512, 'Tối đa 512 kí tự'),
     author: z.array(authorInfo).min(1, { message: 'Tối thiểu một tác giả' }),
     tag: z.array(tagInfo).min(1, { message: 'Tối thiểu có một thể loại' }),
     facebookLink: z.string().optional(),

@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="vi" className="dark">
       <body
         className={cn(
-          'h-screen antialiased dark:bg-zinc-800 dark:text-slate-50',
+          'h-screen antialiased dark:bg-zinc-800 dark:text-slate-50 md:scrollbar md:scrollbar--dark',
           roboto.className
         )}
       >

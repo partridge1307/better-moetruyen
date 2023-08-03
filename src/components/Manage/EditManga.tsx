@@ -42,7 +42,13 @@ const Editor = dynamic(() => import('@/components/Editor'), {
 interface EditMangaProps {
   manga: Pick<
     Manga,
-    'id' | 'name' | 'description' | 'image' | 'facebookLink' | 'discordLink'
+    | 'id'
+    | 'name'
+    | 'description'
+    | 'review'
+    | 'image'
+    | 'facebookLink'
+    | 'discordLink'
   > & {
     author: MangaAuthor[];
     tags: Tag[];
@@ -59,6 +65,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
       image: manga.image,
       name: manga.name,
       description: undefined,
+      review: manga.review ?? undefined,
       author: manga.author,
       tag: manga.tags,
       facebookLink: manga.facebookLink ?? '',
@@ -171,6 +178,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
       author: values.author,
       tag: values.tag,
       description: editor,
+      review: values.review,
       facebookLink: values.facebookLink,
       discordLink: values.discordLink,
     };
@@ -223,6 +231,25 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
               <FormMessage />
               <FormControl>
                 <Editor editorRef={editorRef} initialData={manga.description} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="review"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel
+                className="after:content-['*'] after:text-red-500 after:ml-0.5"
+                title="Nội dung này sẽ được hiển thị bên ngoài trang chủ"
+              >
+                Sơ lược
+              </FormLabel>
+              <FormMessage />
+              <FormControl>
+                <Input placeholder="Nhập nội dung..." {...field} />
               </FormControl>
             </FormItem>
           )}

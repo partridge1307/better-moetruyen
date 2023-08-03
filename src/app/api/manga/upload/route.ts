@@ -24,6 +24,9 @@ const mangaFormValidator = zfd.formData({
   image: zfd.file(),
   name: zfd.text(z.string().min(3).max(255)),
   description: zfd.json(descriptionInfo),
+  review: zfd.text(
+    z.string().min(5, 'Tối thiểu 5 kí tự').max(512, 'Tối đa 512 kí tự')
+  ),
   author: zfd.repeatableOfType(zfd.json(authorInfo)),
   tag: zfd.repeatableOfType(zfd.json(tagInfo)),
   facebook: zfd.text(z.string().optional()),
@@ -61,6 +64,7 @@ export async function POST(req: NextRequest) {
       image: img,
       name,
       description,
+      review,
       author,
       tag,
       facebook,
@@ -77,7 +81,8 @@ export async function POST(req: NextRequest) {
     await db.manga.create({
       data: {
         name,
-        description: description,
+        description,
+        review,
         image,
         facebookLink: !facebook ? null : facebook,
         discordLink: !discord ? null : discord,

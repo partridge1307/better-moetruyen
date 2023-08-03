@@ -47,6 +47,7 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
       image: undefined,
       name: '',
       description: undefined,
+      review: '',
       author: [],
       tag: [],
       facebookLink: '',
@@ -166,6 +167,7 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
       author: values.author,
       tag: values.tag,
       description: editor,
+      review: values.review,
       facebookLink: values.facebookLink,
       discordLink: values.discordLink,
     };
@@ -229,6 +231,25 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
 
         <FormField
           control={form.control}
+          name="review"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel
+                className="after:content-['*'] after:text-red-500 after:ml-0.5"
+                title="Nội dung này sẽ được hiển thị bên ngoài trang chủ"
+              >
+                Sơ lược
+              </FormLabel>
+              <FormMessage />
+              <FormControl>
+                <Input placeholder="Nhập nội dung..." {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name="facebookLink"
           render={({ field }) => (
             <FormItem>
@@ -258,7 +279,7 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
                 Link Discord (nếu có){' '}
                 <span
                   className="text-red-500"
-                  title="Chỉ nhận link Invite. Yêu cầu phải bật Widget, khuyên để link không hết hạn"
+                  title="Chỉ nhận link Invite. Yêu cầu phải bật Widget, khuyên dùng link không hết hạn"
                 >
                   *
                 </span>

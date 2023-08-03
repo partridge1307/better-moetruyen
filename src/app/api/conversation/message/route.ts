@@ -43,6 +43,7 @@ export async function GET(req: NextRequest) {
       select: {
         messages: {
           select: {
+            id: true,
             content: true,
             createdAt: true,
             sender: {

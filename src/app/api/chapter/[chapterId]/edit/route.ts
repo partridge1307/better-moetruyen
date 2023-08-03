@@ -5,7 +5,7 @@ import { NextRequest } from 'next/server';
 import { ZodError, z } from 'zod';
 
 const chapterValidator = z.object({
-  images: z.string().array(),
+  images: z.string().array().min(5, 'Tối thiểu 5 ảnh'),
   chapterName: z.string().min(3).max(255).optional(),
   chapterIndex: z.number().min(0),
   volume: z.number().min(1),

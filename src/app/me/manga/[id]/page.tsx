@@ -1,6 +1,6 @@
 import EditorOutput from '@/components/EditorOutput';
 import ForceSignOut from '@/components/ForceSignOut';
-import MangaImage from '@/components/MangaImage';
+import MangaImage from '@/components/Manga/MangaImage';
 import { buttonVariants } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { getAuthSession } from '@/lib/auth';
@@ -96,7 +96,7 @@ const page: FC<pageProps> = async ({ params }) => {
         value="info"
         className="flex flex-col max-sm:items-center md:p-2 gap-4"
       >
-        <MangaImage className="h-48 w-40" image={manga.image} />
+        <MangaImage className="h-48 w-40" manga={manga} />
 
         <div className="space-y-6">
           <dl className="flex gap-1">

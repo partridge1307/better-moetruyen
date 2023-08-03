@@ -257,7 +257,7 @@ const Toolbar = () => {
           disabled={!canUndo}
           className={cn('transition-opacity', !canUndo && 'opacity-50')}
           onClick={() => {
-            editor.dispatchCommand(UNDO_COMMAND, void +'');
+            editor.dispatchCommand(UNDO_COMMAND, undefined);
           }}
         >
           <Undo className="w-5 h-5" />
@@ -265,7 +265,7 @@ const Toolbar = () => {
         <button
           disabled={!canRedo}
           className={cn('transition-opacity', !canRedo && 'opacity-50')}
-          onClick={() => editor.dispatchCommand(REDO_COMMAND, void +'')}
+          onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}
         >
           <Redo className="w-5 h-5" />
         </button>

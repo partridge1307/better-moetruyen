@@ -1,5 +1,5 @@
 import FBEmbed from '@/components/FBEmbed';
-import MangaImage from '@/components/MangaImage';
+import MangaImage from '@/components/Manga/MangaImage';
 import UserAvatar from '@/components/User/UserAvatar';
 import UserBanner from '@/components/User/UserBanner';
 import Username from '@/components/User/Username';
@@ -141,7 +141,7 @@ const page: FC<pageProps> = async ({ params }) => {
       <main className="container max-sm:px-2 mx-auto h-full pt-20 space-y-14">
         <div className="relative h-max">
           <div className="p-4 max-sm:space-y-4 md:flex md:gap-10">
-            <MangaImage className="h-48 w-full md:w-40" image={manga.image} />
+            <MangaImage className="h-48 w-full md:w-40" manga={manga} />
 
             <div className="space-y-1 md:space-y-2">
               <p className="text-2xl md:text-4xl font-semibold">{manga.name}</p>

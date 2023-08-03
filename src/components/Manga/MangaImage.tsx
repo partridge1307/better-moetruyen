@@ -7,14 +7,17 @@ import { FC, useCallback, useState } from 'react';
 import { Controlled as Zoom } from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
 import '@/styles/zoom.css';
+import axios from 'axios';
+import type { Manga } from '@prisma/client';
 
 interface MangaCardProps extends React.HTMLAttributes<HTMLImageElement> {
-  image: string;
+  manga: Pick<Manga, 'id' | 'image'>;
   className: string;
 }
 
-const MangaImage: FC<MangaCardProps> = ({ image, className }) => {
+const MangaImage: FC<MangaCardProps> = ({ manga, className }) => {
   const [isZoomed, setIsZoomed] = useState<boolean>(false);
+  axios.post(`/api/manga/${manga.id}/history`).catch(() => {});
 
   const handleZoom = useCallback((value: boolean) => {
     setIsZoomed(value);
@@ -31,7 +34,7 @@ const MangaImage: FC<MangaCardProps> = ({ image, className }) => {
           fill
           sizes="0%"
           priority
-          src={image}
+          src={manga.image}
           alt="Manga Image"
           className="rounded-md object-cover"
         />

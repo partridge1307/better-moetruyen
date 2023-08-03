@@ -40,3 +40,14 @@ export const dailyViewGroupByHour = (mangaId: number) =>
 
 export const weeklyViewGroupByDay = (mangaId: number) =>
   db.$queryRaw`SELECT DATE_PART('day', "createdAt") as time, COUNT("id") as view, array_agg("createdAt") as "viewTimeCreatedAt" FROM "WeeklyView" WHERE "mangaId" = ${mangaId} GROUP BY DATE_PART('day', "createdAt")` as Promise<View>;
+
+export type Manga = {
+  id: number;
+  name: string;
+  image: string;
+  createdAt: Date;
+};
+export const randomManga = (take: number) =>
+  db.$queryRaw`SELECT "id", "name", "image", "createdAt" FROM "Manga" ORDER BY random() LIMIT ${take}` as Promise<
+    Manga[]
+  >;

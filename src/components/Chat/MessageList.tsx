@@ -26,6 +26,7 @@ interface MessageListProps {
 
 const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
   const [messages, setMessages] = useState(conversation.messages);
+  const lastMessageRef = useRef<HTMLLIElement | null>(null);
   const firstMessageRef = useRef<HTMLLIElement | null>(null);
   const { ref, entry } = useIntersection({
     threshold: 1,
@@ -87,9 +88,16 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
       setMessages(msgData.reverse());
     }
   }, [messageData?.pages]);
+  useEffect(() => {
+    lastMessageRef.current?.scrollIntoView({ behavior: 'instant' });
+  }, [messages.length]);
 
   return (
-    <ScrollArea type="scroll" className="flex-1 overflow-y-auto">
+    <ScrollArea
+      type="scroll"
+      scrollHideDelay={300}
+      className="flex-1 overflow-y-auto"
+    >
       {isFetchingNextPage && (
         <div className="flex justify-center">
           <Loader2 className="w-6 h-6 animate-spin" />
@@ -109,6 +117,22 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
             } else {
               return (
                 <li ref={ref} key={index} className="flex gap-2">
+                  {sender.image ? <UserAvatar user={sender} /> : null}
+
+                  <MessageCard message={message} className="items-start" />
+                </li>
+              );
+            }
+          } else if (index === messages.length - 1) {
+            if (sender.id === me.id) {
+              return (
+                <li ref={lastMessageRef} key={index} className="flex gap-2">
+                  <MessageCard message={message} className="items-end" />
+                </li>
+              );
+            } else {
+              return (
+                <li ref={lastMessageRef} key={index} className="flex gap-2">
                   {sender.image ? <UserAvatar user={sender} /> : null}
 
                   <MessageCard message={message} className="items-start" />

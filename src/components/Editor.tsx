@@ -11,6 +11,17 @@ interface EditorProps {
 
 const charactersLimit = 2048;
 
+function couldBeCounted(block: OutputBlockData<string, any>) {
+  return 'text' in block.data;
+}
+function getBlocksTextLen(blocks: OutputBlockData<string, any>[]) {
+  return blocks.filter(couldBeCounted).reduce((sum, block) => {
+    sum += block.data.text.length;
+
+    return sum;
+  }, 0);
+}
+
 const Editor: FC<EditorProps> = ({ editorRef, initialData }) => {
   const [mounted, setMounted] = useState<boolean>(false);
   const initializeEditor = useCallback(async () => {
@@ -158,15 +169,3 @@ const Editor: FC<EditorProps> = ({ editorRef, initialData }) => {
 };
 
 export default Editor;
-
-function couldBeCounted(block: OutputBlockData<string, any>) {
-  return 'text' in block.data;
-}
-
-function getBlocksTextLen(blocks: OutputBlockData<string, any>[]) {
-  return blocks.filter(couldBeCounted).reduce((sum, block) => {
-    sum += block.data.text.length;
-
-    return sum;
-  }, 0);
-}

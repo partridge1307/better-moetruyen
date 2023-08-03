@@ -55,6 +55,7 @@ const ChatList = () => {
       });
     },
     onSuccess: () => {
+      router.push('/chat');
       router.refresh();
 
       return toast({
@@ -76,7 +77,7 @@ const ChatList = () => {
 
   return (
     <>
-      <ScrollArea className="h-full">
+      <ScrollArea type="scroll" scrollHideDelay={300} className="h-full">
         <ul className="space-y-2">
           {conversation ? (
             conversation.map((con, index) => {

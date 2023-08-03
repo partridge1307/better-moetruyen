@@ -30,15 +30,15 @@ const NavSidebar = () => {
         subMenu: [
           {
             title: 'Mới cập nhật',
-            link: '/manga/latest',
+            link: '/latest',
           },
           {
             title: 'Tìm kiếm nâng cao',
-            link: '/magna/advanced-search',
+            link: '/advanced-search',
           },
           {
             title: 'Ngẫu nhiên',
-            link: '/manga/random',
+            link: '/random',
           },
         ],
       },

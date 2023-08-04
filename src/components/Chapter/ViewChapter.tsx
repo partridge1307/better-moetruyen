@@ -2,11 +2,11 @@
 
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useIntersection } from '@mantine/hooks';
 import type { Chapter, Manga } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { FC, useEffect, useRef, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
 import ChapterControll from './ChapterControll';
 import HorizontalViewChapter from './HorizontalViewChapter';
@@ -51,7 +51,9 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
   >('hidden');
   const slider = useRef<HTMLDivElement | null>(null);
   const currentImageRef = useRef<HTMLImageElement | null>(null);
-  const { ref: imageRef, inView } = useInView({
+  const imageRef = useRef<HTMLImageElement>(null);
+  const { ref, entry } = useIntersection({
+    root: imageRef.current,
     threshold: 0,
   });
 
@@ -163,7 +165,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
   useEffect(() => {
     if (
       typeof window !== 'undefined' &&
-      inView &&
+      entry?.isIntersecting &&
       'startPage' in sessionStorage
     ) {
       if (
@@ -174,7 +176,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
         IncreaseView();
       }
     }
-  }, [IncreaseView, inView]);
+  }, [IncreaseView, entry]);
 
   return (
     <div className="h-full space-y-16">

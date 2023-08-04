@@ -1,4 +1,3 @@
-declare module '@editorjs/header';
 declare module '@editorjs/embed';
 declare module '@editorjs/simple-image';
 declare module '@editorjs/checklist';

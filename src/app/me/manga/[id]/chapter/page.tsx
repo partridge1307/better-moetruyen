@@ -4,14 +4,17 @@ import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { columns } from './column';
+import { columns } from '@/components/Manage/Table/Chapter/column';
 import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
 import { redirect } from 'next/navigation';
-const DataChapterTable = dynamic(() => import('./DataChapterTable'), {
-  ssr: false,
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
-});
+const DataChapterTable = dynamic(
+  () => import('@/components/Manage/Table/Chapter/DataChapterTable'),
+  {
+    ssr: false,
+    loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+  }
+);
 
 const page = async ({ params }: { params: { id: string } }) => {
   const session = await getAuthSession();
@@ -57,7 +60,6 @@ const page = async ({ params }: { params: { id: string } }) => {
           >
             Thêm chapter
           </Link>
-          {/* @ts-ignore */}
           <DataChapterTable columns={columns} data={chapters} />
         </div>
       ) : (

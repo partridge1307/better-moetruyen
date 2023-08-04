@@ -14,14 +14,33 @@ export const tagInfo = z.object({
 });
 export type tagInfoProps = z.infer<typeof tagInfo>;
 
+const blocksInfo = z.object({
+  id: z.string(),
+  type: z.string(),
+  data: z.any(),
+});
+const descriptionInfo = z.object({
+  time: z.number(),
+  blocks: z.array(blocksInfo),
+  version: z.string(),
+});
+
 export const MangaUploadValidator = z
   .object({
-    image: z.any() as ZodType<File | string>,
+    image: z
+      .any()
+      .refine(
+        (file) =>
+          typeof file === 'string' ||
+          (file?.size <= 4 * 1000 * 1000 &&
+            ['image/jpeg', 'image/png', 'image/jpg'].includes(file?.type)),
+        'Ảnh phải dưới 4MB và có định dạng là .jpg, .png, .jpeg'
+      ) as ZodType<File | string>,
     name: z
       .string()
       .min(3, { message: 'Tối thiểu 3 kí tự' })
       .max(255, { message: 'Tối đa 255 kí tự' }),
-    description: z.any(),
+    description: z.any(descriptionInfo),
     review: z.string().min(5, 'Tối thiểu 5 kí tự').max(512, 'Tối đa 512 kí tự'),
     author: z.array(authorInfo).min(1, { message: 'Tối thiểu một tác giả' }),
     tag: z.array(tagInfo).min(1, { message: 'Tối thiểu có một thể loại' }),
@@ -39,11 +58,7 @@ export const ChapterUploadValidator = z.object({
   chapterIndex: z
     .number()
     .min(0, { message: 'Số thứ tự chapter phải lớn hơn 0' }),
-  chapterName: z
-    .string()
-    .min(3, { message: 'Tối thiểu 3 ký tự' })
-    .max(255, { message: 'Tối đa 255 ký tự' })
-    .optional(),
+  chapterName: z.string().optional(),
   volume: z.number().min(1, { message: 'Volume phải là số dương' }),
   image: z.any() as ZodType<FileList | string[]>,
 });

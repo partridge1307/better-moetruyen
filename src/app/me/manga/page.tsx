@@ -1,14 +1,17 @@
 import ForceSignOut from '@/components/ForceSignOut';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { columns } from './column';
+import { columns } from '@/components/Manage/Table/Manga/column';
 import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
 import { redirect } from 'next/navigation';
-const DataMangaTable = dynamic(() => import('@/app/me/manga/DataMangaTable'), {
-  ssr: false,
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
-});
+const DataMangaTable = dynamic(
+  () => import('@/components/Manage/Table/Manga/DataMangaTable'),
+  {
+    ssr: false,
+    loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+  }
+);
 
 const page = async () => {
   const session = await getAuthSession();
@@ -41,7 +44,6 @@ const page = async () => {
   return (
     <div className="min-h-[400px] md:min-h-[500px]">
       {!!manga?.length ? (
-        // @ts-ignore
         <DataMangaTable columns={columns} data={manga} />
       ) : (
         <div className="min-h-[400px] md:min-h-[500px] flex items-center justify-center">

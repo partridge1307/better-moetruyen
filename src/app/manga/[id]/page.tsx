@@ -113,6 +113,43 @@ const page: FC<pageProps> = async ({ params }) => {
   });
   if (!manga) return notFound();
 
+  const comments = await db.comment.findMany({
+    where: {
+      mangaId: +params.id,
+      replyToId: null,
+    },
+    select: {
+      id: true,
+      content: true,
+      oEmbed: true,
+      createdAt: true,
+      authorId: true,
+      chapter: {
+        select: {
+          id: true,
+          chapterIndex: true,
+        },
+      },
+      author: {
+        select: {
+          name: true,
+          image: true,
+          color: true,
+        },
+      },
+      votes: true,
+      _count: {
+        select: {
+          replies: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    take: 10,
+  });
+
   let discord: discordProps = { code: false };
   if (manga.discordLink) {
     try {
@@ -203,13 +240,19 @@ const page: FC<pageProps> = async ({ params }) => {
                 <div>
                   <p className="text-lg px-2 w-full">Uploader</p>
                   <Card className="relative bg-transparent/10">
-                    <CardHeader className="max-sm:gap-12">
-                      <div className="relative">
-                        <UserAvatar user={manga.creator} />
-                        <UserBanner user={manga.creator} />
+                    <CardHeader className="max-sm:gap-12 p-2">
+                      <div className="relative md:mb-10">
+                        <UserBanner user={manga.creator} className="rounded" />
+                        <UserAvatar
+                          user={manga.creator}
+                          className="absolute top-1/2 translate-y-1/3 translate-x-2 w-20 h-20 border-4"
+                        />
                       </div>
 
-                      <Username user={manga.creator} />
+                      <Username
+                        user={manga.creator}
+                        className="text-lg text-start"
+                      />
                     </CardHeader>
                     {manga.creator.memberOnTeam && (
                       <CardContent>
@@ -279,7 +322,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
             <TabsContent value="comment">
               <MoetruyenEditor id={params.id} />
-              <Comment id={params.id} />
+              <Comment id={params.id} initialComments={comments} />
             </TabsContent>
           </Tabs>
         </div>

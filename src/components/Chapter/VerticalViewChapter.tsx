@@ -1,7 +1,7 @@
 import type { Chapter, Manga } from '@prisma/client';
 import { Loader2, MessagesSquare } from 'lucide-react';
 import Image from 'next/image';
-import { Suspense, forwardRef, lazy, memo } from 'react';
+import { RefObject, Suspense, forwardRef, lazy, memo } from 'react';
 import NextChapterButton from './NextChapterButton';
 import PrevChapterButton from './PrevChapterButton';
 const Comment = lazy(() => import('@/components/Comment/Chapter'));
@@ -13,8 +13,7 @@ interface VerticalViewChapterProps {
   chapter: Pick<Chapter, 'images'> & {
     manga: Pick<Manga, 'name'>;
   };
-  // eslint-disable-next-line no-unused-vars
-  imageRef: (node: Element | null | undefined) => void;
+  imageRef: RefObject<HTMLImageElement>;
   chapterList:
     | Pick<Chapter, 'id' | 'chapterIndex' | 'name' | 'volume' | 'isPublished'>[]
     | null;

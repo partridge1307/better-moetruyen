@@ -29,11 +29,11 @@ const FirstThree: FC<FirstThreeProps> = ({ mangas }) => {
                   sizes="0%"
                   src={manga.image}
                   alt="First Three Top Manga Image"
-                  className="rounded-full"
+                  className="rounded-full object-cover"
                 />
                 <Crown className="float-right translate-x-1 -translate-y-2 w-6 h-6 rotate-45 text-orange-400" />
               </div>
-              <h5 className="pl-1 lg:text-lg font-medium text-orange-400">
+              <h5 className="lg:text-lg font-medium text-orange-400">
                 {manga.name}
               </h5>
             </Link>
@@ -51,7 +51,6 @@ const FirstThree: FC<FirstThreeProps> = ({ mangas }) => {
                 <div className="w-10 h-10 lg:w-14 lg:h-14 flex justify-center items-center dark:bg-zinc-700 rounded-full">
                   <Armchair className="w-8 h-8 opacity-50" />
                 </div>
-                <p className="max-md:text-sm">Hạng {idx + 1}</p>
               </div>
             );
           } else {
@@ -70,10 +69,9 @@ const FirstThree: FC<FirstThreeProps> = ({ mangas }) => {
                     sizes="0%"
                     src={manga.image}
                     alt="Top Daily Manga Image"
-                    className="rounded-full"
+                    className="rounded-full object-cover"
                   />
                 </div>
-                <h5 className="max-md:text-sm">{manga.name}</h5>
               </Link>
             );
           }

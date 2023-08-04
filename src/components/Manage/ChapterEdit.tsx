@@ -144,6 +144,20 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
         type: 'custom',
         message: 'Tối thiểu 5 ảnh',
       });
+    if (values.chapterName) {
+      if (values.chapterName.length < 3) {
+        return form.setError('chapterName', {
+          type: 'min',
+          message: 'Tối thiểu ba kí tự',
+        });
+      } else if (values.chapterName.length > 256) {
+        return form.setError('chapterName', {
+          type: 'max',
+          message: 'Tối đa 256 kí tự',
+        });
+      }
+    }
+
     Edit(values);
   }
 
@@ -222,7 +236,12 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
           name="image"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Ảnh</FormLabel>
+              <FormLabel
+                title="Sẽ bỏ qua ảnh lớn hơn 4MB"
+                className="after:content-['*'] after:ml-0.5 after:text-red-500"
+              >
+                Ảnh
+              </FormLabel>
               <FormMessage />
 
               {images.length ? (
@@ -293,6 +312,10 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
                         name: string;
                       }[] = [];
                       for (let i = 0; i < e.target.files.length; i++) {
+                        if (e.target.files.item(i)!.size > 4 * 1000 * 1000) {
+                          continue;
+                        }
+
                         const imageUrl = URL.createObjectURL(
                           e.target.files.item(i)!
                         );

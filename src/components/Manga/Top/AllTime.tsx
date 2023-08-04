@@ -20,7 +20,7 @@ const AllTime = async () => {
     },
   });
 
-  let firstThreeMangas = allTime.slice(0, 4).map((all) => all.manga);
+  let firstThreeMangas = allTime.slice(0, 3).map((all) => all.manga);
   if (firstThreeMangas.length === 1) {
     firstThreeMangas.push(
       ...[

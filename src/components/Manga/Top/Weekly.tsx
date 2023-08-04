@@ -26,7 +26,7 @@ const Weekly = async () => {
     take: 10,
   });
 
-  let firstThreeMangas = weekly.slice(0, 4).map((w) => w.manga);
+  let firstThreeMangas = weekly.slice(0, 3).map((w) => w.manga);
   if (firstThreeMangas.length === 1) {
     firstThreeMangas.push(
       ...[

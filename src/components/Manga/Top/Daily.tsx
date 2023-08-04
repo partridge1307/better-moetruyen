@@ -26,7 +26,7 @@ const Daily = async () => {
     take: 10,
   });
 
-  let firstThreeMangas = daily.slice(0, 4).map((d) => d.manga);
+  let firstThreeMangas = daily.slice(0, 3).map((d) => d.manga);
   if (firstThreeMangas.length === 1) {
     firstThreeMangas.push(
       ...[

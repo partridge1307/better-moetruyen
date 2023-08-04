@@ -54,14 +54,16 @@ const ListChapter: FC<ListChapterProps> = async ({ mangaId }) => {
                     <div className="flex items-center gap-1 max-sm:text-sm">
                       <p>Vol. {chapter.volume}</p>
                       <p>Ch. {chapter.chapterIndex}</p>
-                      <p>-</p>
-                      {chapter.name !== null && (
-                        <p
-                          title={`Chapter ${chapter.name}`}
-                          className="line-clamp-2 capitalize md:line-clamp-3"
-                        >
-                          {chapter.name}
-                        </p>
+                      {chapter.name && (
+                        <>
+                          <p>-</p>
+                          <p
+                            title={`Chapter ${chapter.name}`}
+                            className="line-clamp-2 capitalize md:line-clamp-3"
+                          >
+                            {chapter.name}
+                          </p>
+                        </>
                       )}
                     </div>
 

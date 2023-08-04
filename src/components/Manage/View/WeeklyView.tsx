@@ -43,7 +43,7 @@ const WeeklyViewManga: FC<WeeklyViewMangaProps> = ({ filteredView }) => {
   };
 
   return (
-    <div className="space-y-2 md:space-y-4">
+    <div className="flex flex-col gap-2 md:gap-4">
       <p className="text-sm font-medium">Thống kê View trong tuần</p>
       <Line
         options={opts}

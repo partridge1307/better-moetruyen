@@ -2,16 +2,16 @@
 
 import { DataTableColumnHeader } from '@/components/DataColumnHeader';
 import { formatTimeToNow } from '@/lib/utils';
-import type { Chapter } from '@prisma/client';
+import type { Manga } from '@prisma/client';
 import type { ColumnDef } from '@tanstack/react-table';
 import DataTableRowAction from './DataTableRowAction';
 
-export const columns: ColumnDef<
-  Pick<
-    Chapter,
-    'id' | 'name' | 'images' | 'isPublished' | 'mangaId' | 'updatedAt'
-  >
->[] = [
+export type MangaColumn = Pick<
+  Manga,
+  'id' | 'name' | 'isPublished' | 'updatedAt'
+>;
+
+export const columns: ColumnDef<MangaColumn>[] = [
   {
     id: 'ID',
     accessorKey: 'id',
@@ -22,23 +22,12 @@ export const columns: ColumnDef<
     enableHiding: false,
   },
   {
-    id: 'Tên chapter',
+    id: 'Tên truyện',
     accessorKey: 'name',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Tên chapter" />
+      <DataTableColumnHeader column={column} title="Tên truyện" />
     ),
     enableHiding: false,
-  },
-  {
-    id: 'Số lượng ảnh',
-    accessorKey: 'image',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Số lượng ảnh" />
-    ),
-    cell: ({ row }) => {
-      return <div className="text-center">{row.original.images.length}</div>;
-    },
-    enableSorting: false,
   },
   {
     id: 'Trạng thái',
@@ -47,7 +36,7 @@ export const columns: ColumnDef<
     cell: ({ row }) => {
       const formattedStatus = row.getValue('Trạng thái')
         ? 'Đã đăng'
-        : 'Chờ đăng';
+        : 'Chờ publish';
 
       return <div>{formattedStatus}</div>;
     },

@@ -21,16 +21,22 @@ const descriptionInfo = z.object({
 });
 
 const mangaFormValidator = zfd.formData({
-  image: zfd.file(),
+  image: zfd
+    .file()
+    .refine((file) => file.size <= 4 * 1000 * 1000, 'Tối đa 4MB')
+    .refine(
+      (file) => ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type),
+      'Chỉ nhận định dạng .jpg, .png, .jpeg'
+    ),
   name: zfd.text(z.string().min(3).max(255)),
   description: zfd.json(descriptionInfo),
-  review: zfd.text(
-    z.string().min(5, 'Tối thiểu 5 kí tự').max(512, 'Tối đa 512 kí tự')
-  ),
+  review: zfd
+    .text(z.string().min(5, 'Tối thiểu 5 kí tự').max(512, 'Tối đa 512 kí tự'))
+    .optional(),
   author: zfd.repeatableOfType(zfd.json(authorInfo)),
   tag: zfd.repeatableOfType(zfd.json(tagInfo)),
-  facebook: zfd.text(z.string().optional()),
-  discord: zfd.text(z.string().optional()),
+  facebookLink: zfd.text(z.string().optional()),
+  discordLink: zfd.text(z.string().optional()),
 });
 
 export async function POST(req: NextRequest) {
@@ -67,15 +73,15 @@ export async function POST(req: NextRequest) {
       review,
       author,
       tag,
-      facebook,
-      discord,
+      facebookLink,
+      discordLink,
     } = mangaFormValidator.parse(form);
 
     const image = await upload({ blobImage: img, retryCount: 5 });
 
-    if (facebook && !fbRegex.test(facebook))
+    if (facebookLink && !fbRegex.test(facebookLink))
       return new Response('Invalid FB link', { status: 406 });
-    if (discord && !disRegex.test(discord))
+    if (discordLink && !disRegex.test(discordLink))
       return new Response('Invalid Discord link', { status: 406 });
 
     await db.manga.create({
@@ -84,8 +90,8 @@ export async function POST(req: NextRequest) {
         description,
         review,
         image,
-        facebookLink: !facebook ? null : facebook,
-        discordLink: !discord ? null : discord,
+        facebookLink: !facebookLink ? null : facebookLink,
+        discordLink: !discordLink ? null : discordLink,
         creatorId: user.id,
         tags: {
           connect: tag.map((t) => ({

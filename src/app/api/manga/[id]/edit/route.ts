@@ -5,7 +5,7 @@ import { authorInfo, tagInfo } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
-import { ZodType, z } from 'zod';
+import { z } from 'zod';
 import { zfd } from 'zod-form-data';
 
 const blocksInfo = z.object({
@@ -21,7 +21,13 @@ const descriptionInfo = z.object({
 });
 
 const mangaFormValidator = zfd.formData({
-  image: zfd.file(),
+  image: zfd
+    .file()
+    .refine((file) => file.size <= 4 * 1000 * 1000, 'Tối đa 4MB')
+    .refine((file) =>
+      ['image/jpg', 'image/jpeg', 'image/png'].includes(file.type)
+    )
+    .or(zfd.text()),
   name: zfd.text(
     z.string().min(3, 'Tối thiểu 3 kí tự').max(255, 'Tối đa 255 kí tự')
   ),
@@ -31,8 +37,8 @@ const mangaFormValidator = zfd.formData({
   ),
   author: zfd.repeatableOfType(zfd.json(authorInfo)),
   tag: zfd.repeatableOfType(zfd.json(tagInfo)),
-  facebook: zfd.text(z.string().optional()),
-  discord: zfd.text(z.string().optional()),
+  facebookLink: zfd.text(z.string().optional()),
+  discordLink: zfd.text(z.string().optional()),
 });
 
 export async function PATCH(
@@ -69,8 +75,8 @@ export async function PATCH(
       review,
       author,
       tag,
-      facebook,
-      discord,
+      facebookLink,
+      discordLink,
     } = mangaFormValidator.parse(form);
 
     let image: string;
@@ -80,9 +86,9 @@ export async function PATCH(
       image = await upload({ blobImage: img, retryCount: 5 });
     }
 
-    if (facebook && !fbRegex.test(facebook))
+    if (facebookLink && !fbRegex.test(facebookLink))
       return new Response('Invalid FB link', { status: 406 });
-    if (discord && !disRegex.test(discord))
+    if (discordLink && !disRegex.test(discordLink))
       return new Response('Invalid Discord link', { status: 406 });
 
     await db.manga.update({
@@ -94,8 +100,8 @@ export async function PATCH(
         name,
         description,
         review,
-        facebookLink: !facebook ? null : facebook,
-        discordLink: !discord ? null : discord,
+        facebookLink: !facebookLink ? null : facebookLink,
+        discordLink: !discordLink ? null : discordLink,
         tags: {
           connect: tag.map((t) => ({ id: t.id })),
         },

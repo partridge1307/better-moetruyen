@@ -30,15 +30,23 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import DataToolbar from './DataToolbar';
+import { ChapterColumn } from './column';
+import type { Chapter } from '@prisma/client';
+
+type ChapterData = Pick<
+  Chapter,
+  'id' | 'name' | 'isPublished' | 'mangaId' | 'updatedAt' | 'images'
+>;
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
-function DataMangaTable<TData, TValue>({
+
+function DataChapterTable({
   data,
   columns,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<ChapterColumn, ChapterData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilter] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -51,9 +59,9 @@ function DataMangaTable<TData, TValue>({
       columnFilters,
       columnVisibility,
     },
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilter,
     getFilteredRowModel: getFilteredRowModel(),
@@ -66,12 +74,12 @@ function DataMangaTable<TData, TValue>({
     <div>
       <div className="flex items-center gap-4 py-4 max-sm:flex-wrap">
         <Input
-          placeholder="Lọc tên truyện"
+          placeholder="Lọc tên chapter"
           value={
-            (table.getColumn('Tên truyện')?.getFilterValue() as string) ?? ''
+            (table.getColumn('Tên chapter')?.getFilterValue() as string) ?? ''
           }
           onChange={(e) =>
-            table.getColumn('Tên truyện')?.setFilterValue(e.target.value)
+            table.getColumn('Tên chapter')?.setFilterValue(e.target.value)
           }
           className="rounded-xl"
         />
@@ -103,25 +111,24 @@ function DataMangaTable<TData, TValue>({
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => {
-                  if (cell.column.id === 'actions') {
+                  if (cell.column.id !== 'actions') {
+                    return (
+                      <TableCell key={cell.id}>
+                        <Link href={`/me/chapter/${row.original.id}`}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
+                        </Link>
+                      </TableCell>
+                    );
+                  } else {
                     return (
                       <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
                         )}
-                      </TableCell>
-                    );
-                  } else {
-                    return (
-                      <TableCell key={cell.id}>
-                        {/* @ts-expect-error */}
-                        <Link href={`/me/manga/${row.original.id}`}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </Link>
                       </TableCell>
                     );
                   }
@@ -160,4 +167,4 @@ function DataMangaTable<TData, TValue>({
   );
 }
 
-export default DataMangaTable;
+export default DataChapterTable;

@@ -49,6 +49,7 @@ const MangaImageUpload: FC<MangaImageUploadProps> = ({
                 <Image
                   fill
                   sizes="0%"
+                  priority
                   src={previewImage!}
                   alt="Preview Manga Image"
                   className="rounded-lg object-cover"

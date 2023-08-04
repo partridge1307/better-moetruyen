@@ -47,8 +47,8 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
                   <div className="flex max-sm:flex-col gap-1 md:items-center md:justify-between w-full">
                     <div className="text-start font-semibold">
                       <p className="text-base md:text-lg">{manga.name}</p>
-                      <p className="text-base max-sm:hidden">
-                        {manga.author.map((a) => a.name).join(' ')}
+                      <p className="text-sm max-sm:hidden">
+                        {manga.author.map((a) => a.name).join(', ')}
                       </p>
                     </div>
                     <TagWrapper className="max-sm:gap-1">

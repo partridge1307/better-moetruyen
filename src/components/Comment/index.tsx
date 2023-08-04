@@ -22,9 +22,10 @@ export type ExtendedComment = Pick<
 
 interface CommentOutputProps {
   id: string;
+  initialComments: ExtendedComment[];
 }
 
-const CommentOutput: FC<CommentOutputProps> = ({ id }) => {
+const CommentOutput: FC<CommentOutputProps> = ({ id, initialComments }) => {
   const lastCmtRef = useRef<HTMLElement>(null);
   const { ref, entry } = useIntersection({
     threshold: 1,
@@ -37,7 +38,7 @@ const CommentOutput: FC<CommentOutputProps> = ({ id }) => {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    ['comment-infinite-query'],
+    ['comment-infinite-query', `${id}`],
     async ({ pageParam = 1 }) => {
       const query = `/api/manga/${id}/comment?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}`;
 
@@ -48,6 +49,10 @@ const CommentOutput: FC<CommentOutputProps> = ({ id }) => {
       getNextPageParam: (_, pages) => {
         return pages.length + 1;
       },
+      initialData: {
+        pages: [initialComments],
+        pageParams: [1],
+      },
     }
   );
 
@@ -57,11 +62,12 @@ const CommentOutput: FC<CommentOutputProps> = ({ id }) => {
     }
   }, [entry, fetchNextPage]);
 
-  const comments = CommentData?.pages.flatMap((page) => page);
+  const comments =
+    CommentData?.pages.flatMap((page) => page) ?? initialComments;
 
   return (
     <ul className="mt-20 space-y-10">
-      {comments && comments.length ? (
+      {comments?.length ? (
         comments.map((comment, idx) => {
           if (idx === comments.length - 1) {
             return (

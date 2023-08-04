@@ -38,7 +38,7 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    ['infinite-message-query'],
+    ['infinite-message-query', `${conversation.id}`],
     async ({ pageParam = 1 }) => {
       const query = `/api/conversation/message?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}&id=${conversation.id}`;
 

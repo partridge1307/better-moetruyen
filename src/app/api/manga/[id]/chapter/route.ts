@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 const chapterValidator = z.object({
   images: z.string().array().min(5, 'Tối thiểu 5 ảnh'),
-  chapterName: z.string().min(3).max(255).optional(),
+  chapterName: z.string().optional(),
   chapterIndex: z.number().min(0),
   volume: z.number().min(1),
 });
@@ -46,6 +46,10 @@ export async function POST(
     } = chapterValidator.parse(await req.json());
 
     if (!images.length) return new Response('Invalid', { status: 422 });
+    if (name) {
+      if (name.length < 3 || name.length > 256)
+        return new Response('Invalid', { status: 422 });
+    }
 
     let index;
     if (chapterIndex === 0) {

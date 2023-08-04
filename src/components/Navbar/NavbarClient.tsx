@@ -137,7 +137,7 @@ const NavbarClient = () => {
                 <DropdownMenuItem asChild>
                   <Link
                     href="/sign-in"
-                    className={cn(buttonVariants(), 'w-full')}
+                    className={cn(buttonVariants(), 'w-full cursor-pointer')}
                   >
                     Đăng nhập
                   </Link>
@@ -146,7 +146,7 @@ const NavbarClient = () => {
                 <DropdownMenuItem asChild>
                   <Link
                     href="/sign-up"
-                    className={cn(buttonVariants(), 'w-full')}
+                    className={cn(buttonVariants(), 'w-full cursor-pointer')}
                   >
                     Đăng ký
                   </Link>

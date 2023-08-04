@@ -7,20 +7,20 @@ import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { dailyViewGroupByHour, weeklyViewGroupByDay } from '@/lib/query';
 import { cn, filterView } from '@/lib/utils';
-import { format, getHours, getDay } from 'date-fns';
+import { format, getDay, getHours } from 'date-fns';
 import { ArrowUpRightFromCircle, Edit, Loader2, Newspaper } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { FC } from 'react';
-const DailyViewManga = dynamic(() => import('./DailyViewManga'), {
+const DailyView = dynamic(() => import('@/components/Manage/View/DailyView'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
 });
-const WeeklyViewManga = dynamic(() => import('./WeeklyViewManga'), {
-  ssr: false,
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
-});
+const WeeklyView = dynamic(
+  () => import('@/components/Manage/View/WeeklyView'),
+  { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
+);
 
 interface pageProps {
   params: {
@@ -195,11 +195,9 @@ const page: FC<pageProps> = async ({ params }) => {
         </div>
       </TabsContent>
 
-      <TabsContent value="analytics">
-        <div className="p-2 md:px-4 space-y-8 md:space-y-10">
-          <DailyViewManga filteredView={filteredDailyView} />
-          <WeeklyViewManga filteredView={filteredWeeklyView} />
-        </div>
+      <TabsContent value="analytics" className="space-y-10">
+        <DailyView filteredView={filteredDailyView} />
+        <WeeklyView filteredView={filteredWeeklyView} />
       </TabsContent>
     </Tabs>
   );

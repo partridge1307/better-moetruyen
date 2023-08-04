@@ -60,7 +60,6 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
     mutate: FetchAuthor,
     isLoading: isFetchingAuthor,
   } = useMutation({
-    mutationKey: ['fetch-author'],
     mutationFn: async (inputValue: string) => {
       const { data } = await axios.get(`/api/manga/author/${inputValue}`);
 
@@ -68,12 +67,12 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
     },
   });
   const { mutate: Upload, isLoading: isUploadManga } = useMutation({
-    mutationKey: ['upload-author'],
     mutationFn: async (values: MangaUploadPayload) => {
       const {
         image,
         name,
         description,
+        review,
         author,
         tag,
         facebookLink,
@@ -84,8 +83,9 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
       form.append('image', image);
       form.append('name', name);
       form.append('description', JSON.stringify(description));
-      form.append('facebook', facebookLink);
-      form.append('discord', discordLink);
+      form.append('review', review);
+      form.append('facebookLink', facebookLink);
+      form.append('discordLink', discordLink);
       author.map((a) => form.append('author', JSON.stringify(a)));
       tag.map((t) => form.append('tag', JSON.stringify(t)));
 

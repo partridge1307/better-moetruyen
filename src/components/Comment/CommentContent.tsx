@@ -1,5 +1,6 @@
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import '@/styles/mteditor.css';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import {
   InitialConfigType,

@@ -47,14 +47,16 @@ const ListTreeChapter: FC<ListTreeChapterProps> = async ({ mangaId }) => {
                           >
                             <div className="flex items-center gap-1 max-sm:text-sm text-base">
                               <p>Chap. {d.index}</p>
-                              <p>-</p>
-                              {d.name !== null && (
-                                <p
-                                  title={`Chapter ${d.index}`}
-                                  className="line-clamp-2 capitalize md:line-clamp-3"
-                                >
-                                  {d.name}
-                                </p>
+                              {d.name && (
+                                <>
+                                  <p>-</p>
+                                  <p
+                                    title={`Chapter ${d.index}`}
+                                    className="line-clamp-2 capitalize md:line-clamp-3"
+                                  >
+                                    {d.name}
+                                  </p>
+                                </>
                               )}
                             </div>
 

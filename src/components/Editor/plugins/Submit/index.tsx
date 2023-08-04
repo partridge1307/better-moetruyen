@@ -40,7 +40,7 @@ export default function Submit({
     },
   });
   const { mutate: Upload, isLoading: isUpload } = useMutation({
-    mutationKey: ['comment-request-query'],
+    mutationKey: ['comment-upload-query'],
     mutationFn: async (values: CommentContentPayload) => {
       if (chapterId) {
         const payload = {

@@ -37,6 +37,7 @@ const getMangas = async (session: Session | null) => {
 
       manga = await db.manga.findMany({
         where: {
+          isPublished: true,
           OR: filterdTags.map((tag) => ({ tags: { some: { name: tag } } })),
         },
         select: {

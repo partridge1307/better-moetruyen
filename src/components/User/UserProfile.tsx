@@ -65,7 +65,7 @@ const reducer = (state: StateProps, action: ActionState) => {
 
 const UserProfile: FC<UserProfileProps> = ({ user }) => {
   const { loginToast, notFoundToast } = useCustomToast();
-  const { push } = useRouter();
+  const { push, refresh } = useRouter();
   const { update } = useSession();
   const modalRef = useRef<HTMLButtonElement>(null);
   const avatarRef = useRef<HTMLInputElement>(null);
@@ -155,6 +155,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
     },
     onSuccess: () => {
       update();
+      refresh();
       push('/');
 
       return toast({

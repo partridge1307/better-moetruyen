@@ -36,7 +36,7 @@ const CommentOutput: FC<CommentOutputProps> = ({ chapterId, mangaId }) => {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery(
-    ['comment-infinite-query'],
+    ['comment-infinite-query', `${chapterId}`],
     async ({ pageParam = 1 }) => {
       const query = `/api/chapter/${chapterId}/comment/?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}`;
 

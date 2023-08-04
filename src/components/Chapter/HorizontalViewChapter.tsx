@@ -1,7 +1,7 @@
 import type { Chapter, Manga } from '@prisma/client';
 import { ChevronLeft, Loader2, MessagesSquare } from 'lucide-react';
 import Image from 'next/image';
-import { Suspense, forwardRef, lazy } from 'react';
+import { type RefObject, Suspense, forwardRef, lazy } from 'react';
 import { Button } from '../ui/Button';
 import NextChapterButton from './NextChapterButton';
 import PrevChapterButton from './PrevChapterButton';
@@ -16,8 +16,7 @@ interface HorizontalViewChapterProps {
   };
   slideLeft(): void;
   slideRight(): void;
-  // eslint-disable-next-line no-unused-vars
-  imageRef: (node: Element | null | undefined) => void;
+  imageRef: RefObject<HTMLImageElement>;
   currentImage: number;
   currentChapterId: number;
   currentChapterIndex: number;

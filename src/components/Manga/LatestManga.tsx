@@ -39,8 +39,8 @@ const LatestManga: FC<LatestMangaProps> = async ({}) => {
   return (
     <ul
       className={cn(
-        'flex overflow-auto gap-4 p-2 snap-proximity snap-x',
-        'md:max-h-[600px] lg:max-h-[800px] md:flex-col md:snap-y md:scrollbar md:dark:scrollbar--dark'
+        'max-sm:flex overflow-auto gap-4 p-2 snap-proximity',
+        'md:grid md:grid-cols-2 md:scrollbar md:dark:scrollbar--dark'
       )}
     >
       {chapters.map((chapter, idx) => (

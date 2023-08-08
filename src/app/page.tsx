@@ -1,11 +1,11 @@
 import { db } from '@/lib/db';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
   ssr: false,
   loading: () => (
-    <div className="grid grid-cols-[1fr_.15fr] gap-2 w-full h-72">
+    <div className="grid grid-cols-1 md:grid-cols-[1fr_.15fr] gap-2 w-full h-72">
       <div className="animate-pulse dark:bg-zinc-900 rounded-lg" />
       <div className="animate-pulse dark:bg-zinc-900 rounded-lg" />
     </div>
@@ -21,15 +21,22 @@ const Recommendation = dynamic(
 );
 const LatestManga = dynamic(() => import('@/components/Manga/LatestManga'), {
   loading: () => (
-    <div className="w-full h-44 md:h-[600px] lg:h-[800px] p-2 animate-pulse" />
+    <div className="w-full h-44 p-2 md:grid md:grid-cols-2 gap-4 animate-pulse" />
   ),
 });
 const Leaderboard = dynamic(() => import('@/components/Leaderboard'), {
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+  loading: () => (
+    <div className="w-full h-56 p-2 animate-pulse dark:bg-zinc-900" />
+  ),
 });
 const LastestComment = dynamic(
   () => import('@/components/Comment/LatestComment'),
-  { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-56 p-2 animate-pulse dark:bg-zinc-900" />
+    ),
+  }
 );
 
 const Home = async () => {

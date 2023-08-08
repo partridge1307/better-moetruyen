@@ -17,7 +17,7 @@ interface LatestCommentProps {
 
 const LatestComment: FC<LatestCommentProps> = ({ comments }) => {
   return (
-    <ul className="space-y-4 p-4 lg:max-h-[550px] overflow-auto md:scrollbar md:dark:scrollbar--dark rounded-lg dark:bg-zinc-900/70">
+    <ul className="space-y-4 p-4 md:scrollbar md:dark:scrollbar--dark rounded-lg dark:bg-zinc-900/70">
       {comments.map((comment, idx) => (
         <li key={idx} className="flex gap-2 md:gap-4">
           <Link href={`/user/${comment.author.id}`}>

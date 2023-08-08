@@ -64,8 +64,8 @@ const Recommendation = async () => {
   return (
     <div
       className={cn(
-        'flex gap-4 py-2 overflow-auto snap-proximity snap-x rounded-lg dark:bg-zinc-900/75',
-        'md:grid md:place-items-center md:grid-cols-4 md:snap-y md:max-h-96 md:scrollbar md:dark:scrollbar--dark'
+        'flex gap-4 py-2 overflow-auto max-sm:snap-proximity max-sm:snap-x rounded-lg dark:bg-zinc-900/75',
+        'md:grid md:place-items-center md:grid-cols-4 md:scrollbar md:dark:scrollbar--dark'
       )}
     >
       {mangas.map((manga, idx) => (

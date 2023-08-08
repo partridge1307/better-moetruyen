@@ -36,6 +36,14 @@ const Daily = async () => {
     );
   } else if (firstThreeMangas.length === 2) {
     firstThreeMangas.push({ id: -1, image: '', name: '' });
+  } else if (!firstThreeMangas.length) {
+    firstThreeMangas.push(
+      ...[
+        { id: -1, image: '', name: '' },
+        { id: -1, image: '', name: '' },
+        { id: -1, image: '', name: '' },
+      ]
+    );
   }
 
   return (

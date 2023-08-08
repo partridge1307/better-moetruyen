@@ -65,6 +65,7 @@ const NavSidebar = () => {
   );
 
   useEffect(() => {
+    console.log(colorScheme);
     if (colorTheme) {
       if (
         colorTheme === 'dark' ||
@@ -101,29 +102,37 @@ const NavSidebar = () => {
           <h1 className="sticky top-0 bg-white py-4 text-center text-2xl font-semibold dark:bg-zinc-800">
             Moetruyen
           </h1>
-          <ul className="mt-2 flex flex-col gap-y-10 px-4">
+          <ul className="mt-2 flex flex-col gap-y-8 px-4">
             <Link
               href="/"
               className={cn(
                 'w-full rounded-lg py-2 text-center text-xl font-medium',
-                pathname === '/' && 'bg-slate-200 dark:bg-zinc-700'
+                {
+                  'bg-slate-200 dark:bg-zinc-900/70': pathname === '/',
+                  'hover:bg-slate-100 dark:hover:bg-zinc-700': pathname !== '/',
+                }
               )}
             >
               Trang chủ
             </Link>
 
             {NavContent.map((nc) => (
-              <li key={nc.title}>
+              <li key={nc.title} className="space-y-4">
                 <div className="flex items-center gap-2 text-xl">
                   {nc.icon}
                   <p>{nc.title}</p>
                 </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-2">
                   {nc.subMenu.map((nsm) => (
                     <Link
                       key={nsm.title}
                       href={nsm.link}
-                      className="rounded-lg py-2 pl-8 transition-colors hover:bg-slate-100 dark:hover:bg-zinc-700"
+                      className={cn('rounded-lg py-2 pl-8 transition-colors', {
+                        'bg-slate-200 dark:bg-zinc-900/70':
+                          pathname === nsm.link,
+                        'hover:bg-slate-100 dark:hover:bg-zinc-700':
+                          pathname !== nsm.link,
+                      })}
                     >
                       {nsm.title}
                     </Link>
@@ -137,13 +146,9 @@ const NavSidebar = () => {
         <div className="flex h-[10%] items-center justify-between px-6 dark:bg-zinc-900">
           <div>
             <p>©Moetruyen</p>
-            <p>Version: 0.0.3</p>
+            <p>Version: 8w2</p>
           </div>
-          <SwitchWithIcon
-            defaultChecked={true}
-            checked={isChecked}
-            onCheckedChange={handleSwitch}
-          >
+          <SwitchWithIcon checked={isChecked} onCheckedChange={handleSwitch}>
             <SunMoon />
           </SwitchWithIcon>
         </div>

@@ -2,7 +2,6 @@
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
-import { socket } from '@/lib/socket';
 import { ChatPayload, ChatValidator } from '@/lib/validators/chat';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Conversation } from '@prisma/client';
@@ -58,7 +57,7 @@ const ChatForm: FC<ChatFormProps> = ({ conversation }) => {
     },
     onSuccess: (_, values) => {
       const { content, conversationId } = values;
-      socket.emit('message', { content, conversationId });
+      // socket.emit('message', { content, conversationId });
 
       form.setValue('content', '');
     },

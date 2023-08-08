@@ -26,9 +26,11 @@ export type Tags = {
     name: string;
     description: string;
   }[];
-}[];
+};
 export const tagGroupByCategory = () =>
-  db.$queryRaw`SELECT "category", array_agg(json_build_object('id', "id", 'name', "name", 'description', "description")) AS data FROM "Tag" GROUP BY "category"` as Promise<Tags>;
+  db.$queryRaw`SELECT "category", array_agg(json_build_object('id', "id", 'name', "name", 'description', "description")) AS data FROM "Tag" GROUP BY "category"` as Promise<
+    Tags[]
+  >;
 
 export type View = {
   time: number;

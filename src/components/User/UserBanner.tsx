@@ -6,15 +6,20 @@ import Image from 'next/image';
 interface UserBannerProps {
   user: Pick<User, 'banner'>;
   className?: string;
+  ratioClassName?: string;
 }
 
-const UserBanner: FC<UserBannerProps> = ({ user, className }) => {
+const UserBanner: FC<UserBannerProps> = ({
+  user,
+  ratioClassName,
+  className,
+}) => {
   return (
-    <AspectRatio ratio={16 / 9}>
+    <AspectRatio ratio={16 / 9} className={ratioClassName}>
       {user.banner !== null ? (
         <Image
           fill
-          sizes="0%"
+          sizes="40vw"
           priority
           src={user.banner}
           alt="User Banner"

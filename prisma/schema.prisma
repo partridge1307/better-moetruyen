@@ -32,6 +32,7 @@ model User {
   badge         Badge[]        @relation("BadgeToUser")
   conversation  Conversation[] @relation("ConversationToUser")
   history       History[]
+  mangaFollow   MangaFollow[]
 
   @@index([followToId])
   @@index([email], type: Hash)
@@ -89,9 +90,21 @@ model Manga {
   author       MangaAuthor[] @relation("MangaToMangaAuthor")
   tags         Tag[]         @relation("MangaToTag")
   history      History[]
+  mangaFollow  MangaFollow[]
 
   @@unique([name, creatorId])
   @@index([creatorId])
+  @@index([isPublished], type: Hash)
+}
+
+model MangaFollow {
+  mangaId Int
+  userId  String
+  manga   Manga  @relation(fields: [mangaId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([mangaId, userId])
+  @@index([mangaId, userId])
 }
 
 model MangaAuthor {
@@ -181,7 +194,7 @@ model DailyView {
   mangaId   Int
   chapterId Int
   createdAt DateTime @default(now())
-  chapter   Chapter  @relation(fields: [chapterId], references: [id])
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   view      View     @relation(fields: [mangaId], references: [mangaId], onDelete: Cascade)
 
   @@index([mangaId])
@@ -193,7 +206,7 @@ model WeeklyView {
   mangaId   Int
   chapterId Int
   createdAt DateTime @default(now())
-  chapter   Chapter  @relation(fields: [chapterId], references: [id])
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   view      View     @relation(fields: [mangaId], references: [mangaId])
 
   @@index([mangaId])

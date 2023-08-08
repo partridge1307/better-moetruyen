@@ -5,17 +5,24 @@ import Link from 'next/link';
 const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
   ssr: false,
   loading: () => (
-    <p className="flex justify-center">
-      <Loader2 className="w-6 h-6 animate-spin" />
-    </p>
+    <div className="grid grid-cols-[1fr_.15fr] gap-2 w-full h-72">
+      <div className="animate-pulse dark:bg-zinc-900 rounded-lg" />
+      <div className="animate-pulse dark:bg-zinc-900 rounded-lg" />
+    </div>
   ),
 });
 const Recommendation = dynamic(
   () => import('@/components/Manga/Recommendation'),
-  { loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
+  {
+    loading: () => (
+      <div className="w-32 h-44 lg:w-40 lg:h-56 p-2 dark:bg-zinc-900 animate-pulse" />
+    ),
+  }
 );
 const LatestManga = dynamic(() => import('@/components/Manga/LatestManga'), {
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+  loading: () => (
+    <div className="w-full h-44 md:h-[600px] lg:h-[800px] p-2 animate-pulse" />
+  ),
 });
 const Leaderboard = dynamic(() => import('@/components/Leaderboard'), {
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
@@ -26,55 +33,57 @@ const LastestComment = dynamic(
 );
 
 const Home = async () => {
-  const manga = await db.manga.findMany({
-    where: {
-      isPublished: true,
-    },
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      author: {
-        select: {
-          name: true,
+  const [manga, lastestComment] = await db.$transaction([
+    db.manga.findMany({
+      where: {
+        isPublished: true,
+      },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
+        tags: {
+          select: {
+            name: true,
+            description: true,
+          },
         },
       },
-      tags: {
-        select: {
-          name: true,
-          description: true,
+      take: 10,
+    }),
+    db.comment.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 10,
+      where: {
+        replyToId: null,
+      },
+      select: {
+        content: true,
+        mangaId: true,
+        createdAt: true,
+        author: {
+          select: {
+            id: true,
+            image: true,
+            name: true,
+            color: true,
+          },
         },
       },
-    },
-    take: 10,
-  });
-  const lastestComment = await db.comment.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
-    take: 10,
-    where: {
-      replyToId: null,
-    },
-    select: {
-      content: true,
-      mangaId: true,
-      createdAt: true,
-      author: {
-        select: {
-          id: true,
-          image: true,
-          name: true,
-          color: true,
-        },
-      },
-    },
-  });
+    }),
+  ]);
 
   return (
-    <section className="container mx-auto max-sm:px-3 h-screen pt-20 space-y-20">
+    <section className="container mx-auto max-sm:px-3 h-screen pt-20">
       <NotableManga mangas={manga} />
-      <div className="flex max-sm:flex-col gap-4">
+      <div className="flex max-sm:flex-col gap-4 mt-20">
         <section className="w-2/3 max-sm:w-full space-y-20 pb-10">
           <div className="space-y-2">
             <h2 className="text-2xl font-semibold">Dành cho bạn</h2>

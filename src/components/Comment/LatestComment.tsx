@@ -7,6 +7,7 @@ import Link from 'next/link';
 import UserAvatar from '../User/UserAvatar';
 import Username from '../User/Username';
 import { formatTimeToNow } from '@/lib/utils';
+import '@/styles/mteditor.css';
 
 interface LatestCommentProps {
   comments: (Pick<Comment, 'mangaId' | 'content' | 'createdAt'> & {
@@ -22,7 +23,7 @@ const LatestComment: FC<LatestCommentProps> = ({ comments }) => {
           <Link href={`/user/${comment.author.id}`}>
             <UserAvatar
               user={comment.author}
-              className="mt-2 w-10 h-10 md:w-12 md:h-12"
+              className="mt-2 max-w-[2.5rem] max-h-[2.5rem] md:max-w-[3rem] md:max-h-[3rem]"
             />
           </Link>
 

@@ -14,6 +14,9 @@ const page: FC<pageProps> = async ({ params }) => {
     where: {
       id: +params.chapterId,
       isPublished: true,
+      manga: {
+        isPublished: true,
+      },
     },
     select: {
       manga: {
@@ -30,7 +33,7 @@ const page: FC<pageProps> = async ({ params }) => {
       volume: true,
     },
   });
-  if (!chapter || !chapter.manga.isPublished) return notFound();
+  if (!chapter) return notFound();
 
   const chapterList = await db.manga
     .findUnique({

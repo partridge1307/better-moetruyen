@@ -100,7 +100,10 @@ const ChatList = () => {
                       ) : null}
 
                       <div>
-                        <Username user={user} className="max-sm:text-sm" />
+                        <Username
+                          user={user}
+                          className="max-sm:text-sm text-start"
+                        />
                         <p className="flex items-center gap-1 max-sm:text-xs text-sm">
                           <Clock className="w-4 h-4" />
                           {formatTimeToNow(new Date(con.createdAt))}

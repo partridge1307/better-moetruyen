@@ -9,7 +9,6 @@ import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { $isImageNode, ImageNode } from '../../nodes/Image';
-import { socket } from '@/lib/socket';
 import { CLEAR_EDITOR_COMMAND } from 'lexical';
 
 export default function Submit({
@@ -51,7 +50,7 @@ export default function Submit({
       } else {
         await axios.put(`/api/manga/${id}/comment/create`, values);
         if (commentId) {
-          socket.emit('notify', { type: 'COMMENT', payload: commentId });
+          // socket.emit('notify', { type: 'COMMENT', payload: commentId });
         }
       }
     },

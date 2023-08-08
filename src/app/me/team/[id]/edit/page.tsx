@@ -20,27 +20,28 @@ const page: FC<pageProps> = async ({ params }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
 
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
+  const [user, team] = await db.$transaction([
+    db.user.findFirst({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        id: true,
+      },
+    }),
+    db.team.findFirst({
+      where: {
+        id: +params.id,
+        ownerId: session.user.id,
+      },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+      },
+    }),
+  ]);
   if (!user) return <ForceSignOut />;
-
-  const team = await db.team.findFirst({
-    where: {
-      id: +params.id,
-      ownerId: user.id,
-    },
-    select: {
-      id: true,
-      name: true,
-      image: true,
-    },
-  });
   if (!team) return notFound();
 
   return <TeamEdit team={team} />;

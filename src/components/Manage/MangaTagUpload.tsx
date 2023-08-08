@@ -1,14 +1,8 @@
-import { FC } from 'react';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../ui/Form';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
+import { cn } from '@/lib/utils';
+import type { MangaUploadPayload, tagInfoProps } from '@/lib/validators/upload';
 import { Check, X } from 'lucide-react';
-import { Input } from '../ui/Input';
+import { FC } from 'react';
+import type { UseFormReturn } from 'react-hook-form';
 import {
   Command,
   CommandEmpty,
@@ -17,9 +11,15 @@ import {
   CommandItem,
   CommandList,
 } from '../ui/Command';
-import type { MangaUploadPayload, tagInfoProps } from '@/lib/validators/upload';
-import type { UseFormReturn } from 'react-hook-form';
-import { cn } from '@/lib/utils';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../ui/Form';
+import { Input } from '../ui/Input';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
 
 type Tags = {
   category: string;
@@ -85,7 +85,7 @@ const MangaTagUpload: FC<MangaTagUploadProps> = ({
                 <CommandInput placeholder="Tìm thể loại" />
                 <CommandEmpty>Không tìm thấy</CommandEmpty>
                 <CommandList>
-                  {tag.length &&
+                  {!!tag.length &&
                     tag.map((t, idx) => (
                       <CommandGroup key={`${idx}`} heading={t.category}>
                         {t.data.map((d, i) => (

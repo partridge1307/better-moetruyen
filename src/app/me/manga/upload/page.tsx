@@ -16,17 +16,20 @@ interface pageProps {}
 const page: FC<pageProps> = async ({}) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
-  if (!user) return <ForceSignOut />;
 
-  const tag = await tagGroupByCategory();
+  const [user, tag] = await Promise.all([
+    db.user.findFirst({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        id: true,
+      },
+    }),
+    tagGroupByCategory(),
+  ]);
+
+  if (!user) return <ForceSignOut />;
 
   return <MangaUpload tag={tag} />;
 };

@@ -12,7 +12,6 @@ import {
 } from '@/lib/validators/upload';
 import type EditorJS from '@editorjs/editorjs';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useDebouncedState } from '@mantine/hooks';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { Loader2 } from 'lucide-react';
@@ -33,12 +32,13 @@ import { Input } from '../ui/Input';
 import MangaAuthorUpload, { type authorResultProps } from './MangaAuthorUpload';
 import MangaImageUpload from './MangaImageUpload';
 import MangaTagUpload from './MangaTagUpload';
+import { useDebouncedValue } from '@mantine/hooks';
 const Editor = dynamic(() => import('@/components/Editor'), {
   ssr: false,
   loading: () => <Loader2 className="h-6 w-6 animate-spin" />,
 });
 
-const MangaUpload = ({ tag }: { tag: Tags }) => {
+const MangaUpload = ({ tag }: { tag: Tags[] }) => {
   const { verifyToast, notFoundToast, loginToast } = useCustomToast();
   const router = useRouter();
   const form = useForm<MangaUploadPayload>({
@@ -131,14 +131,15 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
   });
 
   const [previewImage, setPreviewImage] = useState<string>();
-  const [authorInput, setAuthorInput] = useDebouncedState('', 300);
   const [authorSelected, setAuthorSelected] = useState<authorInfoProps[]>([]);
   const [tagSelect, setTagSelect] = useState<tagInfoProps[]>([]);
   const editorRef = useRef<EditorJS>();
+  const [authorInput, setAuthorInput] = useState('');
+  const [debouncedValue] = useDebouncedValue(authorInput, 300);
 
   useEffect(() => {
-    if (authorInput) FetchAuthor(authorInput);
-  }, [FetchAuthor, authorInput]);
+    if (debouncedValue) FetchAuthor(debouncedValue);
+  }, [FetchAuthor, debouncedValue]);
 
   const onSubmitHandler = async (values: MangaUploadPayload) => {
     const editor = await editorRef.current?.save();
@@ -264,7 +265,7 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
               </FormLabel>
               <FormMessage />
               <FormControl>
-                <Input placeholder="Nhập link Facebook" {...field} />
+                <Input placeholder="https://facebook.com/" {...field} />
               </FormControl>
             </FormItem>
           )}
@@ -286,7 +287,7 @@ const MangaUpload = ({ tag }: { tag: Tags }) => {
               </FormLabel>
               <FormMessage />
               <FormControl>
-                <Input placeholder="Nhập link Discord" {...field} />
+                <Input placeholder="https://discord.gg/" {...field} />
               </FormControl>
             </FormItem>
           )}

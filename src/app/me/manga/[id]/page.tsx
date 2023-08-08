@@ -1,4 +1,3 @@
-import EditorOutput from '@/components/EditorOutput';
 import ForceSignOut from '@/components/ForceSignOut';
 import MangaImage from '@/components/Manga/MangaImage';
 import { buttonVariants } from '@/components/ui/Button';
@@ -21,6 +20,10 @@ const WeeklyView = dynamic(
   () => import('@/components/Manage/View/WeeklyView'),
   { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
 );
+const EditorOutput = dynamic(() => import('@/components/EditorOutput'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
 
 interface pageProps {
   params: {
@@ -32,41 +35,44 @@ const page: FC<pageProps> = async ({ params }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
 
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
-  if (!user) return <ForceSignOut />;
-
-  const manga = await db.manga.findFirst({
-    where: {
-      id: +params.id,
-      creatorId: user.id,
-    },
-    select: {
-      _count: {
-        select: { chapter: true },
+  const [user, manga] = await db.$transaction([
+    db.user.findFirst({
+      where: {
+        id: session.user.id,
       },
-      view: true,
-      id: true,
-      isPublished: true,
-      name: true,
-      image: true,
-      discordLink: true,
-      facebookLink: true,
-      description: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
+      select: {
+        id: true,
+      },
+    }),
+    db.manga.findFirst({
+      where: {
+        id: +params.id,
+        creatorId: session.user.id,
+      },
+      select: {
+        _count: {
+          select: { chapter: true },
+        },
+        view: true,
+        id: true,
+        isPublished: true,
+        name: true,
+        image: true,
+        discordLink: true,
+        facebookLink: true,
+        description: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    }),
+  ]);
+  if (!user) return <ForceSignOut />;
   if (!manga) return notFound();
 
-  const dailyView = await dailyViewGroupByHour(manga.id);
-  const weeklyView = await weeklyViewGroupByDay(manga.id);
+  const [dailyView, weeklyView] = await Promise.all([
+    dailyViewGroupByHour(manga.id),
+    weeklyViewGroupByDay(manga.id),
+  ]);
 
   const filteredDailyView = filterView({
     target: dailyView.map((dv) => ({

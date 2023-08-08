@@ -1,14 +1,29 @@
+import { UploadChapterImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
+import { zfd } from 'zod-form-data';
 
-const chapterValidator = z.object({
-  images: z.string().array().min(5, 'Tối thiểu 5 ảnh'),
-  chapterName: z.string().optional(),
-  chapterIndex: z.number().min(0),
-  volume: z.number().min(1),
+const chapterValidator = zfd.formData({
+  images: zfd
+    .repeatableOfType(
+      zfd
+        .file()
+        .refine((file) => file.size < 4 * 1000 * 1000, 'Ảnh phải nhỏ hơn 4MB')
+        .refine(
+          (file) =>
+            ['image/jpg', 'image/png', 'image/jpeg'].includes(file.type),
+          'Chỉ nhận định dạng .jpg, .png, .jpeg'
+        )
+    )
+    .refine((files) => files.length >= 1, 'Tối thiểu 1 ảnh'),
+  volume: zfd.numeric(z.number().min(1, 'Số volume phải lớn hơn 0')),
+  chapterIndex: zfd.numeric(z.number().min(0, 'Số thứ tự phải lớn hơn 0')),
+  chapterName: zfd
+    .text(z.string().min(3, 'Tối thiểu 3 kí tự').max(256, 'Tối đa 256 kí tự'))
+    .optional(),
 });
 
 export async function POST(
@@ -19,37 +34,29 @@ export async function POST(
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
 
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const { images, volume, chapterIndex, chapterName } =
+      chapterValidator.parse(await req.formData());
 
-    const manga = await db.manga.findFirstOrThrow({
-      where: {
-        id: +context.params.id,
-        creatorId: user.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    const {
-      chapterIndex,
-      chapterName: name,
-      images,
-      volume,
-    } = chapterValidator.parse(await req.json());
-
-    if (!images.length) return new Response('Invalid', { status: 422 });
-    if (name) {
-      if (name.length < 3 || name.length > 256)
-        return new Response('Invalid', { status: 422 });
-    }
+    const [user, manga] = await db.$transaction([
+      db.user.findFirstOrThrow({
+        where: {
+          id: token.id,
+        },
+        select: {
+          id: true,
+        },
+      }),
+      db.manga.findFirstOrThrow({
+        where: {
+          id: +context.params.id,
+          creatorId: token.id,
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+      }),
+    ]);
 
     let index;
     if (chapterIndex === 0) {
@@ -86,6 +93,8 @@ export async function POST(
         return new Response('Forbidden', { status: 403 });
     }
 
+    const uploadedImages = await UploadChapterImage(images, manga.id, index);
+
     const team = await db.memberOnTeam.findFirst({
       where: {
         userId: user.id,
@@ -99,9 +108,9 @@ export async function POST(
       await db.chapter.create({
         data: {
           chapterIndex: index,
-          name,
+          name: chapterName,
           volume,
-          images,
+          images: uploadedImages,
           manga: {
             connect: { id: manga.id },
           },
@@ -114,9 +123,9 @@ export async function POST(
       await db.chapter.create({
         data: {
           chapterIndex: index,
-          name,
+          name: chapterName,
           volume,
-          images,
+          images: uploadedImages,
           manga: {
             connect: { id: manga.id },
           },

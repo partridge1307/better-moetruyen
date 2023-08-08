@@ -1,5 +1,5 @@
+import { UploadTeamImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
-import { upload } from '@/lib/discord';
 import { TeamEditValidator } from '@/lib/validators/team';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
@@ -17,30 +17,32 @@ export async function PATCH(
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
 
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-    const team = await db.team.findFirstOrThrow({
-      where: {
-        id: +context.params.id,
-        ownerId: user.id,
-      },
-      select: {
-        id: true,
-        image: true,
-      },
-    });
+    const [, team] = await db.$transaction([
+      db.user.findFirstOrThrow({
+        where: {
+          id: token.id,
+        },
+        select: {
+          id: true,
+        },
+      }),
+      db.team.findFirstOrThrow({
+        where: {
+          id: +context.params.id,
+          ownerId: token.id,
+        },
+        select: {
+          id: true,
+          image: true,
+        },
+      }),
+    ]);
 
     const form = await req.formData();
     const { image, name } = formValidator.parse(form);
     let imageUrl: string | null = null;
 
-    if (image) await upload({ blobImage: image, retryCount: 5 });
+    if (image) imageUrl = await UploadTeamImage(image, team.id);
 
     await db.team.update({
       where: {

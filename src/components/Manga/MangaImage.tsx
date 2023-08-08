@@ -1,14 +1,13 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn, rgbDataURL } from '@/lib/utils';
+import '@/styles/zoom.css';
+import type { Manga } from '@prisma/client';
 import { Maximize2 } from 'lucide-react';
 import Image from 'next/image';
 import { FC, useCallback, useState } from 'react';
 import { Controlled as Zoom } from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
-import '@/styles/zoom.css';
-import axios from 'axios';
-import type { Manga } from '@prisma/client';
 
 interface MangaCardProps extends React.HTMLAttributes<HTMLImageElement> {
   manga: Pick<Manga, 'id' | 'image'>;
@@ -17,7 +16,6 @@ interface MangaCardProps extends React.HTMLAttributes<HTMLImageElement> {
 
 const MangaImage: FC<MangaCardProps> = ({ manga, className }) => {
   const [isZoomed, setIsZoomed] = useState<boolean>(false);
-  axios.post(`/api/manga/${manga.id}/history`).catch(() => {});
 
   const handleZoom = useCallback((value: boolean) => {
     setIsZoomed(value);
@@ -32,11 +30,13 @@ const MangaImage: FC<MangaCardProps> = ({ manga, className }) => {
       <div className={cn('relative', className)}>
         <Image
           fill
-          sizes="0%"
+          sizes="70vw"
           priority
           src={manga.image}
+          placeholder="blur"
+          blurDataURL={rgbDataURL(255, 209, 148)}
           alt="Manga Image"
-          className="rounded-md object-cover"
+          className="rounded-md object-cover w-full h-full"
         />
         <div
           role="button"

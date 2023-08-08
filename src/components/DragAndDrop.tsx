@@ -1,4 +1,3 @@
-import { Progress } from '@/components/ui/Progress';
 import {
   DndContext,
   DragEndEvent,
@@ -12,17 +11,11 @@ import { SortableContext, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Pencil, X } from 'lucide-react';
 import Image from 'next/image';
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import type { Dispatch, FC, SetStateAction } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 interface indexProps {
-  items: { src: string; name: string; progress?: number }[];
+  items: { src: string; name: string }[];
   isUpload: boolean;
   setItems: Dispatch<SetStateAction<{ src: string; name: string }[]>>;
 }
@@ -97,7 +90,7 @@ function SortableItem({
   setCurrentIdx,
   setItems,
 }: {
-  img: { src: string; name: string; progress?: number };
+  img: { src: string; name: string };
   index: number;
   isUpload: boolean;
   setCurrentIdx: Dispatch<SetStateAction<number>>;
@@ -126,10 +119,6 @@ function SortableItem({
           alt={img.name}
           className="object-cover w-36 h-48 rounded-md"
         />
-
-        {img.progress ? (
-          <Progress className="mt-1 h-2" value={img.progress} />
-        ) : null}
 
         {!isUpload ? (
           <span

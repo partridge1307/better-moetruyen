@@ -21,36 +21,36 @@ const page: FC<pageProps> = async ({ params }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
 
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
+  const [user, manga, tags] = await Promise.all([
+    db.user.findFirst({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        id: true,
+      },
+    }),
+    db.manga.findFirst({
+      where: {
+        id: +params.id,
+        creatorId: session.user.id,
+      },
+      select: {
+        author: true,
+        tags: true,
+        id: true,
+        name: true,
+        description: true,
+        review: true,
+        image: true,
+        facebookLink: true,
+        discordLink: true,
+      },
+    }),
+    tagGroupByCategory(),
+  ]);
   if (!user) return <ForceSignOut />;
-
-  const manga = await db.manga.findFirst({
-    where: {
-      id: +params.id,
-      creatorId: user.id,
-    },
-    select: {
-      author: true,
-      tags: true,
-      id: true,
-      name: true,
-      description: true,
-      review: true,
-      image: true,
-      facebookLink: true,
-      discordLink: true,
-    },
-  });
   if (!manga) return notFound();
-
-  const tags = await tagGroupByCategory();
 
   return <EditManga manga={manga} tags={tags} />;
 };

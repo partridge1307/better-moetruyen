@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import type { Crop, PixelCrop } from 'react-image-crop';

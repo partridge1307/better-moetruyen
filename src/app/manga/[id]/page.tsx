@@ -1,5 +1,3 @@
-import FBEmbed from '@/components/FBEmbed';
-import MangaImage from '@/components/Manga/MangaImage';
 import UserAvatar from '@/components/User/UserAvatar';
 import UserBanner from '@/components/User/UserBanner';
 import Username from '@/components/User/Username';
@@ -31,6 +29,18 @@ const ListTreeChapter = dynamic(
   () => import('@/components/Chapter/ListTreeChapter'),
   { loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
 );
+const FBEmbed = dynamic(() => import('@/components/FBEmbed'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
+const MangaControll = dynamic(
+  () => import('@/components/Manga/MangaControll'),
+  { loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
+);
+const MangaImage = dynamic(() => import('@/components/Manga/MangaImage'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
 
 interface pageProps {
   params: {
@@ -45,11 +55,6 @@ type discordProps = {
 };
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  if (!params.id)
-    return {
-      title: 'Moetruyen',
-      description: 'Powered by Yuri',
-    };
   const manga = await db.manga.findFirst({
     where: {
       id: +params.id,
@@ -71,84 +76,91 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 const page: FC<pageProps> = async ({ params }) => {
-  const manga = await db.manga.findFirst({
-    where: {
-      id: +params.id,
-      isPublished: true,
-    },
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      description: true,
-      facebookLink: true,
-      discordLink: true,
-      author: true,
-      tags: true,
-      creator: {
-        select: {
-          name: true,
-          image: true,
-          banner: true,
-          color: true,
-          memberOnTeam: {
-            select: {
-              team: {
-                select: {
-                  id: true,
-                  name: true,
-                  image: true,
+  const [manga, comments] = await db.$transaction([
+    db.manga.findFirst({
+      where: {
+        id: +params.id,
+        isPublished: true,
+      },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        description: true,
+        facebookLink: true,
+        discordLink: true,
+        author: true,
+        tags: true,
+        _count: {
+          select: {
+            mangaFollow: true,
+          },
+        },
+        view: {
+          select: {
+            totalView: true,
+          },
+        },
+        creator: {
+          select: {
+            id: true,
+            name: true,
+            image: true,
+            banner: true,
+            color: true,
+            memberOnTeam: {
+              select: {
+                team: {
+                  select: {
+                    id: true,
+                    name: true,
+                    image: true,
+                  },
                 },
               },
             },
           },
         },
       },
-      view: {
-        select: {
-          totalView: true,
+    }),
+    db.comment.findMany({
+      where: {
+        mangaId: +params.id,
+        replyToId: null,
+      },
+      select: {
+        id: true,
+        content: true,
+        oEmbed: true,
+        createdAt: true,
+        authorId: true,
+        chapter: {
+          select: {
+            id: true,
+            chapterIndex: true,
+          },
+        },
+        author: {
+          select: {
+            name: true,
+            image: true,
+            color: true,
+          },
+        },
+        votes: true,
+        _count: {
+          select: {
+            replies: true,
+          },
         },
       },
-    },
-  });
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 10,
+    }),
+  ]);
   if (!manga) return notFound();
-
-  const comments = await db.comment.findMany({
-    where: {
-      mangaId: +params.id,
-      replyToId: null,
-    },
-    select: {
-      id: true,
-      content: true,
-      oEmbed: true,
-      createdAt: true,
-      authorId: true,
-      chapter: {
-        select: {
-          id: true,
-          chapterIndex: true,
-        },
-      },
-      author: {
-        select: {
-          name: true,
-          image: true,
-          color: true,
-        },
-      },
-      votes: true,
-      _count: {
-        select: {
-          replies: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    take: 10,
-  });
 
   let discord: discordProps = { code: false };
   if (manga.discordLink) {
@@ -188,21 +200,20 @@ const page: FC<pageProps> = async ({ params }) => {
             </div>
           </div>
 
-          <div className="absolute inset-0 -z-10">
-            <div className="relative h-full w-full">
-              <Image
-                fill
-                priority
-                sizes="0%"
-                src={manga.image}
-                alt="Manga Background Image"
-                className="object-cover blur-sm brightness-[.2] md:brightness-[.3] rounded-md"
-              />
-            </div>
-          </div>
+          <Image
+            width={500}
+            height={300}
+            quality={50}
+            priority
+            src={manga.image}
+            alt="Manga Background Image"
+            className="absolute inset-0 -z-10 h-full w-full blur-sm brightness-[.2] md:brightness-[.3] object-cover rounded-md"
+          />
         </div>
 
         <div className="p-3 md:p-6 space-y-10 dark:bg-zinc-900/80 rounded-md">
+          <MangaControll manga={manga} />
+
           <div className="space-y-1">
             <p className="font-semibold text-lg">Thể loại</p>
             <TagWrapper>
@@ -217,10 +228,14 @@ const page: FC<pageProps> = async ({ params }) => {
             </TagWrapper>
           </div>
 
-          <dl className="flex gap-2">
-            <dt>Lượt xem:</dt>
-            <dd className="font-medium">{manga.view?.totalView}</dd>
-          </dl>
+          <div className="flex gap-6">
+            <p>
+              <span>Lượt xem:</span> {manga.view?.totalView}
+            </p>
+            <p>
+              <span>Theo dõi:</span> {manga._count.mangaFollow}
+            </p>
+          </div>
 
           <div className="space-y-2">
             <p className="font-semibold text-lg">Mô tả</p>

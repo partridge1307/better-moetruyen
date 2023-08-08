@@ -29,7 +29,6 @@ const LatestManga: FC<LatestMangaProps> = async ({}) => {
           },
         },
       },
-      id: true,
       volume: true,
       chapterIndex: true,
       name: true,

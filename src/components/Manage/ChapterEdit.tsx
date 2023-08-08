@@ -9,7 +9,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Chapter } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { ImagePlus, PlusCircle, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
@@ -25,6 +25,7 @@ import {
   FormMessage,
 } from '../ui/Form';
 import { Input } from '../ui/Input';
+import { Progress } from '../ui/Progress';
 
 interface ChapterEditProps {
   chapter: Pick<
@@ -36,14 +37,13 @@ interface ChapterEditProps {
 const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
   const { loginToast, notFoundToast } = useCustomToast();
   const router = useRouter();
-  const [images, setImages] = useState<
-    { src: string; name: string; progress?: number }[]
-  >(
+  const [images, setImages] = useState<{ src: string; name: string }[]>(
     chapter.images.map((img, index) => ({
       src: img,
       name: `Trang ${index + 1}`,
     }))
   );
+  const [updateProgress, setUpdateProgress] = useState<number | null>(null);
 
   const form = useForm<ChapterUploadPayload>({
     resolver: zodResolver(ChapterUploadValidator),
@@ -55,66 +55,38 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
     },
   });
 
-  const imgUpload = (
-    blobStrArr: { src: string; index: number }[]
-  ): Promise<{ src: string; index: number }[]> =>
-    new Promise(async (resolve) => {
-      let imagePromise: Promise<AxiosResponse>[] = [];
-
-      await Promise.all(
-        blobStrArr.map(async (img) => {
-          const blob = await fetch(img.src).then((res) => res.blob());
-          const form = new FormData();
-          form.append('file', blob);
-          imagePromise.push(
-            axios.post('/api/image', form, {
-              onUploadProgress: (progressEvent) => {
-                const percentCompleted = Math.floor(
-                  (progressEvent.loaded * 100) / progressEvent.total!
-                );
-                images[img.index].progress = percentCompleted;
-                setImages([...images]);
-              },
-            })
-          );
-        })
-      );
-
-      const imageUrl: { src: string; index: number }[] = await Promise.all(
-        imagePromise
-      ).then((res) =>
-        res.map((r, idx) => {
-          blobStrArr[idx].src = r.data;
-          return blobStrArr[idx];
-        })
-      );
-      resolve(imageUrl);
-    });
   const { mutate: Edit, isLoading: isEditting } = useMutation({
     mutationFn: async (values: ChapterUploadPayload) => {
-      const { image, ...payload } = values;
-      const blobStrArr = images.flatMap((img, index) =>
-        img.src.startsWith('blob') ? { src: img.src, index } : []
+      const { chapterIndex, chapterName, volume } = values;
+
+      const form = new FormData();
+      form.append('chapterIndex', `${chapterIndex}`);
+      form.append('volume', `${volume}`);
+      chapterName ? form.append('chapterName', chapterName) : null;
+
+      await Promise.all(
+        images.map(async (image) => {
+          if (image.src.startsWith('blob')) {
+            const blob = await fetch(image.src).then((res) => res.blob());
+            return form.append('images', blob);
+          } else {
+            return form.append('images', image.src);
+          }
+        })
       );
-
-      if (blobStrArr.length) {
-        const imageRes = await imgUpload(blobStrArr);
-        await Promise.all(
-          imageRes.map((img) => (images[img.index].src = img.src))
-        );
-
-        const { data } = await axios.patch(`/api/chapter/${chapter.id}/edit`, {
-          images: images.map((img) => img.src),
-          ...payload,
-        });
-        return data;
-      } else {
-        const { data } = await axios.patch(`/api/chapter/${chapter.id}/edit`, {
-          images: images.map((img) => img.src),
-          ...payload,
-        });
-        return data;
-      }
+      const { data } = await axios.patch(
+        `/api/chapter/${chapter.id}/edit`,
+        form,
+        {
+          onDownloadProgress(progressEvent) {
+            const percentCompleted = Math.floor(
+              (progressEvent.loaded * 100) / progressEvent.total!
+            );
+            setUpdateProgress(percentCompleted);
+          },
+        }
+      );
+      return data as string;
     },
     onError: (e) => {
       if (e instanceof AxiosError) {
@@ -131,6 +103,7 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
     onSuccess: () => {
       router.push(`/me/manga/${chapter.mangaId}/chapter`);
       router.refresh();
+      setUpdateProgress(null);
 
       return toast({
         title: 'Thành công',
@@ -139,10 +112,10 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
   });
 
   function onSubmitHandler(values: ChapterUploadPayload) {
-    if (images.length < 5)
+    if (images.length < 1)
       return form.setError('image', {
         type: 'custom',
-        message: 'Tối thiểu 5 ảnh',
+        message: 'Tối thiểu 1 ảnh',
       });
     if (values.chapterName) {
       if (values.chapterName.length < 3) {
@@ -276,6 +249,7 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
                 </div>
               ) : (
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.preventDefault();
                     const target = document.getElementById(
@@ -333,6 +307,8 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
             </FormItem>
           )}
         />
+
+        {updateProgress ? <Progress value={updateProgress} /> : null}
 
         <Button
           type="submit"

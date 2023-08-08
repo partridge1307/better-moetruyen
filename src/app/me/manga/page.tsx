@@ -1,7 +1,6 @@
 import ForceSignOut from '@/components/ForceSignOut';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { columns } from '@/components/Manage/Table/Manga/column';
 import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
 import { redirect } from 'next/navigation';
@@ -16,20 +15,11 @@ const DataMangaTable = dynamic(
 const page = async () => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
-  if (!user) return <ForceSignOut />;
 
   const manga = await db.user
     .findUnique({
       where: {
-        id: user.id,
+        id: session.user.id,
       },
     })
     .manga({
@@ -40,11 +30,12 @@ const page = async () => {
         updatedAt: true,
       },
     });
+  if (!manga) return <ForceSignOut />;
 
   return (
     <div className="min-h-[400px] md:min-h-[500px]">
       {!!manga?.length ? (
-        <DataMangaTable columns={columns} data={manga} />
+        <DataMangaTable data={manga} />
       ) : (
         <div className="min-h-[400px] md:min-h-[500px] flex items-center justify-center">
           Bạn chưa có manga nào. Hãy upload một bộ ngay thôi nhé

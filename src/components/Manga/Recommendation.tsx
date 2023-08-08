@@ -3,9 +3,9 @@ import { db } from '@/lib/db';
 import { randomManga } from '@/lib/query';
 import { cn, formatTimeToNow, groupArray } from '@/lib/utils';
 import type { Session } from 'next-auth';
-import { Card, CardContent, CardFooter, CardHeader } from '../ui/Card';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
+import { Card, CardContent, CardFooter } from '../ui/Card';
 
 const getMangas = async (session: Session | null) => {
   let manga;
@@ -27,13 +27,14 @@ const getMangas = async (session: Session | null) => {
       },
       take: 10,
     });
+
     if (!history.length) manga = await randomManga(12);
     else {
       const tags = history.flatMap((h) => h.manga.tags.map((tag) => tag.name));
       const groupedTags = (
         Object.entries(groupArray(tags)) as [string, number][]
       ).sort((a, b) => b[1] - a[1]);
-      const filterdTags = groupedTags.slice(0, 4).map((tag) => tag[0]);
+      const filterdTags = groupedTags.slice(0, 3).map((tag) => tag[0]);
 
       manga = await db.manga.findMany({
         where: {
@@ -63,9 +64,8 @@ const Recommendation = async () => {
   return (
     <div
       className={cn(
-        'flex gap-4 p-2 overflow-auto snap-proximity snap-x rounded-lg dark:bg-zinc-900/75',
-        'md:grid md:place-items-center md:grid-cols-3 md:snap-y md:max-h-96 md:scrollbar md:dark:scrollbar--dark',
-        'lg:grid-cols-4'
+        'flex gap-4 py-2 overflow-auto snap-proximity snap-x rounded-lg dark:bg-zinc-900/75',
+        'md:grid md:place-items-center md:grid-cols-4 md:snap-y md:max-h-96 md:scrollbar md:dark:scrollbar--dark'
       )}
     >
       {mangas.map((manga, idx) => (
@@ -75,16 +75,17 @@ const Recommendation = async () => {
           className="w-fit snap-start"
         >
           <Card className="relative overflow-hidden w-fit">
-            <CardHeader className="relative w-32 h-44 md:w-40 md:h-56">
+            <div className="relative w-32 h-44 lg:w-40 lg:h-56">
               <Image
                 fill
-                sizes="0%"
-                priority
+                sizes="10vw"
+                quality={30}
                 src={manga.image}
                 alt="Recommend Manga Image"
                 className="object-cover rounded-lg"
               />
-            </CardHeader>
+            </div>
+
             <div className="absolute inset-0 transition-opacity opacity-0 hover:opacity-100 hover:bg-gradient-to-t dark:from-zinc-900 flex items-end">
               <div className="p-2">
                 <CardContent className="p-0 text-lg">{manga.name}</CardContent>

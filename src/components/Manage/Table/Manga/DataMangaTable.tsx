@@ -1,5 +1,6 @@
 'use client';
 
+import { columns } from '@/components/Manage/Table/Manga/column';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import {
@@ -11,7 +12,6 @@ import {
   TableRow,
 } from '@/components/ui/Table';
 import type {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -31,18 +31,11 @@ import Link from 'next/link';
 import { useState } from 'react';
 import DataToolbar from './DataToolbar';
 import { MangaColumn } from './column';
-import type { Manga } from '@prisma/client';
 
-type MangaData = Pick<Manga, 'id' | 'name' | 'isPublished' | 'updatedAt'>;
-
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps {
+  data: MangaColumn[];
 }
-function DataMangaTable({
-  data,
-  columns,
-}: DataTableProps<MangaColumn, MangaData>) {
+function DataMangaTable({ data }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilter] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

@@ -1,5 +1,5 @@
+import { UploadMangaImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
-import { upload } from '@/lib/discord';
 import { disRegex, fbRegex } from '@/lib/utils';
 import { authorInfo, tagInfo } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
@@ -27,7 +27,14 @@ const mangaFormValidator = zfd.formData({
     .refine((file) =>
       ['image/jpg', 'image/jpeg', 'image/png'].includes(file.type)
     )
-    .or(zfd.text()),
+    .or(
+      zfd
+        .text()
+        .refine(
+          (endpoint) => endpoint.startsWith(`${process.env.IMG_DOMAIN}`),
+          'Ảnh có đường dẫn không hợp lệ'
+        )
+    ),
   name: zfd.text(
     z.string().min(3, 'Tối thiểu 3 kí tự').max(255, 'Tối đa 255 kí tự')
   ),
@@ -49,24 +56,6 @@ export async function PATCH(
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
 
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-    const targetManga = await db.manga.findFirstOrThrow({
-      where: {
-        id: +context.params.id,
-        creatorId: user.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
     const form = await req.formData();
     const {
       image: img,
@@ -79,11 +68,31 @@ export async function PATCH(
       discordLink,
     } = mangaFormValidator.parse(form);
 
+    const [, targetManga] = await db.$transaction([
+      db.user.findFirstOrThrow({
+        where: {
+          id: token.id,
+        },
+        select: {
+          id: true,
+        },
+      }),
+      db.manga.findFirstOrThrow({
+        where: {
+          id: +context.params.id,
+          creatorId: token.id,
+        },
+        select: {
+          id: true,
+        },
+      }),
+    ]);
+
     let image: string;
     if (typeof img === 'string') {
       image = img;
     } else {
-      image = await upload({ blobImage: img, retryCount: 5 });
+      image = await UploadMangaImage(img, targetManga.id);
     }
 
     if (facebookLink && !fbRegex.test(facebookLink))

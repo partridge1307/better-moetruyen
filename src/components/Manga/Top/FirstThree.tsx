@@ -25,17 +25,18 @@ const FirstThree: FC<FirstThreeProps> = ({ mangas }) => {
             >
               <div className="relative w-16 h-16 lg:w-20 lg:h-20">
                 <Image
-                  fill
-                  sizes="0%"
+                  width={75}
+                  height={75}
+                  quality={50}
                   src={manga.image}
                   alt="First Three Top Manga Image"
-                  className="rounded-full object-cover"
+                  className="absolute top-0 left-0 rounded-full object-cover w-16 h-16 lg:w-20 lg:h-20"
                 />
                 <Crown className="float-right translate-x-1 -translate-y-2 w-6 h-6 rotate-45 text-orange-400" />
               </div>
-              <h5 className="lg:text-lg font-medium text-orange-400">
-                {manga.name}
-              </h5>
+              <h6 className="lg:text-lg font-medium text-orange-400">
+                Hạng <span>{idx + 1}</span>
+              </h6>
             </Link>
           );
         } else {
@@ -43,14 +44,17 @@ const FirstThree: FC<FirstThreeProps> = ({ mangas }) => {
             return (
               <div
                 key={idx}
-                className={cn(
-                  'flex flex-col items-center gap-2',
-                  idx === 1 ? 'order-first' : 'order-last'
-                )}
+                className={cn('flex flex-col items-center gap-2', {
+                  'order-first': idx === 1,
+                  'order-last': idx === 2,
+                })}
               >
                 <div className="w-10 h-10 lg:w-14 lg:h-14 flex justify-center items-center dark:bg-zinc-700 rounded-full">
                   <Armchair className="w-8 h-8 opacity-50" />
                 </div>
+                <h6>
+                  Hạng <span>{idx + 1}</span>
+                </h6>
               </div>
             );
           } else {
@@ -58,20 +62,22 @@ const FirstThree: FC<FirstThreeProps> = ({ mangas }) => {
               <Link
                 key={idx}
                 href={`/manga/${manga.id}`}
-                className={cn(
-                  'flex flex-col items-center gap-2',
-                  idx === 1 ? 'order-first' : 'order-last'
-                )}
+                className={cn('flex flex-col items-center gap-2', {
+                  'order-first': idx === 1,
+                  'order-last': idx === 2,
+                })}
               >
-                <div className="relative w-10 h-10 lg:w-14 lg:h-14">
-                  <Image
-                    fill
-                    sizes="0%"
-                    src={manga.image}
-                    alt="Top Daily Manga Image"
-                    className="rounded-full object-cover"
-                  />
-                </div>
+                <Image
+                  width={50}
+                  height={50}
+                  quality={40}
+                  src={manga.image}
+                  alt="Top Daily Manga Image"
+                  className="rounded-full object-cover w-10 h-10 lg:w-14 lg:h-14"
+                />
+                <h6 className="text-sm">
+                  Hạng <span>{idx + 1}</span>
+                </h6>
               </Link>
             );
           }

@@ -51,7 +51,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
   >('hidden');
   const slider = useRef<HTMLDivElement | null>(null);
   const currentImageRef = useRef<HTMLImageElement | null>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
   const { ref, entry } = useIntersection({
     root: imageRef.current,
     threshold: 0,
@@ -138,7 +138,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
       const init = () => {
         const handler = () => {
           if (window.scrollY <= 200) {
-            slider.current?.scrollIntoView({ behavior: 'instant' });
+            slider.current?.scrollIntoView({ behavior: 'smooth' });
           }
 
           if (slider.current?.scrollTop === 0) {
@@ -199,7 +199,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
             chapter={chapter}
             slideLeft={slideLeft}
             slideRight={slideRight}
-            imageRef={imageRef}
+            imageRef={ref}
             currentImage={currentImage}
             currentChapterId={chapter.id}
             currentChapterIndex={chapter.chapterIndex}
@@ -210,7 +210,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
           <VerticalViewChapter
             ref={slider}
             chapter={chapter}
-            imageRef={imageRef}
+            imageRef={ref}
             chapterList={chapterList}
             currentChapterIndex={chapter.chapterIndex}
             mangaId={chapter.manga.id}

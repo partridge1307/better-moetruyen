@@ -11,23 +11,24 @@ export async function POST(
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
 
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    const targetUser = await db.user.findFirstOrThrow({
-      where: {
-        id: context.params.id,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const [user, targetUser] = await db.$transaction([
+      db.user.findFirstOrThrow({
+        where: {
+          id: token.id,
+        },
+        select: {
+          id: true,
+        },
+      }),
+      db.user.findFirstOrThrow({
+        where: {
+          id: context.params.id,
+        },
+        select: {
+          id: true,
+        },
+      }),
+    ]);
 
     const existConversation = await db.conversation.findFirst({
       where: {

@@ -1,19 +1,24 @@
 import type { Chapter, Manga } from '@prisma/client';
 import { Loader2, MessagesSquare } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { RefObject, Suspense, forwardRef, lazy, memo } from 'react';
+import { forwardRef, memo } from 'react';
 import NextChapterButton from './NextChapterButton';
 import PrevChapterButton from './PrevChapterButton';
-const Comment = lazy(() => import('@/components/Comment/Chapter'));
-const MoetruyenEditor = lazy(
-  () => import('@/components/Editor/MoetruyenEditor')
+const MoetruyenEditor = dynamic(
+  () => import('@/components/Editor/MoetruyenEditor'),
+  { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
 );
+const Comment = dynamic(() => import('@/components/Comment/Chapter'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
 
 interface VerticalViewChapterProps {
   chapter: Pick<Chapter, 'images'> & {
     manga: Pick<Manga, 'name'>;
   };
-  imageRef: RefObject<HTMLImageElement>;
+  imageRef: (element: any) => void;
   chapterList:
     | Pick<Chapter, 'id' | 'chapterIndex' | 'name' | 'volume' | 'isPublished'>[]
     | null;
@@ -108,10 +113,8 @@ const VerticalViewChapter = forwardRef<
               <MessagesSquare className="w-5 h-5" />
             </p>
 
-            <Suspense fallback={<Loader2 className="w-6 h-6 animate-spin" />}>
-              <MoetruyenEditor id={`${mangaId}`} chapterId={currentChapterId} />
-              <Comment mangaId={mangaId} chapterId={currentChapterId} />
-            </Suspense>
+            <MoetruyenEditor id={`${mangaId}`} chapterId={currentChapterId} />
+            <Comment mangaId={mangaId} chapterId={currentChapterId} />
           </div>
         </div>
       </div>

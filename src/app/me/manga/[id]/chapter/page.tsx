@@ -3,10 +3,9 @@ import { buttonVariants } from '@/components/ui/Button';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
-import { columns } from '@/components/Manage/Table/Chapter/column';
-import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 const DataChapterTable = dynamic(
   () => import('@/components/Manage/Table/Chapter/DataChapterTable'),
@@ -19,33 +18,35 @@ const DataChapterTable = dynamic(
 const page = async ({ params }: { params: { id: string } }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
-  if (!user) return <ForceSignOut />;
 
-  const chapters = await db.manga
-    .findUnique({
+  const [user, chapters] = await db.$transaction([
+    db.user.findFirst({
       where: {
-        id: +params.id,
-        creatorId: user.id,
+        id: session.user.id,
       },
-    })
-    .chapter({
       select: {
         id: true,
-        name: true,
-        isPublished: true,
-        mangaId: true,
-        updatedAt: true,
-        images: true,
       },
-    });
+    }),
+    db.manga
+      .findUnique({
+        where: {
+          id: +params.id,
+          creatorId: session.user.id,
+        },
+      })
+      .chapter({
+        select: {
+          id: true,
+          name: true,
+          isPublished: true,
+          mangaId: true,
+          updatedAt: true,
+          images: true,
+        },
+      }),
+  ]);
+  if (!user) return <ForceSignOut />;
 
   return (
     <div className="min-h-[400px] md:min-h-[500px]">
@@ -54,13 +55,13 @@ const page = async ({ params }: { params: { id: string } }) => {
           <Link
             href={`/me/manga/${params.id}/chapter/upload`}
             className={cn(
-              buttonVariants({ variant: 'outline' }),
-              'self-end rounded-lg max-sm:w-full'
+              buttonVariants(),
+              'self-end rounded-lg max-sm:w-full mr-1'
             )}
           >
             Thêm chapter
           </Link>
-          <DataChapterTable columns={columns} data={chapters} />
+          <DataChapterTable data={chapters} />
         </div>
       ) : (
         <div className="min-h-[400px] md:min-h-[500px] flex h-full flex-col items-center justify-center gap-4">

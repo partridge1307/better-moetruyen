@@ -1,5 +1,6 @@
 'use client';
 
+import { columns } from '@/components/Manage/Table/Chapter/column';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import {
@@ -11,7 +12,6 @@ import {
   TableRow,
 } from '@/components/ui/Table';
 import type {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -31,22 +31,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import DataToolbar from './DataToolbar';
 import { ChapterColumn } from './column';
-import type { Chapter } from '@prisma/client';
 
-type ChapterData = Pick<
-  Chapter,
-  'id' | 'name' | 'isPublished' | 'mangaId' | 'updatedAt' | 'images'
->;
-
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface DataTableProps {
+  data: ChapterColumn[];
 }
 
-function DataChapterTable({
-  data,
-  columns,
-}: DataTableProps<ChapterColumn, ChapterData>) {
+function DataChapterTable({ data }: DataTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilter] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

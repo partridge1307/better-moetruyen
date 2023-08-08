@@ -12,25 +12,27 @@ const ChapterUpload = dynamic(
 const page = async ({ params }: { params: { id: string } }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
-  if (!user) return <ForceSignOut />;
 
-  const manga = await db.manga.findFirst({
-    where: {
-      id: +params.id,
-      creatorId: user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
+  const [user, manga] = await db.$transaction([
+    db.user.findFirst({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        id: true,
+      },
+    }),
+    db.manga.findFirst({
+      where: {
+        id: +params.id,
+        creatorId: session.user.id,
+      },
+      select: {
+        id: true,
+      },
+    }),
+  ]);
+  if (!user) return <ForceSignOut />;
   if (!manga) return notFound();
 
   return <ChapterUpload id={params.id} />;

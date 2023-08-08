@@ -1,11 +1,12 @@
+'use client';
+
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
-import { socket } from '@/lib/socket';
-import type { Notify, Prisma, User } from '@prisma/client';
+import type { Notify, User } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Bell, Loader2 } from 'lucide-react';
 import type { Session } from 'next-auth';
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import { Button } from '../ui/Button';
 import {
   DropdownMenu,
@@ -57,69 +58,69 @@ const Notifications: FC<NotificationsProps> = ({ session }) => {
     }
   );
 
-  useEffect(() => {
-    socket.connect();
+  // useEffect(() => {
+  //   socket.connect();
 
-    socket.emit('userConnect', session.user.id);
-  }, [session.user]);
+  //   socket.emit('userConnect', session.user.id);
+  // }, [session.user]);
 
-  useEffect(() => {
-    socket.on(
-      'notify',
-      (data: {
-        type: notifyType;
-        data: {
-          id: number;
-          fromUser: Pick<User, 'name'>;
-          mangaId?: number;
-          chapterId?: number | null;
-        };
-      }) => {
-        const { id, fromUser, mangaId, chapterId } = data.data;
+  // useEffect(() => {
+  //   socket.on(
+  //     'notify',
+  //     (data: {
+  //       type: notifyType;
+  //       data: {
+  //         id: number;
+  //         fromUser: Pick<User, 'name'>;
+  //         mangaId?: number;
+  //         chapterId?: number | null;
+  //       };
+  //     }) => {
+  //       const { id, fromUser, mangaId, chapterId } = data.data;
 
-        if (
-          data.type === notifyType.LIKE ||
-          data.type === notifyType.MENTION ||
-          data.type === notifyType.COMMENT
-        ) {
-          setGeneralNotify((prev) => [
-            {
-              id,
-              type: data.type,
-              createdAt: new Date(Date.now()),
-              fromUser: fromUser,
-              isRead: false,
-              content: {
-                mangaId,
-                chapterId,
-              } as Prisma.JsonValue,
-            },
-            ...prev,
-          ]);
-        }
+  //       if (
+  //         data.type === notifyType.LIKE ||
+  //         data.type === notifyType.MENTION ||
+  //         data.type === notifyType.COMMENT
+  //       ) {
+  //         setGeneralNotify((prev) => [
+  //           {
+  //             id,
+  //             type: data.type,
+  //             createdAt: new Date(Date.now()),
+  //             fromUser: fromUser,
+  //             isRead: false,
+  //             content: {
+  //               mangaId,
+  //               chapterId,
+  //             } as Prisma.JsonValue,
+  //           },
+  //           ...prev,
+  //         ]);
+  //       }
 
-        setIsClear(false);
-      }
-    );
+  //       setIsClear(false);
+  //     }
+  //   );
 
-    return () => {
-      socket.off('notify');
-    };
-  }, []);
+  //   return () => {
+  //     socket.off('notify');
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    let notifications = notifyData?.pages.flatMap((page) => page);
+  // useEffect(() => {
+  //   let notifications = notifyData?.pages.flatMap((page) => page);
 
-    if (notifications?.length) {
-      setGeneralNotify(
-        notifications?.filter(
-          (noti) => noti.type !== 'SYSTEM' && noti.type !== 'FOLLOW'
-        )
-      );
+  //   if (notifications?.length) {
+  //     setGeneralNotify(
+  //       notifications?.filter(
+  //         (noti) => noti.type !== 'SYSTEM' && noti.type !== 'FOLLOW'
+  //       )
+  //     );
 
-      notifications.some((noti) => noti.isRead === false) && setIsClear(false);
-    }
-  }, [notifyData?.pages]);
+  //     notifications.some((noti) => noti.isRead === false) && setIsClear(false);
+  //   }
+  // }, [notifyData?.pages]);
 
   return (
     <DropdownMenu>

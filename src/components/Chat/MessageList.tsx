@@ -1,16 +1,15 @@
 'use client';
 
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
-import { socket } from '@/lib/socket';
 import { useIntersection } from '@mantine/hooks';
 import type { Conversation, Message, User } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { Loader2 } from 'lucide-react';
 import { FC, useEffect, useRef, useState } from 'react';
 import UserAvatar from '../User/UserAvatar';
 import { ScrollArea } from '../ui/ScrollArea';
 import MessageCard from './MessageCard';
-import { Loader2 } from 'lucide-react';
 
 type ExtendedMessage = Pick<Message, 'content' | 'createdAt'> & {
   sender: Pick<User, 'id' | 'name' | 'image' | 'color'>;
@@ -52,30 +51,30 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
     }
   );
 
-  useEffect(() => {
-    socket.on(
-      'message',
-      (data: {
-        content: string;
-        sender: Pick<User, 'id' | 'name' | 'color' | 'image'>;
-      }) => {
-        const { content, sender } = data;
+  // useEffect(() => {
+  //   socket.on(
+  //     'message',
+  //     (data: {
+  //       content: string;
+  //       sender: Pick<User, 'id' | 'name' | 'color' | 'image'>;
+  //     }) => {
+  //       const { content, sender } = data;
 
-        setMessages((prev) => [
-          ...prev,
-          {
-            content,
-            createdAt: new Date(Date.now()),
-            sender,
-          },
-        ]);
-      }
-    );
+  //       setMessages((prev) => [
+  //         ...prev,
+  //         {
+  //           content,
+  //           createdAt: new Date(Date.now()),
+  //           sender,
+  //         },
+  //       ]);
+  //     }
+  //   );
 
-    return () => {
-      socket.off('message');
-    };
-  }, []);
+  //   return () => {
+  //     socket.off('message');
+  //   };
+  // }, []);
   useEffect(() => {
     if (entry?.isIntersecting) {
       fetchNextPage();
@@ -111,7 +110,11 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
             if (sender.id === me.id) {
               return (
                 <li ref={ref} key={index} className="flex gap-2">
-                  <MessageCard message={message} className="items-end" />
+                  <MessageCard
+                    message={message}
+                    className="items-end"
+                    isMe={true}
+                  />
                 </li>
               );
             } else {
@@ -119,7 +122,11 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
                 <li ref={ref} key={index} className="flex gap-2">
                   {sender.image ? <UserAvatar user={sender} /> : null}
 
-                  <MessageCard message={message} className="items-start" />
+                  <MessageCard
+                    message={message}
+                    className="items-start"
+                    isMe={false}
+                  />
                 </li>
               );
             }
@@ -127,7 +134,11 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
             if (sender.id === me.id) {
               return (
                 <li ref={lastMessageRef} key={index} className="flex gap-2">
-                  <MessageCard message={message} className="items-end" />
+                  <MessageCard
+                    message={message}
+                    className="items-end"
+                    isMe={true}
+                  />
                 </li>
               );
             } else {
@@ -135,7 +146,11 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
                 <li ref={lastMessageRef} key={index} className="flex gap-2">
                   {sender.image ? <UserAvatar user={sender} /> : null}
 
-                  <MessageCard message={message} className="items-start" />
+                  <MessageCard
+                    message={message}
+                    className="items-start"
+                    isMe={false}
+                  />
                 </li>
               );
             }
@@ -143,7 +158,11 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
             if (sender.id === me.id) {
               return (
                 <li key={index} className="flex gap-2">
-                  <MessageCard message={message} className="items-end" />
+                  <MessageCard
+                    message={message}
+                    className="items-end"
+                    isMe={true}
+                  />
                 </li>
               );
             } else {
@@ -151,7 +170,11 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
                 <li key={index} className="flex gap-2">
                   {sender.image ? <UserAvatar user={sender} /> : null}
 
-                  <MessageCard message={message} className="items-start" />
+                  <MessageCard
+                    message={message}
+                    className="items-start"
+                    isMe={false}
+                  />
                 </li>
               );
             }

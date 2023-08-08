@@ -20,32 +20,33 @@ const page: FC<pageProps> = async ({ params }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
 
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
-  if (!user) return <ForceSignOut />;
-
-  const chapter = await db.chapter.findFirst({
-    where: {
-      id: +params.id,
-      manga: {
-        creatorId: user.id,
+  const [user, chapter] = await db.$transaction([
+    db.user.findFirst({
+      where: {
+        id: session.user.id,
       },
-    },
-    select: {
-      id: true,
-      name: true,
-      chapterIndex: true,
-      mangaId: true,
-      volume: true,
-      images: true,
-    },
-  });
+      select: {
+        id: true,
+      },
+    }),
+    db.chapter.findFirst({
+      where: {
+        id: +params.id,
+        manga: {
+          creatorId: session.user.id,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        chapterIndex: true,
+        mangaId: true,
+        volume: true,
+        images: true,
+      },
+    }),
+  ]);
+  if (!user) return <ForceSignOut />;
   if (!chapter) return notFound();
 
   return <ChapterEdit chapter={chapter} />;

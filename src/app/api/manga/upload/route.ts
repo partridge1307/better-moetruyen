@@ -1,5 +1,5 @@
+import { UploadMangaImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
-import { upload } from '@/lib/discord';
 import { disRegex, fbRegex } from '@/lib/utils';
 import { authorInfo, tagInfo } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
@@ -77,19 +77,17 @@ export async function POST(req: NextRequest) {
       discordLink,
     } = mangaFormValidator.parse(form);
 
-    const image = await upload({ blobImage: img, retryCount: 5 });
-
     if (facebookLink && !fbRegex.test(facebookLink))
       return new Response('Invalid FB link', { status: 406 });
     if (discordLink && !disRegex.test(discordLink))
       return new Response('Invalid Discord link', { status: 406 });
 
-    await db.manga.create({
+    const mangaCreated = await db.manga.create({
       data: {
         name,
         description,
         review,
-        image,
+        image: '',
         facebookLink: !facebookLink ? null : facebookLink,
         discordLink: !discordLink ? null : discordLink,
         creatorId: user.id,
@@ -104,6 +102,16 @@ export async function POST(req: NextRequest) {
             create: { name: a.name },
           })),
         },
+      },
+    });
+
+    const uploadedImage = await UploadMangaImage(img, mangaCreated.id);
+    await db.manga.update({
+      where: {
+        id: mangaCreated.id,
+      },
+      data: {
+        image: uploadedImage,
       },
     });
 

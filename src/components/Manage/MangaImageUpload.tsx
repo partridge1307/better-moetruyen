@@ -38,6 +38,7 @@ const MangaImageUpload: FC<MangaImageUploadProps> = ({
                 type="file"
                 accept=".jpg, .jpeg, .png"
                 className="absolute z-10 h-full w-full opacity-0 cursor-pointer"
+                title=""
                 onChange={(e) => {
                   if (e.target.files?.length) {
                     field.onChange(e.target.files[0]);
@@ -48,7 +49,7 @@ const MangaImageUpload: FC<MangaImageUploadProps> = ({
               {!!previewImage ? (
                 <Image
                   fill
-                  sizes="0%"
+                  sizes="50vw"
                   priority
                   src={previewImage!}
                   alt="Preview Manga Image"

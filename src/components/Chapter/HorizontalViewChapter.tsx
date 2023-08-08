@@ -1,14 +1,19 @@
 import type { Chapter, Manga } from '@prisma/client';
 import { ChevronLeft, Loader2, MessagesSquare } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { type RefObject, Suspense, forwardRef, lazy } from 'react';
+import { forwardRef } from 'react';
 import { Button } from '../ui/Button';
 import NextChapterButton from './NextChapterButton';
 import PrevChapterButton from './PrevChapterButton';
-const Comment = lazy(() => import('@/components/Comment/Chapter'));
-const MoetruyenEditor = lazy(
-  () => import('@/components/Editor/MoetruyenEditor')
+const MoetruyenEditor = dynamic(
+  () => import('@/components/Editor/MoetruyenEditor'),
+  { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
 );
+const Comment = dynamic(() => import('@/components/Comment/Chapter'), {
+  ssr: false,
+  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+});
 
 interface HorizontalViewChapterProps {
   chapter: Pick<Chapter, 'images'> & {
@@ -16,7 +21,7 @@ interface HorizontalViewChapterProps {
   };
   slideLeft(): void;
   slideRight(): void;
-  imageRef: RefObject<HTMLImageElement>;
+  imageRef: (element: any) => void;
   currentImage: number;
   currentChapterId: number;
   currentChapterIndex: number;
@@ -152,10 +157,8 @@ const HorizontalViewChapter = forwardRef<
               Quay lại
             </Button>
 
-            <Suspense fallback={<Loader2 className="w-6 h-6 animate-spin" />}>
-              <MoetruyenEditor id={`${mangaId}`} chapterId={currentChapterId} />
-              <Comment mangaId={mangaId} chapterId={currentChapterId} />
-            </Suspense>
+            <MoetruyenEditor id={`${mangaId}`} chapterId={currentChapterId} />
+            <Comment mangaId={mangaId} chapterId={currentChapterId} />
           </div>
         </div>
 

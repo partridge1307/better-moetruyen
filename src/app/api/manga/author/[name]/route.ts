@@ -9,6 +9,7 @@ export async function GET(req: Request, context: { params: { name: string } }) {
           mode: 'insensitive',
         },
       },
+      take: 5,
     });
 
     return new Response(JSON.stringify({ author: [...author] }), {

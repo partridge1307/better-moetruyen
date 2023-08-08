@@ -10,31 +10,30 @@ export async function PATCH(
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
 
-    const user = await db.user.findFirst({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-    if (!user) return new Response('User does not exists', { status: 404 });
-
-    const targetManga = await db.manga.findFirst({
-      where: {
-        id: +context.params.id,
-        creatorId: user.id,
-      },
-      select: {
-        _count: {
-          select: {
-            chapter: true,
-          },
+    const [, targetManga] = await db.$transaction([
+      db.user.findFirstOrThrow({
+        where: {
+          id: token.id,
         },
-        id: true,
-      },
-    });
-    if (!targetManga) return new Response('Not found', { status: 404 });
+        select: {
+          id: true,
+        },
+      }),
+      db.manga.findFirstOrThrow({
+        where: {
+          id: +context.params.id,
+          creatorId: token.id,
+        },
+        select: {
+          _count: {
+            select: {
+              chapter: true,
+            },
+          },
+          id: true,
+        },
+      }),
+    ]);
     if (targetManga._count.chapter <= 0)
       return new Response('Must have at least 1 chapter', { status: 403 });
 

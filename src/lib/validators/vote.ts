@@ -5,3 +5,9 @@ export const commentVoteValidator = z.object({
   commentId: z.number(),
 });
 export type CommentVotePayload = z.infer<typeof commentVoteValidator>;
+
+export const userFollowValidator = z.object({
+  id: z.number().or(z.string()),
+  target: z.enum(['USER', 'MANGA']),
+});
+export type FollowPayload = z.infer<typeof userFollowValidator>;

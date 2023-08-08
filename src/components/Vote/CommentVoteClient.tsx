@@ -1,5 +1,7 @@
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+import { CommentVotePayload } from '@/lib/validators/vote';
 import { usePrevious } from '@mantine/hooks';
 import { VoteType } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
@@ -7,9 +9,6 @@ import axios, { AxiosError } from 'axios';
 import { Heart, HeartOff } from 'lucide-react';
 import { FC, memo, useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
-import { CommentVotePayload } from '@/lib/validators/vote';
-import { cn } from '@/lib/utils';
-import { socket } from '@/lib/socket';
 
 interface CommentVoteClientProps {
   commentId: number;
@@ -62,7 +61,7 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
         setCurrentVote(type);
         if (type === 'UP_VOTE') {
           setVoteAmt((prev) => prev + (currentVote ? 2 : 1));
-          socket.emit('notify', { type: 'LIKE', payload: commentId });
+          // socket.emit('notify', { type: 'LIKE', payload: commentId });
         } else if (type === 'DOWN_VOTE')
           setVoteAmt((prev) => prev - (currentVote ? 2 : 1));
       }

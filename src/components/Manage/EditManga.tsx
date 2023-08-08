@@ -12,7 +12,7 @@ import {
 } from '@/lib/validators/upload';
 import type EditorJS from '@editorjs/editorjs';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useDebouncedState } from '@mantine/hooks';
+import { useDebouncedValue } from '@mantine/hooks';
 import { Manga, MangaAuthor, Tag } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
@@ -53,7 +53,7 @@ interface EditMangaProps {
     author: MangaAuthor[];
     tags: Tag[];
   };
-  tags: Tags;
+  tags: Tags[];
 }
 
 const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
@@ -144,12 +144,13 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
     manga.author
   );
   const [tagSelect, setTagSelect] = useState<tagInfoProps[]>(manga.tags);
-  const [authorInput, setAuthorInput] = useDebouncedState('', 300);
   const editorRef = useRef<EditorJS>();
+  const [authorInput, setAuthorInput] = useState<string>('');
+  const [debouncedValue] = useDebouncedValue(authorInput, 300);
 
   useEffect(() => {
-    if (authorInput) FetchAuthor(authorInput);
-  }, [FetchAuthor, authorInput]);
+    if (debouncedValue) FetchAuthor(debouncedValue);
+  }, [FetchAuthor, debouncedValue]);
 
   async function onSubmitHandler(values: MangaUploadPayload) {
     const editor = await editorRef.current?.save();
@@ -200,7 +201,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <Input {...field} />
+              <Input placeholder="Tên truyện" autoComplete="off" {...field} />
             </FormItem>
           )}
         />
@@ -271,7 +272,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
               </FormLabel>
               <FormMessage />
               <FormControl>
-                <Input placeholder="Nhập link Facebook" {...field} />
+                <Input placeholder="https://facebook.com/" {...field} />
               </FormControl>
             </FormItem>
           )}
@@ -293,7 +294,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
               </FormLabel>
               <FormMessage />
               <FormControl>
-                <Input placeholder="Nhập link Discord" {...field} />
+                <Input placeholder="https://discord.gg/" {...field} />
               </FormControl>
             </FormItem>
           )}

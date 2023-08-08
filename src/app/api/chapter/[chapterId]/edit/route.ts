@@ -1,14 +1,37 @@
+import { UploadChapterImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
 import { ZodError, z } from 'zod';
+import { zfd } from 'zod-form-data';
 
-const chapterValidator = z.object({
-  images: z.string().array().min(5, 'Tối thiểu 5 ảnh'),
-  chapterName: z.string().optional(),
-  chapterIndex: z.number().min(0),
-  volume: z.number().min(1),
+const chapterValidator = zfd.formData({
+  images: zfd
+    .repeatableOfType(
+      zfd
+        .file()
+        .refine((file) => file.size < 4 * 1000 * 1000, 'Ảnh phải nhỏ hơn 4MB')
+        .refine(
+          (file) =>
+            ['image/jpg', 'image/jpeg', 'image/png'].includes(file.type),
+          'Chỉ nhận định dạng .jpg, .png, .jpeg'
+        )
+        .or(
+          z
+            .string()
+            .refine(
+              (endpoint) => endpoint.startsWith(`${process.env.IMG_DOMAIN}`),
+              'Ảnh có đường dẫn không hợp lệ'
+            )
+        )
+    )
+    .refine((files) => files.length >= 1, 'Tối thiểu 1 ảnh'),
+  chapterName: zfd
+    .text(z.string().min(3, 'Tối thiểu 3 kí tự').max(256, 'Tối đa 256 kí tự'))
+    .optional(),
+  chapterIndex: zfd.numeric(z.number().min(0, 'Số thứ tự phải lớn hơn 0')),
+  volume: zfd.numeric(z.number().min(1, 'Volume phải lớn hơn 0')),
 });
 
 export async function PATCH(
@@ -19,40 +42,39 @@ export async function PATCH(
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
 
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    await db.manga.findFirstOrThrow({
-      where: {
-        creatorId: user.id,
-        chapter: {
-          some: {
-            id: +context.params.chapterId,
+    const [, manga] = await db.$transaction([
+      db.user.findFirstOrThrow({
+        where: {
+          id: token.id,
+        },
+        select: {
+          id: true,
+        },
+      }),
+      db.manga.findFirstOrThrow({
+        where: {
+          creatorId: token.id,
+          chapter: {
+            some: {
+              id: +context.params.chapterId,
+            },
           },
         },
-      },
-      select: {
-        id: true,
-      },
-    });
+        select: {
+          id: true,
+          name: true,
+        },
+      }),
+    ]);
 
-    const {
-      chapterIndex,
-      chapterName: name,
-      images,
-      volume,
-    } = chapterValidator.parse(await req.json());
-    if (!images.length) return new Response('Invalid', { status: 422 });
-    if (name) {
-      if (name.length < 3 || name.length > 256)
-        return new Response('Invalid', { status: 422 });
-    }
+    const { images, chapterIndex, chapterName, volume } =
+      chapterValidator.parse(await req.formData());
+
+    const uploadedImages = await UploadChapterImage(
+      images.filter((image) => image instanceof File) as File[],
+      manga.id,
+      chapterIndex
+    );
 
     await db.chapter.update({
       where: {
@@ -60,9 +82,9 @@ export async function PATCH(
       },
       data: {
         chapterIndex,
-        name,
+        name: chapterName,
         volume,
-        images,
+        images: uploadedImages,
       },
     });
 

@@ -11,45 +11,48 @@ export async function PATCH(
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
 
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    const targetChapter = await db.chapter.findFirstOrThrow({
-      where: {
-        id: +context.params.chapterId,
-        manga: {
-          creatorId: user.id,
+    const [user, targetChapter] = await db.$transaction([
+      db.user.findFirstOrThrow({
+        where: {
+          id: token.id,
         },
-      },
-      select: {
-        id: true,
-        mangaId: true,
-      },
-    });
-    const manga = await db.manga.findFirst({
-      where: {
-        id: targetChapter.mangaId,
-      },
-      select: {
-        isPublished: true,
-      },
-    });
-    if (!manga?.isPublished) return new Response('Forbidden', { status: 400 });
+        select: {
+          id: true,
+        },
+      }),
+      db.chapter.findFirstOrThrow({
+        where: {
+          id: +context.params.chapterId,
+          manga: {
+            creatorId: token.id,
+          },
+        },
+        select: {
+          id: true,
+          mangaId: true,
+        },
+      }),
+    ]);
 
-    await db.chapter.update({
-      where: {
-        id: targetChapter.id,
-      },
-      data: {
-        isPublished: true,
-      },
-    });
+    await db.$transaction([
+      db.manga.findFirstOrThrow({
+        where: {
+          id: targetChapter.mangaId,
+          isPublished: true,
+        },
+        select: {
+          isPublished: true,
+        },
+      }),
+      db.chapter.update({
+        where: {
+          id: targetChapter.id,
+        },
+        data: {
+          isPublished: true,
+        },
+      }),
+    ]);
 
     return new Response('OK');
   } catch (error) {

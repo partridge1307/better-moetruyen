@@ -1,5 +1,5 @@
+import { UploadUserImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
-import { upload } from '@/lib/discord';
 import { UserProfileEditValidator } from '@/lib/validators/user';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
@@ -31,8 +31,8 @@ export async function PATCH(req: NextRequest) {
 
     let avatarUrl: string | null = null,
       bannerUrl: string | null = null;
-    if (avatar) avatarUrl = await upload({ blobImage: avatar, retryCount: 5 });
-    if (banner) bannerUrl = await upload({ blobImage: banner, retryCount: 5 });
+    if (avatar) avatarUrl = await UploadUserImage(avatar, user.id, 'avatar');
+    if (banner) bannerUrl = await UploadUserImage(banner, user.id, 'banner');
 
     await db.user.update({
       where: {

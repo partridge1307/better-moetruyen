@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 
 const CustomImage = ({ data }: { data: any }) => {
   return (
@@ -14,6 +13,8 @@ const CustomImage = ({ data }: { data: any }) => {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           loading="lazy"
+          width={150}
+          height={150}
           src={data.url}
           alt={data.caption ? data.caption : 'Manga Description Image'}
           className={cn(

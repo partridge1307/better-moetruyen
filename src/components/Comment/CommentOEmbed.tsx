@@ -27,16 +27,19 @@ const CommentOEmbed: FC<CommentOEmbedProps> = ({ oEmbed }) => {
         {oEmbed.meta.image.url && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            className="w-24 h-24 rounded-l-lg object-cover"
+            width={100}
+            height={100}
             loading="lazy"
             src={oEmbed.meta.image.url}
             alt="OEmbed Image"
+            className="w-24 h-24 rounded-l-lg object-cover"
           />
         )}
+
         <div className="flex flex-col overflow-clip space-y-1 max-w-sm md:max-w-md lg:max-w-lg px-3 md:px-4">
-          <span className="moetruyen-editor-link line-clamp-1">
+          <p className="moetruyen-editor-link line-clamp-1">
             {new URL(oEmbed.link).host}
-          </span>
+          </p>
 
           <dl>
             {oEmbed.meta.title && (
@@ -44,7 +47,7 @@ const CommentOEmbed: FC<CommentOEmbedProps> = ({ oEmbed }) => {
             )}
 
             {oEmbed.meta.description && (
-              <dd className="text-sm line-clamp-2">
+              <dd className="text-xs md:text-sm line-clamp-2">
                 {oEmbed.meta.description}
               </dd>
             )}

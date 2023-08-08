@@ -1,7 +1,12 @@
+// const withBunleAnalyzer = require('@next/bundle-analyzer')({
+//   enabled: process.env.ANALYZE === 'true',
+// });
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["cdn.discordapp.com"],
+    formats: ['image/webp'],
+    domains: ['i.moetruyen.net'],
   },
 };
 

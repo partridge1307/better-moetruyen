@@ -1,6 +1,8 @@
 'use client';
 
+import { rgbDataURL } from '@/lib/utils';
 import '@/styles/swiper.css';
+import { useMediaQuery } from '@mantine/hooks';
 import type { Manga, MangaAuthor, Tag } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,7 +12,6 @@ import 'react-image-gallery/styles/css/image-gallery.css';
 import { TagContent, TagWrapper } from '../ui/Tag';
 import LeftNav from './Swiper/LeftNav';
 import RightNav from './Swiper/RightNav';
-import { useMediaQuery } from '@mantine/hooks';
 
 type ExtendedManga = Pick<Manga, 'id' | 'name' | 'image'> & {
   tags: Pick<Tag, 'name' | 'description'>[];
@@ -29,19 +30,22 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
       items={mangas.map((manga) => ({
         original: manga.image,
         thumbnail: manga.image,
-        thumbnailLoading: 'lazy',
         thumbnailClass: 'thumbnail-wrapper',
+        thumbnailLoading: 'lazy',
         renderItem(item) {
           return (
             <Link href={`/manga/${manga.id}`}>
               <div className="relative w-full h-72">
                 <Image
                   fill
-                  sizes="0%"
+                  sizes="40vw"
+                  quality={50}
                   priority
+                  placeholder="blur"
+                  blurDataURL={rgbDataURL(255, 209, 148)}
                   src={item.original}
                   alt="Manga Image"
-                  className="object-cover rounded-md absolute"
+                  className="object-cover rounded-md"
                 />
                 <div className="relative h-full w-full flex items-end px-2 md:px-10 py-8 bg-gradient-to-t dark:from-zinc-900">
                   <div className="flex max-sm:flex-col gap-1 md:items-center md:justify-between w-full">
@@ -69,7 +73,8 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
             <div className="relative w-16 h-10 md:w-24 md:h-16">
               <Image
                 fill
-                sizes="0%"
+                sizes="30vw"
+                quality={20}
                 src={item.original}
                 alt="Manga Thumbnail Image"
                 className="object-cover rounded-md"

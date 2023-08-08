@@ -8,7 +8,6 @@ import { usePathname } from 'next/navigation';
 import { useMemo, useRef } from 'react';
 import SignOutButton from '../Auth/SignOutButton';
 import { Icons } from '../Icons';
-import Notifications from '../Notify/Notifications';
 import UserAvatar from '../User/UserAvatar';
 import UserBanner from '../User/UserBanner';
 import Username from '../User/Username';
@@ -21,6 +20,10 @@ import {
   DropdownMenuTrigger,
 } from '../ui/DropdownMenu';
 import NavSidebar from './NavSidebar';
+// const Notifications = dynamic(
+//   () => import('@/components/Notify/Notifications'),
+//   { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
+// );
 
 const viewChapterRegex = /^(\/chapter\/\d+$)/;
 
@@ -54,7 +57,7 @@ const NavbarClient = () => {
         </div>
 
         <div className="flex items-center gap-4 md:gap-6">
-          {session?.user ? <Notifications session={session} /> : null}
+          {/* {session?.user ? <Notifications session={session} /> : null} */}
 
           <DropdownMenu>
             <DropdownMenuTrigger disabled={status === 'loading'}>

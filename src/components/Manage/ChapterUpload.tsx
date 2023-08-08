@@ -8,12 +8,11 @@ import {
 } from '@/lib/validators/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { ImagePlus, PlusCircle, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import DnDChapterImage from '../DragAndDrop';
 import { Button } from '../ui/Button';
 import {
   Form,
@@ -25,63 +24,49 @@ import {
 } from '../ui/Form';
 import { Input } from '../ui/Input';
 import ChapterIndexUpload from './ChapterIndexUpload';
+import { Progress } from '../ui/Progress';
+import { lazy } from 'react';
+const DnDChapterImage = lazy(() => import('../DragAndDrop'));
 
 const ChapterUpload = ({ id }: { id: string }) => {
   const { loginToast, notFoundToast } = useCustomToast();
   const router = useRouter();
   const [disaleChapterIndex, setDisableChapterIndex] = useState<boolean>(true);
-  const [images, setImages] = useState<
-    { src: string; name: string; progress?: number }[]
-  >([]);
+  const [images, setImages] = useState<{ src: string; name: string }[]>([]);
+  const [uploadProgress, setUploadProgres] = useState<number | null>(null);
 
   const form = useForm<ChapterUploadPayload>({
     resolver: zodResolver(ChapterUploadValidator),
     defaultValues: {
       chapterIndex: 0,
       chapterName: '',
-      volume: 0,
+      volume: 1,
       image: undefined,
     },
   });
 
-  const imgUpload = (): Promise<string[]> =>
-    new Promise(async (resolve) => {
-      let imagePromise: Promise<AxiosResponse>[] = [];
+  const { mutate: upload, isLoading: isChapterUpload } = useMutation({
+    mutationFn: async (values: ChapterUploadPayload) => {
+      const { chapterIndex, chapterName, volume } = values;
 
+      const form = new FormData();
+      form.append('chapterIndex', `${chapterIndex}`);
+      form.append('volume', `${volume}`);
+      chapterName ? form.append('chapterName', chapterName) : null;
       await Promise.all(
-        images.map(async (img, index) => {
-          const blob = await fetch(img.src).then((res) => res.blob());
-          const form = new FormData();
-          form.append('file', blob);
-          imagePromise.push(
-            axios.post('/api/image', form, {
-              onUploadProgress: (progressEvent) => {
-                const percentCompleted = Math.floor(
-                  (progressEvent.loaded * 100) / progressEvent.total!
-                );
-                images[index].progress = percentCompleted;
-                setImages([...images]);
-              },
-            })
-          );
+        images.map(async (image) => {
+          const blob = await fetch(image.src).then((res) => res.blob());
+          form.append('images', blob);
         })
       );
 
-      const imageUrl: string[] = await Promise.all(imagePromise).then((res) =>
-        res.map((r) => r.data)
-      );
-      resolve(imageUrl);
-    });
-  const { mutate: upload, isLoading: isChapterUpload } = useMutation({
-    mutationFn: async (values: ChapterUploadPayload) => {
-      // eslint-disable-next-line no-unused-vars
-      const { image, ...payload } = values;
-
-      const imageURL = await imgUpload();
-
-      const { data } = await axios.post(`/api/manga/${id}/chapter`, {
-        images: imageURL,
-        ...payload,
+      const { data } = await axios.post(`/api/manga/${id}/chapter`, form, {
+        onUploadProgress(progressEvent) {
+          const percentCompleted = Math.floor(
+            (progressEvent.loaded * 100) / progressEvent.total!
+          );
+          setUploadProgres(percentCompleted);
+        },
       });
       return data as string;
     },
@@ -107,6 +92,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
     onSuccess: () => {
       router.push(`/me/manga/${id}/chapter`);
       router.refresh();
+      setUploadProgres(null);
 
       return toast({
         title: 'Thành công',
@@ -115,10 +101,10 @@ const ChapterUpload = ({ id }: { id: string }) => {
   });
 
   const onSubmitHandler = (values: ChapterUploadPayload) => {
-    if (images.length < 5)
+    if (images.length < 1)
       return form.setError('image', {
         type: 'custom',
-        message: 'Tối thiểu 5 ảnh',
+        message: 'Tối thiểu 1 ảnh',
       });
     if (values.chapterName) {
       if (values.chapterName.length < 3) {
@@ -151,7 +137,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
           name="chapterName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tên chap</FormLabel>
+              <FormLabel>Tên chap (Nếu có)</FormLabel>
               <FormMessage />
               <FormControl>
                 <Input placeholder="Tên chapter" {...field} />
@@ -226,13 +212,20 @@ const ChapterUpload = ({ id }: { id: string }) => {
               ) : null}
 
               {images.length ? (
-                <DnDChapterImage
-                  isUpload={isChapterUpload}
-                  items={images}
-                  setItems={setImages}
-                />
+                <Suspense
+                  fallback={
+                    <div className="w-40 h-52 dark:bg-zinc-800 animate-pulse" />
+                  }
+                >
+                  <DnDChapterImage
+                    isUpload={isChapterUpload}
+                    items={images}
+                    setItems={setImages}
+                  />
+                </Suspense>
               ) : (
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.preventDefault();
                     const target = document.getElementById(
@@ -260,6 +253,8 @@ const ChapterUpload = ({ id }: { id: string }) => {
                         src: string;
                         name: string;
                       }[] = [];
+
+                      // Ignore file if it larger 4MB
                       for (let i = 0; i < e.target.files.length; i++) {
                         if (e.target.files.item(i)!.size > 4 * 1000 * 1000) {
                           continue;
@@ -282,6 +277,8 @@ const ChapterUpload = ({ id }: { id: string }) => {
             </FormItem>
           )}
         />
+
+        {uploadProgress ? <Progress value={uploadProgress} /> : null}
 
         <Button
           type="submit"

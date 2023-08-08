@@ -70,63 +70,67 @@ const MangaAuthorUpload: FC<MangaAuthorUploadProps> = ({
               <Input
                 ref={field.ref}
                 placeholder="Tác giả"
-                defaultValue={authorInput}
+                value={authorInput}
                 onChange={(e) => {
-                  setAuthorInput(e.target.value);
+                  setAuthorInput(e.target.value.trim());
                 }}
                 className="border-none focus:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-transparent"
               />
             </div>
           </FormControl>
-          <ul className="flex items-center">
-            {isFetchingAuthor && <Loader2 className="h-4 w-4 animate-spin" />}
-            {!isFetchingAuthor && authorResult?.author.length
-              ? authorResult.author.map((auth) => (
-                  <li
-                    key={auth.id}
-                    className={`cursor-pointer rounded-md bg-slate-800 p-1 ${
-                      authorSelected.some((a) => a.name === auth.name) &&
-                      'hidden'
-                    }`}
+          <ul className="flex flex-wrap items-center gap-2">
+            {isFetchingAuthor ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              !!authorInput.length && (
+                <li
+                  className={`flex items-center gap-x-2 rounded-md ${
+                    authorSelected.some((a) => a.name === authorInput) &&
+                    'hidden'
+                  }`}
+                >
+                  Thêm:{' '}
+                  <span
+                    className="cursor-pointer bg-zinc-800 p-1"
                     onClick={() => {
-                      if (!authorSelected.includes(auth)) {
-                        form.setValue('author', [...authorSelected, auth]);
-                        setAuthorSelected([...authorSelected, auth]);
+                      if (!authorSelected.some((a) => a.name === authorInput)) {
+                        form.setValue('author', [
+                          ...authorSelected,
+                          { id: -1, name: authorInput },
+                        ]);
+                        setAuthorSelected([
+                          ...authorSelected,
+                          { id: -1, name: authorInput },
+                        ]);
+                        setAuthorInput('');
                       }
                     }}
                   >
-                    {auth.name}
-                  </li>
-                ))
-              : !!authorInput && (
-                  <li
-                    className={`flex items-center gap-x-2 rounded-md ${
-                      authorSelected.some((a) => a.name === authorInput) &&
-                      'hidden'
-                    }`}
-                  >
-                    Thêm:{' '}
-                    <span
-                      className="cursor-pointer bg-zinc-800 p-1"
-                      onClick={() => {
-                        if (
-                          !authorSelected.some((a) => a.name === authorInput)
-                        ) {
-                          form.setValue('author', [
-                            ...authorSelected,
-                            { id: -1, name: authorInput },
-                          ]);
-                          setAuthorSelected([
-                            ...authorSelected,
-                            { id: -1, name: authorInput },
-                          ]);
-                        }
-                      }}
-                    >
-                      {authorInput}
-                    </span>
-                  </li>
-                )}
+                    {authorInput}
+                  </span>
+                </li>
+              )
+            )}
+
+            {!isFetchingAuthor &&
+              !!authorResult?.author.length &&
+              authorResult.author.map((auth) => (
+                <li
+                  key={auth.id}
+                  className={`cursor-pointer rounded-md bg-slate-800 p-1 ${
+                    authorSelected.some((a) => a.name === auth.name) && 'hidden'
+                  }`}
+                  onClick={() => {
+                    if (!authorSelected.includes(auth)) {
+                      form.setValue('author', [...authorSelected, auth]);
+                      setAuthorSelected([...authorSelected, auth]);
+                      setAuthorInput('');
+                    }
+                  }}
+                >
+                  {auth.name}
+                </li>
+              ))}
           </ul>
         </FormItem>
       )}

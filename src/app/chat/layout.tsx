@@ -7,41 +7,43 @@ import { redirect } from 'next/navigation';
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
-  if (!user) return <ForceSignOut />;
 
-  const conversation = await db.user
-    .findUnique({
+  const [user, conversation] = await db.$transaction([
+    db.user.findFirst({
       where: {
-        id: user.id,
+        id: session.user.id,
       },
-    })
-    .conversation({
       select: {
         id: true,
-        createdAt: true,
-        users: {
-          where: {
-            id: {
-              not: user.id,
+      },
+    }),
+    db.user
+      .findUnique({
+        where: {
+          id: session.user.id,
+        },
+      })
+      .conversation({
+        select: {
+          id: true,
+          createdAt: true,
+          users: {
+            where: {
+              id: {
+                not: session.user.id,
+              },
+            },
+            select: {
+              id: true,
+              name: true,
+              color: true,
+              image: true,
             },
           },
-          select: {
-            id: true,
-            name: true,
-            color: true,
-            image: true,
-          },
         },
-      },
-    });
+      }),
+  ]);
+  if (!user) return <ForceSignOut />;
 
   return (
     <main className="relative container max-sm:px-2 h-full pt-16 md:pt-20 md:pb-4">

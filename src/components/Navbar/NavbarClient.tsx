@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Loader2, MessageCircle, User2 } from 'lucide-react';
+import { Loader2, Menu, MessageCircle, User2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -19,11 +19,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/DropdownMenu';
-import NavSidebar from './NavSidebar';
-// const Notifications = dynamic(
-//   () => import('@/components/Notify/Notifications'),
-//   { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
-// );
+import dynamic from 'next/dynamic';
+const NavSidebar = dynamic(() => import('./NavSidebar'), {
+  ssr: false,
+  loading: () => <Menu className="h-8 w-8 animate-pulse" />,
+});
 
 const viewChapterRegex = /^(\/chapter\/\d+$)/;
 

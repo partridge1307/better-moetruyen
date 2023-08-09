@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/Sheet';
 import { SwitchWithIcon } from '../ui/Switch';
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
+import { DialogClose } from '@radix-ui/react-dialog';
 
 interface NavContentProps {
   icon: JSX.Element;
@@ -23,7 +24,6 @@ const NavSidebar = () => {
   const colorScheme = useColorScheme();
   const [colorTheme, setColorTheme] = useLocalStorage({ key: 'theme' });
   const [isChecked, setChecked] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const NavContent: NavContentProps[] = useMemo(
     () => [
@@ -95,8 +95,8 @@ const NavSidebar = () => {
   }
 
   return (
-    <Sheet open={isOpen}>
-      <SheetTrigger onClick={() => setIsOpen(true)}>
+    <Sheet>
+      <SheetTrigger>
         <Menu className="h-8 w-8" />
       </SheetTrigger>
       <SheetContent side="left" className="p-0 dark:bg-zinc-800">
@@ -114,9 +114,8 @@ const NavSidebar = () => {
                   'hover:bg-slate-100 dark:hover:bg-zinc-700': pathname !== '/',
                 }
               )}
-              onClick={() => setIsOpen(false)}
             >
-              Trang chủ
+              <DialogClose>Trang chủ</DialogClose>
             </Link>
 
             {NavContent.map((nc) => (
@@ -136,9 +135,8 @@ const NavSidebar = () => {
                         'hover:bg-slate-100 dark:hover:bg-zinc-700':
                           pathname !== nsm.link,
                       })}
-                      onClick={() => setIsOpen(false)}
                     >
-                      {nsm.title}
+                      <DialogClose>{nsm.title}</DialogClose>
                     </Link>
                   ))}
                 </div>

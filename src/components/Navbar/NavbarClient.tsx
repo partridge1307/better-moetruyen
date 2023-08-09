@@ -19,11 +19,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/DropdownMenu';
-import dynamic from 'next/dynamic';
-const NavSidebar = dynamic(() => import('./NavSidebar'), {
-  ssr: false,
-  loading: () => <Menu className="h-8 w-8 animate-pulse" />,
-});
+import NavSidebar from './NavSidebar';
 
 const viewChapterRegex = /^(\/chapter\/\d+$)/;
 

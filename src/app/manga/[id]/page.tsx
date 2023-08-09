@@ -234,7 +234,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
           <div className="space-y-2">
             <p className="font-semibold text-lg">Mô tả</p>
-            {/* <EditorOutput content={manga.description} /> */}
+            <EditorOutput content={manga.description} />
           </div>
 
           <Tabs defaultValue="chapter">

@@ -30,13 +30,13 @@ const MangaImage: FC<MangaCardProps> = ({ manga, className }) => {
       <div className={cn('relative', className)}>
         <Image
           fill
-          sizes="70vw"
+          sizes="50vw"
           priority
           src={manga.image}
           placeholder="blur"
           blurDataURL={rgbDataURL(255, 209, 148)}
           alt="Manga Image"
-          className="rounded-md object-cover w-full h-full"
+          className="rounded-md object-cover"
         />
         <div
           role="button"

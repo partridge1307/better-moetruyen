@@ -5,36 +5,23 @@ import Link from 'next/link';
 const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
   ssr: false,
   loading: () => (
-    <div className="grid grid-cols-1 md:grid-cols-[1fr_.15fr] gap-2 w-full h-72">
+    <div className="grid grid-cols-1 md:grid-cols-[1fr_.13fr] gap-2 w-full h-72">
       <div className="animate-pulse dark:bg-zinc-900 rounded-lg" />
       <div className="animate-pulse dark:bg-zinc-900 rounded-lg" />
     </div>
   ),
 });
 const Recommendation = dynamic(
-  () => import('@/components/Manga/Recommendation'),
-  {
-    loading: () => (
-      <div className="w-32 h-44 lg:w-40 lg:h-56 p-2 dark:bg-zinc-900 animate-pulse" />
-    ),
-  }
+  () => import('@/components/Manga/Recommendation')
 );
-const LatestManga = dynamic(() => import('@/components/Manga/LatestManga'), {
-  loading: () => (
-    <div className="w-full h-44 p-2 md:grid md:grid-cols-2 gap-4 animate-pulse" />
-  ),
-});
-const Leaderboard = dynamic(() => import('@/components/Leaderboard'), {
-  loading: () => (
-    <div className="w-full h-56 p-2 animate-pulse dark:bg-zinc-900" />
-  ),
-});
+const LatestManga = dynamic(() => import('@/components/Manga/LatestManga'));
+const Leaderboard = dynamic(() => import('@/components/Leaderboard'));
 const LastestComment = dynamic(
   () => import('@/components/Comment/LatestComment'),
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-56 p-2 animate-pulse dark:bg-zinc-900" />
+      <div className="w-full h-40 p-2 rounded-lg animate-pulse dark:bg-zinc-900" />
     ),
   }
 );

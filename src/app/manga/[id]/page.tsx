@@ -39,7 +39,9 @@ const MangaControll = dynamic(
 );
 const MangaImage = dynamic(() => import('@/components/Manga/MangaImage'), {
   ssr: false,
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+  loading: () => (
+    <div className="h-48 w-full md:w-40 dark:bg-zinc-900 animate-pulse" />
+  ),
 });
 
 interface pageProps {

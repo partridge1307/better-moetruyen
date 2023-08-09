@@ -59,6 +59,7 @@ const Home = async () => {
         replyToId: null,
       },
       select: {
+        id: true,
         content: true,
         mangaId: true,
         createdAt: true,

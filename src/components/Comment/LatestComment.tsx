@@ -10,7 +10,7 @@ import { formatTimeToNow } from '@/lib/utils';
 import '@/styles/mteditor.css';
 
 interface LatestCommentProps {
-  comments: (Pick<Comment, 'mangaId' | 'content' | 'createdAt'> & {
+  comments: (Pick<Comment, 'id' | 'mangaId' | 'content' | 'createdAt'> & {
     author: Pick<User, 'id' | 'color' | 'image' | 'name'>;
   })[];
 }
@@ -38,7 +38,7 @@ const LatestComment: FC<LatestCommentProps> = ({ comments }) => {
               </p>
             </Link>
             <Link href={`/manga/${comment.mangaId}`}>
-              <CommentContent index={idx} content={comment.content} />
+              <CommentContent id={comment.id} content={comment.content} />
             </Link>
           </div>
         </li>

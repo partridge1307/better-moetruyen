@@ -124,7 +124,16 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
 
     function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
       const { height, width } = e.currentTarget;
-      setCrop(centerAspectCrop(width, height, aspect));
+      const centerCrop = centerAspectCrop(width, height, aspect);
+
+      setCompleteCrop({
+        unit: 'px',
+        x: centerCrop.x,
+        width: centerCrop.width,
+        y: centerCrop.y,
+        height: centerCrop.height,
+      });
+      setCrop(centerCrop);
     }
 
     return (

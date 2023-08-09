@@ -10,7 +10,10 @@ export async function GET(req: Request) {
 
   try {
     const { data } = await axios.get(href);
-    console.log(data);
+    const response = await fetch(href, {
+      method: 'GET',
+    });
+    console.log(await response.text());
 
     const descriptionMatch = data.match(
       /<meta name="description" content="(.*?)"/

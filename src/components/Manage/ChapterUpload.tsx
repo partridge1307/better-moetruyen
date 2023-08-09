@@ -54,9 +54,9 @@ const ChapterUpload = ({ id }: { id: string }) => {
       form.append('volume', `${volume}`);
       chapterName ? form.append('chapterName', chapterName) : null;
       await Promise.all(
-        images.map(async (image, index) => {
+        images.map(async (image) => {
           const blob = await fetch(image.src).then((res) => res.blob());
-          form.append('images', JSON.stringify({ image: blob, index }));
+          form.append('images', blob);
         })
       );
 

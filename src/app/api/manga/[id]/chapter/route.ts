@@ -9,22 +9,14 @@ import { zfd } from 'zod-form-data';
 const chapterValidator = zfd.formData({
   images: zfd
     .repeatableOfType(
-      zfd.json(
-        z.object({
-          image: zfd
-            .file()
-            .refine(
-              (file) => file.size < 4 * 1000 * 1000,
-              'Ảnh phải nhỏ hơn 4MB'
-            )
-            .refine(
-              (file) =>
-                ['image/jpg', 'image/png', 'image/jpeg'].includes(file.type),
-              'Chỉ nhận định dạng .jpg, .png, .jpeg'
-            ),
-          index: z.number().min(0, 'Không hợp lệ'),
-        })
-      )
+      zfd
+        .file()
+        .refine((file) => file.size < 4 * 1000 * 1000, 'Ảnh phải nhỏ hơn 4MB')
+        .refine(
+          (file) =>
+            ['image/jpg', 'image/png', 'image/jpeg'].includes(file.type),
+          'Chỉ nhận định dạng .jpg, .png, .jpeg'
+        )
     )
     .refine((files) => files.length >= 1, 'Tối thiểu 1 ảnh'),
   volume: zfd.numeric(z.number().min(1, 'Số volume phải lớn hơn 0')),
@@ -101,7 +93,11 @@ export async function POST(
         return new Response('Forbidden', { status: 403 });
     }
 
-    const uploadedImages = await UploadChapterImage(images, manga.id, index);
+    const uploadedImages = await UploadChapterImage(
+      images.map((img, index) => ({ image: img, index })),
+      manga.id,
+      index
+    );
 
     const team = await db.memberOnTeam.findFirst({
       where: {

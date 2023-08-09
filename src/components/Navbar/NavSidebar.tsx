@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import { Book, Menu, Pin, SunMoon } from 'lucide-react';
 import Link from 'next/link';
@@ -17,10 +19,11 @@ interface NavContentProps {
 }
 
 const NavSidebar = () => {
-  const [isChecked, setChecked] = useState<boolean>(false);
   const pathname = usePathname();
   const colorScheme = useColorScheme();
   const [colorTheme, setColorTheme] = useLocalStorage({ key: 'theme' });
+  const [isChecked, setChecked] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const NavContent: NavContentProps[] = useMemo(
     () => [
@@ -65,7 +68,6 @@ const NavSidebar = () => {
   );
 
   useEffect(() => {
-    console.log(colorScheme);
     if (colorTheme) {
       if (
         colorTheme === 'dark' ||
@@ -93,8 +95,8 @@ const NavSidebar = () => {
   }
 
   return (
-    <Sheet>
-      <SheetTrigger>
+    <Sheet open={isOpen}>
+      <SheetTrigger onClick={() => setIsOpen(true)}>
         <Menu className="h-8 w-8" />
       </SheetTrigger>
       <SheetContent side="left" className="p-0 dark:bg-zinc-800">
@@ -112,6 +114,7 @@ const NavSidebar = () => {
                   'hover:bg-slate-100 dark:hover:bg-zinc-700': pathname !== '/',
                 }
               )}
+              onClick={() => setIsOpen(false)}
             >
               Trang chủ
             </Link>
@@ -133,6 +136,7 @@ const NavSidebar = () => {
                         'hover:bg-slate-100 dark:hover:bg-zinc-700':
                           pathname !== nsm.link,
                       })}
+                      onClick={() => setIsOpen(false)}
                     >
                       {nsm.title}
                     </Link>

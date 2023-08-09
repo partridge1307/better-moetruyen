@@ -123,15 +123,20 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
     }
 
     function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
-      const { height, width } = e.currentTarget;
+      const { height, width, clientWidth, clientHeight } = e.currentTarget;
       const centerCrop = centerAspectCrop(width, height, aspect);
+
+      const xCrop = Math.round(clientWidth * (centerCrop.x / 100));
+      const widthCrop = Math.round(clientWidth * (centerCrop.width / 100));
+      const yCrop = Math.round(clientHeight * (centerCrop.y / 100));
+      const heightCrop = Math.round(clientHeight * (centerCrop.height / 100));
 
       setCompleteCrop({
         unit: 'px',
-        x: centerCrop.x,
-        width: centerCrop.width,
-        y: centerCrop.y,
-        height: centerCrop.height,
+        x: xCrop,
+        width: widthCrop,
+        y: yCrop,
+        height: heightCrop,
       });
       setCrop(centerCrop);
     }

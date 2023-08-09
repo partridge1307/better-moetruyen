@@ -5,37 +5,21 @@ import { Card, CardContent, CardHeader } from '@/components/ui/Card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';
-import { List, ListTree, Loader2 } from 'lucide-react';
+import { List, ListTree } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { FC } from 'react';
+import { FC, Suspense, lazy } from 'react';
 
 const MangaControll = dynamic(() => import('@/components/Manga/MangaControll'));
 const ListTreeChapter = dynamic(
   () => import('@/components/Chapter/ListTreeChapter')
 );
 const ListChapter = dynamic(() => import('@/components/Chapter/ListChapter'));
-const Comment = dynamic(() => import('@/components/Comment'), {
-  ssr: false,
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
-});
-const EditorOutput = dynamic(() => import('@/components/EditorOutput'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-72 p-2 rounded-md dark:bg-zinc-900 animate-pulse" />
-  ),
-});
-const FBEmbed = dynamic(() => import('@/components/FBEmbed'), {
-  ssr: false,
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
-});
-const MangaImage = dynamic(() => import('@/components/Manga/MangaImage'), {
-  ssr: false,
-  loading: () => (
-    <div className="h-48 w-full md:w-40 dark:bg-zinc-900 animate-pulse" />
-  ),
-});
+const Comment = lazy(() => import('@/components/Comment'));
+const EditorOutput = lazy(() => import('@/components/EditorOutput'));
+const FBEmbed = lazy(() => import('@/components/FBEmbed'));
+const MangaImage = lazy(() => import('@/components/Manga/MangaImage'));
 
 interface pageProps {
   params: {
@@ -185,7 +169,13 @@ const page: FC<pageProps> = async ({ params }) => {
       <main className="container max-sm:px-2 mx-auto h-full pt-20 space-y-14">
         <div className="relative h-max">
           <div className="p-4 max-sm:space-y-4 md:flex md:gap-10">
-            <MangaImage className="h-48 w-full md:w-40" manga={manga} />
+            <Suspense
+              fallback={
+                <template className="h-48 w-full md:w-40 dark:bg-zinc-900 animate-pulse" />
+              }
+            >
+              <MangaImage className="h-48 w-full md:w-40" manga={manga} />
+            </Suspense>
 
             <div className="space-y-1 md:space-y-2">
               <p className="text-2xl md:text-4xl font-semibold">{manga.name}</p>
@@ -234,7 +224,13 @@ const page: FC<pageProps> = async ({ params }) => {
 
           <div className="space-y-2">
             <p className="font-semibold text-lg">Mô tả</p>
-            <EditorOutput content={manga.description} />
+            <Suspense
+              fallback={
+                <template className="w-full h-72 p-2 rounded-md dark:bg-zinc-900 animate-pulse" />
+              }
+            >
+              <EditorOutput content={manga.description} />
+            </Suspense>
           </div>
 
           <Tabs defaultValue="chapter">
@@ -288,7 +284,13 @@ const page: FC<pageProps> = async ({ params }) => {
                 </div>
 
                 {manga.facebookLink && (
-                  <FBEmbed facebookLink={manga.facebookLink} />
+                  <Suspense
+                    fallback={
+                      <template className="w-full h-[300px] rounded-md dark:bg-zinc-900 animate-pulse" />
+                    }
+                  >
+                    <FBEmbed facebookLink={manga.facebookLink} />
+                  </Suspense>
                 )}
 
                 {discord.code && (
@@ -331,7 +333,13 @@ const page: FC<pageProps> = async ({ params }) => {
             </TabsContent>
 
             <TabsContent value="comment">
-              <Comment id={params.id} initialComments={comments} />
+              <Suspense
+                fallback={
+                  <template className="grid grid-cols-1 grid-rows-[.7fr_1fr] gap-20 dark:bg-zinc-900 animate-pulse" />
+                }
+              >
+                <Comment id={params.id} initialComments={comments} />
+              </Suspense>
             </TabsContent>
           </Tabs>
         </div>

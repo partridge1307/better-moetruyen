@@ -42,7 +42,7 @@ export async function PATCH(
     const { image, name } = formValidator.parse(form);
     let imageUrl: string | null = null;
 
-    if (image) imageUrl = await UploadTeamImage(image, team.id);
+    if (image) imageUrl = await UploadTeamImage(image, team.id, team.image);
 
     await db.team.update({
       where: {

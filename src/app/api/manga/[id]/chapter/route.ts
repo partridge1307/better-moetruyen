@@ -9,14 +9,22 @@ import { zfd } from 'zod-form-data';
 const chapterValidator = zfd.formData({
   images: zfd
     .repeatableOfType(
-      zfd
-        .file()
-        .refine((file) => file.size < 4 * 1000 * 1000, 'Ảnh phải nhỏ hơn 4MB')
-        .refine(
-          (file) =>
-            ['image/jpg', 'image/png', 'image/jpeg'].includes(file.type),
-          'Chỉ nhận định dạng .jpg, .png, .jpeg'
-        )
+      zfd.json(
+        z.object({
+          image: zfd
+            .file()
+            .refine(
+              (file) => file.size < 4 * 1000 * 1000,
+              'Ảnh phải nhỏ hơn 4MB'
+            )
+            .refine(
+              (file) =>
+                ['image/jpg', 'image/png', 'image/jpeg'].includes(file.type),
+              'Chỉ nhận định dạng .jpg, .png, .jpeg'
+            ),
+          index: z.number().min(0, 'Không hợp lệ'),
+        })
+      )
     )
     .refine((files) => files.length >= 1, 'Tối thiểu 1 ảnh'),
   volume: zfd.numeric(z.number().min(1, 'Số volume phải lớn hơn 0')),
@@ -110,7 +118,9 @@ export async function POST(
           chapterIndex: index,
           name: chapterName,
           volume,
-          images: uploadedImages,
+          images: uploadedImages
+            .sort((a, b) => a.index - b.index)
+            .map((img) => img.url),
           manga: {
             connect: { id: manga.id },
           },
@@ -125,7 +135,9 @@ export async function POST(
           chapterIndex: index,
           name: chapterName,
           volume,
-          images: uploadedImages,
+          images: uploadedImages
+            .sort((a, b) => a.index - b.index)
+            .map((img) => img.url),
           manga: {
             connect: { id: manga.id },
           },

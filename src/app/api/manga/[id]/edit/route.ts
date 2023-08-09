@@ -84,6 +84,7 @@ export async function PATCH(
         },
         select: {
           id: true,
+          image: true,
         },
       }),
     ]);
@@ -92,7 +93,7 @@ export async function PATCH(
     if (typeof img === 'string') {
       image = img;
     } else {
-      image = await UploadMangaImage(img, targetManga.id);
+      image = await UploadMangaImage(img, targetManga.id, targetManga.image);
     }
 
     if (facebookLink && !fbRegex.test(facebookLink))

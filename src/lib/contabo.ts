@@ -1,4 +1,5 @@
 import {
+  DeleteObjectCommand,
   PutObjectCommand,
   PutObjectCommandOutput,
   S3Client,
@@ -19,13 +20,13 @@ const contabo = new S3Client({
 
 const sendCommand = async (
   client: S3Client,
-  command: PutObjectCommand,
+  command: PutObjectCommand | DeleteObjectCommand,
   retry = 5
 ): Promise<PutObjectCommandOutput> => {
   try {
     return await client.send(command);
   } catch (error) {
-    if (retry || retry > 0) {
+    if (retry > 0) {
       retry--;
       await sleep(1.5);
       return await sendCommand(client, command, retry);
@@ -56,14 +57,31 @@ const resizeImage = (
   return optimizedImage;
 };
 
+const generateKey = (key: string, prevImage: string | null) => {
+  let Key;
+
+  if (prevImage) {
+    const idParam = new URL(prevImage).searchParams.get('id');
+    if (idParam) {
+      Key = `${key}?id=${Number(idParam) + 1}`;
+    } else {
+      Key = `${key}?id=1`;
+    }
+  } else {
+    Key = key;
+  }
+
+  return Key;
+};
+
 export const UploadChapterImage = (
-  images: Blob[],
+  images: { image: Blob; index: number }[],
   mangaId: number,
   chapterIndex: number
 ) =>
   Promise.all(
-    images.map(async (image, index) => {
-      const arrayBuffer = await new Blob([image]).arrayBuffer();
+    images.map(async (img) => {
+      const arrayBuffer = await new Blob([img.image]).arrayBuffer();
       const sharpImage = sharp(arrayBuffer)
         .toFormat('webp')
         .webp({ quality: 40 });
@@ -80,18 +98,25 @@ export const UploadChapterImage = (
       const command = new PutObjectCommand({
         Body: optimizedImage,
         Bucket: `chapter`,
-        Key: `${mangaId}/${chapterIndex}/${index + 1}.webp`,
+        Key: `${mangaId}/${chapterIndex}/${img.index + 1}.webp`,
       });
 
       await sendCommand(contabo, command, 5);
 
-      return `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${
-        index + 1
-      }.webp`;
+      return {
+        url: `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${
+          img.index + 1
+        }.webp`,
+        index: img.index,
+      };
     })
   );
 
-export const UploadMangaImage = async (image: Blob, mangaId: number) => {
+export const UploadMangaImage = async (
+  image: Blob,
+  mangaId: number,
+  prevImage: string | null
+) => {
   const arrayBuffer = await new Blob([image]).arrayBuffer();
   const sharpImage = sharp(arrayBuffer).toFormat('webp').webp({ quality: 40 });
 
@@ -111,11 +136,16 @@ export const UploadMangaImage = async (image: Blob, mangaId: number) => {
 
   await sendCommand(contabo, command, 5);
 
-  return `${process.env.IMG_DOMAIN}/manga/${mangaId}/thumbnail.webp`;
+  const Key = generateKey(
+    `${process.env.IMG_DOMAIN}/manga/${mangaId}/thumbnail.webp`,
+    prevImage
+  );
+  return Key;
 };
 
 export const UploadUserImage = async (
   image: Blob,
+  prevImage: string | null,
   userId: string,
   type: 'banner' | 'avatar'
 ) => {
@@ -138,10 +168,19 @@ export const UploadUserImage = async (
 
   await sendCommand(contabo, command, 5);
 
-  return `${process.env.IMG_DOMAIN}/user/${type}/${userId}.webp`;
+  const Key = generateKey(
+    `${process.env.IMG_DOMAIN}/user/${type}/${userId}.webp`,
+    prevImage
+  );
+
+  return Key;
 };
 
-export const UploadTeamImage = async (image: Blob, teamId: number) => {
+export const UploadTeamImage = async (
+  image: Blob,
+  teamId: number,
+  prevImage: string | null
+) => {
   const arrayBuffer = await new Blob([image]).arrayBuffer();
   const sharpImage = sharp(arrayBuffer).toFormat('webp').webp({ quality: 40 });
 
@@ -161,5 +200,89 @@ export const UploadTeamImage = async (image: Blob, teamId: number) => {
 
   await sendCommand(contabo, command, 5);
 
-  return `${process.env.IMG_DOMAIN}/team/${teamId}.webp`;
+  const Key = generateKey(
+    `${process.env.IMG_DOMAIN}/team/${teamId}.webp`,
+    prevImage
+  );
+
+  return Key;
+};
+
+export const EditChapterImage = async (
+  newImages: { image: Blob; index: number }[],
+  existingImages: string[],
+  mangaId: number,
+  chapterIndex: number
+) => {
+  const uploadedImages = await Promise.all(
+    newImages.map(async (img) => {
+      const arrayBuffer = await new Blob([img.image]).arrayBuffer();
+
+      let sharpImage;
+      if (img.image.type === 'application/octet-stream')
+        sharpImage = sharp(arrayBuffer).toFormat('webp').webp();
+      else
+        sharpImage = sharp(arrayBuffer).toFormat('webp').webp({ quality: 40 });
+
+      const { width, height } = await sharpImage.metadata();
+
+      const optimizedImage = await resizeImage(
+        sharpImage,
+        width,
+        height
+      ).toBuffer();
+
+      const command = new PutObjectCommand({
+        Body: optimizedImage,
+        Bucket: 'chapter',
+        Key: `${mangaId}/${chapterIndex}/${img.index + 1}.webp`,
+      });
+
+      await sendCommand(contabo, command);
+
+      let Key;
+      const existingImage = existingImages.find((image) =>
+        image.startsWith(
+          `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${
+            img.index + 1
+          }.webp`
+        )
+      );
+
+      if (existingImage)
+        Key = generateKey(
+          `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${
+            img.index + 1
+          }.webp`,
+          existingImage
+        );
+      else
+        Key = generateKey(
+          `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${
+            img.index + 1
+          }.webp`,
+          null
+        );
+
+      return { url: Key, index: img.index };
+    })
+  );
+
+  const remainImages = existingImages.slice(uploadedImages.length);
+  await Promise.all(
+    remainImages.map(async (image) => {
+      const key = new URL(image.split('?')[0]).pathname
+        .split('/')
+        .slice(2)
+        .join('/');
+      const command = new DeleteObjectCommand({
+        Bucket: 'chapter',
+        Key: key,
+      });
+
+      await sendCommand(contabo, command);
+    })
+  );
+
+  return uploadedImages;
 };

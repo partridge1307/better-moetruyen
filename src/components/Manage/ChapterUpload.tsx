@@ -54,9 +54,9 @@ const ChapterUpload = ({ id }: { id: string }) => {
       form.append('volume', `${volume}`);
       chapterName ? form.append('chapterName', chapterName) : null;
       await Promise.all(
-        images.map(async (image) => {
+        images.map(async (image, index) => {
           const blob = await fetch(image.src).then((res) => res.blob());
-          form.append('images', blob);
+          form.append('images', JSON.stringify({ image: blob, index }));
         })
       );
 
@@ -254,7 +254,6 @@ const ChapterUpload = ({ id }: { id: string }) => {
                         name: string;
                       }[] = [];
 
-                      // Ignore file if it larger 4MB
                       for (let i = 0; i < e.target.files.length; i++) {
                         if (e.target.files.item(i)!.size > 4 * 1000 * 1000) {
                           continue;

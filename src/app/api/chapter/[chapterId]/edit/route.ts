@@ -1,4 +1,4 @@
-import { UploadChapterImage } from '@/lib/contabo';
+import { EditChapterImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
@@ -12,19 +12,14 @@ const chapterValidator = zfd.formData({
       zfd
         .file()
         .refine((file) => file.size < 4 * 1000 * 1000, 'Ảnh phải nhỏ hơn 4MB')
-        .refine(
-          (file) =>
-            ['image/jpg', 'image/jpeg', 'image/png'].includes(file.type),
-          'Chỉ nhận định dạng .jpg, .png, .jpeg'
-        )
-        .or(
-          z
-            .string()
-            .refine(
-              (endpoint) => endpoint.startsWith(`${process.env.IMG_DOMAIN}`),
-              'Ảnh có đường dẫn không hợp lệ'
-            )
-        )
+        .refine((file) => {
+          return [
+            'image/jpg',
+            'image/jpeg',
+            'image/png',
+            'application/octet-stream',
+          ].includes(file.type);
+        }, 'Chỉ nhận định dạng .jpg, .png, .jpeg')
     )
     .refine((files) => files.length >= 1, 'Tối thiểu 1 ảnh'),
   chapterName: zfd
@@ -41,6 +36,9 @@ export async function PATCH(
   try {
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
+
+    const { images, chapterIndex, chapterName, volume } =
+      chapterValidator.parse(await req.formData());
 
     const [, manga] = await db.$transaction([
       db.user.findFirstOrThrow({
@@ -63,15 +61,18 @@ export async function PATCH(
         select: {
           id: true,
           name: true,
+          chapter: {
+            select: {
+              images: true,
+            },
+          },
         },
       }),
     ]);
 
-    const { images, chapterIndex, chapterName, volume } =
-      chapterValidator.parse(await req.formData());
-
-    const uploadedImages = await UploadChapterImage(
-      images.filter((image) => image instanceof File) as File[],
+    const edittedImages = await EditChapterImage(
+      images.map((img, index) => ({ image: img, index })),
+      manga.chapter[0].images,
       manga.id,
       chapterIndex
     );
@@ -84,7 +85,9 @@ export async function PATCH(
         chapterIndex,
         name: chapterName,
         volume,
-        images: uploadedImages,
+        images: edittedImages
+          .sort((a, b) => a.index - b.index)
+          .map((img) => img.url),
       },
     });
 

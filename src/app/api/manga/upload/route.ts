@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const uploadedImage = await UploadMangaImage(img, mangaCreated.id);
+    const uploadedImage = await UploadMangaImage(img, mangaCreated.id, null);
     await db.manga.update({
       where: {
         id: mangaCreated.id,

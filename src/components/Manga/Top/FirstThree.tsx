@@ -16,7 +16,7 @@ const FirstThree: FC<FirstThreeProps> = ({ mangas }) => {
   return (
     <div className="flex justify-center items-end overflow-auto py-4 dark:bg-zinc-900 rounded-lg">
       {mangas.map((manga, idx) => {
-        if (idx === 0) {
+        if (idx === 0 && manga.id === -1) {
           return (
             <Link
               key={idx}

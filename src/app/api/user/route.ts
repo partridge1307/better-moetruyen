@@ -31,8 +31,10 @@ export async function PATCH(req: NextRequest) {
 
     let avatarUrl: string | null = null,
       bannerUrl: string | null = null;
-    if (avatar) avatarUrl = await UploadUserImage(avatar, user.id, 'avatar');
-    if (banner) bannerUrl = await UploadUserImage(banner, user.id, 'banner');
+    if (avatar)
+      avatarUrl = await UploadUserImage(avatar, user.image, user.id, 'avatar');
+    if (banner)
+      bannerUrl = await UploadUserImage(banner, user.banner, user.id, 'banner');
 
     await db.user.update({
       where: {
@@ -40,8 +42,8 @@ export async function PATCH(req: NextRequest) {
       },
       data: {
         name,
-        image: avatarUrl ? avatarUrl : user.image,
-        banner: bannerUrl ? bannerUrl : user.banner,
+        image: !avatarUrl ? user.image : avatarUrl,
+        banner: !bannerUrl ? user.banner : bannerUrl,
         color: color ? JSON.parse(color) : user.color,
       },
     });

@@ -16,7 +16,7 @@ const CustomLink = ({ data }: any) => {
       />
 
       <div className="flex flex-col justify-center gap-2">
-        <p className="text-sky-500">{data.link.split('//')[1]}</p>
+        <p className="text-sky-500">{new URL(data.link).hostname}</p>
         <div className="space-y-2">
           <p className="text-xl font-bold">{data.meta.title}</p>
           <p className="line-clamp-3 leading-5 text-sm">

@@ -138,7 +138,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
       const init = () => {
         const handler = () => {
           if (window.scrollY <= 200) {
-            slider.current?.scrollIntoView({ behavior: 'smooth' });
+            slider.current?.scrollIntoView({ behavior: 'instant' });
           }
 
           if (slider.current?.scrollTop === 0) {

@@ -10,33 +10,26 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
-const MoetruyenEditor = dynamic(
-  () => import('@/components/Editor/MoetruyenEditor'),
-  { ssr: false, loading: () => <Loader2 className="w-6 h-6" /> }
+
+const MangaControll = dynamic(() => import('@/components/Manga/MangaControll'));
+const ListTreeChapter = dynamic(
+  () => import('@/components/Chapter/ListTreeChapter')
 );
+const ListChapter = dynamic(() => import('@/components/Chapter/ListChapter'));
 const Comment = dynamic(() => import('@/components/Comment'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
 });
 const EditorOutput = dynamic(() => import('@/components/EditorOutput'), {
   ssr: false,
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+  loading: () => (
+    <div className="w-full h-72 p-2 rounded-md dark:bg-zinc-900 animate-pulse" />
+  ),
 });
-const ListChapter = dynamic(() => import('@/components/Chapter/ListChapter'), {
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
-});
-const ListTreeChapter = dynamic(
-  () => import('@/components/Chapter/ListTreeChapter'),
-  { loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
-);
 const FBEmbed = dynamic(() => import('@/components/FBEmbed'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
 });
-const MangaControll = dynamic(
-  () => import('@/components/Manga/MangaControll'),
-  { loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
-);
 const MangaImage = dynamic(() => import('@/components/Manga/MangaImage'), {
   ssr: false,
   loading: () => (
@@ -241,7 +234,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
           <div className="space-y-2">
             <p className="font-semibold text-lg">Mô tả</p>
-            <EditorOutput content={manga.description} />
+            {/* <EditorOutput content={manga.description} /> */}
           </div>
 
           <Tabs defaultValue="chapter">
@@ -251,7 +244,7 @@ const page: FC<pageProps> = async ({ params }) => {
             </TabsList>
             <TabsContent
               value="chapter"
-              className="grid grid-cols-1 max-sm:gap-20 md:grid-cols-[.4fr_1fr] lg:grid-cols-[.3fr_1fr] gap-6"
+              className="grid grid-cols-1 md:grid-cols-[.4fr_1fr] lg:grid-cols-[.3fr_1fr] gap-6 max-sm:gap-20 mb-2"
             >
               <div className="space-y-4">
                 <div>
@@ -338,7 +331,6 @@ const page: FC<pageProps> = async ({ params }) => {
             </TabsContent>
 
             <TabsContent value="comment">
-              <MoetruyenEditor id={params.id} />
               <Comment id={params.id} initialComments={comments} />
             </TabsContent>
           </Tabs>

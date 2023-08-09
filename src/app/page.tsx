@@ -5,7 +5,7 @@ import Link from 'next/link';
 const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
   ssr: false,
   loading: () => (
-    <div className="grid grid-cols-1 md:grid-cols-[1fr_.13fr] gap-2 w-full h-72">
+    <div className="grid grid-cols-1 max-sm:grid-rows-[1fr_.3fr] md:grid-cols-[1fr_.1fr] gap-2 w-full h-72">
       <div className="animate-pulse dark:bg-zinc-900 rounded-lg" />
       <div className="animate-pulse dark:bg-zinc-900 rounded-lg" />
     </div>

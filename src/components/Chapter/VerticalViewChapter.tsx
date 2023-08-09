@@ -5,10 +5,7 @@ import Image from 'next/image';
 import { forwardRef, memo } from 'react';
 import NextChapterButton from './NextChapterButton';
 import PrevChapterButton from './PrevChapterButton';
-const MoetruyenEditor = dynamic(
-  () => import('@/components/Editor/MoetruyenEditor'),
-  { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
-);
+import { rgbDataURL } from '@/lib/utils';
 const Comment = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
@@ -50,40 +47,33 @@ const VerticalViewChapter = forwardRef<
         {chapter.images.map((img, idx) => {
           if (idx === Math.floor(chapter.images.length * 0.7)) {
             return (
-              <div
-                key={`${idx}`}
-                id={`${idx}`}
-                className="relative h-fit w-full"
-              >
+              <div key={`${idx}`} id={`${idx}`} className="relative w-full">
                 <Image
                   ref={imageRef}
                   width={0}
                   height={0}
-                  priority
-                  sizes="0%"
+                  sizes="100vw"
+                  tabIndex={-1}
                   src={img}
                   alt={`Trang ${idx + 1}`}
-                  tabIndex={-1}
-                  className="w-4/5 object-contain max-sm:w-full md:mx-auto"
+                  blurDataURL={rgbDataURL(255, 209, 148)}
+                  className="object-contain w-fit mx-auto"
                 />
               </div>
             );
           } else {
             return (
-              <div
-                key={`${idx}`}
-                id={`${idx}`}
-                className="relative h-fit w-full"
-              >
+              <div key={`${idx}`} id={`${idx}`} className="relative w-full">
                 <Image
                   width={0}
                   height={0}
-                  sizes="0%"
-                  priority
+                  sizes="100vw"
+                  tabIndex={-1}
                   src={img}
                   alt={`Trang ${idx + 1}`}
-                  tabIndex={-1}
-                  className="w-4/5 object-contain max-sm:w-full md:mx-auto"
+                  placeholder="blur"
+                  blurDataURL={rgbDataURL(255, 209, 148)}
+                  className="object-contain w-fit mx-auto"
                 />
               </div>
             );
@@ -113,7 +103,6 @@ const VerticalViewChapter = forwardRef<
               <MessagesSquare className="w-5 h-5" />
             </p>
 
-            <MoetruyenEditor id={`${mangaId}`} chapterId={currentChapterId} />
             <Comment mangaId={mangaId} chapterId={currentChapterId} />
           </div>
         </div>

@@ -1,18 +1,17 @@
 import UserAvatar from '@/components/User/UserAvatar';
+import Username from '@/components/User/Username';
 import { formatTimeToNow } from '@/lib/utils';
-import { FC } from 'react';
-import CommentContent from '../CommentContent';
-import CommentOEmbed from '../CommentOEmbed';
-import CommentFunc from './CommentFunc';
-import SubComment from '../SubComment';
-import { ExtendedComment } from '.';
 import type { Prisma } from '@prisma/client';
 import type { Session } from 'next-auth';
-import Username from '@/components/User/Username';
+import { FC } from 'react';
+import { ExtendedComment } from '.';
+import CommentContent from '../CommentContent';
+import CommentOEmbed from '../CommentOEmbed';
+import SubComment from '../SubComment';
+import CommentFunc from './CommentFunc';
 
 interface ChapterCommentCardProps {
   comment: ExtendedComment;
-  index: number;
   session: Session | null;
   chapterId: number;
   mangaId: number;
@@ -20,7 +19,6 @@ interface ChapterCommentCardProps {
 
 const ChapterCommentCard: FC<ChapterCommentCardProps> = ({
   comment,
-  index,
   session,
   chapterId,
   mangaId,
@@ -48,7 +46,7 @@ const ChapterCommentCard: FC<ChapterCommentCardProps> = ({
         </div>
 
         <div className="space-y-2">
-          <CommentContent index={index} content={comment.content} />
+          <CommentContent id={comment.id} content={comment.content} />
 
           <CommentOEmbed
             oEmbed={

@@ -6,10 +6,7 @@ import { forwardRef } from 'react';
 import { Button } from '../ui/Button';
 import NextChapterButton from './NextChapterButton';
 import PrevChapterButton from './PrevChapterButton';
-const MoetruyenEditor = dynamic(
-  () => import('@/components/Editor/MoetruyenEditor'),
-  { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
-);
+import { rgbDataURL } from '@/lib/utils';
 const Comment = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
@@ -65,11 +62,13 @@ const HorizontalViewChapter = forwardRef<
                 <Image
                   ref={imageRef}
                   fill
-                  priority
+                  sizes="100vw"
+                  tabIndex={-1}
                   src={img}
                   alt={chapter.manga.name}
-                  tabIndex={-1}
                   className="object-contain"
+                  placeholder="blur"
+                  blurDataURL={rgbDataURL(255, 209, 148)}
                 />
               </div>
             );
@@ -82,11 +81,13 @@ const HorizontalViewChapter = forwardRef<
               >
                 <Image
                   fill
-                  priority
+                  sizes="100vw"
+                  tabIndex={-1}
                   src={img}
                   alt={chapter.manga.name}
-                  tabIndex={-1}
                   className="object-contain"
+                  placeholder="blur"
+                  blurDataURL={rgbDataURL(255, 209, 148)}
                 />
               </div>
             );
@@ -157,7 +158,6 @@ const HorizontalViewChapter = forwardRef<
               Quay lại
             </Button>
 
-            <MoetruyenEditor id={`${mangaId}`} chapterId={currentChapterId} />
             <Comment mangaId={mangaId} chapterId={currentChapterId} />
           </div>
         </div>

@@ -16,7 +16,7 @@ import { ImageNode } from '../Editor/nodes/Image';
 import { YouTubeNode } from '../Editor/nodes/Youtube';
 
 interface CommentProps {
-  index: number;
+  id: number;
   content: Prisma.JsonValue;
 }
 
@@ -30,11 +30,11 @@ function onError(err: Error): void {
   });
 }
 
-const CommentContent: FC<CommentProps> = ({ index, content }): JSX.Element => {
+const CommentContent: FC<CommentProps> = ({ id, content }): JSX.Element => {
   const cmtRef = useRef<HTMLDivElement>(null);
   const [isCollapsed, setisCollapsed] = useState<boolean>(true);
   const initialConfig: InitialConfigType = {
-    namespace: `MTComment-${index}`,
+    namespace: `MTComment-${id}`,
     onError,
     theme,
     editable: false,

@@ -42,8 +42,9 @@ export async function PUT(
       await req.json()
     );
 
+    let createdComment;
     if (commentId) {
-      await db.comment.create({
+      createdComment = await db.comment.create({
         data: {
           content: { ...content },
           oEmbed,
@@ -54,7 +55,7 @@ export async function PUT(
         },
       });
     } else {
-      await db.comment.create({
+      createdComment = await db.comment.create({
         data: {
           content: { ...content },
           oEmbed,
@@ -65,7 +66,7 @@ export async function PUT(
       });
     }
 
-    return new Response('OK');
+    return new Response(JSON.stringify(createdComment.id));
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2025') {

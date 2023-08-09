@@ -142,9 +142,7 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
                   onChange={(_, percentCrop) => {
                     setCrop(percentCrop);
                   }}
-                  onComplete={(c) => {
-                    setCompleteCrop(c);
-                  }}
+                  onComplete={(c) => setCompleteCrop(c)}
                   aspect={aspect}
                   circularCrop={aspect === 1}
                 >
@@ -168,9 +166,9 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
                 min={aspect === 1 ? 25 : 50}
                 max={aspect === 1 ? 100 : 100}
                 step={1}
-                onValueChange={(value) =>
-                  setCrop(
-                    centerCrop(
+                onValueChange={(value) => {
+                  if (imageRef.current) {
+                    const { x, width, y, height } = centerCrop(
                       makeAspectCrop(
                         { unit: '%', width: value[0] },
                         aspect,
@@ -179,9 +177,38 @@ const ImageCropModal = forwardRef<HTMLButtonElement, ImageCropModalProps>(
                       ),
                       mediaWidth.current,
                       mediaHeight.current
-                    )
-                  )
-                }
+                    );
+
+                    const { clientWidth, clientHeight } = imageRef.current;
+                    const xCrop = Math.round(clientWidth * (x / 100));
+                    const widthCrop = Math.round(clientWidth * (width / 100));
+                    const yCrop = Math.round(clientHeight * (y / 100));
+                    const heightCrop = Math.round(
+                      clientHeight * (height / 100)
+                    );
+
+                    setCompleteCrop({
+                      unit: 'px',
+                      x: xCrop,
+                      width: widthCrop,
+                      y: yCrop,
+                      height: heightCrop,
+                    });
+
+                    setCrop(
+                      centerCrop(
+                        makeAspectCrop(
+                          { unit: '%', width: value[0] },
+                          aspect,
+                          mediaWidth.current,
+                          mediaHeight.current
+                        ),
+                        mediaWidth.current,
+                        mediaHeight.current
+                      )
+                    );
+                  }
+                }}
               />
             ) : null}
 

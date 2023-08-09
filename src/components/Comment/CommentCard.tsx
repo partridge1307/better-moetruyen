@@ -7,10 +7,10 @@ import Link from 'next/link';
 import { FC } from 'react';
 import type { ExtendedComment } from '.';
 import UserAvatar from '../User/UserAvatar';
+import Username from '../User/Username';
 import CommentContent from './CommentContent';
 import CommentOEmbed from './CommentOEmbed';
 import SubComment from './SubComment';
-import Username from '../User/Username';
 const CommentFunc = dynamic(() => import('./CommentFunc'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6" />,
@@ -19,11 +19,10 @@ const CommentFunc = dynamic(() => import('./CommentFunc'), {
 interface CommentCardProps {
   comment: ExtendedComment;
   id: string;
-  index: number;
   session: Session | null;
 }
 
-const CommentCard: FC<CommentCardProps> = ({ comment, id, index, session }) => {
+const CommentCard: FC<CommentCardProps> = ({ comment, id, session }) => {
   const voteAmt = comment.votes.reduce((acc, vote) => {
     if (vote.type === 'UP_VOTE') return acc + 1;
     if (vote.type === 'DOWN_VOTE') return acc - 1;
@@ -59,7 +58,7 @@ const CommentCard: FC<CommentCardProps> = ({ comment, id, index, session }) => {
         </div>
 
         <div className="space-y-2">
-          <CommentContent index={index} content={comment.content} />
+          <CommentContent id={comment.id} content={comment.content} />
 
           <CommentOEmbed
             oEmbed={

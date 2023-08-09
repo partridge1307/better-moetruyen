@@ -6,7 +6,6 @@ import type { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
 import { FC, memo, useState } from 'react';
 import DeleteComment from '../DeleteComment';
-
 const MoetruyenEditor = dynamic(
   () => import('@/components/Editor/MoetruyenEditor'),
   { ssr: false, loading: () => <Loader2 className="w-6 h-6" /> }

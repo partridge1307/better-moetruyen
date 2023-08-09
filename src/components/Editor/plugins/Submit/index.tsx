@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Button } from '@/components/ui/Button';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
@@ -7,9 +8,14 @@ import { AutoLinkNode } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
+import {
+  CLEAR_EDITOR_COMMAND,
+  SerializedEditorState,
+  SerializedLexicalNode,
+} from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
 import { $isImageNode, ImageNode } from '../../nodes/Image';
-import { CLEAR_EDITOR_COMMAND } from 'lexical';
+import { useRouter } from 'next/navigation';
 
 export default function Submit({
   id,
@@ -23,6 +29,7 @@ export default function Submit({
   const [editor] = useLexicalComposerContext();
   const [hasText, setHasText] = useState<boolean>(false);
   const { loginToast, notFoundToast } = useCustomToast();
+  const router = useRouter();
 
   const {
     data: oEmbedData,
@@ -46,12 +53,47 @@ export default function Submit({
           ...values,
           id,
         };
-        await axios.put(`/api/chapter/${chapterId}/comment/create`, payload);
+        const { data } = await axios.put(
+          `/api/chapter/${chapterId}/comment/create`,
+          payload
+        );
+
+        return { data, oEmbed: values.oEmbed } as {
+          data: number;
+          oEmbed: {
+            meta: {
+              title: string;
+              description: string;
+              image: {
+                url: string;
+              };
+            };
+            link: string;
+          } | null;
+        };
       } else {
-        await axios.put(`/api/manga/${id}/comment/create`, values);
+        const { data } = await axios.put(
+          `/api/manga/${id}/comment/create`,
+          values
+        );
         if (commentId) {
           // socket.emit('notify', { type: 'COMMENT', payload: commentId });
         }
+
+        return { data, commentId, oEmbed: values.oEmbed } as {
+          data: number;
+          commentId: number;
+          oEmbed: {
+            meta: {
+              title: string;
+              description: string;
+              image: {
+                url: string;
+              };
+            };
+            link: string;
+          } | null;
+        };
       }
     },
     onError: (err) => {
@@ -66,7 +108,9 @@ export default function Submit({
         variant: 'destructive',
       });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      router.refresh();
+
       if (!editor.isEditable()) editor.setEditable(true);
       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
 

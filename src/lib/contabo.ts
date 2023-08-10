@@ -107,7 +107,7 @@ export const UploadChapterImage = (
   chapterIndex: number
 ) =>
   Promise.all(
-    images.map(async (img, index) => {
+    images.map(async (img) => {
       const arrayBuffer = await new Blob([img]).arrayBuffer();
       const sharpImage = sharp(arrayBuffer)
         .toFormat('webp')
@@ -130,14 +130,9 @@ export const UploadChapterImage = (
 
       await sendCommand(contabo, command, 5);
 
-      return {
-        link: `${
-          process.env.IMG_DOMAIN
-        }/chapter/${mangaId}/${chapterIndex}/${img.name
-          .split('.')
-          .shift()}.webp`,
-        index,
-      };
+      return `${
+        process.env.IMG_DOMAIN
+      }/chapter/${mangaId}/${chapterIndex}/${img.name.split('.').shift()}.webp`;
     })
   );
 
@@ -247,7 +242,6 @@ export const EditChapterImage = async (
     newImages.map((image, index) => ({ index, image })),
     existingImages.map((image, index) => ({ index, image })),
   ]);
-
   const [blobImages, linkImages] = await Promise.all([
     serializedNewImages.filter((image) => image.image instanceof File) as {
       index: number;
@@ -300,7 +294,7 @@ export const EditChapterImage = async (
           }/chapter/${mangaId}/${chapterIndex}/${img.image.name
             .split('.')
             .shift()}.webp`,
-          null
+          existImage.image
         );
       } else {
         const name = img.image.name.split('.')[0].split('_');

@@ -89,9 +89,7 @@ export async function POST(
           chapterIndex: index,
           name: chapterName,
           volume,
-          images: uploadedImages
-            .sort((a, b) => a.index - b.index)
-            .map((img) => img.link),
+          images: uploadedImages,
           manga: {
             connect: { id: manga.id },
           },
@@ -106,9 +104,7 @@ export async function POST(
           chapterIndex: index,
           name: chapterName,
           volume,
-          images: uploadedImages
-            .sort((a, b) => a.index - b.index)
-            .map((img) => img.link),
+          images: uploadedImages,
           manga: {
             connect: { id: manga.id },
           },

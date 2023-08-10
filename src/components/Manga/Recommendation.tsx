@@ -78,7 +78,7 @@ const Recommendation = async () => {
             <div className="relative w-32 h-44 lg:w-40 lg:h-56">
               <Image
                 fill
-                sizes="10vw"
+                sizes="40vw"
                 quality={30}
                 src={manga.image}
                 alt="Recommend Manga Image"

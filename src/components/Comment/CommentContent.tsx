@@ -8,17 +8,12 @@ import {
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { ChevronsDown, ChevronsUp } from 'lucide-react';
-import { FC, useRef, useState } from 'react';
+import { FC, useCallback, useMemo, useRef, useState } from 'react';
 import { theme } from '../Editor/Theme';
 import { ImageNode } from '../Editor/nodes/Image';
 import { YouTubeNode } from '../Editor/nodes/Youtube';
-
-interface CommentProps {
-  id: number;
-  content: Prisma.JsonValue;
-}
 
 function onError(err: Error): void {
   // eslint-disable-next-line no-console
@@ -30,33 +25,50 @@ function onError(err: Error): void {
   });
 }
 
+interface CommentProps {
+  id: number;
+  content: Prisma.JsonValue;
+}
+
 const CommentContent: FC<CommentProps> = ({ id, content }): JSX.Element => {
   const cmtRef = useRef<HTMLDivElement>(null);
   const [isCollapsed, setisCollapsed] = useState<boolean>(true);
-  const initialConfig: InitialConfigType = {
-    namespace: `MTComment-${id}`,
-    onError,
-    theme,
-    editable: false,
-    editorState: JSON.stringify(content),
-    nodes: [AutoLinkNode, ImageNode, YouTubeNode, LinkNode],
-  };
 
-  return (
-    <div
-      ref={cmtRef}
-      className={cn(
-        'relative p-2 px-3 max-h-80 overflow-clip rounded-2xl dark:bg-zinc-700',
-        !isCollapsed && 'max-h-fit'
-      )}
-    >
-      <LexicalComposer initialConfig={initialConfig}>
+  const initialConfig = useCallback(() => {
+    const initialConfig: InitialConfigType = {
+      namespace: `MTComment-${id}`,
+      onError,
+      theme,
+      editable: false,
+      editorState: JSON.stringify(content),
+      nodes: [AutoLinkNode, ImageNode, YouTubeNode, LinkNode],
+    };
+
+    return initialConfig;
+  }, [content, id]);
+
+  const MoetruyenEditorOutput = useMemo(
+    () => (
+      <LexicalComposer initialConfig={initialConfig()}>
         <RichTextPlugin
           contentEditable={<ContentEditable />}
           placeholder={null}
           ErrorBoundary={LexicalErrorBoundary}
         />
       </LexicalComposer>
+    ),
+    [initialConfig]
+  );
+
+  return (
+    <div
+      ref={cmtRef}
+      className={cn(
+        'relative p-2 px-3 max-h-80 overflow-clip rounded-2xl dark:bg-zinc-700',
+        !isCollapsed && 'max-h-fit pb-10'
+      )}
+    >
+      {MoetruyenEditorOutput}
 
       {cmtRef.current && cmtRef.current.clientHeight >= 320 ? (
         <div

@@ -70,7 +70,6 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
   const { loginToast, notFoundToast } = useCustomToast();
   const { push, refresh } = useRouter();
   const { update } = useSession();
-  const modalRef = useRef<HTMLButtonElement>(null);
   const avatarRef = useRef<HTMLInputElement>(null);
   const bannerRef = useRef<HTMLInputElement>(null);
   const [aspect, setAspect] = useState(1);
@@ -422,7 +421,6 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
       </div>
 
       <ImageCropModal
-        ref={modalRef}
         previewImage={previewImage}
         setCancel={(value) => {
           dispatch({
@@ -459,7 +457,8 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
             });
             setAspect(1);
             e.target.value = '';
-            modalRef.current?.click();
+            const target = document.getElementById('crop-modal=button');
+            target?.click();
           }
         }}
       />
@@ -476,7 +475,8 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
             });
             setAspect(16 / 9);
             e.target.value = '';
-            modalRef.current?.click();
+            const target = document.getElementById('crop-modal=button');
+            target?.click();
           }
         }}
       />

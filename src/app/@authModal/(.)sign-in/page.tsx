@@ -1,11 +1,18 @@
 import SignIn from '@/components/Auth/SignIn';
 import CloseModal from '@/components/CloseModal';
+import { buttonVariants } from '@/components/ui/Button';
+import { cn } from '@/lib/utils';
 
 const Page = () => {
   return (
     <div className="fixed inset-0 z-20 flex items-center bg-white/30 dark:bg-zinc-900/30">
-      <div className="container relative mx-auto h-3/4 max-w-2xl rounded-lg bg-white py-4 dark:bg-zinc-800">
-        <CloseModal className="absolute right-4 h-6 w-6 rounded-md p-0" />
+      <div className="container relative mx-auto h-fit p-4 max-w-sm md:max-w-md lg:max-w-lg rounded-lg bg-white dark:bg-zinc-800">
+        <CloseModal
+          className={cn(
+            buttonVariants({ variant: 'link' }),
+            'absolute left-4 rounded-md bg-transparent hover:bg-transparent'
+          )}
+        />
         <SignIn />
       </div>
     </div>

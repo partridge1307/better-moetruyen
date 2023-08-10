@@ -1,24 +1,13 @@
 'use client';
 
+import { cn } from '@/lib/utils';
 import { ChevronsDown, ChevronsUp } from 'lucide-react';
 import { FC, useEffect, useRef, useState } from 'react';
-import CustomImage from './Renderer/CustomImage';
-import CustomLink from './Renderer/CustomLink';
-import { cn } from '@/lib/utils';
-import dynamic from 'next/dynamic';
-const Output = dynamic(() => import('editorjs-react-renderer'), {
-  ssr: false,
-  loading: () => <template className="w-full h-24" />,
-});
+import EditorJSOutput from './Renderer/EditorJSOutput';
 
 interface EditorOutputProps {
   data: any;
 }
-
-const renderers = {
-  linktool: CustomLink,
-  image: CustomImage,
-};
 
 const EditorOutput: FC<EditorOutputProps> = ({ data }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -39,7 +28,7 @@ const EditorOutput: FC<EditorOutputProps> = ({ data }) => {
         !isCollapsed && 'max-h-fit pb-10'
       )}
     >
-      <Output data={data} renderers={renderers} />
+      <EditorJSOutput data={data} />
       {showMore ? (
         <div
           role="button"

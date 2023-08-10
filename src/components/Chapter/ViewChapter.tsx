@@ -62,10 +62,13 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
     setReadingMode(mode);
   };
   const slideLeft = () => {
+    if (currentImage === 0) return;
+
     if (slider.current !== null) {
       const target = document.getElementById(
         `${currentImage - 1}`
       ) as HTMLImageElement;
+
       currentImageRef.current = target;
       currentImageRef.current.scrollIntoView({ behavior: 'smooth' });
       setCurrentImage(currentImage - 1);
@@ -196,21 +199,22 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
         {readingMode === 'horizontal' ? (
           <HorizontalViewChapter
             ref={slider}
+            imageRef={ref}
             chapter={chapter}
+            chapterList={chapterList}
+            currentChapterIndex={chapter.chapterIndex}
+            mangaId={chapter.manga.id}
+            currentChapterId={chapter.id}
             slideLeft={slideLeft}
             slideRight={slideRight}
-            imageRef={ref}
-            currentImage={currentImage}
-            currentChapterId={chapter.id}
-            currentChapterIndex={chapter.chapterIndex}
-            chapterList={chapterList}
-            mangaId={chapter.manga.id}
+            hasPrevImage={currentImage >= 0}
+            hasNextImage={currentImage >= chapter.images.length}
           />
         ) : (
           <VerticalViewChapter
             ref={slider}
-            chapter={chapter}
             imageRef={ref}
+            chapter={chapter}
             chapterList={chapterList}
             currentChapterIndex={chapter.chapterIndex}
             mangaId={chapter.manga.id}

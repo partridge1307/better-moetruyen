@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { forwardRef, memo } from 'react';
 import NextChapterButton from './NextChapterButton';
 import PrevChapterButton from './PrevChapterButton';
-import { rgbDataURL } from '@/lib/utils';
 const Comment = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
@@ -53,10 +52,10 @@ const VerticalViewChapter = forwardRef<
                   width={0}
                   height={0}
                   sizes="100vw"
+                  priority
                   tabIndex={-1}
                   src={img}
                   alt={`Trang ${idx + 1}`}
-                  blurDataURL={rgbDataURL(255, 209, 148)}
                   className="object-contain w-fit mx-auto"
                 />
               </div>
@@ -68,11 +67,10 @@ const VerticalViewChapter = forwardRef<
                   width={0}
                   height={0}
                   sizes="100vw"
+                  priority
                   tabIndex={-1}
                   src={img}
                   alt={`Trang ${idx + 1}`}
-                  placeholder="blur"
-                  blurDataURL={rgbDataURL(255, 209, 148)}
                   className="object-contain w-fit mx-auto"
                 />
               </div>

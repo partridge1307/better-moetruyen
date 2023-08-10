@@ -2,11 +2,10 @@ import type { Chapter, Manga } from '@prisma/client';
 import { ChevronLeft, Loader2, MessagesSquare } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { forwardRef } from 'react';
+import { forwardRef, memo } from 'react';
 import { Button } from '../ui/Button';
 import NextChapterButton from './NextChapterButton';
 import PrevChapterButton from './PrevChapterButton';
-import { rgbDataURL } from '@/lib/utils';
 const Comment = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
@@ -19,13 +18,14 @@ interface HorizontalViewChapterProps {
   slideLeft(): void;
   slideRight(): void;
   imageRef: (element: any) => void;
-  currentImage: number;
   currentChapterId: number;
   currentChapterIndex: number;
   chapterList:
     | Pick<Chapter, 'id' | 'chapterIndex' | 'name' | 'volume' | 'isPublished'>[]
     | null;
   mangaId: number;
+  hasPrevImage: boolean;
+  hasNextImage: boolean;
 }
 
 const HorizontalViewChapter = forwardRef<
@@ -38,18 +38,19 @@ const HorizontalViewChapter = forwardRef<
       slideLeft,
       slideRight,
       imageRef,
-      currentImage,
       currentChapterId,
       currentChapterIndex,
       chapterList,
       mangaId,
+      hasPrevImage,
+      hasNextImage,
     },
     ref
   ) => {
     return (
       <div
         ref={ref}
-        className="no-scrollbar flex h-full w-full overflow-auto scroll-smooth transition-transform"
+        className="flex h-full w-full overflow-hidden scroll-smooth"
       >
         {chapter.images.map((img, idx) => {
           if (idx === Math.floor(chapter.images.length * 0.7)) {
@@ -63,12 +64,11 @@ const HorizontalViewChapter = forwardRef<
                   ref={imageRef}
                   fill
                   sizes="100vw"
+                  priority
                   tabIndex={-1}
                   src={img}
                   alt={chapter.manga.name}
                   className="object-contain"
-                  placeholder="blur"
-                  blurDataURL={rgbDataURL(255, 209, 148)}
                 />
               </div>
             );
@@ -82,12 +82,11 @@ const HorizontalViewChapter = forwardRef<
                 <Image
                   fill
                   sizes="100vw"
+                  priority
                   tabIndex={-1}
                   src={img}
                   alt={chapter.manga.name}
                   className="object-contain"
-                  placeholder="blur"
-                  blurDataURL={rgbDataURL(255, 209, 148)}
                 />
               </div>
             );
@@ -162,11 +161,11 @@ const HorizontalViewChapter = forwardRef<
           </div>
         </div>
 
-        {currentImage < chapter.images.length && (
+        {!hasNextImage && (
           <>
             <button
               onClick={slideLeft}
-              disabled={currentImage <= 0}
+              disabled={!hasPrevImage}
               className="absolute left-0 h-full w-2/5 opacity-0"
             />
             <button
@@ -182,4 +181,4 @@ const HorizontalViewChapter = forwardRef<
 
 HorizontalViewChapter.displayName = 'HorizontalViewChapter';
 
-export default HorizontalViewChapter;
+export default memo(HorizontalViewChapter);

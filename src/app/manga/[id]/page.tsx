@@ -226,10 +226,10 @@ const page: FC<pageProps> = async ({ params }) => {
             <p className="font-semibold text-lg">Mô tả</p>
             <Suspense
               fallback={
-                <template className="w-full h-72 p-2 rounded-md dark:bg-zinc-900 animate-pulse" />
+                <template className="w-full h-20 p-2 rounded-md dark:bg-zinc-900 animate-pulse" />
               }
             >
-              <EditorOutput content={manga.description} />
+              <EditorOutput data={manga.description} />
             </Suspense>
           </div>
 

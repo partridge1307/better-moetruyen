@@ -64,18 +64,14 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
       form.append('volume', `${volume}`);
       chapterName ? form.append('chapterName', chapterName) : null;
 
-      await Promise.all(
-        images.map(async (image) => {
-          if (!image.src.startsWith('blob')) {
-            return form.append('images', image.src);
-          } else {
-            const blob = await fetch(image.src).then((res) => res.blob());
-            return form.append('images', blob, image.name);
-          }
-        })
-      );
-
-      console.log(images);
+      for (const image of images) {
+        if (!image.src.startsWith('blob')) {
+          form.append('images', image.src);
+        } else {
+          const blob = await fetch(image.src).then((res) => res.blob());
+          form.append('images', blob, image.name);
+        }
+      }
 
       const { data } = await axios.patch(
         `/api/chapter/${chapter.id}/edit`,
@@ -311,7 +307,13 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
           )}
         />
 
-        {updateProgress ? <Progress value={updateProgress} /> : null}
+        {updateProgress ? (
+          updateProgress >= 100 ? (
+            <p className="text-center">Đang gửi đến Server...</p>
+          ) : (
+            <Progress value={updateProgress} />
+          )
+        ) : null}
 
         <Button
           type="submit"

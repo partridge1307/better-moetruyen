@@ -53,12 +53,11 @@ const ChapterUpload = ({ id }: { id: string }) => {
       form.append('chapterIndex', `${chapterIndex}`);
       form.append('volume', `${volume}`);
       chapterName ? form.append('chapterName', chapterName) : null;
-      await Promise.all(
-        images.map(async (image) => {
-          const blob = await fetch(image.src).then((res) => res.blob());
-          form.append('images', blob, image.name);
-        })
-      );
+
+      for (const image of images) {
+        const blob = await fetch(image.src).then((res) => res.blob());
+        form.append('images', blob, image.name);
+      }
 
       const { data } = await axios.post(`/api/manga/${id}/chapter`, form, {
         onUploadProgress(progressEvent) {
@@ -277,7 +276,13 @@ const ChapterUpload = ({ id }: { id: string }) => {
           )}
         />
 
-        {uploadProgress ? <Progress value={uploadProgress} /> : null}
+        {uploadProgress ? (
+          uploadProgress >= 100 ? (
+            <p className="text-center">Đang gửi đến Server...</p>
+          ) : (
+            <Progress value={uploadProgress} />
+          )
+        ) : null}
 
         <Button
           type="submit"

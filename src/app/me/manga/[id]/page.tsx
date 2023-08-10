@@ -159,7 +159,7 @@ const page: FC<pageProps> = async ({ params }) => {
           <dl className="space-y-1">
             <dt>Mô tả:</dt>
             <dd className="dark:bg-zinc-600/60 rounded-md">
-              <EditorOutput content={manga.description} />
+              <EditorOutput data={manga.description} />
             </dd>
           </dl>
 

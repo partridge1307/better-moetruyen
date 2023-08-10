@@ -183,7 +183,7 @@ model View {
   mangaId    Int          @id
   totalView  Int
   dailyView  DailyView[]
-  manga      Manga        @relation(fields: [mangaId], references: [id])
+  manga      Manga        @relation(fields: [mangaId], references: [id], onDelete: Cascade)
   weeklyView WeeklyView[]
 
   @@index([mangaId])

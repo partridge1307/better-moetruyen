@@ -134,7 +134,7 @@ model Chapter {
   isPublished  Boolean      @default(false)
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
-  manga        Manga        @relation(fields: [mangaId], references: [id])
+  manga        Manga        @relation(fields: [mangaId], references: [id], onDelete: Cascade)
   team         Team?        @relation(fields: [teamId], references: [id])
   comment      Comment[]
   dailyView    DailyView[]

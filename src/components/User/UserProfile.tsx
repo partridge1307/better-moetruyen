@@ -9,9 +9,11 @@ import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { Edit as EditIcon, Loader2, Pencil } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { FC, useEffect, useReducer, useRef, useState } from 'react';
-import ImageCropModal from '../ImageCropModal';
+import { AspectRatio } from '../ui/AspectRatio';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
 import { Input } from '../ui/Input';
 import {
@@ -21,8 +23,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/Select';
-import { AspectRatio } from '../ui/AspectRatio';
-import { useRouter } from 'next/navigation';
+const ImageCropModal = dynamic(() => import('../ImageCropModal'), {
+  ssr: false,
+});
 
 interface UserProfileProps {
   user: Pick<User, 'name' | 'color' | 'image' | 'banner'> & {

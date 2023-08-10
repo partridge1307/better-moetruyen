@@ -171,7 +171,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
       avatar: blobImg?.avatar,
       banner: blobImg?.banner,
       name: username,
-      color: JSON.stringify(color),
+      color: color ? JSON.stringify(color) : null,
     };
 
     Edit(payload);

@@ -24,6 +24,7 @@ export async function PATCH(req: NextRequest) {
     });
 
     const form = await req.formData();
+    console.log(form);
     const { avatar, banner, name, color } = UserFormUpdateValidator.parse(form);
 
     let avatarUrl: string | null = null,
@@ -47,6 +48,7 @@ export async function PATCH(req: NextRequest) {
 
     return new Response('OK');
   } catch (error) {
+    console.log(error);
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 422 });
     }

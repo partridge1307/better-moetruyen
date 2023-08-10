@@ -6,7 +6,10 @@ import CustomImage from './Renderer/CustomImage';
 import CustomLink from './Renderer/CustomLink';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
-const Output = dynamic(() => import('editorjs-react-renderer'), { ssr: false });
+const Output = dynamic(() => import('editorjs-react-renderer'), {
+  ssr: false,
+  loading: () => <template className="w-full h-24" />,
+});
 
 interface EditorOutputProps {
   data: any;

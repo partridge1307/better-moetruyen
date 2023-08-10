@@ -5,13 +5,16 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import dynamic from 'next/dist/shared/lib/dynamic';
 import { FC } from 'react';
 import UserAvatar from '../User/UserAvatar';
+import Username from '../User/Username';
 import CommentVoteClient from '../Vote/CommentVoteClient';
 import CommentOEmbed from './CommentOEmbed';
 import DeleteComment from './DeleteComment';
-import SubCommentContent from './SubCommentContent';
-import Username from '../User/Username';
+const SubCommentContent = dynamic(() => import('./SubCommentContent'), {
+  ssr: false,
+});
 
 interface SubCommentContentProps {
   commentId: number;

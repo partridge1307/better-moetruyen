@@ -1,18 +1,21 @@
 'use client';
 
-import { Team } from '@prisma/client';
-import { Edit, Loader2, Pencil, Plus } from 'lucide-react';
-import Image from 'next/image';
-import { FC, useEffect, useRef, useState } from 'react';
-import ImageCropModal from '../ImageCropModal';
-import { cn, dataUrlToBlob } from '@/lib/utils';
-import { Input } from '../ui/Input';
-import { useMutation } from '@tanstack/react-query';
-import { TeamEditPayload } from '@/lib/validators/team';
-import axios, { AxiosError } from 'axios';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
+import { cn, dataUrlToBlob } from '@/lib/utils';
+import { TeamEditPayload } from '@/lib/validators/team';
+import { Team } from '@prisma/client';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import { Edit, Loader2, Pencil, Plus } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { FC, useEffect, useState } from 'react';
+import { Input } from '../ui/Input';
+const ImageCropModal = dynamic(() => import('../ImageCropModal'), {
+  ssr: false,
+});
 
 interface TeamEditProps {
   team: Pick<Team, 'id' | 'name' | 'image'>;
@@ -21,7 +24,6 @@ interface TeamEditProps {
 const TeamEdit: FC<TeamEditProps> = ({ team }) => {
   const { loginToast, notFoundToast } = useCustomToast();
   const router = useRouter();
-  const modalRef = useRef<HTMLButtonElement>(null);
   const [previewImage, setPreviewImage] = useState<{
     type: string;
     image: string;
@@ -143,26 +145,13 @@ const TeamEdit: FC<TeamEditProps> = ({ team }) => {
                     image: URL.createObjectURL(e.target.files[0]),
                   });
                   e.target.value = '';
-                  modalRef.current?.click();
+                  const target = document.getElementById('crop-modal=button');
+                  target?.click();
                 }
               }}
             />
             <Edit className="w-6 h-6 absolute right-2 top-0 z-10 p-1 dark:bg-zinc-900 rounded-full" />
           </div>
-
-          <ImageCropModal
-            ref={modalRef}
-            previewImage={previewImage}
-            aspect={1}
-            setCancel={() => {
-              setCroppedImg(null);
-              setPreviewImage(null);
-            }}
-            setDone={() => setPreviewImage(null)}
-            setDataUrl={(value) => {
-              setDataUrl(value);
-            }}
-          />
         </div>
 
         <div>
@@ -203,6 +192,19 @@ const TeamEdit: FC<TeamEditProps> = ({ team }) => {
           </div>
         )}
       </div>
+
+      <ImageCropModal
+        previewImage={previewImage}
+        aspect={1}
+        setCancel={() => {
+          setCroppedImg(null);
+          setPreviewImage(null);
+        }}
+        setDone={() => setPreviewImage(null)}
+        setDataUrl={(value) => {
+          setDataUrl(value);
+        }}
+      />
     </form>
   );
 };

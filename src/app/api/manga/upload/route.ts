@@ -1,43 +1,11 @@
 import { UploadMangaImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
 import { disRegex, fbRegex } from '@/lib/utils';
-import { authorInfo, tagInfo } from '@/lib/validators/upload';
+import { MangaFormValidator } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { zfd } from 'zod-form-data';
-
-const blocksInfo = z.object({
-  id: z.string(),
-  type: z.string(),
-  data: z.any(),
-});
-
-const descriptionInfo = z.object({
-  time: z.number(),
-  blocks: z.array(blocksInfo),
-  version: z.string(),
-});
-
-const mangaFormValidator = zfd.formData({
-  image: zfd
-    .file()
-    .refine((file) => file.size <= 4 * 1000 * 1000, 'Tối đa 4MB')
-    .refine(
-      (file) => ['image/jpeg', 'image/png', 'image/jpg'].includes(file.type),
-      'Chỉ nhận định dạng .jpg, .png, .jpeg'
-    ),
-  name: zfd.text(z.string().min(3).max(255)),
-  description: zfd.json(descriptionInfo),
-  review: zfd
-    .text(z.string().min(5, 'Tối thiểu 5 kí tự').max(512, 'Tối đa 512 kí tự'))
-    .optional(),
-  author: zfd.repeatableOfType(zfd.json(authorInfo)),
-  tag: zfd.repeatableOfType(zfd.json(tagInfo)),
-  facebookLink: zfd.text(z.string().optional()),
-  discordLink: zfd.text(z.string().optional()),
-});
 
 export async function POST(req: NextRequest) {
   try {
@@ -75,7 +43,7 @@ export async function POST(req: NextRequest) {
       tag,
       facebookLink,
       discordLink,
-    } = mangaFormValidator.parse(form);
+    } = MangaFormValidator.parse(form);
 
     if (facebookLink && !fbRegex.test(facebookLink))
       return new Response('Invalid FB link', { status: 406 });
@@ -105,7 +73,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const uploadedImage = await UploadMangaImage(img, mangaCreated.id, null);
+    let uploadedImage;
+    if (typeof img === 'string') {
+      uploadedImage = img;
+    } else uploadedImage = await UploadMangaImage(img, mangaCreated.id, null);
+
     await db.manga.update({
       where: {
         id: mangaCreated.id,

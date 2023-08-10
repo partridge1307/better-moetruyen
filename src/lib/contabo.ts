@@ -74,14 +74,41 @@ const generateKey = (key: string, prevImage: string | null) => {
   return Key;
 };
 
+const generateName = (
+  currentName: string,
+  existingImages: string[],
+  start: number,
+  templateString: string
+): string => {
+  let newName: string, num;
+
+  if (isNaN(start)) {
+    num = 1;
+    newName = `${currentName}_${num}`;
+  } else {
+    num = start;
+    newName = `${currentName}_${num}`;
+  }
+
+  const existImage = existingImages.some((img) =>
+    img.startsWith(`${templateString}/${newName}.webp`)
+  );
+
+  if (existImage) {
+    return generateName(currentName, existingImages, num + 1, templateString);
+  } else {
+    return newName;
+  }
+};
+
 export const UploadChapterImage = (
-  images: { image: Blob; index: number }[],
+  images: Blob[],
   mangaId: number,
   chapterIndex: number
 ) =>
   Promise.all(
-    images.map(async (img) => {
-      const arrayBuffer = await new Blob([img.image]).arrayBuffer();
+    images.map(async (img, index) => {
+      const arrayBuffer = await new Blob([img]).arrayBuffer();
       const sharpImage = sharp(arrayBuffer)
         .toFormat('webp')
         .webp({ quality: 40 });
@@ -98,16 +125,18 @@ export const UploadChapterImage = (
       const command = new PutObjectCommand({
         Body: optimizedImage,
         Bucket: `chapter`,
-        Key: `${mangaId}/${chapterIndex}/${img.index + 1}.webp`,
+        Key: `${mangaId}/${chapterIndex}/${img.name.split('.').shift()}.webp`,
       });
 
       await sendCommand(contabo, command, 5);
 
       return {
-        url: `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${
-          img.index + 1
-        }.webp`,
-        index: img.index,
+        link: `${
+          process.env.IMG_DOMAIN
+        }/chapter/${mangaId}/${chapterIndex}/${img.name
+          .split('.')
+          .shift()}.webp`,
+        index,
       };
     })
   );
@@ -209,20 +238,33 @@ export const UploadTeamImage = async (
 };
 
 export const EditChapterImage = async (
-  newImages: { image: Blob; index: number }[],
+  newImages: (Blob | string)[],
   existingImages: string[],
   mangaId: number,
   chapterIndex: number
 ) => {
-  const uploadedImages = await Promise.all(
-    newImages.map(async (img) => {
-      const arrayBuffer = await new Blob([img.image]).arrayBuffer();
+  const [serializedNewImages, serializedExistImages] = await Promise.all([
+    newImages.map((image, index) => ({ index, image })),
+    existingImages.map((image, index) => ({ index, image })),
+  ]);
 
-      let sharpImage;
-      if (img.image.type === 'application/octet-stream')
-        sharpImage = sharp(arrayBuffer).toFormat('webp').webp();
-      else
-        sharpImage = sharp(arrayBuffer).toFormat('webp').webp({ quality: 40 });
+  const [blobImages, linkImages] = await Promise.all([
+    serializedNewImages.filter((image) => image.image instanceof File) as {
+      index: number;
+      image: File;
+    }[],
+    serializedNewImages.filter((image) => typeof image.image === 'string') as {
+      index: number;
+      image: string;
+    }[],
+  ]);
+
+  const uploadedNewImages = await Promise.all(
+    blobImages.map(async (img) => {
+      const arrayBuffer = await new Blob([img.image]).arrayBuffer();
+      const sharpImage = sharp(arrayBuffer)
+        .toFormat('webp')
+        .webp({ quality: 40 });
 
       const { width, height } = await sharpImage.metadata();
 
@@ -232,57 +274,80 @@ export const EditChapterImage = async (
         height
       ).toBuffer();
 
-      const command = new PutObjectCommand({
-        Body: optimizedImage,
-        Bucket: 'chapter',
-        Key: `${mangaId}/${chapterIndex}/${img.index + 1}.webp`,
-      });
+      const key = `${
+        process.env.IMG_DOMAIN
+      }/chapter/${mangaId}/${chapterIndex}/${img.image.name
+        .split('.')
+        .shift()}.webp`;
 
-      await sendCommand(contabo, command);
+      let command, generatedKey;
 
-      let Key;
-      const existingImage = existingImages.find((image) =>
-        image.startsWith(
-          `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${
-            img.index + 1
-          }.webp`
-        )
+      const existImage = serializedExistImages.find(
+        (exist) => exist.index === img.index && exist.image.startsWith(key)
       );
+      if (existImage) {
+        command = new PutObjectCommand({
+          Body: optimizedImage,
+          Bucket: 'chapter',
+          Key: `${mangaId}/${chapterIndex}/${img.image.name
+            .split('.')
+            .shift()}.webp`,
+        });
 
-      if (existingImage)
-        Key = generateKey(
-          `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${
-            img.index + 1
-          }.webp`,
-          existingImage
-        );
-      else
-        Key = generateKey(
-          `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${
-            img.index + 1
-          }.webp`,
+        generatedKey = generateKey(
+          `${
+            process.env.IMG_DOMAIN
+          }/chapter/${mangaId}/${chapterIndex}/${img.image.name
+            .split('.')
+            .shift()}.webp`,
           null
         );
+      } else {
+        const name = img.image.name.split('.')[0].split('_');
+        const newName = generateName(
+          name[0],
+          existingImages,
+          Number(name[1]),
+          `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}`
+        );
 
-      return { url: Key, index: img.index };
+        command = new PutObjectCommand({
+          Body: optimizedImage,
+          Bucket: 'chapter',
+          Key: `${mangaId}/${chapterIndex}/${newName}.webp`,
+        });
+
+        generatedKey = generateKey(
+          `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${newName}.webp`,
+          null
+        );
+      }
+
+      await sendCommand(contabo, command, 5);
+
+      return {
+        index: img.index,
+        image: generatedKey,
+      };
     })
   );
 
-  const remainImages = existingImages.slice(uploadedImages.length);
+  const deletedImages = serializedExistImages.filter(
+    (img) => !linkImages.some((image) => image.image === img.image)
+  );
+
   await Promise.all(
-    remainImages.map(async (image) => {
-      const key = new URL(image.split('?')[0]).pathname
-        .split('/')
-        .slice(2)
-        .join('/');
+    deletedImages.map(async (img) => {
+      const image = new URL(img.image).pathname.split('/').pop();
+
       const command = new DeleteObjectCommand({
         Bucket: 'chapter',
-        Key: key,
+        Key: `${mangaId}/${chapterIndex}/${image}`,
       });
 
       await sendCommand(contabo, command);
     })
   );
 
-  return uploadedImages;
+  return [...linkImages, ...uploadedNewImages];
 };

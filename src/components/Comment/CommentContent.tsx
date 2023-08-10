@@ -1,29 +1,12 @@
-import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { AutoLinkNode, LinkNode } from '@lexical/link';
-import {
-  InitialConfigType,
-  LexicalComposer,
-} from '@lexical/react/LexicalComposer';
-import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { Prisma } from '@prisma/client';
 import { ChevronsDown, ChevronsUp } from 'lucide-react';
-import { FC, useCallback, useMemo, useRef, useState } from 'react';
-import { theme } from '../Editor/Theme';
-import { ImageNode } from '../Editor/nodes/Image';
-import { YouTubeNode } from '../Editor/nodes/Youtube';
-
-function onError(err: Error): void {
-  // eslint-disable-next-line no-console
-  console.log(err);
-  toast({
-    title: 'Có lỗi xảy ra',
-    description: 'Có lỗi xảy ra khi load Comment',
-    variant: 'destructive',
-  });
-}
+import dynamic from 'next/dist/shared/lib/dynamic';
+import { FC, useRef, useState } from 'react';
+const MoetruyenEditorOutput = dynamic(
+  () => import('../Editor/MoetruyenEditorOutput'),
+  { ssr: false }
+);
 
 interface CommentProps {
   id: number;
@@ -34,32 +17,6 @@ const CommentContent: FC<CommentProps> = ({ id, content }): JSX.Element => {
   const cmtRef = useRef<HTMLDivElement>(null);
   const [isCollapsed, setisCollapsed] = useState<boolean>(true);
 
-  const initialConfig = useCallback(() => {
-    const initialConfig: InitialConfigType = {
-      namespace: `MTComment-${id}`,
-      onError,
-      theme,
-      editable: false,
-      editorState: JSON.stringify(content),
-      nodes: [AutoLinkNode, ImageNode, YouTubeNode, LinkNode],
-    };
-
-    return initialConfig;
-  }, [content, id]);
-
-  const MoetruyenEditorOutput = useMemo(
-    () => (
-      <LexicalComposer initialConfig={initialConfig()}>
-        <RichTextPlugin
-          contentEditable={<ContentEditable />}
-          placeholder={null}
-          ErrorBoundary={LexicalErrorBoundary}
-        />
-      </LexicalComposer>
-    ),
-    [initialConfig]
-  );
-
   return (
     <div
       ref={cmtRef}
@@ -68,7 +25,7 @@ const CommentContent: FC<CommentProps> = ({ id, content }): JSX.Element => {
         !isCollapsed && 'max-h-fit pb-10'
       )}
     >
-      {MoetruyenEditorOutput}
+      <MoetruyenEditorOutput id={id} content={content} />
 
       {cmtRef.current && cmtRef.current.clientHeight >= 320 ? (
         <div

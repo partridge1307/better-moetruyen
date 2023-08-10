@@ -134,10 +134,10 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
       const { avatar, banner, name, color } = values;
 
       const form = new FormData();
-      form.append('avatar', avatar ? avatar : '');
-      form.append('banner', banner ? banner : '');
+      avatar && form.append('avatar', avatar);
+      banner && form.append('banner', banner);
+      color && form.append('color', color);
       form.append('name', name);
-      form.append('color', color ? color : '');
 
       const { data } = await axios.patch('/api/user', form);
 

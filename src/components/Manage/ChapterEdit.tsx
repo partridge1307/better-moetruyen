@@ -66,10 +66,17 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
 
       await Promise.all(
         images.map(async (image) => {
-          const blob = await fetch(image.src).then((res) => res.blob());
-          return form.append('images', blob);
+          if (!image.src.startsWith('blob')) {
+            return form.append('images', image.src);
+          } else {
+            const blob = await fetch(image.src).then((res) => res.blob());
+            return form.append('images', blob, image.name);
+          }
         })
       );
+
+      console.log(images);
+
       const { data } = await axios.patch(
         `/api/chapter/${chapter.id}/edit`,
         form,

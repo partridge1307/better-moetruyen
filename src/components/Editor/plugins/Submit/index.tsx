@@ -8,14 +8,10 @@ import { AutoLinkNode } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import {
-  CLEAR_EDITOR_COMMAND,
-  SerializedEditorState,
-  SerializedLexicalNode,
-} from 'lexical';
+import { CLEAR_EDITOR_COMMAND } from 'lexical';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { $isImageNode, ImageNode } from '../../nodes/Image';
-import { useRouter } from 'next/navigation';
 
 export default function Submit({
   id,

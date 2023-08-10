@@ -1,13 +1,10 @@
 import { UploadUserImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
-import { UserProfileEditValidator } from '@/lib/validators/user';
+import { UserFormUpdateValidator } from '@/lib/validators/user';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { zfd } from 'zod-form-data';
-
-const formValidator = zfd.formData(UserProfileEditValidator);
 
 export async function PATCH(req: NextRequest) {
   try {
@@ -27,7 +24,7 @@ export async function PATCH(req: NextRequest) {
     });
 
     const form = await req.formData();
-    const { avatar, banner, name, color } = formValidator.parse(form);
+    const { avatar, banner, name, color } = UserFormUpdateValidator.parse(form);
 
     let avatarUrl: string | null = null,
       bannerUrl: string | null = null;
@@ -44,7 +41,7 @@ export async function PATCH(req: NextRequest) {
         name,
         image: !avatarUrl ? user.image : avatarUrl,
         banner: !bannerUrl ? user.banner : bannerUrl,
-        color: color ? JSON.parse(color) : user.color,
+        color: color ? (color as any) : user.color,
       },
     });
 

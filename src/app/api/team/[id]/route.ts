@@ -1,13 +1,10 @@
 import { UploadTeamImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
-import { TeamEditValidator } from '@/lib/validators/team';
+import { TeamFormEditValidator } from '@/lib/validators/team';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { zfd } from 'zod-form-data';
-
-const formValidator = zfd.formData(TeamEditValidator);
 
 export async function PATCH(
   req: NextRequest,
@@ -39,7 +36,7 @@ export async function PATCH(
     ]);
 
     const form = await req.formData();
-    const { image, name } = formValidator.parse(form);
+    const { image, name } = TeamFormEditValidator.parse(form);
     let imageUrl: string | null = null;
 
     if (image) imageUrl = await UploadTeamImage(image, team.id, team.image);

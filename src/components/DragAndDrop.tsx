@@ -57,7 +57,7 @@ const DnDChapterImage: FC<indexProps> = ({ items, setItems, isUpload }) => {
       onDragEnd={onDragEnd}
     >
       <SortableContext disabled={isUpload} items={itemIds}>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 py-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 py-4">
           {items.map((item, idx) => (
             <SortableItem
               isUpload={isUpload}

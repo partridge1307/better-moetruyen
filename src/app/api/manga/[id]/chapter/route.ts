@@ -1,30 +1,10 @@
 import { UploadChapterImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
+import { ChapterFormUploadValidator } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
-import { zfd } from 'zod-form-data';
-
-const chapterValidator = zfd.formData({
-  images: zfd
-    .repeatableOfType(
-      zfd
-        .file()
-        .refine((file) => file.size < 4 * 1000 * 1000, 'Ảnh phải nhỏ hơn 4MB')
-        .refine(
-          (file) =>
-            ['image/jpg', 'image/png', 'image/jpeg'].includes(file.type),
-          'Chỉ nhận định dạng .jpg, .png, .jpeg'
-        )
-    )
-    .refine((files) => files.length >= 1, 'Tối thiểu 1 ảnh'),
-  volume: zfd.numeric(z.number().min(1, 'Số volume phải lớn hơn 0')),
-  chapterIndex: zfd.numeric(z.number().min(0, 'Số thứ tự phải lớn hơn 0')),
-  chapterName: zfd
-    .text(z.string().min(3, 'Tối thiểu 3 kí tự').max(256, 'Tối đa 256 kí tự'))
-    .optional(),
-});
 
 export async function POST(
   req: NextRequest,
@@ -35,9 +15,9 @@ export async function POST(
     if (!token) return new Response('Unauthorized', { status: 401 });
 
     const { images, volume, chapterIndex, chapterName } =
-      chapterValidator.parse(await req.formData());
+      ChapterFormUploadValidator.parse(await req.formData());
 
-    const [user, manga] = await db.$transaction([
+    const [, manga, team] = await db.$transaction([
       db.user.findFirstOrThrow({
         where: {
           id: token.id,
@@ -54,6 +34,14 @@ export async function POST(
         select: {
           id: true,
           name: true,
+        },
+      }),
+      db.memberOnTeam.findFirst({
+        where: {
+          userId: token.id,
+        },
+        select: {
+          teamId: true,
         },
       }),
     ]);
@@ -93,20 +81,7 @@ export async function POST(
         return new Response('Forbidden', { status: 403 });
     }
 
-    const uploadedImages = await UploadChapterImage(
-      images.map((img, index) => ({ image: img, index })),
-      manga.id,
-      index
-    );
-
-    const team = await db.memberOnTeam.findFirst({
-      where: {
-        userId: user.id,
-      },
-      select: {
-        teamId: true,
-      },
-    });
+    const uploadedImages = await UploadChapterImage(images, manga.id, index);
 
     if (team) {
       await db.chapter.create({
@@ -116,7 +91,7 @@ export async function POST(
           volume,
           images: uploadedImages
             .sort((a, b) => a.index - b.index)
-            .map((img) => img.url),
+            .map((img) => img.link),
           manga: {
             connect: { id: manga.id },
           },
@@ -133,7 +108,7 @@ export async function POST(
           volume,
           images: uploadedImages
             .sort((a, b) => a.index - b.index)
-            .map((img) => img.url),
+            .map((img) => img.link),
           manga: {
             connect: { id: manga.id },
           },

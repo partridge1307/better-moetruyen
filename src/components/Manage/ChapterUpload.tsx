@@ -56,7 +56,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
       await Promise.all(
         images.map(async (image) => {
           const blob = await fetch(image.src).then((res) => res.blob());
-          form.append('images', blob);
+          form.append('images', blob, image.name);
         })
       );
 

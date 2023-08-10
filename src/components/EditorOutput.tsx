@@ -2,8 +2,21 @@
 
 import { cn } from '@/lib/utils';
 import { ChevronsDown, ChevronsUp } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { FC, useEffect, useRef, useState } from 'react';
-import EditorJSOutput from './Renderer/EditorJSOutput';
+import CustomImage from './Renderer/CustomImage';
+import CustomLink from './Renderer/CustomLink';
+const Output = dynamic(
+  async () => (await import('editorjs-react-renderer')).default,
+  {
+    ssr: false,
+  }
+);
+
+const renderers = {
+  linktool: CustomLink,
+  image: CustomImage,
+};
 
 interface EditorOutputProps {
   data: any;
@@ -28,7 +41,7 @@ const EditorOutput: FC<EditorOutputProps> = ({ data }) => {
         !isCollapsed && 'max-h-fit pb-10'
       )}
     >
-      <EditorJSOutput data={data} />
+      <Output data={data} renderers={renderers} />
       {showMore ? (
         <div
           role="button"

@@ -45,7 +45,7 @@ const MangaControll: FC<MangaControllProps> = async ({ manga }) => {
 
   return (
     <div className="flex max-sm:flex-col md:items-center gap-6">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4 md:gap-3">
         {firstChapter ? (
           <Link
             href={`/chapter/${firstChapter.id}`}

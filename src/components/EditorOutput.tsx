@@ -22,7 +22,7 @@ interface EditorOutputProps {
 
 const EditorOutput: FC<EditorOutputProps> = ({ data }) => {
   return (
-    <div className="relative max-h-40 overflow-auto dark:bg-zinc-700 p-2 rounded-md">
+    <div className="relative max-h-40 p-2 rounded-md overflow-auto dark:bg-zinc-700 md:scrollbar md:dark:scrollbar--dark">
       <Output data={data} renderers={renderers} />
     </div>
   );

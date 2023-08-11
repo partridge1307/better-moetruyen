@@ -212,7 +212,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
           name="altName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tên khác</FormLabel>
+              <FormLabel>Tên khác(Nếu có)</FormLabel>
               <FormMessage />
               <FormControl>
                 <Input placeholder="Tên khác" autoComplete="off" {...field} />

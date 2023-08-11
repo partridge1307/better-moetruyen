@@ -25,6 +25,7 @@ interface MangaAuthorUploadProps {
   authorSelected: authorInfoProps[];
   setAuthorSelected: React.Dispatch<React.SetStateAction<authorInfoProps[]>>;
   authorInput: string;
+  // eslint-disable-next-line no-unused-vars
   setAuthorInput: (value: string) => void;
   isFetchingAuthor: boolean;
   authorResult?: authorResultProps;

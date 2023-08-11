@@ -21,6 +21,7 @@ import { Input } from '../ui/Input';
 import { socket } from '@/lib/socket';
 import { cn } from '@/lib/utils';
 import type { Session } from 'next-auth';
+import { useRouter } from 'next/navigation';
 
 interface ChatFormProps {
   conversation: Pick<Conversation, 'id'>;
@@ -28,6 +29,7 @@ interface ChatFormProps {
 }
 
 const ChatForm: FC<ChatFormProps> = ({ conversation, session }) => {
+  const router = useRouter();
   const { loginToast, notFoundToast } = useCustomToast();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -58,6 +60,7 @@ const ChatForm: FC<ChatFormProps> = ({ conversation, session }) => {
     onSuccess: (_, values) => {
       const { content, conversationId, senderId } = values;
       socket.emit('message', { content, conversationId, senderId });
+      router.refresh();
 
       form.setValue('content', '');
     },

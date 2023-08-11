@@ -22,15 +22,6 @@ interface pageProps {
 const page: FC<pageProps> = async ({ searchParams }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
-  if (!user) return <ForceSignOut />;
 
   if (!searchParams.id)
     return (
@@ -39,49 +30,60 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       </div>
     );
 
-  const conversation = await db.conversation.findFirst({
-    where: {
-      id: parseInt(searchParams.id),
-      users: {
-        some: {
-          id: user.id,
-        },
+  const [user, conversation] = await Promise.all([
+    db.user.findFirst({
+      where: {
+        id: session.user.id,
       },
-    },
-    select: {
-      id: true,
-      users: {
-        select: {
-          id: true,
-          name: true,
-          color: true,
-        },
-        where: {
-          id: {
-            not: user.id,
+      select: {
+        id: true,
+      },
+    }),
+    db.conversation.findFirst({
+      where: {
+        id: parseInt(searchParams.id),
+        users: {
+          some: {
+            id: session.user.id,
           },
         },
       },
-      messages: {
-        select: {
-          content: true,
-          createdAt: true,
-          sender: {
-            select: {
-              id: true,
-              name: true,
-              color: true,
-              image: true,
+      select: {
+        id: true,
+        users: {
+          select: {
+            id: true,
+            name: true,
+            color: true,
+          },
+          where: {
+            id: {
+              not: session.user.id,
             },
           },
         },
-        orderBy: {
-          createdAt: 'asc',
+        messages: {
+          select: {
+            content: true,
+            createdAt: true,
+            sender: {
+              select: {
+                id: true,
+                name: true,
+                color: true,
+                image: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'asc',
+          },
+          take: -10,
         },
-        take: -10,
       },
-    },
-  });
+    }),
+  ]);
+  if (!user) return <ForceSignOut />;
   if (!conversation) return notFound();
 
   const toUser = conversation.users.find((usr) => usr.id !== user.id);

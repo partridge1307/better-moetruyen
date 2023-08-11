@@ -1,16 +1,15 @@
 'use client';
 
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
+import { socket } from '@/lib/socket';
 import { useIntersection } from '@mantine/hooks';
 import type { Conversation, Message, User } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { FC, useEffect, useRef, useState } from 'react';
-import UserAvatar from '../User/UserAvatar';
 import { ScrollArea } from '../ui/ScrollArea';
 import MessageCard from './MessageCard';
-import { socket } from '@/lib/socket';
 
 type ExtendedMessage = Pick<Message, 'content' | 'createdAt'> & {
   sender: Pick<User, 'id' | 'name' | 'image' | 'color'>;
@@ -84,10 +83,10 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
     }
   }, [entry, fetchNextPage]);
   useEffect(() => {
-    const msgData = messageData?.pages.flatMap((page) => page);
+    const msgData = messageData?.pages.flatMap((page) => page).reverse();
 
     if (msgData?.length) {
-      setMessages(msgData.reverse());
+      setMessages(msgData);
     }
   }, [messageData?.pages]);
   useEffect(() => {
@@ -110,77 +109,35 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
           const sender = message.sender;
 
           if (index === 0) {
-            if (sender.id === me.id) {
-              return (
-                <li ref={ref} key={index} className="flex gap-2">
-                  <MessageCard
-                    message={message}
-                    className="items-end"
-                    isMe={true}
-                  />
-                </li>
-              );
-            } else {
-              return (
-                <li ref={ref} key={index} className="flex gap-2">
-                  {sender.image ? <UserAvatar user={sender} /> : null}
-
-                  <MessageCard
-                    message={message}
-                    className="items-start"
-                    isMe={false}
-                  />
-                </li>
-              );
-            }
+            return (
+              <li ref={ref} key={index} className="flex gap-2">
+                <MessageCard
+                  message={message}
+                  isMe={sender.id === me.id}
+                  sender={sender}
+                />
+              </li>
+            );
           } else if (index === messages.length - 1) {
-            if (sender.id === me.id) {
-              return (
-                <li ref={lastMessageRef} key={index} className="flex gap-2">
-                  <MessageCard
-                    message={message}
-                    className="items-end"
-                    isMe={true}
-                  />
-                </li>
-              );
-            } else {
-              return (
-                <li ref={lastMessageRef} key={index} className="flex gap-2">
-                  {sender.image ? <UserAvatar user={sender} /> : null}
-
-                  <MessageCard
-                    message={message}
-                    className="items-start"
-                    isMe={false}
-                  />
-                </li>
-              );
-            }
+            return (
+              <li ref={lastMessageRef} key={index} className="flex gap-2">
+                <MessageCard
+                  message={message}
+                  isMe={sender.id === me.id}
+                  sender={sender}
+                />
+              </li>
+            );
           } else {
-            if (sender.id === me.id) {
-              return (
-                <li key={index} className="flex gap-2">
-                  <MessageCard
-                    message={message}
-                    className="items-end"
-                    isMe={true}
-                  />
-                </li>
-              );
-            } else {
-              return (
-                <li key={index} className="flex gap-2">
-                  {sender.image ? <UserAvatar user={sender} /> : null}
-
-                  <MessageCard
-                    message={message}
-                    className="items-start"
-                    isMe={false}
-                  />
-                </li>
-              );
-            }
+            return (
+              <li key={index} className="flex gap-2">
+                <MessageCard
+                  message={message}
+                  isMe={sender.id === me.id}
+                  sender={sender}
+                />
+              </li>
+            );
           }
         })}
       </ul>

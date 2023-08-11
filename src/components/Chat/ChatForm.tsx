@@ -19,6 +19,7 @@ import {
 } from '../ui/Form';
 import { Input } from '../ui/Input';
 import { socket } from '@/lib/socket';
+import { cn } from '@/lib/utils';
 
 interface ChatFormProps {
   conversation: Pick<Conversation, 'id'>;
@@ -82,8 +83,7 @@ const ChatForm: FC<ChatFormProps> = ({ conversation }) => {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormMessage className="text-red-500" />
-              <div className="flex items-center justify-center gap-4 p-2">
+              <div className="relative flex items-center justify-center gap-4 p-2">
                 <FormControl>
                   <Input
                     ref={(e) => {
@@ -98,10 +98,14 @@ const ChatForm: FC<ChatFormProps> = ({ conversation }) => {
                     className="focus-visible:ring-1 dark:border-white dark:focus-visible:ring-offset-0 dark:focus-visible:ring-white"
                   />
                 </FormControl>
+                <FormMessage className="absolute left-2 -top-1/3 text-red-500" />
 
                 <button
-                  disabled={isLoading || !field.value.length}
                   type="submit"
+                  disabled={isLoading || field.value.length < 5}
+                  className={cn({
+                    'opacity-50': field.value.length < 5,
+                  })}
                 >
                   <SendHorizonal className="w-8 h-8" />
                 </button>

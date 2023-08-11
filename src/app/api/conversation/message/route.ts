@@ -43,15 +43,14 @@ export async function GET(req: NextRequest) {
       select: {
         messages: {
           select: {
-            id: true,
             content: true,
             createdAt: true,
             sender: {
               select: {
                 id: true,
                 name: true,
-                color: true,
                 image: true,
+                color: true,
               },
             },
           },

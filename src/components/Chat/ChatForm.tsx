@@ -20,12 +20,14 @@ import {
 import { Input } from '../ui/Input';
 import { socket } from '@/lib/socket';
 import { cn } from '@/lib/utils';
+import type { Session } from 'next-auth';
 
 interface ChatFormProps {
   conversation: Pick<Conversation, 'id'>;
+  session: Session;
 }
 
-const ChatForm: FC<ChatFormProps> = ({ conversation }) => {
+const ChatForm: FC<ChatFormProps> = ({ conversation, session }) => {
   const { loginToast, notFoundToast } = useCustomToast();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -34,16 +36,12 @@ const ChatForm: FC<ChatFormProps> = ({ conversation }) => {
     defaultValues: {
       content: '',
       conversationId: conversation.id,
+      senderId: session.user.id,
     },
   });
   const { mutate: createMessage, isLoading } = useMutation({
     mutationFn: async (values: ChatPayload) => {
-      const { content, conversationId } = values;
-
-      await axios.post('/api/conversation/message/create', {
-        content,
-        conversationId,
-      });
+      await axios.post('/api/conversation/message/create', values);
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
@@ -58,8 +56,8 @@ const ChatForm: FC<ChatFormProps> = ({ conversation }) => {
       });
     },
     onSuccess: (_, values) => {
-      const { content, conversationId } = values;
-      socket.emit('message', { content, conversationId });
+      const { content, conversationId, senderId } = values;
+      socket.emit('message', { content, conversationId, senderId });
 
       form.setValue('content', '');
     },

@@ -9,15 +9,6 @@ export async function GET(req: NextRequest) {
     const token = await getToken({ req });
     if (!token) return new Response('Unauthorized', { status: 401 });
 
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
     const url = new URL(req.url);
     const { id, limit, page } = z
       .object({
@@ -31,39 +22,46 @@ export async function GET(req: NextRequest) {
         page: url.searchParams.get('page'),
       });
 
-    const conversation = await db.conversation.findFirstOrThrow({
+    const user = await db.user.findFirstOrThrow({
       where: {
-        id: parseInt(id),
-        users: {
-          some: {
-            id: user.id,
+        id: token.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    const messages = await db.message.findMany({
+      where: {
+        conversationId: parseInt(id),
+        conversation: {
+          users: {
+            some: {
+              id: user.id,
+            },
           },
         },
       },
       select: {
-        messages: {
+        content: true,
+        createdAt: true,
+        sender: {
           select: {
-            content: true,
-            createdAt: true,
-            sender: {
-              select: {
-                id: true,
-                name: true,
-                image: true,
-                color: true,
-              },
-            },
+            id: true,
+            name: true,
+            image: true,
+            color: true,
           },
-          orderBy: {
-            createdAt: 'desc',
-          },
-          take: parseInt(limit),
-          skip: (parseInt(page) - 1) * parseInt(limit),
         },
+      },
+      take: parseInt(limit),
+      skip: (parseInt(page) - 1) * parseInt(limit),
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
-    return new Response(JSON.stringify(conversation.messages));
+    return new Response(JSON.stringify(messages));
   } catch (error) {
     if (error instanceof ZodError) {
       return new Response(error.message, { status: 422 });

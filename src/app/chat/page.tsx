@@ -30,7 +30,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       </div>
     );
 
-  const [user, conversation] = await Promise.all([
+  const [user, conversation] = await db.$transaction([
     db.user.findFirst({
       where: {
         id: session.user.id,
@@ -39,7 +39,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         id: true,
       },
     }),
-    db.conversation.findFirst({
+    db.conversation.findUnique({
       where: {
         id: parseInt(searchParams.id),
         users: {
@@ -96,7 +96,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       </div>
 
       <MessageList me={user} conversation={conversation} />
-      <ChatForm conversation={conversation} />
+      <ChatForm conversation={conversation} session={session} />
     </div>
   );
 };

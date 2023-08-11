@@ -68,12 +68,17 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
   }, [messages.length]);
 
   useEffect(() => {
-    const msgData = messageData?.pages.flatMap((page) => page).reverse();
-
+    const msgData =
+      messageData?.pages.flatMap((page) => page) ?? conversation.messages;
     if (msgData?.length) {
-      setMessages(msgData);
+      setMessages(
+        msgData.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        )
+      );
     }
-  }, [messageData?.pages]);
+  }, [conversation.messages, messageData?.pages]);
 
   useEffect(() => {
     router.refresh();

@@ -42,6 +42,7 @@ const page: FC<pageProps> = async ({ params }) => {
         name: true,
         description: true,
         review: true,
+        altName: true,
         image: true,
         facebookLink: true,
         discordLink: true,

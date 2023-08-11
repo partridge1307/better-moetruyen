@@ -3,7 +3,6 @@
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
 import { Tags } from '@/lib/query';
-import { disRegex, fbRegex } from '@/lib/utils';
 import {
   MangaUploadPayload,
   MangaUploadValidator,
@@ -12,6 +11,7 @@ import {
 } from '@/lib/validators/upload';
 import type EditorJS from '@editorjs/editorjs';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useDebouncedValue } from '@mantine/hooks';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { Loader2 } from 'lucide-react';
@@ -29,13 +29,19 @@ import {
   FormMessage,
 } from '../ui/Form';
 import { Input } from '../ui/Input';
-import MangaAuthorUpload, { type authorResultProps } from './MangaAuthorUpload';
-import MangaImageUpload from './MangaImageUpload';
-import MangaTagUpload from './MangaTagUpload';
-import { useDebouncedValue } from '@mantine/hooks';
+import type { authorResultProps } from './MangaAuthorUpload';
 const Editor = dynamic(() => import('@/components/Editor'), {
   ssr: false,
   loading: () => <Loader2 className="h-6 w-6 animate-spin" />,
+});
+const MangaImageUpload = dynamic(() => import('./MangaImageUpload'), {
+  ssr: false,
+});
+const MangaTagUpload = dynamic(() => import('./MangaTagUpload'), {
+  ssr: false,
+});
+const MangaAuthorUpload = dynamic(() => import('./MangaAuthorUpload'), {
+  ssr: false,
 });
 
 const MangaUpload = ({ tag }: { tag: Tags[] }) => {
@@ -48,6 +54,7 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
       name: '',
       description: undefined,
       review: '',
+      altName: '',
       author: [],
       tag: [],
       facebookLink: '',
@@ -73,6 +80,7 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
         name,
         description,
         review,
+        altName,
         author,
         tag,
         facebookLink,
@@ -84,8 +92,9 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
       form.append('name', name);
       form.append('description', JSON.stringify(description));
       form.append('review', review);
-      form.append('facebookLink', facebookLink);
-      form.append('discordLink', discordLink);
+      altName && form.append('altName', altName);
+      facebookLink && form.append('facebookLink', facebookLink);
+      discordLink && form.append('discordLink', discordLink);
       author.map((a) => form.append('author', JSON.stringify(a)));
       tag.map((t) => form.append('tag', JSON.stringify(t)));
 
@@ -149,18 +158,6 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
         message: 'Mô tả không được bỏ trống',
       });
     }
-    if (values.facebookLink && !fbRegex.test(values.facebookLink)) {
-      return form.setError('facebookLink', {
-        type: 'custom',
-        message: 'Đường dẫn Facebook không hợp lệ',
-      });
-    }
-    if (values.discordLink && !disRegex.test(values.discordLink)) {
-      return form.setError('discordLink', {
-        type: 'custom',
-        message: 'Đường dẫn Discord không hợp lệ',
-      });
-    }
 
     const payload: MangaUploadPayload = {
       image: values.image,
@@ -194,6 +191,20 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
               <FormMessage />
               <FormControl>
                 <Input placeholder="Tên truyện" autoComplete="off" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="altName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tên khác (Nếu có)</FormLabel>
+              <FormMessage />
+              <FormControl>
+                <Input placeholder="Tên khác" autoComplete="off" {...field} />
               </FormControl>
             </FormItem>
           )}
@@ -254,15 +265,7 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
           name="facebookLink"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Link Facebook (nếu có){' '}
-                <span
-                  className="text-red-500"
-                  title="Chỉ nhận link Profile hoặc Page"
-                >
-                  *
-                </span>
-              </FormLabel>
+              <FormLabel>Link Facebook (nếu có)</FormLabel>
               <FormMessage />
               <FormControl>
                 <Input placeholder="https://facebook.com/" {...field} />
@@ -276,15 +279,7 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
           name="discordLink"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                Link Discord (nếu có){' '}
-                <span
-                  className="text-red-500"
-                  title="Chỉ nhận link Invite. Yêu cầu phải bật Widget, khuyên dùng link không hết hạn"
-                >
-                  *
-                </span>
-              </FormLabel>
+              <FormLabel>Link Discord (nếu có)</FormLabel>
               <FormMessage />
               <FormControl>
                 <Input placeholder="https://discord.gg/" {...field} />

@@ -1,6 +1,5 @@
 import { UploadMangaImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
-import { disRegex, fbRegex } from '@/lib/utils';
 import { MangaFormValidator } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
 import { getToken } from 'next-auth/jwt';
@@ -20,6 +19,7 @@ export async function PATCH(
       name,
       description,
       review,
+      altName,
       author,
       tag,
       facebookLink,
@@ -54,11 +54,6 @@ export async function PATCH(
       image = await UploadMangaImage(img, targetManga.id, targetManga.image);
     }
 
-    if (facebookLink && !fbRegex.test(facebookLink))
-      return new Response('Invalid FB link', { status: 406 });
-    if (discordLink && !disRegex.test(discordLink))
-      return new Response('Invalid Discord link', { status: 406 });
-
     await db.manga.update({
       where: {
         id: targetManga.id,
@@ -68,6 +63,7 @@ export async function PATCH(
         name,
         description,
         review,
+        altName,
         facebookLink: !facebookLink ? null : facebookLink,
         discordLink: !discordLink ? null : discordLink,
         tags: {

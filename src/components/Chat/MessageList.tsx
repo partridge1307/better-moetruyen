@@ -64,7 +64,10 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
   );
 
   useEffect(() => {
-    lastMessageRef.current?.scrollIntoView({ behavior: 'instant' });
+    setTimeout(
+      () => lastMessageRef.current?.scrollIntoView({ behavior: 'instant' }),
+      500
+    );
   }, []);
   useEffect(() => {
     if (entry?.isIntersecting) {
@@ -74,6 +77,7 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
 
   useEffect(() => {
     const msgData = messageData?.pages.flatMap((page) => page);
+
     if (msgData?.length) {
       setMessages(
         msgData.sort(

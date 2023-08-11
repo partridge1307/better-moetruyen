@@ -37,6 +37,7 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
     data: messageData,
     fetchNextPage,
     isFetchingNextPage,
+    refetch,
   } = useInfiniteQuery(
     ['infinite-message-query', `${conversation.id}`],
     async ({ pageParam = 1 }) => {
@@ -55,6 +56,26 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
       },
     }
   );
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+  useEffect(() => {
+    if (entry?.isIntersecting) {
+      fetchNextPage();
+    }
+  }, [entry, fetchNextPage]);
+  useEffect(() => {
+    lastMessageRef.current?.scrollIntoView({ behavior: 'instant' });
+  }, [messages.length]);
+
+  useEffect(() => {
+    const msgData = messageData?.pages.flatMap((page) => page).reverse();
+
+    if (msgData?.length) {
+      setMessages(msgData);
+    }
+  }, [messageData?.pages]);
 
   useEffect(() => {
     socket.connect();
@@ -82,21 +103,6 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
       socket.off('message');
     };
   }, []);
-  useEffect(() => {
-    if (entry?.isIntersecting) {
-      fetchNextPage();
-    }
-  }, [entry, fetchNextPage]);
-  useEffect(() => {
-    const msgData = messageData?.pages.flatMap((page) => page).reverse();
-
-    if (msgData?.length) {
-      setMessages(msgData);
-    }
-  }, [messageData?.pages]);
-  useEffect(() => {
-    lastMessageRef.current?.scrollIntoView({ behavior: 'instant' });
-  }, [messages.length]);
 
   return (
     <ScrollArea

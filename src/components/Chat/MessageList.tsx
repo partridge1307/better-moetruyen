@@ -27,6 +27,7 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
   const [messages, setMessages] = useState(conversation.messages);
   const lastMessageRef = useRef<HTMLLIElement | null>(null);
   const firstMessageRef = useRef<HTMLLIElement | null>(null);
+
   const { ref, entry } = useIntersection({
     threshold: 1,
     root: firstMessageRef.current,
@@ -47,6 +48,10 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
     {
       getNextPageParam: (_, pages) => {
         return pages.length + 1;
+      },
+      initialData: {
+        pages: [conversation.messages],
+        pageParams: [1],
       },
     }
   );

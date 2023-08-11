@@ -1,4 +1,4 @@
-import { ZodType, nullable, z } from 'zod';
+import { ZodType, z } from 'zod';
 import { zfd } from 'zod-form-data';
 
 export const UserProfileEditValidator = z.object({

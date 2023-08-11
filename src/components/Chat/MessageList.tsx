@@ -68,9 +68,6 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
       fetchNextPage();
     }
   }, [entry, fetchNextPage]);
-  useEffect(() => {
-    lastMessageRef.current?.scrollIntoView({ behavior: 'instant' });
-  }, [messages.length]);
 
   useEffect(() => {
     const msgData = messageData?.pages.flatMap((page) => page);
@@ -86,7 +83,7 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
 
   useEffect(() => {
     router.refresh();
-    socket.connect();
+    lastMessageRef.current?.scrollIntoView({ behavior: 'instant' });
 
     socket.on(
       'message',
@@ -104,6 +101,9 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
             sender,
           },
         ]);
+        setTimeout(() => {
+          lastMessageRef.current?.scrollIntoView({ behavior: 'instant' });
+        }, 0);
       }
     );
 

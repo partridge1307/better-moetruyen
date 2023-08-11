@@ -64,6 +64,9 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
   );
 
   useEffect(() => {
+    lastMessageRef.current?.scrollIntoView({ behavior: 'instant' });
+  }, []);
+  useEffect(() => {
     if (entry?.isIntersecting) {
       fetchNextPage();
     }
@@ -83,7 +86,6 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
 
   useEffect(() => {
     router.refresh();
-    lastMessageRef.current?.scrollIntoView({ behavior: 'instant' });
 
     socket.on(
       'message',

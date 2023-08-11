@@ -6,11 +6,16 @@ import { useIntersection } from '@mantine/hooks';
 import type { Chapter, Manga } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 import { FC, useEffect, useRef, useState } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
 import ChapterControll from './ChapterControll';
-import HorizontalViewChapter from './HorizontalViewChapter';
-import VerticalViewChapter from './VerticalViewChapter';
+const VerticalViewChapter = dynamic(() => import('./VerticalViewChapter'), {
+  ssr: false,
+});
+const HorizontalViewChapter = dynamic(() => import('./HorizontalViewChapter'), {
+  ssr: false,
+});
 
 interface ViewChapterProps {
   chapter: Pick<
@@ -61,6 +66,10 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
     localStorage.setItem('readingMode', mode);
     setReadingMode(mode);
   };
+  const progressBarHandler = (mode: 'hidden' | 'fixed' | 'lightbar') => {
+    localStorage.setItem('progressBar', mode);
+    setProgressBar(mode);
+  };
   const slideLeft = () => {
     if (currentImage === 0) return;
 
@@ -101,10 +110,6 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
 
       setCurrentImage(idx);
     }
-  };
-  const progressBarHandler = (mode: 'hidden' | 'fixed' | 'lightbar') => {
-    localStorage.setItem('progressBar', mode);
-    setProgressBar(mode);
   };
 
   useEffect(() => {

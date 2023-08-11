@@ -4,8 +4,8 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { forwardRef, memo } from 'react';
 import { Button } from '../ui/Button';
-import NextChapterButton from './NextChapterButton';
 import PrevChapterButton from './PrevChapterButton';
+import NextChapterButton from './NextChapterButton';
 const Comment = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,

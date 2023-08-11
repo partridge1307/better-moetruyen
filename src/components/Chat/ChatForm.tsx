@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from '../ui/Form';
 import { Input } from '../ui/Input';
+import { socket } from '@/lib/socket';
 
 interface ChatFormProps {
   conversation: Pick<Conversation, 'id'>;
@@ -57,7 +58,7 @@ const ChatForm: FC<ChatFormProps> = ({ conversation }) => {
     },
     onSuccess: (_, values) => {
       const { content, conversationId } = values;
-      // socket.emit('message', { content, conversationId });
+      socket.emit('message', { content, conversationId });
 
       form.setValue('content', '');
     },
@@ -98,7 +99,10 @@ const ChatForm: FC<ChatFormProps> = ({ conversation }) => {
                   />
                 </FormControl>
 
-                <button disabled={isLoading} type="submit">
+                <button
+                  disabled={isLoading || !field.value.length}
+                  type="submit"
+                >
                   <SendHorizonal className="w-8 h-8" />
                 </button>
               </div>

@@ -1,3 +1,5 @@
+'use client';
+
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -9,6 +11,7 @@ import axios, { AxiosError } from 'axios';
 import { Heart, HeartOff } from 'lucide-react';
 import { FC, memo, useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
+import { socket } from '@/lib/socket';
 
 interface CommentVoteClientProps {
   commentId: number;
@@ -61,7 +64,7 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
         setCurrentVote(type);
         if (type === 'UP_VOTE') {
           setVoteAmt((prev) => prev + (currentVote ? 2 : 1));
-          // socket.emit('notify', { type: 'LIKE', payload: commentId });
+          socket.emit('notify', { type: 'LIKE', payload: commentId });
         } else if (type === 'DOWN_VOTE')
           setVoteAmt((prev) => prev - (currentVote ? 2 : 1));
       }
@@ -80,7 +83,7 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
         size={'sm'}
         aria-label="like"
         className={cn('transition-colors', {
-          'text-red-500': currentVote === 'UP_VOTE',
+          'text-red-500 hover:text-red-500': currentVote === 'UP_VOTE',
         })}
       >
         <Heart className="w-5 h-5" />
@@ -94,7 +97,7 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
         size={'sm'}
         aria-label="dislike"
         className={cn('transition-colors', {
-          'text-red-500': currentVote === 'DOWN_VOTE',
+          'text-red-500 hover:text-red-500': currentVote === 'DOWN_VOTE',
         })}
       >
         <HeartOff className="w-5 h-5" />

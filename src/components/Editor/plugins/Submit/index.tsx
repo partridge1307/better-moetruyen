@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/Button';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
+import { socket } from '@/lib/socket';
 import { cn } from '@/lib/utils';
 import { CommentContentPayload } from '@/lib/validators/upload';
 import { AutoLinkNode } from '@lexical/link';
@@ -9,7 +10,6 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { CLEAR_EDITOR_COMMAND } from 'lexical';
-import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { $isImageNode, ImageNode } from '../../nodes/Image';
 
@@ -25,7 +25,6 @@ export default function Submit({
   const [editor] = useLexicalComposerContext();
   const [hasText, setHasText] = useState<boolean>(false);
   const { loginToast, notFoundToast } = useCustomToast();
-  const router = useRouter();
 
   const {
     data: oEmbedData,
@@ -49,47 +48,13 @@ export default function Submit({
           ...values,
           id,
         };
-        const { data } = await axios.put(
-          `/api/chapter/${chapterId}/comment/create`,
-          payload
-        );
-
-        return { data, oEmbed: values.oEmbed } as {
-          data: number;
-          oEmbed: {
-            meta: {
-              title: string;
-              description: string;
-              image: {
-                url: string;
-              };
-            };
-            link: string;
-          } | null;
-        };
+        await axios.put(`/api/chapter/${chapterId}/comment/create`, payload);
       } else {
-        const { data } = await axios.put(
-          `/api/manga/${id}/comment/create`,
-          values
-        );
-        if (commentId) {
-          // socket.emit('notify', { type: 'COMMENT', payload: commentId });
-        }
+        await axios.put(`/api/manga/${id}/comment/create`, values);
 
-        return { data, commentId, oEmbed: values.oEmbed } as {
-          data: number;
-          commentId: number;
-          oEmbed: {
-            meta: {
-              title: string;
-              description: string;
-              image: {
-                url: string;
-              };
-            };
-            link: string;
-          } | null;
-        };
+        if (commentId) {
+          socket.emit('notify', { type: 'COMMENT', payload: commentId });
+        }
       }
     },
     onError: (err) => {
@@ -104,9 +69,7 @@ export default function Submit({
         variant: 'destructive',
       });
     },
-    onSuccess: (data) => {
-      router.refresh();
-
+    onSuccess: () => {
       if (!editor.isEditable()) editor.setEditable(true);
       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
 
@@ -125,6 +88,16 @@ export default function Submit({
       }
     });
   }, [editor]);
+
+  useEffect(() => {
+    if (typeof oEmbedData !== 'undefined' && !isFetchingOEmbed) {
+      Upload({
+        content: editor.getEditorState().toJSON(),
+        oEmbed: oEmbedData,
+        commentId,
+      });
+    }
+  }, [Upload, commentId, editor, isFetchingOEmbed, oEmbedData]);
 
   const onClick = useCallback(() => {
     const editorState = editor.getEditorState();
@@ -149,16 +122,6 @@ export default function Submit({
       }
     }
   }, [Embed, Upload, commentId, editor]);
-
-  useEffect(() => {
-    if (typeof oEmbedData !== 'undefined' && !isFetchingOEmbed) {
-      Upload({
-        content: editor.getEditorState().toJSON(),
-        oEmbed: oEmbedData,
-        commentId,
-      });
-    }
-  }, [Upload, commentId, editor, isFetchingOEmbed, oEmbedData]);
 
   return (
     <Button

@@ -1,3 +1,5 @@
+'use client';
+
 import { toast } from '@/hooks/use-toast';
 import { formatTimeToNow } from '@/lib/utils';
 import type { Comment, CommentVote, Prisma, User } from '@prisma/client';

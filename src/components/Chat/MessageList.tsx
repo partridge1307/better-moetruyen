@@ -10,6 +10,7 @@ import { FC, useEffect, useRef, useState } from 'react';
 import UserAvatar from '../User/UserAvatar';
 import { ScrollArea } from '../ui/ScrollArea';
 import MessageCard from './MessageCard';
+import { socket } from '@/lib/socket';
 
 type ExtendedMessage = Pick<Message, 'content' | 'createdAt'> & {
   sender: Pick<User, 'id' | 'name' | 'image' | 'color'>;
@@ -51,30 +52,32 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
     }
   );
 
-  // useEffect(() => {
-  //   socket.on(
-  //     'message',
-  //     (data: {
-  //       content: string;
-  //       sender: Pick<User, 'id' | 'name' | 'color' | 'image'>;
-  //     }) => {
-  //       const { content, sender } = data;
+  useEffect(() => {
+    socket.connect();
 
-  //       setMessages((prev) => [
-  //         ...prev,
-  //         {
-  //           content,
-  //           createdAt: new Date(Date.now()),
-  //           sender,
-  //         },
-  //       ]);
-  //     }
-  //   );
+    socket.on(
+      'message',
+      (data: {
+        content: string;
+        sender: Pick<User, 'id' | 'name' | 'color' | 'image'>;
+      }) => {
+        const { content, sender } = data;
 
-  //   return () => {
-  //     socket.off('message');
-  //   };
-  // }, []);
+        setMessages((prev) => [
+          ...prev,
+          {
+            content,
+            createdAt: new Date(Date.now()),
+            sender,
+          },
+        ]);
+      }
+    );
+
+    return () => {
+      socket.off('message');
+    };
+  }, []);
   useEffect(() => {
     if (entry?.isIntersecting) {
       fetchNextPage();

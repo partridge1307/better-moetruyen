@@ -53,7 +53,7 @@ export async function POST(
     if (existConversation)
       return new Response('Existed conversation', { status: 406 });
 
-    await db.conversation.create({
+    const createdConversation = await db.conversation.create({
       data: {
         users: {
           connect: [{ id: user.id }, { id: targetUser.id }],
@@ -61,7 +61,7 @@ export async function POST(
       },
     });
 
-    return new Response('OK');
+    return new Response(JSON.stringify(createdConversation.id));
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       return new Response('Not found', { status: 404 });

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { TabsContent } from '../ui/Tabs';
-import { ExtendedNotify } from './Notifications';
+import { ExtendedNotify } from '.';
 import Link from 'next/link';
 import { cn, formatTimeToNow } from '@/lib/utils';
 import { useMutation } from '@tanstack/react-query';

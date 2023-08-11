@@ -1,6 +1,9 @@
 import { CornerDownRight } from 'lucide-react';
+import dynamic from 'next/dist/shared/lib/dynamic';
 import { FC, useState } from 'react';
-import SubCommentOutput from './SubCommentOutput';
+const SubCommentOutput = dynamic(() => import('./SubCommentOutput'), {
+  ssr: false,
+});
 
 interface SubCommentProps {
   subCommentLength: number;

@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Loader2, Menu, MessageCircle, User2 } from 'lucide-react';
+import { MessageCircle, User2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,6 +20,10 @@ import {
   DropdownMenuTrigger,
 } from '../ui/DropdownMenu';
 import NavSidebar from './NavSidebar';
+import dynamic from 'next/dynamic';
+const Notifications = dynamic(() => import('@/components/Notify'), {
+  ssr: false,
+});
 
 const viewChapterRegex = /^(\/chapter\/\d+$)/;
 
@@ -53,14 +57,12 @@ const NavbarClient = () => {
         </div>
 
         <div className="flex items-center gap-4 md:gap-6">
-          {/* {session?.user ? <Notifications session={session} /> : null} */}
+          {!!session?.user && <Notifications session={session} />}
 
           <DropdownMenu>
-            <DropdownMenuTrigger disabled={status === 'loading'}>
+            <DropdownMenuTrigger>
               {session?.user ? (
                 <UserAvatar className="w-8 h-8" user={session.user} />
-              ) : status === 'loading' ? (
-                <Loader2 className="w-7 h-7 animate-spin" />
               ) : (
                 <User2 className="h-7 w-7" />
               )}
@@ -69,7 +71,7 @@ const NavbarClient = () => {
             {session?.user ? (
               <DropdownMenuContent
                 align="end"
-                className="min-w-[300px] sm:max-w-sm md:max-w-md lg:max-w-lg p-2"
+                className="w-[250px] md:w-[300px] p-2"
               >
                 <div className="relative w-full h-fit mb-16">
                   <UserBanner user={session.user} />
@@ -131,6 +133,8 @@ const NavbarClient = () => {
                 <DropdownMenuSeparator className="mt-4" />
                 <SignOutButton />
               </DropdownMenuContent>
+            ) : status === 'loading' ? (
+              <template className="h-72 w-52 rounded-md dark:bg-zinc-900 animate-pulse"></template>
             ) : (
               <DropdownMenuContent align="end" className="min-w-[200px] p-2">
                 <DropdownMenuItem asChild>

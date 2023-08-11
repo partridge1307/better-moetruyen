@@ -14,12 +14,13 @@ import {
   CommandItem,
   CommandList,
 } from '../ui/Command';
-import { Skeleton } from '../ui/Skeleton';
+import { useRouter } from 'next/navigation';
 
 interface ChatRequestProps {}
 
 const ChatRequest: FC<ChatRequestProps> = ({}) => {
   const { loginToast, notFoundToast } = useCustomToast();
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [debounced] = useDebouncedValue(query, 300);
 
@@ -44,7 +45,7 @@ const ChatRequest: FC<ChatRequestProps> = ({}) => {
     mutationFn: async (id: string) => {
       const { data } = await axios.post(`/api/user/conversation/${id}`);
 
-      return data;
+      return data as number;
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
@@ -64,7 +65,10 @@ const ChatRequest: FC<ChatRequestProps> = ({}) => {
         variant: 'destructive',
       });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      router.push(`/chat?id=${data}`);
+      router.refresh();
+
       return toast({
         title: 'Thành công',
       });
@@ -88,7 +92,7 @@ const ChatRequest: FC<ChatRequestProps> = ({}) => {
           {isFetched && <CommandEmpty>Không tìm thấy</CommandEmpty>}
           {isFetching && (
             <div className="p-2">
-              <Skeleton className="w-full h-4 rounded-full dark:bg-zinc-800" />
+              <template className="w-full h-4 rounded-full dark:bg-zinc-800" />
             </div>
           )}
           {(results?.length ?? 0) > 0 ? (

@@ -45,7 +45,6 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
   const {
     data: messageData,
     fetchNextPage,
-    isFetchingNextPage,
     refetch,
   } = useInfiniteQuery(
     ['infinite-message-query', `${conversation.id}`],
@@ -65,7 +64,7 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
   useEffect(() => {
     setTimeout(
       () => lastMessageRef.current?.scrollIntoView({ behavior: 'instant' }),
-      700
+      500
     );
   }, []);
   useEffect(() => {
@@ -124,14 +123,11 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
         scrollHideDelay={300}
         className="flex-1 overflow-y-auto"
       >
-        {isFetchingNextPage && (
-          <template className="w-full h-6 rounded-lg px-4 animate-pulse dark:bg-zinc-900" />
-        )}
         <ul className="flex flex-col gap-4 p-2 px-4">
           {messages.map((message, index) => {
             const sender = message.sender;
 
-            if (index === Math.floor(messages.length * (10 / 100))) {
+            if (index === 0) {
               return (
                 <li ref={ref} key={index} className="flex gap-2">
                   <MessageCard

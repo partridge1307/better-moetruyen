@@ -19,14 +19,13 @@ type ExtendedMessage = Pick<Message, 'content' | 'createdAt'> & {
 interface MessageListProps {
   conversation: Pick<Conversation, 'id'> & {
     users: Pick<User, 'id' | 'name' | 'color'>[];
-    messages: ExtendedMessage[];
   };
   me: Pick<User, 'id'>;
 }
 
 const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
   const router = useRouter();
-  const [messages, setMessages] = useState(conversation.messages);
+  const [messages, setMessages] = useState<ExtendedMessage[]>([]);
   const lastMessageRef = useRef<HTMLLIElement | null>(null);
   const firstMessageRef = useRef<HTMLLIElement | null>(null);
 
@@ -51,10 +50,6 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
       getNextPageParam: (_, pages) => {
         return pages.length + 1;
       },
-      initialData: {
-        pages: [conversation.messages],
-        pageParams: [1],
-      },
     }
   );
 
@@ -68,8 +63,7 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
   }, [messages.length]);
 
   useEffect(() => {
-    const msgData =
-      messageData?.pages.flatMap((page) => page) ?? conversation.messages;
+    const msgData = messageData?.pages.flatMap((page) => page);
     if (msgData?.length) {
       setMessages(
         msgData.sort(
@@ -78,10 +72,11 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
         )
       );
     }
-  }, [conversation.messages, messageData?.pages]);
+  }, [messageData?.pages]);
 
   useEffect(() => {
     router.refresh();
+    socket.connect();
 
     socket.on(
       'message',

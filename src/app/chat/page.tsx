@@ -62,24 +62,6 @@ const page: FC<pageProps> = async ({ searchParams }) => {
             },
           },
         },
-        messages: {
-          select: {
-            content: true,
-            createdAt: true,
-            sender: {
-              select: {
-                id: true,
-                name: true,
-                color: true,
-                image: true,
-              },
-            },
-          },
-          orderBy: {
-            createdAt: 'asc',
-          },
-          take: -10,
-        },
       },
     }),
   ]);

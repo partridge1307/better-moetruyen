@@ -2,12 +2,15 @@
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
+import { socket } from '@/lib/socket';
+import { cn } from '@/lib/utils';
 import { ChatPayload, ChatValidator } from '@/lib/validators/chat';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Conversation } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { SendHorizonal } from 'lucide-react';
+import type { Session } from 'next-auth';
 import { FC, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import {
@@ -18,10 +21,6 @@ import {
   FormMessage,
 } from '../ui/Form';
 import { Input } from '../ui/Input';
-import { socket } from '@/lib/socket';
-import { cn } from '@/lib/utils';
-import type { Session } from 'next-auth';
-import { useRouter } from 'next/navigation';
 
 interface ChatFormProps {
   conversation: Pick<Conversation, 'id'>;
@@ -29,7 +28,6 @@ interface ChatFormProps {
 }
 
 const ChatForm: FC<ChatFormProps> = ({ conversation, session }) => {
-  const router = useRouter();
   const { loginToast, notFoundToast } = useCustomToast();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -60,7 +58,6 @@ const ChatForm: FC<ChatFormProps> = ({ conversation, session }) => {
     onSuccess: (_, values) => {
       const { content, conversationId, senderId } = values;
       socket.emit('message', { content, conversationId, senderId });
-      router.refresh();
 
       form.setValue('content', '');
     },

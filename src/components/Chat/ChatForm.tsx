@@ -25,9 +25,10 @@ import { Input } from '../ui/Input';
 interface ChatFormProps {
   conversation: Pick<Conversation, 'id'>;
   session: Session;
+  refetch: () => void;
 }
 
-const ChatForm: FC<ChatFormProps> = ({ conversation, session }) => {
+const ChatForm: FC<ChatFormProps> = ({ conversation, session, refetch }) => {
   const { loginToast, notFoundToast } = useCustomToast();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -58,6 +59,7 @@ const ChatForm: FC<ChatFormProps> = ({ conversation, session }) => {
     onSuccess: (_, values) => {
       const { content, conversationId, senderId } = values;
       socket.emit('message', { content, conversationId, senderId });
+      refetch();
 
       form.setValue('content', '');
     },

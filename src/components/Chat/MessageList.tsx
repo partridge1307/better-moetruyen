@@ -7,10 +7,18 @@ import type { Conversation, Message, User } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
+import type { Session } from 'next-auth';
+import dynamic from 'next/dist/shared/lib/dynamic';
+import { useRouter } from 'next/navigation';
 import { FC, useEffect, useRef, useState } from 'react';
 import { ScrollArea } from '../ui/ScrollArea';
 import MessageCard from './MessageCard';
-import { useRouter } from 'next/navigation';
+const ChatForm = dynamic(() => import('./ChatForm'), {
+  ssr: false,
+  loading: () => (
+    <template className="h-14 w-full px-2 rounded-md dark:bg-zinc-900 animate-pulse" />
+  ),
+});
 
 type ExtendedMessage = Pick<Message, 'content' | 'createdAt'> & {
   sender: Pick<User, 'id' | 'name' | 'image' | 'color'>;
@@ -21,9 +29,10 @@ interface MessageListProps {
     users: Pick<User, 'id' | 'name' | 'color'>[];
   };
   me: Pick<User, 'id'>;
+  session: Session;
 }
 
-const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
+const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
   const router = useRouter();
   const [messages, setMessages] = useState<ExtendedMessage[]>([]);
   const lastMessageRef = useRef<HTMLLIElement | null>(null);
@@ -38,6 +47,7 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
     data: messageData,
     fetchNextPage,
     isFetchingNextPage,
+    refetch,
   } = useInfiniteQuery(
     ['infinite-message-query', `${conversation.id}`],
     async ({ pageParam = 1 }) => {
@@ -103,54 +113,62 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
   }, [router]);
 
   return (
-    <ScrollArea
-      type="scroll"
-      scrollHideDelay={300}
-      className="flex-1 overflow-y-auto"
-    >
-      {isFetchingNextPage && (
-        <div className="flex justify-center">
-          <Loader2 className="w-6 h-6 animate-spin" />
-        </div>
-      )}
-      <ul className="flex flex-col gap-4 p-2 px-4">
-        {messages.map((message, index) => {
-          const sender = message.sender;
+    <>
+      <ScrollArea
+        type="scroll"
+        scrollHideDelay={300}
+        className="flex-1 overflow-y-auto"
+      >
+        {isFetchingNextPage && (
+          <div className="flex justify-center">
+            <Loader2 className="w-6 h-6 animate-spin" />
+          </div>
+        )}
+        <ul className="flex flex-col gap-4 p-2 px-4">
+          {messages.map((message, index) => {
+            const sender = message.sender;
 
-          if (index === 0) {
-            return (
-              <li ref={ref} key={index} className="flex gap-2">
-                <MessageCard
-                  message={message}
-                  isMe={sender.id === me.id}
-                  sender={sender}
-                />
-              </li>
-            );
-          } else if (index === messages.length - 1) {
-            return (
-              <li ref={lastMessageRef} key={index} className="flex gap-2">
-                <MessageCard
-                  message={message}
-                  isMe={sender.id === me.id}
-                  sender={sender}
-                />
-              </li>
-            );
-          } else {
-            return (
-              <li key={index} className="flex gap-2">
-                <MessageCard
-                  message={message}
-                  isMe={sender.id === me.id}
-                  sender={sender}
-                />
-              </li>
-            );
-          }
-        })}
-      </ul>
-    </ScrollArea>
+            if (index === 0) {
+              return (
+                <li ref={ref} key={index} className="flex gap-2">
+                  <MessageCard
+                    message={message}
+                    isMe={sender.id === me.id}
+                    sender={sender}
+                  />
+                </li>
+              );
+            } else if (index === messages.length - 1) {
+              return (
+                <li ref={lastMessageRef} key={index} className="flex gap-2">
+                  <MessageCard
+                    message={message}
+                    isMe={sender.id === me.id}
+                    sender={sender}
+                  />
+                </li>
+              );
+            } else {
+              return (
+                <li key={index} className="flex gap-2">
+                  <MessageCard
+                    message={message}
+                    isMe={sender.id === me.id}
+                    sender={sender}
+                  />
+                </li>
+              );
+            }
+          })}
+        </ul>
+      </ScrollArea>
+
+      <ChatForm
+        conversation={conversation}
+        session={session}
+        refetch={refetch}
+      />
+    </>
   );
 };
 

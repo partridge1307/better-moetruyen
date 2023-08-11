@@ -2,11 +2,10 @@ import ForceSignOut from '@/components/ForceSignOut';
 import Username from '@/components/User/Username';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { Loader2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { notFound, redirect } from 'next/navigation';
 import { FC } from 'react';
-import dynamic from 'next/dynamic';
-import { Loader2 } from 'lucide-react';
-import ChatForm from '@/components/Chat/ChatForm';
 const MessageList = dynamic(() => import('@/components/Chat/MessageList'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
@@ -77,8 +76,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         <Username user={toUser} className="md:text-start text-lg" />
       </div>
 
-      <MessageList me={user} conversation={conversation} />
-      <ChatForm conversation={conversation} session={session} />
+      <MessageList me={user} conversation={conversation} session={session} />
     </div>
   );
 };

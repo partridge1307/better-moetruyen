@@ -10,12 +10,8 @@ import dynamic from 'next/dynamic';
 import { FC, useEffect, useRef, useState } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
 import ChapterControll from './ChapterControll';
-const VerticalViewChapter = dynamic(() => import('./VerticalViewChapter'), {
-  ssr: false,
-});
-const HorizontalViewChapter = dynamic(() => import('./HorizontalViewChapter'), {
-  ssr: false,
-});
+import HorizontalViewChapter from './HorizontalViewChapter';
+import VerticalViewChapter from './VerticalViewChapter';
 
 interface ViewChapterProps {
   chapter: Pick<

@@ -10,6 +10,7 @@ import { Loader2 } from 'lucide-react';
 import { FC, useEffect, useRef, useState } from 'react';
 import { ScrollArea } from '../ui/ScrollArea';
 import MessageCard from './MessageCard';
+import { useRouter } from 'next/navigation';
 
 type ExtendedMessage = Pick<Message, 'content' | 'createdAt'> & {
   sender: Pick<User, 'id' | 'name' | 'image' | 'color'>;
@@ -24,6 +25,7 @@ interface MessageListProps {
 }
 
 const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
+  const router = useRouter();
   const [messages, setMessages] = useState(conversation.messages);
   const lastMessageRef = useRef<HTMLLIElement | null>(null);
   const firstMessageRef = useRef<HTMLLIElement | null>(null);
@@ -37,7 +39,6 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
     data: messageData,
     fetchNextPage,
     isFetchingNextPage,
-    refetch,
   } = useInfiniteQuery(
     ['infinite-message-query', `${conversation.id}`],
     async ({ pageParam = 1 }) => {
@@ -58,9 +59,6 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
   );
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
-  useEffect(() => {
     if (entry?.isIntersecting) {
       fetchNextPage();
     }
@@ -78,6 +76,7 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
   }, [messageData?.pages]);
 
   useEffect(() => {
+    router.refresh();
     socket.connect();
 
     socket.on(
@@ -102,7 +101,7 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
     return () => {
       socket.off('message');
     };
-  }, []);
+  }, [router]);
 
   return (
     <ScrollArea

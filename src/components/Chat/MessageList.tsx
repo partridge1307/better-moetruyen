@@ -82,7 +82,6 @@ const MessageList: FC<MessageListProps> = ({ conversation, me }) => {
 
   useEffect(() => {
     router.refresh();
-    socket.connect();
 
     socket.on(
       'message',

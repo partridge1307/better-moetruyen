@@ -229,7 +229,7 @@ const page: FC<pageProps> = async ({ params }) => {
                 <template className="w-full h-20 p-2 rounded-md dark:bg-zinc-900 animate-pulse" />
               }
             >
-              {/* <EditorOutput data={manga.description} /> */}
+              <EditorOutput data={manga.description} />
             </Suspense>
           </div>
 

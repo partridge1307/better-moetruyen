@@ -6,7 +6,6 @@ import { useIntersection } from '@mantine/hooks';
 import type { Conversation, Message, User } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Loader2 } from 'lucide-react';
 import type { Session } from 'next-auth';
 import dynamic from 'next/dist/shared/lib/dynamic';
 import { useRouter } from 'next/navigation';
@@ -66,7 +65,7 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
   useEffect(() => {
     setTimeout(
       () => lastMessageRef.current?.scrollIntoView({ behavior: 'instant' }),
-      500
+      700
     );
   }, []);
   useEffect(() => {
@@ -126,15 +125,13 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
         className="flex-1 overflow-y-auto"
       >
         {isFetchingNextPage && (
-          <div className="flex justify-center">
-            <Loader2 className="w-6 h-6 animate-spin" />
-          </div>
+          <template className="w-full h-6 rounded-lg px-4 animate-pulse dark:bg-zinc-900" />
         )}
         <ul className="flex flex-col gap-4 p-2 px-4">
           {messages.map((message, index) => {
             const sender = message.sender;
 
-            if (index === 0) {
+            if (index === Math.floor(messages.length * (10 / 100))) {
               return (
                 <li ref={ref} key={index} className="flex gap-2">
                   <MessageCard

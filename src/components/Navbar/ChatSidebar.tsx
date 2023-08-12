@@ -1,10 +1,10 @@
 'use client';
 
 import { useMediaQuery } from '@mantine/hooks';
+import type { Conversation, User } from '@prisma/client';
+import { FC, createContext } from 'react';
 import DesktopSidebar from './DesktopSidebar';
 import MobileSidebar from './MobileSidebar';
-import { FC, createContext } from 'react';
-import type { Conversation, User } from '@prisma/client';
 
 export type ExtendedConversation = Conversation & {
   users: Pick<User, 'id' | 'name' | 'color' | 'image'>[];
@@ -13,9 +13,9 @@ export type ExtendedConversation = Conversation & {
 interface ChatSidebarProps {
   conversation: ExtendedConversation[] | null;
 }
-export const ConversationContext = createContext<
-  ExtendedConversation[] | null
->(null);
+export const ConversationContext = createContext<ExtendedConversation[] | null>(
+  null
+);
 
 const ChatSidebar: FC<ChatSidebarProps> = ({ conversation }) => {
   const matches = useMediaQuery('(max-width: 640px)');

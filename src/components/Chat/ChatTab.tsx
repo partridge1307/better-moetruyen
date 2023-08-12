@@ -1,8 +1,8 @@
+import { MessageCircle } from 'lucide-react';
 import { FC } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/Tabs';
-import ChatRequest from './ChatRequest';
 import ChatList from './ChatList';
-import { MessageCircle } from 'lucide-react';
+import ChatRequest from './ChatRequest';
 
 interface ChatTabProps {}
 

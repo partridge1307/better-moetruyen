@@ -1,3 +1,5 @@
+'use client';
+
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
 import { useDebouncedValue } from '@mantine/hooks';

@@ -1,3 +1,5 @@
+'use client';
+
 import { cn, formatTimeToNow } from '@/lib/utils';
 import { Clock, Loader2, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';

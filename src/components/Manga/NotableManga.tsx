@@ -1,6 +1,5 @@
 'use client';
 
-import { rgbDataURL } from '@/lib/utils';
 import '@/styles/swiper.css';
 import { useMediaQuery } from '@mantine/hooks';
 import type { Manga, MangaAuthor, Tag } from '@prisma/client';
@@ -35,14 +34,12 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
         renderItem(item) {
           return (
             <Link href={`/manga/${manga.id}`}>
-              <div className="relative w-full h-72">
+              <div className="relative w-full h-72 max-h-72">
                 <Image
                   fill
                   sizes="40vw"
                   quality={50}
                   priority
-                  placeholder="blur"
-                  blurDataURL={rgbDataURL(255, 209, 148)}
                   src={item.original}
                   alt="Manga Image"
                   className="object-cover rounded-md"
@@ -70,10 +67,10 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
         },
         renderThumbInner(item) {
           return (
-            <div className="relative w-16 h-10 md:w-24 md:h-16">
+            <div className="relative w-16 h-10 md:w-24 md:h-16 max-w-[64px] max-h-10 md:max-w-[96px] md:max-h-16">
               <Image
                 fill
-                sizes="30vw"
+                sizes="20vw"
                 quality={20}
                 src={item.original}
                 alt="Manga Thumbnail Image"

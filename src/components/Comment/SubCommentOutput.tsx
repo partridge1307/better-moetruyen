@@ -96,19 +96,21 @@ const SubCommentOutput: FC<SubCommentContentProps> = ({ commentId }) => {
                   }
                 />
 
-                <div className="flex items-center gap-4">
-                  <CommentVoteClient
-                    commentId={comment.id}
-                    currentVote={currentVote}
-                    voteAmt={voteAmt}
-                  />
+                {!!session && (
+                  <div className="flex items-center gap-4">
+                    <CommentVoteClient
+                      commentId={comment.id}
+                      currentVote={currentVote}
+                      voteAmt={voteAmt}
+                    />
 
-                  <DeleteComment
-                    session={session}
-                    authorId={comment.authorId}
-                    commentId={comment.id}
-                  />
-                </div>
+                    <DeleteComment
+                      session={session}
+                      authorId={comment.authorId}
+                      commentId={comment.id}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </li>

@@ -19,14 +19,16 @@ const LatestMangaCard: FC<LatestMangaCardProps> = ({ chapter }) => {
       href={`/manga/${chapter.manga.id}`}
       className="relative flex gap-4 dark:bg-zinc-900/75 rounded-lg pr-2 max-sm:pr-4 max-sm:w-max"
     >
-      <Image
-        height={200}
-        width={200}
-        quality={50}
-        src={chapter.manga.image}
-        alt="Latest Manga Image"
-        className="object-cover rounded-l-lg w-32 h-44 lg:w-40 lg:h-56"
-      />
+      <div className="relative w-32 h-44 lg:w-40 lg:h-56 max-w-[128px] max-h-44 lg:max-w-[160px] lg:max-h-56">
+        <Image
+          fill
+          sizes="30vw"
+          quality={40}
+          src={chapter.manga.image}
+          alt="Latest Manga Image"
+          className="object-cover rounded-l-lg"
+        />
+      </div>
 
       <div className="relative py-2 flex flex-col gap-3 w-max h-44 lg:h-56">
         <div>

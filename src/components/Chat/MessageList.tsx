@@ -88,9 +88,10 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
 
   useEffect(() => {
     router.refresh();
+    socket.connect();
 
     socket.on(
-      'message',
+      `message:${conversation.id}`,
       (data: {
         content: string;
         sender: Pick<User, 'id' | 'name' | 'color' | 'image'>;
@@ -112,9 +113,10 @@ const MessageList: FC<MessageListProps> = ({ conversation, me, session }) => {
     );
 
     return () => {
-      socket.off('message');
+      socket.off(`message:${conversation.id}`);
+      socket.close();
     };
-  }, [router]);
+  }, [conversation.id, router]);
 
   return (
     <>

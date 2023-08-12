@@ -29,10 +29,15 @@ export type ExtendedNotify = Pick<
 };
 
 export enum notifyType {
+  // eslint-disable-next-line no-unused-vars
   LIKE = 'LIKE',
+  // eslint-disable-next-line no-unused-vars
   COMMENT = 'COMMENT',
+  // eslint-disable-next-line no-unused-vars
   MENTION = 'MENTION',
+  // eslint-disable-next-line no-unused-vars
   FOLLOW = 'FOLLOW',
+  // eslint-disable-next-line no-unused-vars
   SYSTEM = 'SYSTEM',
 }
 
@@ -63,6 +68,10 @@ const Notifications: FC<NotificationsProps> = ({ session }) => {
     socket.connect();
 
     socket.emit('userConnect', session.user.id);
+
+    return () => {
+      socket.close();
+    };
   }, [session.user]);
 
   useEffect(() => {

@@ -65,7 +65,7 @@
     "editorjs-react-renderer": "^3.5.1",
     "jsonwebtoken": "^9.0.1",
     "lexical": "^0.12.0",
-    "lucide-react": "^0.265.0",
+    "lucide-react": "0.263.1",
     "next": "^13.4.13",
     "next-auth": "^4.23.0",
     "nodemailer": "^6.9.4",

@@ -12,9 +12,8 @@ import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { ImagePlus, PlusCircle, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { FC, useState } from 'react';
+import { FC, Suspense, lazy, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import DnDChapterImage from '../DragAndDrop';
 import { Button } from '../ui/Button';
 import {
   Form,
@@ -26,6 +25,7 @@ import {
 } from '../ui/Form';
 import { Input } from '../ui/Input';
 import { Progress } from '../ui/Progress';
+const DnDChapterImage = lazy(() => import('../DragAndDrop'));
 
 interface ChapterEditProps {
   chapter: Pick<
@@ -265,12 +265,32 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
               )}
 
               {images.length ? (
-                <DnDChapterImage
-                  isUpload={isEditting}
-                  items={images}
-                  setItems={setImages}
-                />
-              ) : null}
+                <Suspense
+                  fallback={
+                    <div className="w-40 h-52 dark:bg-zinc-800 animate-pulse" />
+                  }
+                >
+                  <DnDChapterImage
+                    isUpload={isEditting}
+                    items={images}
+                    setItems={setImages}
+                  />
+                </Suspense>
+              ) : (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const target = document.getElementById(
+                      'add-image'
+                    ) as HTMLInputElement;
+                    target.click();
+                  }}
+                  className="w-40 h-52 rounded-md border-2 border-dashed flex items-center justify-center"
+                >
+                  <ImagePlus className="w-8 h-8 opacity-50" />
+                </button>
+              )}
 
               <FormControl>
                 <input

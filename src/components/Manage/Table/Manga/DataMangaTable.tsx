@@ -29,8 +29,9 @@ import {
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import DataToolbar from './DataToolbar';
 import { MangaColumn } from './column';
+import dynamic from 'next/dynamic';
+const DataToolbar = dynamic(() => import('./DataToolbar'), { ssr: false });
 
 interface DataTableProps {
   data: MangaColumn[];

@@ -23,10 +23,10 @@ import {
   FormMessage,
 } from '../ui/Form';
 import { Input } from '../ui/Input';
-import ChapterIndexUpload from './ChapterIndexUpload';
 import { Progress } from '../ui/Progress';
 import { lazy } from 'react';
 const DnDChapterImage = lazy(() => import('../DragAndDrop'));
+const ChapterIndexUpload = lazy(() => import('./ChapterIndexUpload'));
 
 const ChapterUpload = ({ id }: { id: string }) => {
   const { loginToast, notFoundToast } = useCustomToast();
@@ -127,11 +127,17 @@ const ChapterUpload = ({ id }: { id: string }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-6">
-        <ChapterIndexUpload
-          form={form}
-          setDisableChapterIndex={(value) => setDisableChapterIndex(value)}
-          disaleChapterIndex={disaleChapterIndex}
-        />
+        <Suspense
+          fallback={
+            <template className="h-28 rounded-md dark:bg-zinc-800 animate-pulse" />
+          }
+        >
+          <ChapterIndexUpload
+            form={form}
+            setDisableChapterIndex={(value) => setDisableChapterIndex(value)}
+            disaleChapterIndex={disaleChapterIndex}
+          />
+        </Suspense>
 
         <FormField
           control={form.control}

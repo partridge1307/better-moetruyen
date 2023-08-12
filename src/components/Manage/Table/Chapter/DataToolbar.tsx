@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/ui/Button';
 import {
   Command,
@@ -19,16 +21,14 @@ import {
 import { cn } from '@/lib/utils';
 import type { Column, Table } from '@tanstack/react-table';
 import { Check } from 'lucide-react';
+import type { ChapterColumn } from './column';
 
-interface DataToolbarProps<TData, TValue> {
-  column?: Column<TData, TValue>;
-  table: Table<TData>;
+interface DataToolbarProps<TValue> {
+  column?: Column<ChapterColumn, TValue>;
+  table: Table<ChapterColumn>;
 }
 
-function DataToolbar<TData, TValue>({
-  column,
-  table,
-}: DataToolbarProps<TData, TValue>) {
+function DataToolbar<TValue>({ column, table }: DataToolbarProps<TValue>) {
   const statusValues = column?.getFilterValue();
 
   return (

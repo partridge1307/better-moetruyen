@@ -27,10 +27,11 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import dynamic from 'next/dist/shared/lib/dynamic';
 import Link from 'next/link';
 import { useState } from 'react';
-import DataToolbar from './DataToolbar';
 import { ChapterColumn } from './column';
+const DataToolbar = dynamic(() => import('./DataToolbar'), { ssr: false });
 
 interface DataTableProps {
   data: ChapterColumn[];

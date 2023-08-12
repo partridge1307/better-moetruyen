@@ -97,7 +97,7 @@ const NavSidebar = () => {
   return (
     <Sheet>
       <SheetTrigger>
-        <Menu className="h-8 w-8" />
+        <Menu aria-label="sidebar button" className="h-8 w-8" />
       </SheetTrigger>
       <SheetContent side="left" className="p-0 dark:bg-zinc-800">
         <div className="scrollbar dark:scrollbar--dark container flex h-[90%] flex-col overflow-y-auto pb-4 max-sm:px-2">

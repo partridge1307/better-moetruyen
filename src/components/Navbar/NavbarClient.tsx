@@ -51,8 +51,16 @@ const NavbarClient = () => {
         <div className="flex items-center gap-4">
           <NavSidebar />
           <Link href="/" className="flex items-center gap-2">
-            <Icons.logo className="h-6 w-6 bg-black dark:bg-white" />
-            <p className="text-2xl font-semibold max-sm:hidden">Moetruyen</p>
+            <Icons.logo
+              aria-label="Moetruyen logo"
+              className="h-6 w-6 bg-black dark:bg-white"
+            />
+            <p
+              aria-label="Moetruyen"
+              className="text-2xl font-semibold max-sm:hidden"
+            >
+              Moetruyen
+            </p>
           </Link>
         </div>
 

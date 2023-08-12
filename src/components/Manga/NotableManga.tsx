@@ -37,7 +37,7 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
               <div className="relative w-full h-72 max-h-72">
                 <Image
                   fill
-                  sizes="(max-width: 640px) 20vw, 40vw"
+                  sizes="(max-width: 640px) 30vw, 40vw"
                   quality={50}
                   priority
                   src={item.original}
@@ -67,10 +67,10 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
         },
         renderThumbInner(item) {
           return (
-            <div className="relative w-16 h-10 lg:w-24 lg:h-16">
+            <div className="relative w-16 h-10 md:w-full md:h-14">
               <Image
                 fill
-                sizes="(max-width: 640px) 20vw, 40vw"
+                sizes="(max-width: 640px) 10vw, 40vw"
                 quality={20}
                 src={item.original}
                 alt="Manga Thumbnail Image"

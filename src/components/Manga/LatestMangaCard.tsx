@@ -17,25 +17,25 @@ const LatestMangaCard: FC<LatestMangaCardProps> = ({ chapter }) => {
   return (
     <Link
       href={`/manga/${chapter.manga.id}`}
-      className="relative flex gap-4 dark:bg-zinc-900/75 rounded-lg pr-2 max-sm:pr-4 max-sm:w-max"
+      className="relative grid grid-cols-[.0fr_1fr] gap-4 pr-2 rounded-lg overflow-clip dark:bg-zinc-900/75"
     >
       <div className="relative w-32 h-44 lg:w-40 lg:h-56">
         <Image
           fill
-          sizes="(max-width: 640px) 20vw, 40vw"
+          sizes="(max-width: 640px) 30vw, 40vw"
           quality={40}
           src={chapter.manga.image}
           alt="Latest Manga Image"
-          className="object-cover rounded-l-lg w-32 h-44 lg:w-40 lg:h-56"
+          className="object-cover rounded-l-lg"
         />
       </div>
 
-      <div className="relative py-2 flex flex-col gap-3 w-max h-44 lg:h-56">
+      <div className="relative flex flex-col gap-2 py-2 h-44 lg:h-56 max-sm:w-max">
         <div>
           <h2 className="text-lg lg:text-xl font-semibold">
             {chapter.manga.name}
           </h2>
-          <h6 className="text-xs md:text-sm">
+          <h6 className="text-xs lg:text-sm">
             {chapter.manga.author.map((a) => a.name).join(', ')}
           </h6>
         </div>
@@ -53,9 +53,9 @@ const LatestMangaCard: FC<LatestMangaCardProps> = ({ chapter }) => {
           </p>
         </div>
 
-        <h6 className="max-sm:hidden max-w-full max-h-full overflow-y-auto md:scrollbar md:dark:scrollbar--dark">
+        <p className="max-sm:hidden max-h-full overflow-auto md:scrollbar md:dark:scrollbar--dark">
           {chapter.manga.review}
-        </h6>
+        </p>
       </div>
     </Link>
   );

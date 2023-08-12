@@ -34,9 +34,9 @@ const FirstThree: FC<FirstThreeProps> = ({ mangas }) => {
                 />
                 <Crown className="float-right translate-x-1 -translate-y-2 w-6 h-6 rotate-45 text-orange-400" />
               </div>
-              <h6 className="lg:text-lg font-medium text-orange-400">
+              <p className="lg:text-lg font-medium text-orange-400">
                 Hạng <span>{idx + 1}</span>
-              </h6>
+              </p>
             </Link>
           );
         } else {
@@ -52,9 +52,9 @@ const FirstThree: FC<FirstThreeProps> = ({ mangas }) => {
                 <div className="w-10 h-10 lg:w-14 lg:h-14 flex justify-center items-center dark:bg-zinc-700 rounded-full">
                   <Armchair className="w-8 h-8 opacity-50" />
                 </div>
-                <h6>
+                <p className="text-sm">
                   Hạng <span>{idx + 1}</span>
-                </h6>
+                </p>
               </div>
             );
           } else {
@@ -75,9 +75,9 @@ const FirstThree: FC<FirstThreeProps> = ({ mangas }) => {
                   alt="Top Daily Manga Image"
                   className="rounded-full object-cover w-10 h-10 lg:w-14 lg:h-14"
                 />
-                <h6 className="text-sm">
+                <p className="text-sm">
                   Hạng <span>{idx + 1}</span>
-                </h6>
+                </p>
               </Link>
             );
           }

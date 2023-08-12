@@ -21,4 +21,8 @@
   .image-gallery-thumbnail {
     width: fit-content !important;
   }
+  .image-gallery-thumbnails-container > *:not(:last-child) {
+    margin-bottom: 0;
+    margin-right: 0.5rem;
+  }
 }

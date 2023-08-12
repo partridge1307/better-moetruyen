@@ -6,7 +6,6 @@ import { useIntersection } from '@mantine/hooks';
 import type { Chapter, Manga } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import dynamic from 'next/dynamic';
 import { FC, useEffect, useRef, useState } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
 import ChapterControll from './ChapterControll';

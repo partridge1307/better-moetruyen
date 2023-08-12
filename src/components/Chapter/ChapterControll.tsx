@@ -1,9 +1,8 @@
 import { cn } from '@/lib/utils';
 import type { Chapter } from '@prisma/client';
+import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
-import { FC, memo, useCallback, useMemo } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
-import { Separator } from '../ui/Separator';
+import { FC, useCallback, useMemo } from 'react';
 import {
   Command,
   CommandEmpty,
@@ -12,7 +11,8 @@ import {
   CommandItem,
   CommandList,
 } from '../ui/Command';
-import { ChevronDown } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
+import { Separator } from '../ui/Separator';
 
 interface ChapterControllProps {
   currentImage: number;
@@ -25,10 +25,13 @@ interface ChapterControllProps {
   chapterList:
     | Pick<Chapter, 'id' | 'chapterIndex' | 'name' | 'volume' | 'isPublished'>[]
     | null;
+  // eslint-disable-next-line no-unused-vars
   setCurrentImage(value: number): void;
   readingMode: 'vertical' | 'horizontal';
+  // eslint-disable-next-line no-unused-vars
   setReadingMode(value: 'vertical' | 'horizontal'): void;
   progressBar: 'hidden' | 'fixed' | 'lightbar';
+  // eslint-disable-next-line no-unused-vars
   setProgressBar(value: 'hidden' | 'fixed' | 'lightbar'): void;
 }
 

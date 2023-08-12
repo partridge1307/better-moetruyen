@@ -110,7 +110,7 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
                 <AlertDialogTitle>Xác nhận lại yêu cầu</AlertDialogTitle>
                 <AlertDialogDescription>
                   Bạn đã chắc chắn muốn{' '}
-                  <span className="font-bold">publish</span> chapter này hay
+                  <span className="font-bold">publish</span> truyện này hay
                   chưa?
                 </AlertDialogDescription>
               </AlertDialogHeader>

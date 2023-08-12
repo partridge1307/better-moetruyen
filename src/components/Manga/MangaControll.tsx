@@ -22,7 +22,8 @@ const MangaControll: FC<MangaControllProps> = async ({ manga }) => {
   const session = await getAuthSession();
   const firstChapter = await db.chapter.findFirst({
     where: {
-      id: manga.id,
+      mangaId: manga.id,
+      isPublished: true,
     },
     select: {
       id: true,

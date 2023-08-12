@@ -68,13 +68,20 @@ const CommentOutput: FC<CommentOutputProps> = ({ chapterId, mangaId }) => {
 
   return (
     <>
-      <Suspense
-        fallback={
-          <div className="h-44 w-full md:w-[600px] lg:w-[900px] rounded-lg mx-auto dark:bg-zinc-900 animate-pulse" />
-        }
-      >
-        <MoetruyenEditor id={`${mangaId}`} chapterId={chapterId} />
-      </Suspense>
+      {session ? (
+        <Suspense
+          fallback={
+            <div className="h-44 w-full md:w-[600px] lg:w-[900px] rounded-lg mx-auto dark:bg-zinc-900 animate-pulse" />
+          }
+        >
+          <MoetruyenEditor id={`${mangaId}`} chapterId={chapterId} />
+        </Suspense>
+      ) : (
+        <div>
+          Vui lòng <span className="font-semibold">đăng nhập</span> hoặc{' '}
+          <span className="font-semibold">đăng ký</span> để comment
+        </div>
+      )}
 
       <div className="mt-20 mb-10 flex justify-end">
         <button

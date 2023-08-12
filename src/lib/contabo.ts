@@ -101,12 +101,12 @@ const generateName = (
   }
 };
 
-export const UploadChapterImage = (
+export const UploadChapterImage = async (
   images: Blob[],
   mangaId: number,
   chapterIndex: number
-) =>
-  Promise.all(
+) => {
+  const optimizedImages = await Promise.all(
     images.map(async (img) => {
       const arrayBuffer = await new Blob([img]).arrayBuffer();
       const sharpImage = sharp(arrayBuffer)
@@ -116,25 +116,36 @@ export const UploadChapterImage = (
       const { width: originalWidth, height: originalHeight } =
         await sharpImage.metadata();
 
-      const optimizedImage = await resizeImage(
+      const buffer = await resizeImage(
         sharpImage,
         originalWidth,
         originalHeight
       ).toBuffer();
 
-      const command = new PutObjectCommand({
-        Body: optimizedImage,
-        Bucket: `chapter`,
-        Key: `${mangaId}/${chapterIndex}/${img.name.split('.').shift()}.webp`,
-      });
-
-      await sendCommand(contabo, command, 5);
-
-      return `${
-        process.env.IMG_DOMAIN
-      }/chapter/${mangaId}/${chapterIndex}/${img.name.split('.').shift()}.webp`;
+      return {
+        buffer,
+        name: img.name.split('.').shift(),
+      };
     })
   );
+
+  let imagesLink: string[] = [];
+  for (const image of optimizedImages) {
+    const command = new PutObjectCommand({
+      Body: image.buffer,
+      Bucket: `chapter`,
+      Key: `${mangaId}/${chapterIndex}/${image.name}.webp`,
+    });
+
+    await sendCommand(contabo, command, 5);
+
+    imagesLink.push(
+      `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${image.name}.webp`
+    );
+  }
+
+  return imagesLink;
+};
 
 export const UploadMangaImage = async (
   image: Blob,
@@ -253,7 +264,7 @@ export const EditChapterImage = async (
     }[],
   ]);
 
-  const uploadedNewImages = await Promise.all(
+  const blobImagesHandler = await Promise.all(
     blobImages.map(async (img) => {
       const arrayBuffer = await new Blob([img.image]).arrayBuffer();
       const sharpImage = sharp(arrayBuffer)
@@ -317,31 +328,34 @@ export const EditChapterImage = async (
         );
       }
 
-      await sendCommand(contabo, command, 5);
-
       return {
         index: img.index,
         image: generatedKey,
+        command: command,
       };
     })
   );
 
+  let uploadedNewImages: { index: number; image: string }[] = [];
+  for (const blobImage of blobImagesHandler) {
+    await sendCommand(contabo, blobImage.command, 5);
+
+    uploadedNewImages.push({ index: blobImage.index, image: blobImage.image });
+  }
+
   const deletedImages = serializedExistImages.filter(
     (img) => !linkImages.some((image) => image.image === img.image)
   );
+  for (const deletedImage of deletedImages) {
+    const image = new URL(deletedImage.image).pathname.split('/').pop();
 
-  await Promise.all(
-    deletedImages.map(async (img) => {
-      const image = new URL(img.image).pathname.split('/').pop();
+    const command = new DeleteObjectCommand({
+      Bucket: 'chapter',
+      Key: `${mangaId}/${chapterIndex}/${image}`,
+    });
 
-      const command = new DeleteObjectCommand({
-        Bucket: 'chapter',
-        Key: `${mangaId}/${chapterIndex}/${image}`,
-      });
-
-      await sendCommand(contabo, command);
-    })
-  );
+    await sendCommand(contabo, command, 5);
+  }
 
   return [...linkImages, ...uploadedNewImages];
 };

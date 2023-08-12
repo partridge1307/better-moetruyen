@@ -12,7 +12,7 @@ const MoetruyenEditor = dynamic(
 );
 
 interface CommentFuncProps {
-  session: Session | null;
+  session: Session;
   authorId: string;
   mangaId: number;
   chapterId: number;

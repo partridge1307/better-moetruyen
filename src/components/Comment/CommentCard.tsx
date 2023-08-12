@@ -77,14 +77,16 @@ const CommentCard: FC<CommentCardProps> = ({ comment, id, session }) => {
             }
           />
 
-          <CommentFunc
-            session={session}
-            authorId={comment.authorId}
-            mangaId={id}
-            commentId={comment.id}
-            currentVote={currentVote}
-            voteAmt={voteAmt}
-          />
+          {!!session && (
+            <CommentFunc
+              session={session}
+              authorId={comment.authorId}
+              mangaId={id}
+              commentId={comment.id}
+              currentVote={currentVote}
+              voteAmt={voteAmt}
+            />
+          )}
         </div>
 
         {comment._count.replies !== 0 ? (

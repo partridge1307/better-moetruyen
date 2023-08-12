@@ -20,7 +20,7 @@ import { buttonVariants } from '../ui/Button';
 
 interface DeleteCommentProps {
   commentId: number;
-  session: Session | null;
+  session: Session;
   authorId: string;
 }
 
@@ -55,7 +55,7 @@ const DeleteComment: FC<DeleteCommentProps> = ({
   });
 
   return (
-    session?.user.id === authorId && (
+    session.user.id === authorId && (
       <AlertDialog>
         <AlertDialogTrigger
           disabled={isDeleting}

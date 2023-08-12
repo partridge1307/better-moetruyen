@@ -65,15 +65,17 @@ const ChapterCommentCard: FC<ChapterCommentCardProps> = ({
             }
           />
 
-          <CommentFunc
-            session={session}
-            authorId={comment.authorId}
-            mangaId={mangaId}
-            chapterId={chapterId}
-            commentId={comment.id}
-            currentVote={currentVote}
-            voteAmt={voteAmt}
-          />
+          {!!session && (
+            <CommentFunc
+              session={session}
+              authorId={comment.authorId}
+              mangaId={mangaId}
+              chapterId={chapterId}
+              commentId={comment.id}
+              currentVote={currentVote}
+              voteAmt={voteAmt}
+            />
+          )}
         </div>
 
         {comment._count.replies !== 0 ? (

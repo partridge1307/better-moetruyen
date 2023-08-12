@@ -29,6 +29,7 @@ export async function POST(req: Request) {
       email,
       subject: 'Xác thực tài khoản',
       html: verifyHTML(token),
+      sender: 'MoeTruyen',
     });
 
     return new Response('Đã gửi thư xác nhận đến mail', {

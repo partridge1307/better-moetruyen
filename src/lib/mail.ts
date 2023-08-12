@@ -4,6 +4,7 @@ interface MailProps {
   email: string;
   subject: string;
   html: string;
+  sender: string;
 }
 
 const transporter = createTransport({
@@ -16,9 +17,9 @@ const transporter = createTransport({
   },
 });
 
-export const Mail = async ({ email, subject, html }: MailProps) => {
+export const Mail = async ({ email, subject, html, sender }: MailProps) => {
   const mailOpts = {
-    from: 'partridgegt137@gmail.com',
+    from: `${sender}<${process.env.MAIL_USER!}>`,
     to: email,
     subject,
     html,

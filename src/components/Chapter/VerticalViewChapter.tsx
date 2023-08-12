@@ -14,6 +14,7 @@ interface VerticalViewChapterProps {
   chapter: Pick<Chapter, 'images'> & {
     manga: Pick<Manga, 'name'>;
   };
+  // eslint-disable-next-line no-unused-vars
   imageRef: (element: any) => void;
   chapterList:
     | Pick<Chapter, 'id' | 'chapterIndex' | 'name' | 'volume' | 'isPublished'>[]
@@ -56,7 +57,7 @@ const VerticalViewChapter = forwardRef<
                   tabIndex={-1}
                   src={img}
                   alt={`Trang ${idx + 1}`}
-                  className="object-contain w-fit mx-auto"
+                  className="object-contain mx-auto"
                 />
               </div>
             );
@@ -71,7 +72,7 @@ const VerticalViewChapter = forwardRef<
                   tabIndex={-1}
                   src={img}
                   alt={`Trang ${idx + 1}`}
-                  className="object-contain w-fit mx-auto"
+                  className="object-contain mx-auto"
                 />
               </div>
             );

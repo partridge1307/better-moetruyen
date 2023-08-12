@@ -22,11 +22,11 @@ const LatestMangaCard: FC<LatestMangaCardProps> = ({ chapter }) => {
       <div className="relative w-32 h-44 lg:w-40 lg:h-56">
         <Image
           fill
-          sizes="(min-width: 640px) 20vw, (min-width: 1024px) 40vw"
+          sizes="(max-width: 640px) 20vw, 40vw"
           quality={40}
           src={chapter.manga.image}
           alt="Latest Manga Image"
-          className="object-cover rounded-l-lg"
+          className="object-cover rounded-l-lg w-32 h-44 lg:w-40 lg:h-56"
         />
       </div>
 

@@ -17,6 +17,7 @@ interface HorizontalViewChapterProps {
   };
   slideLeft(): void;
   slideRight(): void;
+  // eslint-disable-next-line no-unused-vars
   imageRef: (element: any) => void;
   currentChapterId: number;
   currentChapterIndex: number;
@@ -68,7 +69,7 @@ const HorizontalViewChapter = forwardRef<
                   tabIndex={-1}
                   src={img}
                   alt={chapter.manga.name}
-                  className="object-contain"
+                  className="object-scale-down"
                 />
               </div>
             );
@@ -86,7 +87,7 @@ const HorizontalViewChapter = forwardRef<
                   tabIndex={-1}
                   src={img}
                   alt={chapter.manga.name}
-                  className="object-contain"
+                  className="object-scale-down"
                 />
               </div>
             );

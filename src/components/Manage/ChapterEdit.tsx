@@ -88,6 +88,8 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
       return data as string;
     },
     onError: (e) => {
+      setUpdateProgress(null);
+
       if (e instanceof AxiosError) {
         if (e.response?.status === 401) return loginToast();
         if (e.response?.status === 404) return notFoundToast();

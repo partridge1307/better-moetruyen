@@ -75,10 +75,10 @@ const Recommendation = async () => {
           className="w-fit snap-start"
         >
           <Card className="relative overflow-hidden w-fit">
-            <div className="relative w-32 h-44 lg:w-40 lg:h-56 max-w-[128px] max-h-44 lg:max-w-[160px] lg:max-h-56">
+            <div className="relative w-32 h-44 lg:w-40 lg:h-56">
               <Image
                 fill
-                sizes="30vw"
+                sizes="(min-width: 640px) 20vw, (min-width: 1024px) 40vw"
                 quality={40}
                 src={manga.image}
                 alt="Recommend Manga Image"

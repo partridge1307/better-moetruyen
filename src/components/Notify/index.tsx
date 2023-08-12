@@ -136,7 +136,7 @@ const Notifications: FC<NotificationsProps> = ({ session }) => {
     <DropdownMenu>
       <DropdownMenuTrigger>
         <div className="relative">
-          <Bell className="w-7 h-7" />
+          <Bell aria-label="Notify button" className="w-7 h-7" />
           {!isClear ? (
             <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full animate-pulse" />
           ) : null}

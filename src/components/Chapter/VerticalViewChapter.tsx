@@ -57,7 +57,7 @@ const VerticalViewChapter = forwardRef<
                   tabIndex={-1}
                   src={img}
                   alt={`Trang ${idx + 1}`}
-                  className="object-contain mx-auto"
+                  className="object-contain w-fit mx-auto"
                 />
               </div>
             );
@@ -72,7 +72,7 @@ const VerticalViewChapter = forwardRef<
                   tabIndex={-1}
                   src={img}
                   alt={`Trang ${idx + 1}`}
-                  className="object-contain mx-auto"
+                  className="object-contain w-fit mx-auto"
                 />
               </div>
             );

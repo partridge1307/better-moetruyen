@@ -5,5 +5,4 @@ module.exports = {
   sitemapSize: 5000,
   changefreq: 'daily',
   priority: 0.7,
-  exclude: ['/me/*', '/me'],
 };

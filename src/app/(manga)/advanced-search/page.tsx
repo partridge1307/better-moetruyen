@@ -4,12 +4,27 @@ import { db } from '@/lib/db';
 import { tagGroupByCategory } from '@/lib/query';
 import { Prisma } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
+import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { FC } from 'react';
 const AdvancedSearchControll = dynamic(
   () => import('@/components/Manga/AdvancedSearchControll'),
   { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
 );
+
+export const metadata: Metadata = {
+  title: 'Tìm kiếm nâng cao',
+  description: 'Tìm kiếm nâng cao | Moetruyen',
+  keywords: ['Tìm kiếm nâng cao', 'Nâng cao', 'Tìm kiếm', 'Manga', 'Moetruyen'],
+  openGraph: {
+    title: 'Tìm kiếm nâng cao',
+    description: 'Tìm kiếm nâng cao | Moetruyen',
+  },
+  twitter: {
+    title: 'Tìm kiếm nâng cao',
+    description: 'Tìm kiếm nâng cao | Moetruyen',
+  },
+};
 
 export type ExtendedTags = {
   category: string;

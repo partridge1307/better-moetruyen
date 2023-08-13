@@ -2,6 +2,75 @@ import ViewChapter from '@/components/Chapter/ViewChapter';
 import { db } from '@/lib/db';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
+import type { Metadata } from 'next';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { chapterId: string };
+}): Promise<Metadata> {
+  const chapter = await db.chapter.findFirst({
+    where: {
+      id: +params.chapterId,
+      isPublished: true,
+      manga: {
+        isPublished: true,
+      },
+    },
+    select: {
+      manga: {
+        select: {
+          image: true,
+          name: true,
+          review: true,
+        },
+      },
+      chapterIndex: true,
+    },
+  });
+
+  if (!chapter)
+    return {
+      title: 'Chapter',
+      openGraph: {
+        title: 'Chapter | Moetruyen',
+        description: 'Chapter | Moetruyen',
+      },
+    };
+
+  return {
+    metadataBase: new URL(`${process.env.NEXTAUTH_URL}`),
+    title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
+    description: `${chapter.manga.review} | Moetruyen`,
+    keywords: [
+      'Chapter',
+      'Manga',
+      `${chapter.manga.name}`,
+      `${chapter.chapterIndex}`,
+    ],
+    openGraph: {
+      title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
+      description: `${chapter.manga.review} | Moetruyen`,
+      images: [
+        {
+          url: chapter.manga.image,
+          alt: `${chapter.manga.name} Image`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
+      description: `${chapter.manga.review} | Moetruyen`,
+      images: [
+        {
+          url: chapter.manga.image,
+          alt: `${chapter.manga.name} Image`,
+        },
+      ],
+    },
+  };
+}
 
 interface pageProps {
   params: {

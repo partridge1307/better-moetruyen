@@ -9,7 +9,7 @@ interface UsernameProps extends HTMLAttributes<HTMLHeadElement> {
 
 const Username: FC<UsernameProps> = ({ user, className }) => {
   return (
-    <h6
+    <h2
       className={cn(
         'text-center font-medium bg-clip-text text-transparent animate-rainbow',
         !user.color && 'text-white',
@@ -33,7 +33,7 @@ const Username: FC<UsernameProps> = ({ user, className }) => {
       }}
     >
       {user.name}
-    </h6>
+    </h2>
   );
 };
 

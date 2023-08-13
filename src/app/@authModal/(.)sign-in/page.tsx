@@ -2,6 +2,21 @@ import SignIn from '@/components/Auth/SignIn';
 import CloseModal from '@/components/CloseModal';
 import { buttonVariants } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Đăng nhập',
+  description: 'Đăng nhập Moetruyen',
+  keywords: ['sign in', 'Moetruyen'],
+  openGraph: {
+    title: 'Đăng nhập',
+    description: 'Đăng nhập | Moetruyen',
+  },
+  twitter: {
+    title: 'Đăng nhập',
+    description: 'Đăng nhập | Moetruyen',
+  },
+};
 
 const Page = () => {
   return (

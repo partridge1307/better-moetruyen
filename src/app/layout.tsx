@@ -7,7 +7,11 @@ import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 
 export const metadata: Metadata = {
-  title: 'Moetruyen',
+  metadataBase: new URL(`${process.env.NEXTAUTH_URL}`),
+  title: {
+    default: 'Moetruyen',
+    template: '%s | Moetruyen',
+  },
   generator: 'Moetruyen',
   applicationName: 'Moetruyen',
   description: 'Powered by Yuri',
@@ -18,7 +22,20 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/logo.png',
+        url: `${process.env.IMG_DOMAIN}/logo.png`,
+        width: 256,
+        height: 256,
+        alt: 'Moetruyen Logo',
+      },
+    ],
+  },
+  twitter: {
+    card: 'app',
+    title: 'Moetruyen',
+    description: 'Powered by Yuri',
+    images: [
+      {
+        url: `${process.env.IMG_DOMAIN}/logo.png`,
         width: 256,
         height: 256,
         alt: 'Moetruyen Logo',

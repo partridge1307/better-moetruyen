@@ -5,8 +5,22 @@ import { buttonVariants } from '@/components/ui/Button';
 import { getAuthSession } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 import { ChevronRight } from 'lucide-react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+
+export const metadata: Metadata = {
+  title: 'Quản lý',
+  keywords: ['Quản lý', 'Moetruyen'],
+  openGraph: {
+    title: 'Quản lý',
+    description: 'Quản lý | Moetruyen',
+  },
+  twitter: {
+    title: 'Quản lý',
+    description: 'Quản lý | Moetruyen',
+  },
+};
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await getAuthSession();

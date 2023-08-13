@@ -34,11 +34,11 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
         renderItem(item) {
           return (
             <Link href={`/manga/${manga.id}`}>
-              <div className="relative w-full h-72 max-h-72">
+              <div className="relative w-full h-72">
                 <Image
                   fill
-                  sizes="(max-width: 640px) 30vw, 40vw"
-                  quality={50}
+                  sizes="(max-width: 640px) 25vw, 40vw"
+                  quality={40}
                   priority
                   src={item.original}
                   alt="Manga Image"

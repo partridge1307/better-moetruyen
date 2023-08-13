@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { FC, Suspense, lazy } from 'react';
+import type { Metadata } from 'next';
 
 const MangaControll = dynamic(() => import('@/components/Manga/MangaControll'));
 const ListTreeChapter = dynamic(
@@ -33,24 +34,56 @@ type discordProps = {
   name?: string;
 };
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
   const manga = await db.manga.findFirst({
     where: {
       id: +params.id,
     },
     select: {
       name: true,
+      image: true,
+      review: true,
     },
   });
   if (!manga)
     return {
-      title: 'Moetruyen',
-      description: 'Powered by Yuri',
+      title: 'Manga',
+      openGraph: {
+        title: 'Manga | Moetruyen',
+        description: 'Manga | Moetruyen',
+      },
     };
 
   return {
-    title: `Đọc ${manga.name} - Moetruyen`,
-    description: `Đọc ${manga.name} tại Moetruyen`,
+    metadataBase: new URL(`${process.env.NEXTAUTH_URL}`),
+    title: `Đọc ${manga.name}`,
+    description: `${manga.review} | Moetruyen`,
+    keywords: [`Manga`, `${manga.name}`, 'Moetruyen'],
+    openGraph: {
+      title: `Đọc ${manga.name} | Moetruyen`,
+      description: `${manga.review} | Moetruyen`,
+      images: [
+        {
+          url: manga.image,
+          alt: `${manga.name} Image`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `Đọc ${manga.name} | Moetruyen`,
+      description: `${manga.review} | Moetruyen`,
+      images: [
+        {
+          url: manga.image,
+          alt: `${manga.name} Image`,
+        },
+      ],
+    },
   };
 }
 

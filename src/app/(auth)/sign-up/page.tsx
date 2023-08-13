@@ -1,12 +1,21 @@
-import SignUp from "@/components/Auth/SignUp";
-import { Button } from "@/components/ui/Button";
-import { ChevronLeft } from "lucide-react";
-import Link from "next/link";
-import type { Metadata } from "next";
+import SignUp from '@/components/Auth/SignUp';
+import { Button } from '@/components/ui/Button';
+import { ChevronLeft } from 'lucide-react';
+import Link from 'next/link';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Đăng ký",
-  description: "Đăng nhập Moetruyen",
+  title: 'Đăng ký',
+  description: 'Đăng ký Moetruyen',
+  keywords: ['Đăng ký', 'Manga', 'Moetruyen'],
+  openGraph: {
+    title: 'Đăng ký',
+    description: 'Đăng ký | Moetruyen',
+  },
+  twitter: {
+    title: 'Đăng ký',
+    description: 'Đăng ký | Moetruyen',
+  },
 };
 
 const Page = () => {

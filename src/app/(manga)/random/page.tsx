@@ -1,5 +1,20 @@
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Ngẫu nghiên',
+  description: 'Manga ngẫu nhiên Moetruyen',
+  keywords: ['Ngẫu nhiên', 'Manga', 'Moetruyen'],
+  openGraph: {
+    title: 'Ngẫu nhiên',
+    description: 'Ngẫu nhiên | Moetruyen',
+  },
+  twitter: {
+    title: 'Ngẫu nhiên',
+    description: 'Ngẫu nhiên | Moetruyen',
+  },
+};
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;

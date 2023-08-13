@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { notFound, redirect } from 'next/navigation';
 import { FC } from 'react';
+
 const MessageList = dynamic(() => import('@/components/Chat/MessageList'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,

@@ -5,6 +5,27 @@ import { Prisma } from '@prisma/client';
 import Link from 'next/link';
 import { FC } from 'react';
 import { z } from 'zod';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Xác thực tài khoản',
+  description: 'Xác thực Moetruyen',
+  keywords: [
+    'Xác thực tài khoản',
+    'Xác thực',
+    'Tài khoản',
+    'Manga',
+    'Moetruyen',
+  ],
+  openGraph: {
+    title: 'Xác thực tài khoản',
+    description: 'Xác thực tài khoản | Moetruyen',
+  },
+  twitter: {
+    title: 'Đăng ký',
+    description: 'Đăng ký | Moetruyen',
+  },
+};
 
 interface pageProps {
   params: {

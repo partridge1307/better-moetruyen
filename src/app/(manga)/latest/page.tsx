@@ -2,6 +2,21 @@ import LatestMangaCard from '@/components/Manga/LatestMangaCard';
 import LatestMangaControll from '@/components/Manga/LatestMangaControll';
 import { db } from '@/lib/db';
 import { FC } from 'react';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Mới cập nhật',
+  description: 'Manga mới cập nhật | Moetruyen',
+  keywords: ['Mới cập nhật', 'Manga', 'Moetruyen'],
+  openGraph: {
+    title: 'Mới cập nhật',
+    description: 'Mới cập nhật | Moetruyen',
+  },
+  twitter: {
+    title: 'Mới cập nhật',
+    description: 'Mới cập nhật | Moetruyen',
+  },
+};
 
 interface pageProps {
   searchParams: {

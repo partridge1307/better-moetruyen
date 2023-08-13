@@ -3,6 +3,21 @@ import ChatSidebar from '@/components/Navbar/ChatSidebar';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Chat',
+  description: 'Trò chuyện tại Moetruyen',
+  keywords: ['Chat', 'Trò chuyện', 'Moetruyen'],
+  openGraph: {
+    title: 'Chat',
+    description: 'Trò chuyện | Moetruyen',
+  },
+  twitter: {
+    title: 'Chat',
+    description: 'Trò chuyện | Moetruyen',
+  },
+};
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await getAuthSession();

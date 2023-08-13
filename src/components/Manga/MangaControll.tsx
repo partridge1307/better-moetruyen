@@ -52,7 +52,7 @@ const MangaControll: FC<MangaControllProps> = async ({ manga }) => {
             href={`/chapter/${firstChapter.id}`}
             className={cn(
               buttonVariants(),
-              'bg-orange-500 hover:bg-orange-700 text-white md:text-lg text-center font-medium px-6'
+              'bg-orange-500 hover:bg-orange-700 text-black md:text-lg text-center font-medium px-6'
             )}
           >
             Đọc từ đầu

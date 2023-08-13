@@ -34,8 +34,11 @@ interface UserProfileProps {
 }
 
 export enum ActionType {
+  // eslint-disable-next-line no-unused-vars
   SET_BANNER = 'SET_BANNER',
+  // eslint-disable-next-line no-unused-vars
   SET_AVATAR = 'SET_AVATAR',
+  // eslint-disable-next-line no-unused-vars
   RESET = 'RESET',
 }
 
@@ -259,7 +262,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
           </div>
         </div>
 
-        <div className="relative mt-24 md:mt-32">
+        <div className="relative mt-24 md:mt-32 pb-16">
           <div className="relative mb-6">
             <Input
               value={username}

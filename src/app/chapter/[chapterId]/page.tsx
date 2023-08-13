@@ -49,10 +49,17 @@ export async function generateMetadata({
     openGraph: {
       title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
       description: `Đọc ${chapter.manga.name} | Moetruyen`,
+      images: [
+        { url: `${chapter.manga.image}`, alt: `Ảnh bìa ${chapter.manga.name}` },
+      ],
     },
     twitter: {
       title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
       description: `Đọc ${chapter.manga.name} | Moetruyen`,
+      card: 'summary_large_image',
+      images: [
+        { url: `${chapter.manga.image}`, alt: `Ảnh bìa ${chapter.manga.name}` },
+      ],
     },
   };
 }

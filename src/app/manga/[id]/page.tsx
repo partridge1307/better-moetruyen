@@ -46,6 +46,7 @@ export async function generateMetadata({
     select: {
       id: true,
       name: true,
+      image: true,
     },
   });
   if (!manga)
@@ -72,10 +73,23 @@ export async function generateMetadata({
     openGraph: {
       title: `${manga.name} | Moetruyen`,
       description: `Đọc ${manga.name} | Moetruyen`,
+      images: [
+        {
+          url: `${manga.image}`,
+          alt: `Ảnh bìa ${manga.name}`,
+        },
+      ],
     },
     twitter: {
       title: `${manga.name} | Moetruyen`,
       description: `Đọc ${manga.name} | Moetruyen`,
+      card: 'summary_large_image',
+      images: [
+        {
+          url: `${manga.image}`,
+          alt: `Ảnh bìa ${manga.name}`,
+        },
+      ],
     },
   };
 }

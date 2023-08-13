@@ -8,7 +8,23 @@ import { Roboto } from 'next/font/google';
 
 export const metadata: Metadata = {
   title: 'Moetruyen',
+  generator: 'Moetruyen',
+  applicationName: 'Moetruyen',
   description: 'Powered by Yuri',
+  keywords: ['Manga', 'Truyện tranh', 'Moetruyen'],
+  openGraph: {
+    title: 'Moetruyen',
+    description: 'Powered by Yuri',
+    type: 'website',
+    images: [
+      {
+        url: '/logo.png',
+        width: 256,
+        height: 256,
+        alt: 'Moetruyen Logo',
+      },
+    ],
+  },
 };
 
 const roboto = Roboto({ subsets: ['vietnamese'], weight: '400' });

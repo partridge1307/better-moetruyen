@@ -12,17 +12,29 @@ export const metadata: Metadata = {
     default: 'Moetruyen',
     template: '%s | Moetruyen',
   },
+  description:
+    'Web đọc truyện tranh online tiện ích nhất được cập nhật liên tục mỗi ngày - Cùng tham gia đọc truyện và thảo luận tại Moetruyen',
+  colorScheme: 'dark light',
+  referrer: 'origin-when-cross-origin',
   generator: 'Moetruyen',
-  applicationName: 'Moetruyen',
-  description: 'Powered by Yuri',
+  authors: [{ name: 'Moetruyen' }],
   keywords: ['Manga', 'Truyện tranh', 'Moetruyen'],
   openGraph: {
     title: 'Moetruyen',
-    description: 'Powered by Yuri',
+    description:
+      'Web đọc truyện tranh online tiện ích nhất được cập nhật liên tục mỗi ngày - Cùng tham gia đọc truyện và thảo luận tại Moetruyen',
+    siteName: 'Moetruyen',
+    url: `${process.env.NEXTAUTH_URL}`,
+    locale: 'vi',
+    type: 'website',
   },
   twitter: {
     title: 'Moetruyen',
-    description: 'Powered by Yuri',
+    description:
+      'Web đọc truyện tranh online tiện ích nhất được cập nhật liên tục mỗi ngày - Cùng tham gia đọc truyện và thảo luận tại Moetruyen',
+  },
+  robots: {
+    notranslate: true,
   },
 };
 

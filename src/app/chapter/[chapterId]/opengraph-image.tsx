@@ -9,8 +9,12 @@ export const size = {
 
 export const contentType = 'image/png';
 
-export default async function Image({ params }: { params: { id: string } }) {
-  const image = await fetch(`/api/manga/${params.id}/og`).then((res) =>
+export default async function Image({
+  params,
+}: {
+  params: { chapterId: string };
+}) {
+  const image = await fetch(`/api/chapter/${params.chapterId}/og`).then((res) =>
     res.json()
   );
 

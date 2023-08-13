@@ -75,41 +75,57 @@ const Home = async () => {
     }),
   ]);
 
-  return (
-    <section className="container mx-auto max-sm:px-3 h-screen pt-20">
-      <NotableManga mangas={manga} />
-      <div className="flex max-sm:flex-col gap-4 mt-20">
-        <section className="w-2/3 max-sm:w-full space-y-20 pb-10">
-          <div className="space-y-2">
-            <h2 className="text-2xl font-semibold">Dành cho bạn</h2>
-            <Recommendation />
-          </div>
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold">Mới cập nhật</h2>
-              <Link
-                href="/latest"
-                className="flex items-center gap-1 hover:underline hover:underline-offset-2"
-              >
-                Xem thêm <ArrowRight className="w-5 h-5" />
-              </Link>
-            </div>
-            <LatestManga />
-          </div>
-        </section>
-        <section className="w-1/3 max-sm:w-full space-y-10">
-          <div className="space-y-2">
-            <h2 className="text-2xl font-semibold">Bảng xếp hạng</h2>
-            <Leaderboard />
-          </div>
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: manga.map((m, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      url: `${process.env.NEXTAUTH_URL}/manga/${m.id}`,
+    })),
+  };
 
-          <div className="space-y-2">
-            <h2 className="text-2xl font-semibold">Bình luận</h2>
-            <LastestComment comments={lastestComment} />
-          </div>
-        </section>
-      </div>
-    </section>
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <section className="container mx-auto max-sm:px-3 h-screen pt-20">
+        <NotableManga mangas={manga} />
+        <div className="flex max-sm:flex-col gap-4 mt-20">
+          <section className="w-2/3 max-sm:w-full space-y-20 pb-10">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-semibold">Dành cho bạn</h2>
+              <Recommendation />
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-semibold">Mới cập nhật</h2>
+                <Link
+                  href="/latest"
+                  className="flex items-center gap-1 hover:underline hover:underline-offset-2"
+                >
+                  Xem thêm <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
+              <LatestManga />
+            </div>
+          </section>
+          <section className="w-1/3 max-sm:w-full space-y-10">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-semibold">Bảng xếp hạng</h2>
+              <Leaderboard />
+            </div>
+
+            <div className="space-y-2">
+              <h2 className="text-2xl font-semibold">Bình luận</h2>
+              <LastestComment comments={lastestComment} />
+            </div>
+          </section>
+        </div>
+      </section>
+    </>
   );
 };
 

@@ -46,7 +46,6 @@ export async function generateMetadata({
     select: {
       id: true,
       name: true,
-      review: true,
     },
   });
   if (!manga)
@@ -54,28 +53,29 @@ export async function generateMetadata({
       title: 'Manga',
       openGraph: {
         title: 'Manga | Moetruyen',
-        description: 'Manga | Moetruyen',
+        description: 'Đọc Manga | Moetruyen',
+        url: `${process.env.NEXTAUTH_URL}/manga/${params.id}`,
       },
       twitter: {
         title: 'Manga | Moetruyen',
-        description: 'Manga | Moetruyen',
+        description: 'Đọc Manga | Moetruyen',
       },
     };
 
   return {
-    title: `Đọc ${manga.name}`,
-    description: `${manga.review} | Moetruyen`,
+    title: `${manga.name}`,
+    description: `Đọc ${manga.name} | Moetruyen`,
     keywords: [`Manga`, `${manga.name}`, 'Moetruyen'],
     alternates: {
       canonical: `${process.env.NEXTAUTH_URL}/manga/${manga.id}`,
     },
     openGraph: {
-      title: `Đọc ${manga.name} | Moetruyen`,
-      description: `${manga.review} | Moetruyen`,
+      title: `${manga.name} | Moetruyen`,
+      description: `Đọc ${manga.name} | Moetruyen`,
     },
     twitter: {
-      title: `Đọc ${manga.name} | Moetruyen`,
-      description: `${manga.review} | Moetruyen`,
+      title: `${manga.name} | Moetruyen`,
+      description: `Đọc ${manga.name} | Moetruyen`,
     },
   };
 }
@@ -190,8 +190,26 @@ const page: FC<pageProps> = async ({ params }) => {
     }
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    mainEntityOfPage: `${process.env.NEXTAUTH_URL}/manga/${params.id}`,
+    headline: `${manga.name}`,
+    description: `Đọc ${manga.name} | Moetruyen`,
+    image: {
+      '@type': 'ImageObject',
+      url: `${manga.image}`,
+      height: 904,
+      width: 696,
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <main className="container max-sm:px-2 mx-auto h-full pt-20 space-y-14">
         <div className="relative h-max">
           <div className="p-4 max-sm:space-y-4 md:flex md:gap-10">

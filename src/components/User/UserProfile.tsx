@@ -259,8 +259,8 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
           </div>
         </div>
 
-        <div className="relative space-y-6 mt-24 md:mt-32">
-          <div className="relative">
+        <div className="relative mt-24 md:mt-32">
+          <div className="relative mb-6">
             <Input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -268,72 +268,27 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
             <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 -z-10" />
           </div>
 
-          {user.badge.length ? (
-            <div>
-              <p>Chọn huy hiệu</p>
-              <Select
-                value={color !== null ? JSON.stringify(color) : undefined}
-                onValueChange={(value: string) => setColor(JSON.parse(value))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {user.badge.map((b, idx) => (
-                    <SelectItem
-                      key={idx}
-                      value={JSON.stringify(b.color)}
-                      className="cursor-pointer"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="w-4 h-4 rounded-full animate-rainbow"
-                          style={{
-                            backgroundImage: b.color
-                              ? // @ts-ignore
-                                b.color.from || b.color.to
-                                ? // @ts-ignore
-                                  `linear-gradient(to right, ${b.color.from}, ${b.color.to})`
-                                : ''
-                              : '',
-                            backgroundColor: b.color
-                              ? // @ts-ignore
-                                b.color.color
-                                ? // @ts-ignore
-                                  b.color.color
-                                : ''
-                              : '',
-                          }}
-                        />{' '}
-                        <p>{b.name}</p>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          ) : null}
-
-          {user.badge.length ? (
-            <div className="space-y-4">
-              <p className="text-lg font-semibold">Huy hiệu</p>
-              <ul className="flex flex-wrap items-center gap-3">
-                {user.badge.map((b, idx) => (
-                  <li key={idx} className="space-y-1">
-                    <HoverCard openDelay={100} closeDelay={100}>
-                      <HoverCardTrigger asChild>
-                        <div className="flex items-center gap-2 w-fit p-2 rounded-md dark:bg-zinc-700">
-                          <div className="relative h-6 w-6">
-                            <Image
-                              fill
-                              sizes="0%"
-                              src={b.image}
-                              alt="Badge Image"
-                            />
-                          </div>
-
-                          <h5
-                            className="text-sm font-medium bg-clip-text text-transparent animate-rainbow"
+          <div className="relative space-y-6">
+            {!!user.badge.length && (
+              <div>
+                <p>Chọn huy hiệu</p>
+                <Select
+                  value={color !== null ? JSON.stringify(color) : undefined}
+                  onValueChange={(value: string) => setColor(JSON.parse(value))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {user.badge.map((b, idx) => (
+                      <SelectItem
+                        key={idx}
+                        value={JSON.stringify(b.color)}
+                        className="cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-4 h-4 rounded-full animate-rainbow"
                             style={{
                               backgroundImage: b.color
                                 ? // @ts-ignore
@@ -350,33 +305,80 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                                   : ''
                                 : '',
                             }}
-                          >
-                            {b.name}
-                          </h5>
-                        </div>
-                      </HoverCardTrigger>
-
-                      <HoverCardContent className="flex items-center gap-6 w-fit dark:bg-zinc-600">
-                        <div className="relative w-10 h-10">
-                          <Image
-                            fill
-                            sizes="0%"
-                            src={b.image}
-                            alt="Badge Image"
-                            className="object-contain"
-                          />
-                        </div>
-                        <div className="dark:text-white space-y-1">
+                          />{' '}
                           <p>{b.name}</p>
-                          <p className="text-xs">{b.description}</p>
                         </div>
-                      </HoverCardContent>
-                    </HoverCard>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {!!user.badge.length && (
+              <div className="space-y-4">
+                <p className="text-lg font-semibold">Huy hiệu</p>
+                <ul className="flex flex-wrap items-center gap-3">
+                  {user.badge.map((b, idx) => (
+                    <li key={idx} className="space-y-1">
+                      <HoverCard openDelay={100} closeDelay={100}>
+                        <HoverCardTrigger asChild>
+                          <div className="flex items-center gap-2 w-fit p-2 rounded-md dark:bg-zinc-700">
+                            <div className="relative h-6 w-6">
+                              <Image
+                                fill
+                                sizes="10vw"
+                                src={b.image}
+                                alt="Badge Image"
+                              />
+                            </div>
+
+                            <h5
+                              className="text-sm font-medium bg-clip-text text-transparent animate-rainbow"
+                              style={{
+                                backgroundImage: b.color
+                                  ? // @ts-ignore
+                                    b.color.from || b.color.to
+                                    ? // @ts-ignore
+                                      `linear-gradient(to right, ${b.color.from}, ${b.color.to})`
+                                    : ''
+                                  : '',
+                                backgroundColor: b.color
+                                  ? // @ts-ignore
+                                    b.color.color
+                                    ? // @ts-ignore
+                                      b.color.color
+                                    : ''
+                                  : '',
+                              }}
+                            >
+                              {b.name}
+                            </h5>
+                          </div>
+                        </HoverCardTrigger>
+
+                        <HoverCardContent className="flex items-center gap-6 w-fit dark:bg-zinc-600">
+                          <div className="relative w-10 h-10">
+                            <Image
+                              fill
+                              sizes="10vw"
+                              src={b.image}
+                              alt="Badge Image"
+                              className="object-contain"
+                            />
+                          </div>
+                          <div className="dark:text-white space-y-1">
+                            <p>{b.name}</p>
+                            <p className="text-xs">{b.description}</p>
+                          </div>
+                        </HoverCardContent>
+                      </HoverCard>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
 
         {(state.avatar ||

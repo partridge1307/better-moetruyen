@@ -22,7 +22,6 @@ export async function generateMetadata({
         select: {
           image: true,
           name: true,
-          review: true,
         },
       },
       chapterIndex: true,
@@ -40,7 +39,7 @@ export async function generateMetadata({
 
   return {
     title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
-    description: `${chapter.manga.review} | Moetruyen`,
+    description: `Đọc ${chapter.manga.name} | Moetruyen`,
     keywords: [
       'Chapter',
       'Manga',
@@ -49,11 +48,11 @@ export async function generateMetadata({
     ],
     openGraph: {
       title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
-      description: `${chapter.manga.review} | Moetruyen`,
+      description: `Đọc ${chapter.manga.name} | Moetruyen`,
     },
     twitter: {
       title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
-      description: `${chapter.manga.review} | Moetruyen`,
+      description: `Đọc ${chapter.manga.name} | Moetruyen`,
     },
   };
 }

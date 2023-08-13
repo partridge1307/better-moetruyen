@@ -22,7 +22,7 @@ const LatestMangaCard: FC<LatestMangaCardProps> = ({ chapter }) => {
       <div className="relative w-32 h-44 lg:w-40 lg:h-56">
         <Image
           fill
-          sizes="(max-width: 640px) 30vw, 40vw"
+          sizes="(max-width: 640px) 25vw, 35vw"
           quality={40}
           src={chapter.manga.image}
           alt="Latest Manga Image"
@@ -42,10 +42,10 @@ const LatestMangaCard: FC<LatestMangaCardProps> = ({ chapter }) => {
 
         <div className="text-xs lg:text-sm space-y-1">
           <div className="flex md:flex-col lg:flex-row lg:items-center lg:gap-2">
-            <h5>
+            <p>
               <span>Vol. {chapter.volume} </span> Ch. {chapter.chapterIndex}
-            </h5>
-            <h5>{chapter.name}</h5>
+            </p>
+            <h4>{chapter.name}</h4>
           </div>
           <p className="flex items-center gap-1">
             <Clock className="w-3 h-3 lg:w-4 lg:h-4" />

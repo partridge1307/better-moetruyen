@@ -262,8 +262,8 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
           </div>
         </div>
 
-        <div className="relative mt-24 md:mt-32 pb-16">
-          <div className="relative mb-6">
+        <div className="relative space-y-6 mt-24 md:mt-32 pb-16">
+          <div className="relative">
             <Input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -271,7 +271,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
             <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 -z-10" />
           </div>
 
-          <div className="relative space-y-6">
+          <div className="relative">
             {!!user.badge.length && (
               <div>
                 <p>Chọn huy hiệu</p>

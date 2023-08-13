@@ -21,7 +21,7 @@ export async function GET(
 
     const blob = await fetch(target.manga.image).then((res) => res.blob());
 
-    const image = sharp(await new Blob([blob]).arrayBuffer())
+    const image = await sharp(await new Blob([blob]).arrayBuffer())
       .png()
       .toFormat('png')
       .toBuffer();

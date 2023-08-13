@@ -20,27 +20,11 @@ export const metadata: Metadata = {
     title: 'Moetruyen',
     description: 'Powered by Yuri',
     type: 'website',
-    images: [
-      {
-        url: `${process.env.IMG_DOMAIN}/logo.png`,
-        width: 256,
-        height: 256,
-        alt: 'Moetruyen Logo',
-      },
-    ],
   },
   twitter: {
     card: 'app',
     title: 'Moetruyen',
     description: 'Powered by Yuri',
-    images: [
-      {
-        url: `${process.env.IMG_DOMAIN}/logo.png`,
-        width: 256,
-        height: 256,
-        alt: 'Moetruyen Logo',
-      },
-    ],
   },
 };
 

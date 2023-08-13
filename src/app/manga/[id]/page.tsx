@@ -44,8 +44,8 @@ export async function generateMetadata({
       id: +params.id,
     },
     select: {
+      id: true,
       name: true,
-      image: true,
       review: true,
     },
   });
@@ -56,33 +56,27 @@ export async function generateMetadata({
         title: 'Manga | Moetruyen',
         description: 'Manga | Moetruyen',
       },
+      twitter: {
+        title: 'Manga | Moetruyen',
+        description: 'Manga | Moetruyen',
+      },
     };
 
   return {
-    metadataBase: new URL(`${process.env.NEXTAUTH_URL}`),
     title: `Đọc ${manga.name}`,
     description: `${manga.review} | Moetruyen`,
     keywords: [`Manga`, `${manga.name}`, 'Moetruyen'],
+    alternates: {
+      canonical: `${process.env.NEXTAUTH_URL}/manga/${manga.id}`,
+    },
     openGraph: {
       title: `Đọc ${manga.name} | Moetruyen`,
       description: `${manga.review} | Moetruyen`,
-      images: [
-        {
-          url: manga.image,
-          alt: `${manga.name} Image`,
-        },
-      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: `Đọc ${manga.name} | Moetruyen`,
       description: `${manga.review} | Moetruyen`,
-      images: [
-        {
-          url: manga.image,
-          alt: `${manga.name} Image`,
-        },
-      ],
     },
   };
 }

@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate",
     "prestart": "prisma generate",
-    "prerestart": "prisma generate"
+    "prerestart": "prisma generate",
+    "postbuild": "next-sitemap"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.388.0",
@@ -68,6 +68,7 @@
     "lucide-react": "0.263.1",
     "next": "^13.4.13",
     "next-auth": "^4.23.0",
+    "next-sitemap": "^4.2.2",
     "nodemailer": "^6.9.4",
     "react": "18.2.0",
     "react-chartjs-2": "^5.2.0",

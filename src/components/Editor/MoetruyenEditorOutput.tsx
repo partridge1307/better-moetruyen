@@ -46,7 +46,7 @@ const MoetruyenEditorOutput: FC<MoetruyenEditorOutputProps> = ({
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <RichTextPlugin
-        contentEditable={<ContentEditable aria-label="Comment content" />}
+        contentEditable={<ContentEditable />}
         placeholder={null}
         ErrorBoundary={LexicalErrorBoundary}
       />

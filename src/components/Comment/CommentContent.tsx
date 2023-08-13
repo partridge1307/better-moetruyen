@@ -20,6 +20,7 @@ const CommentContent: FC<CommentProps> = ({ id, content }): JSX.Element => {
   return (
     <div
       ref={cmtRef}
+      aria-label="Comment content"
       className={cn(
         'relative p-2 px-3 max-h-80 overflow-clip rounded-2xl dark:bg-zinc-700',
         !isCollapsed && 'max-h-fit pb-10'

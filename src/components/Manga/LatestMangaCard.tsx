@@ -35,9 +35,9 @@ const LatestMangaCard: FC<LatestMangaCardProps> = ({ chapter }) => {
           <h2 className="text-lg lg:text-xl font-semibold">
             {chapter.manga.name}
           </h2>
-          <h6 className="text-xs lg:text-sm">
+          <h5 className="text-xs lg:text-sm">
             {chapter.manga.author.map((a) => a.name).join(', ')}
-          </h6>
+          </h5>
         </div>
 
         <div className="text-xs lg:text-sm space-y-1">

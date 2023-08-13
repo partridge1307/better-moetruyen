@@ -14,8 +14,8 @@ export default async function Image({
 }: {
   params: { chapterId: string };
 }) {
-  const image = await fetch(`/api/chapter/${params.chapterId}/og`).then((res) =>
-    res.json()
+  const image = await fetch(`/api/chapter/${params.chapterId}/og`).then(
+    async (res) => await res.json()
   );
 
   return new ImageResponse(

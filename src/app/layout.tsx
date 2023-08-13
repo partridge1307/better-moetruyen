@@ -7,6 +7,7 @@ import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(`${process.env.NEXTAUTH_URL}`),
   title: {
     default: 'Moetruyen',
     template: '%s | Moetruyen',

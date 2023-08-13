@@ -26,7 +26,7 @@ const sendCommand = async (
   try {
     return await client.send(command);
   } catch (error) {
-    if (retry > 0) {
+    if (retry && retry > 0) {
       retry--;
       await sleep(1.5);
       return await sendCommand(client, command, retry);

@@ -74,7 +74,6 @@ export async function generateMetadata({
       description: `${manga.review} | Moetruyen`,
     },
     twitter: {
-      card: 'summary_large_image',
       title: `Đọc ${manga.name} | Moetruyen`,
       description: `${manga.review} | Moetruyen`,
     },

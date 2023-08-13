@@ -52,7 +52,6 @@ export async function generateMetadata({
       description: `${chapter.manga.review} | Moetruyen`,
     },
     twitter: {
-      card: 'summary_large_image',
       title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
       description: `${chapter.manga.review} | Moetruyen`,
     },

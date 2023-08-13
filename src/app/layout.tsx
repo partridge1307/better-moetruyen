@@ -18,10 +18,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Moetruyen',
     description: 'Powered by Yuri',
-    type: 'website',
   },
   twitter: {
-    card: 'app',
     title: 'Moetruyen',
     description: 'Powered by Yuri',
   },

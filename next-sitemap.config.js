@@ -2,7 +2,5 @@
 module.exports = {
   siteUrl: process.env.NEXTAUTH_URL || 'https://beta.moetruyen.net',
   generateRobotsTxt: true,
-  sitemapSize: 5000,
-  changefreq: 'daily',
-  priority: 0.7,
+  sitemapSize: 7000,
 };

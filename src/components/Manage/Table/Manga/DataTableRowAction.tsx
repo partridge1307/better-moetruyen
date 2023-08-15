@@ -36,6 +36,7 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
   const { loginToast, notFoundToast } = useCustomToast();
 
   const { mutate: publish, isLoading: isPublishLoading } = useMutation({
+    mutationKey: ['publish-manga', manga.id],
     mutationFn: async (id: number) => {
       const { data } = await axios.patch(`/api/manga/${id}/publish`);
 

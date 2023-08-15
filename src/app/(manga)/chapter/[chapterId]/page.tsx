@@ -1,8 +1,17 @@
-import ViewChapter from '@/components/Chapter/ViewChapter';
 import { db } from '@/lib/db';
+import { Loader2 } from 'lucide-react';
+import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
-import type { Metadata } from 'next';
+const ViewChapter = dynamic(() => import('@/components/Chapter/ViewChapter'), {
+  ssr: false,
+  loading: () => (
+    <template className="flex justify-center items-center">
+      <Loader2 className="w-10 h-10 animate-spin" />
+    </template>
+  ),
+});
 
 export async function generateMetadata({
   params,
@@ -100,6 +109,7 @@ const page: FC<pageProps> = async ({ params }) => {
     .findUnique({
       where: {
         id: chapter.manga.id,
+        isPublished: true,
       },
     })
     .chapter({

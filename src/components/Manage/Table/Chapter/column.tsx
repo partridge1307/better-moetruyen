@@ -4,7 +4,10 @@ import { DataTableColumnHeader } from '@/components/DataColumnHeader';
 import { formatTimeToNow } from '@/lib/utils';
 import type { Chapter } from '@prisma/client';
 import type { ColumnDef } from '@tanstack/react-table';
-import DataTableRowAction from './DataTableRowAction';
+import dynamic from 'next/dynamic';
+const DataTableRowAction = dynamic(() => import('./DataTableRowAction'), {
+  ssr: false,
+});
 
 export type ChapterColumn = Pick<
   Chapter,

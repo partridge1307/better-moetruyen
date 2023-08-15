@@ -12,7 +12,8 @@ model User {
   id            String         @id @default(cuid())
   email         String         @unique
   password      String
-  name          String?        @unique(sort: Asc) @db.VarChar(255)
+  role          Role           @default(USER)
+  name          String?        @unique(sort: Asc)
   image         String?
   banner        String?
   color         Json?
@@ -33,10 +34,19 @@ model User {
   conversation  Conversation[] @relation("ConversationToUser")
   history       History[]
   mangaFollow   MangaFollow[]
+  isWaitVeify   VerifyList?
 
   @@index([followToId])
   @@index([email], type: Hash)
   @@index([name])
+}
+
+model VerifyList {
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@id([userId])
+  @@index([userId])
 }
 
 model MemberOnTeam {
@@ -263,6 +273,12 @@ model History {
   @@index([mangaId])
 }
 
+model Log {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+}
+
 enum VoteType {
   UP_VOTE
   DOWN_VOTE
@@ -274,4 +290,10 @@ enum NotifyType {
   MENTION
   FOLLOW
   SYSTEM
+}
+
+enum Role {
+  ADMIN
+  MOD
+  USER
 }

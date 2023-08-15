@@ -3,6 +3,7 @@ import { AuthOptions, getServerSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import { db } from './db';
 import { AuthSignInValidator } from './validators/auth';
+import { PrismaAdapter } from '@auth/prisma-adapter';
 import {
   uniqueNamesGenerator,
   NumberDictionary,

@@ -41,6 +41,7 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
   const { refresh } = useRouter();
 
   const { mutate: publish, isLoading: isPublishLoading } = useMutation({
+    mutationKey: ['publish-chapter', chapter.id],
     mutationFn: async (id: number) => {
       const { data } = await axios.patch(`/api/chapter/${id}/publish`);
 

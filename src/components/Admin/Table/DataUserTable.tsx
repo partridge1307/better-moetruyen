@@ -1,28 +1,20 @@
 'use client';
 
-import { columns } from '@/components/Manage/Table/Manga/column';
-import { Input } from '@/components/ui/Input';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/Table';
-import type {
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-} from '@tanstack/react-table';
 import {
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  type ColumnFiltersState,
+  type SortingState,
 } from '@tanstack/react-table';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { useState } from 'react';
-import { MangaColumn } from './column';
-const DataToolbar = dynamic(() => import('./DataToolbar'), {
-  ssr: false,
-});
+import { FC, useState } from 'react';
+import { UserColumn, columns } from './UserColumn';
+import { Input } from '@/components/ui/Input';
 const TableDataHeader = dynamic(() => import('@/components/TableDataHeader'), {
   ssr: false,
 });
@@ -30,13 +22,13 @@ const TablePagination = dynamic(() => import('@/components/TablePagination'), {
   ssr: false,
 });
 
-interface DataTableProps {
-  data: MangaColumn[];
+interface DataUserTableProps {
+  data: UserColumn[];
 }
-function DataMangaTable({ data }: DataTableProps) {
+
+const DataUserTable: FC<DataUserTableProps> = ({ data }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilter] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const table = useReactTable({
     data,
@@ -44,31 +36,25 @@ function DataMangaTable({ data }: DataTableProps) {
     state: {
       sorting,
       columnFilters,
-      columnVisibility,
     },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilter,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilter,
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
   });
 
   return (
-    <div>
-      <div className="flex items-center gap-4 py-4 max-sm:flex-wrap">
+    <div className="space-y-2">
+      <div className="p-2">
         <Input
-          placeholder="Lọc tên truyện"
-          value={
-            (table.getColumn('Tên truyện')?.getFilterValue() as string) ?? ''
-          }
+          placeholder="Lọc tên user"
+          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(e) =>
-            table.getColumn('Tên truyện')?.setFilterValue(e.target.value)
+            table.getColumn('name')?.setFilterValue(e.target.value)
           }
           className="rounded-xl"
         />
-        <DataToolbar column={table.getColumn('Trạng thái')} table={table} />
       </div>
 
       <Table>
@@ -94,7 +80,7 @@ function DataMangaTable({ data }: DataTableProps) {
                   } else {
                     return (
                       <TableCell key={cell.id}>
-                        <Link href={`/me/manga/${row.original.id}`}>
+                        <Link href={`/user/${row.original.userId}`}>
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()
@@ -117,6 +103,6 @@ function DataMangaTable({ data }: DataTableProps) {
       <TablePagination table={table} />
     </div>
   );
-}
+};
 
-export default DataMangaTable;
+export default DataUserTable;

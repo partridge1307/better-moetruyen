@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import type { Chapter } from '@prisma/client';
 import { ChevronDown } from 'lucide-react';
@@ -13,6 +15,7 @@ import {
 } from '../ui/Command';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
 import { Separator } from '../ui/Separator';
+import { useMediaQuery } from '@mantine/hooks';
 
 interface ChapterControllProps {
   currentImage: number;
@@ -51,6 +54,8 @@ const ChapterControll: FC<ChapterControllProps> = ({
   progressBar,
   setProgressBar,
 }) => {
+  const matches = useMediaQuery('(min-width: 768px)');
+
   function onInputHandler(e: React.ChangeEvent<HTMLInputElement>) {
     if (Number(e.target.value) > Number(e.target.max)) {
       e.target.value = e.target.max;
@@ -92,6 +97,7 @@ const ChapterControll: FC<ChapterControllProps> = ({
                       return (
                         <CommandItem key={idx}>
                           <Link
+                            scroll={false}
                             href={`/chapter/${chapter.id}`}
                             className="w-full"
                           >
@@ -173,25 +179,27 @@ const ChapterControll: FC<ChapterControllProps> = ({
 
           <Separator className="my-6 h-[.15rem] rounded-full dark:bg-slate-700/60" />
 
-          <div className="space-y-2">
-            <p className="text-xl">Thanh tiến trình đọc</p>
-            <button
-              className="w-full rounded-lg py-2 text-center text-lg transition-all dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-700/70 dark:hover:text-white/80"
-              onClick={() => onProgressBarHandler()}
-            >
-              <p className={progressBar === 'hidden' ? '' : 'hidden'}>Ẩn</p>
-              <p className={progressBar === 'fixed' ? '' : 'hidden'}>
-                Luôn hiện
-              </p>
-              <p className={progressBar === 'lightbar' ? '' : 'hidden'}>
-                Làm mờ
-              </p>
-            </button>
-          </div>
+          {matches && (
+            <div className="space-y-2">
+              <p className="text-xl">Thanh tiến trình đọc</p>
+              <button
+                className="w-full rounded-lg py-2 text-center text-lg transition-all dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-700/70 dark:hover:text-white/80"
+                onClick={() => onProgressBarHandler()}
+              >
+                <p className={progressBar === 'hidden' ? '' : 'hidden'}>Ẩn</p>
+                <p className={progressBar === 'fixed' ? '' : 'hidden'}>
+                  Luôn hiện
+                </p>
+                <p className={progressBar === 'lightbar' ? '' : 'hidden'}>
+                  Làm mờ
+                </p>
+              </button>
+            </div>
+          )}
         </PopoverContent>
       </Popover>
     );
-  }, [onProgressBarHandler, progressBar, readingMode, setReadingMode]);
+  }, [matches, onProgressBarHandler, progressBar, readingMode, setReadingMode]);
 
   return (
     <div className="space-y-4">

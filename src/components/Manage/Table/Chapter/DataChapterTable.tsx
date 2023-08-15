@@ -1,16 +1,8 @@
 'use client';
 
 import { columns } from '@/components/Manage/Table/Chapter/column';
-import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/Table';
+import { Table, TableBody, TableCell, TableRow } from '@/components/ui/Table';
 import type {
   ColumnFiltersState,
   SortingState,
@@ -19,19 +11,24 @@ import type {
 import {
   flexRender,
   getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import dynamic from 'next/dist/shared/lib/dynamic';
 import Link from 'next/link';
 import { useState } from 'react';
 import { ChapterColumn } from './column';
-const DataToolbar = dynamic(() => import('./DataToolbar'), { ssr: false });
+const DataToolbar = dynamic(() => import('./DataToolbar'), {
+  ssr: false,
+});
+const TableDataHeader = dynamic(() => import('@/components/TableDataHeader'), {
+  ssr: false,
+});
+const TablePagination = dynamic(() => import('@/components/TablePagination'), {
+  ssr: false,
+});
 
 interface DataTableProps {
   data: ChapterColumn[];
@@ -57,8 +54,6 @@ function DataChapterTable({ data }: DataTableProps) {
     onColumnFiltersChange: setColumnFilter,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
   return (
@@ -78,22 +73,8 @@ function DataChapterTable({ data }: DataTableProps) {
       </div>
 
       <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
+        <TableDataHeader table={table} />
+
         <TableBody>
           {table.getRowModel().rows.length ? (
             table.getRowModel().rows.map((row) => (
@@ -134,26 +115,7 @@ function DataChapterTable({ data }: DataTableProps) {
         </TableBody>
       </Table>
 
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          className="rounded-xl"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="rounded-xl"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
+      <TablePagination table={table} />
     </div>
   );
 }

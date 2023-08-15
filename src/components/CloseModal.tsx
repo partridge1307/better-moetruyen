@@ -1,6 +1,5 @@
 'use client';
 
-import { X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { Button } from './ui/Button';
@@ -14,7 +13,7 @@ const CloseModal: FC<CloseModalProps> = (props) => {
     <Button
       onClick={() => {
         const history = window.history.state.tree;
-        if (history.length) router.back();
+        if (history.length > 1) router.back();
       }}
       aria-label="close modal"
       {...props}

@@ -36,7 +36,7 @@ function DataToolbar<TValue>({ column, table }: DataToolbarProps<TValue>) {
       {column && (
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="w-36 rounded-xl max-sm:w-24">
+            <Button variant="outline" className="w-24 md:w-36 rounded-xl">
               {typeof statusValues === 'undefined'
                 ? 'Trạng thái'
                 : statusValues === true

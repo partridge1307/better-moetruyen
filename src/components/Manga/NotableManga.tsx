@@ -70,7 +70,7 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
             <div className="relative w-16 h-10 md:w-full md:h-14">
               <Image
                 fill
-                sizes="(max-width: 640px) 5vw, 10vw"
+                sizes="10vw"
                 quality={10}
                 src={item.original}
                 alt="Manga Thumbnail Image"

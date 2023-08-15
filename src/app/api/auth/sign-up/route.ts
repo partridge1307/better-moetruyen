@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
     const hashedPwd = await hash(password, 10);
     const token = signToken({ email, password: hashedPwd }, '30m');
-    await Mail({
+    Mail({
       email,
       subject: 'Xác thực tài khoản',
       html: verifyHTML(token),

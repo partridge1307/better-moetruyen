@@ -22,7 +22,7 @@ const Page = () => {
   return (
     <div className="container flex h-full items-center max-sm:px-0">
       <div className="relative flex h-4/5 w-full items-center justify-center rounded-lg p-5 dark:bg-zinc-900/50">
-        <div className="w-full md:w-3/4">
+        <div className="w-full md:w-2/4">
           <Button
             variant="link"
             className="absolute left-0 top-4 flex items-center md:left-4"

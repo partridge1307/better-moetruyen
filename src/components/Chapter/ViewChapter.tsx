@@ -8,9 +8,15 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { FC, useEffect, useRef, useState } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
-import ChapterControll from './ChapterControll';
 import HorizontalViewChapter from './HorizontalViewChapter';
 import VerticalViewChapter from './VerticalViewChapter';
+import dynamic from 'next/dynamic';
+const ChapterControll = dynamic(() => import('./ChapterControll'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-24 rounded-lg animate-pulse dark:bg-zinc-900" />
+  ),
+});
 
 interface ViewChapterProps {
   chapter: Pick<

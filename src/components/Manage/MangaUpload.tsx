@@ -19,7 +19,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '../ui/Button';
+import { Button, buttonVariants } from '../ui/Button';
 import {
   Form,
   FormControl,
@@ -30,6 +30,7 @@ import {
 } from '../ui/Form';
 import { Input } from '../ui/Input';
 import type { authorResultProps } from './MangaAuthorUpload';
+import { cn } from '@/lib/utils';
 const Editor = dynamic(() => import('@/components/Editor'), {
   ssr: false,
   loading: () => <Loader2 className="h-6 w-6 animate-spin" />,
@@ -45,7 +46,7 @@ const MangaAuthorUpload = dynamic(() => import('./MangaAuthorUpload'), {
 });
 
 const MangaUpload = ({ tag }: { tag: Tags[] }) => {
-  const { verifyToast, notFoundToast, loginToast } = useCustomToast();
+  const { notFoundToast, loginToast } = useCustomToast();
   const router = useRouter();
   const form = useForm<MangaUploadPayload>({
     resolver: zodResolver(MangaUploadValidator),
@@ -62,11 +63,45 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
     },
   });
 
+  const { mutate: verifyRequest } = useMutation({
+    mutationKey: ['verify-request'],
+    mutationFn: async () => {
+      await axios.post('/api/user/verify');
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 401) return loginToast();
+        if (err.response?.status === 404) return notFoundToast();
+        if (err.response?.status === 400)
+          return toast({
+            title: 'Bạn đã được Verify rồi',
+            variant: 'destructive',
+          });
+        if (err.response?.status === 418)
+          return toast({
+            title: 'Bạn đã trong hàng đợi xét duyệt rồi',
+            variant: 'destructive',
+          });
+      }
+      return toast({
+        title: 'Có lỗi xảy ra',
+        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
+        variant: 'destructive',
+      });
+    },
+    onSuccess: () => {
+      return toast({
+        title: 'Thành công',
+        description: 'Vui lòng chờ xét duyệt',
+      });
+    },
+  });
   const {
     data: authorResult,
     mutate: FetchAuthor,
     isLoading: isFetchingAuthor,
   } = useMutation({
+    mutationKey: ['fetch-author'],
     mutationFn: async (inputValue: string) => {
       const { data } = await axios.get(`/api/manga/author/${inputValue}`);
 
@@ -74,6 +109,7 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
     },
   });
   const { mutate: Upload, isLoading: isUploadManga } = useMutation({
+    mutationKey: ['upload-manga'],
     mutationFn: async (values: MangaUploadPayload) => {
       const {
         image,
@@ -110,9 +146,6 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
             description: 'Bạn đã tạo manga này rồi',
             variant: 'destructive',
           });
-        if (e.response?.status === 400) {
-          return verifyToast();
-        }
         if (e.response?.status === 401) return loginToast();
         if (e.response?.status === 404) return notFoundToast();
         if (e.response?.status === 406)
@@ -121,6 +154,25 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
             description: 'Đường dẫn FB hoặc Discord không hợp lệ',
             variant: 'destructive',
           });
+        if (e.response?.status === 400) {
+          const { dismiss } = toast({
+            title: 'Yêu cầu xác thực',
+            description:
+              'Bạn đã đạt giới hạn số lượng Upload. Vui lòng xác thực',
+            variant: 'destructive',
+            action: (
+              <button
+                className={cn(buttonVariants(), 'text-sm')}
+                onClick={() => {
+                  verifyRequest();
+                  dismiss();
+                }}
+              >
+                Xác thực
+              </button>
+            ),
+          });
+        }
       }
 
       return toast({

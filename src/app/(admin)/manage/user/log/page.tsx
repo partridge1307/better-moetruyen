@@ -1,12 +1,21 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { formatTimeToNow } from '@/lib/utils';
+import { notFound, redirect } from 'next/navigation';
 
 const Page = async () => {
-  const logs = await db.log.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
-  });
+  const session = await getAuthSession();
+  if (!session) return redirect('/sign-in');
+
+  const [user, logs] = await db.$transaction([
+    db.user.findFirst({ where: { id: session.user.id, role: 'ADMIN' } }),
+    db.log.findMany({
+      orderBy: {
+        createdAt: 'desc',
+      },
+    }),
+  ]);
+  if (!user) return notFound();
 
   return (
     <ul className="p-2 rounded-md flex flex-col gap-2 max-h-full overflow-auto dark:bg-zinc-900/70">

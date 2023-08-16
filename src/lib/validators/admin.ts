@@ -29,3 +29,16 @@ export const AddBadgeFormValidator = zfd.formData({
       .or(z.object({ from: z.string(), to: z.string() }))
   ),
 });
+
+export const MuteValidator = z.object({
+  id: z.string(),
+  name: z.string(),
+  expiredAt: z
+    .date()
+    .or(z.string())
+    .refine(
+      (date) => new Date(date).getTime() > Date.now(),
+      'Time must be higher than current timestamp'
+    ),
+});
+export type MutePayload = z.infer<typeof MuteValidator>;

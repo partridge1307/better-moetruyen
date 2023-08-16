@@ -60,6 +60,8 @@ export const authOptionsWrapper = (
                   banner: true,
                   color: true,
                   password: true,
+                  muteExpires: true,
+                  isBanned: true,
                 },
               });
 
@@ -73,6 +75,8 @@ export const authOptionsWrapper = (
                     | { color: string }
                     | { from: string; to: string }
                     | null,
+                  muteExpires: userExists.muteExpires,
+                  isBanned: userExists.isBanned,
                 };
               } else throw Error();
             } catch (error) {
@@ -146,6 +150,16 @@ export const authOptionsWrapper = (
         },
         session: async ({ session, user: dbUser }) => {
           const { expires } = session;
+
+          if (dbUser.isBanned) {
+            return null;
+          } else if (
+            dbUser.muteExpires &&
+            new Date(dbUser.muteExpires).getTime() > Date.now()
+          ) {
+            return null;
+          }
+
           if (!dbUser.name) {
             const updatedUser = await db.user.update({
               where: {

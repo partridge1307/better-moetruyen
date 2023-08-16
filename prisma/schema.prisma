@@ -36,7 +36,9 @@ model User {
   verified      Boolean        @default(false)
   emailVerified DateTime?
   followToId    String?
-  createAt      DateTime       @default(now())
+  isBanned      Boolean        @default(false)
+  muteExpires   DateTime?
+  createdAt     DateTime       @default(now())
   comment       Comment[]
   commentVote   CommentVote[]
   manga         Manga[]

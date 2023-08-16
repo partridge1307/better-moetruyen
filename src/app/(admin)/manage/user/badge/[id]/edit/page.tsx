@@ -7,19 +7,22 @@ const BadgeModifier = dynamic(
   { ssr: false }
 );
 
-const page = async () => {
+const page = async ({ params }: { params: { id: string } }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
 
-  const user = await db.user.findFirst({
-    where: {
-      id: session.user.id,
-      role: 'ADMIN',
-    },
-  });
-  if (!user) return notFound();
+  const [user, badge] = await db.$transaction([
+    db.user.findFirst({
+      where: {
+        id: session.user.id,
+        role: 'ADMIN',
+      },
+    }),
+    db.badge.findFirst({ where: { id: +params.id } }),
+  ]);
+  if (!user || !badge) return notFound();
 
-  return <BadgeModifier />;
+  return <BadgeModifier badge={badge} />;
 };
 
 export default page;

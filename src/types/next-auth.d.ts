@@ -35,5 +35,7 @@ declare module 'next-auth' {
         }
       | { color: string }
       | null;
+    muteExpires: Date | null;
+    isBanned: boolean;
   }
 }

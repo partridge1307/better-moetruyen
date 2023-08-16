@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import UserSignUpForm from './UserSignUpForm';
 import { cn } from '@/lib/utils';

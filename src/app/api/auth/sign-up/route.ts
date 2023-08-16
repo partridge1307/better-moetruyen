@@ -1,7 +1,6 @@
 import { db } from '@/lib/db';
 import { signToken } from '@/lib/jwt';
-import { Mail } from '@/lib/mail';
-import { verifyHTML } from '@/lib/utils';
+import { textVerifyMai, transporter, verifyMail } from '@/lib/mail';
 import { AuthSignUpValidator } from '@/lib/validators/auth';
 import { hash } from 'bcrypt';
 import { z } from 'zod';
@@ -25,17 +24,23 @@ export async function POST(req: Request) {
 
     const hashedPwd = await hash(password, 10);
     const token = signToken({ email, password: hashedPwd }, '30m');
-    Mail({
-      email,
+    const result = await transporter.sendMail({
+      to: email,
+      from: `Moetruyen<${process.env.MAIL_USER!}>`,
       subject: 'Xác thực tài khoản',
-      html: verifyHTML(token),
-      sender: 'MoeTruyen',
+      html: verifyMail(token),
+      text: textVerifyMai(token),
     });
+    const failed = result.rejected.concat(result.pending).filter(Boolean);
+
+    if (failed.length) throw new Error('Không thể gửi Email');
 
     return new Response('Đã gửi thư xác nhận đến mail', {
       status: 201,
     });
   } catch (error) {
+    if (error instanceof Error)
+      return new Response(error.message, { status: 400 });
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 422 });
     }

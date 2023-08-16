@@ -1,11 +1,16 @@
-"use client";
+'use client';
 
+import { toast } from '@/hooks/use-toast';
 import {
   AuthSignInValidator,
   CreateAuthSignInPayload,
-} from "@/lib/validators/auth";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+} from '@/lib/validators/auth';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Button } from '../ui/Button';
 import {
   Form,
   FormControl,
@@ -13,65 +18,86 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/Form";
-import { Input } from "../ui/Input";
-import { Button } from "../ui/Button";
-import { signIn } from "next-auth/react";
-import { useState } from "react";
-import { toast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+} from '../ui/Form';
+import { Input } from '../ui/Input';
+import { Label } from '../ui/Label';
 
-const UserSignInForm = () => {
+const UserSignInForm = ({
+  signInType,
+}: {
+  signInType: 'MAGIC_LINK' | 'CREDENTIALS';
+}) => {
+  const [emailString, setEmailString] = useState('');
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
+
   const form = useForm<CreateAuthSignInPayload>({
     resolver: zodResolver(AuthSignInValidator),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
-  const [isLoading, setLoading] = useState<boolean>(false);
-  const router = useRouter();
-  async function submitHanlder(values: CreateAuthSignInPayload) {
+  async function magicLinkHandler() {
     setLoading(true);
     try {
-      const { email, password } = AuthSignInValidator.parse(values);
-
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (res && res.error === "CredentialsSignin")
-        throw new Error("Tài khoản hoặc mật khẩu không chính xác");
-
-      router.back();
-      router.refresh();
-
-      return toast({
-        title: "Thành công",
+      await signIn('email', {
+        email: emailString,
+        redirect: true,
+        callbackUrl: '/',
       });
     } catch (error) {
-      if (error instanceof Error) {
-        return toast({
-          title: error.message,
-          description: "Vui lòng thử lại sau",
-          variant: "destructive",
-        });
-      }
-
       return toast({
-        title: "Có lỗi xảy ra",
-        description: "Có lỗi xảy ra. Vui lòng thử lại sau",
-        variant: "destructive",
+        title: 'Có lỗi xảy ra',
+        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
     }
   }
 
-  return (
+  async function submitHanlder(values: CreateAuthSignInPayload) {
+    setLoading(true);
+    try {
+      const { email, password } = AuthSignInValidator.parse(values);
+
+      const res = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (res && res.error === 'CredentialsSignin')
+        throw new Error('Tài khoản hoặc mật khẩu không chính xác');
+
+      router.back();
+      router.refresh();
+
+      return toast({
+        title: 'Thành công',
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        return toast({
+          title: error.message,
+          description: 'Vui lòng thử lại sau',
+          variant: 'destructive',
+        });
+      }
+
+      return toast({
+        title: 'Có lỗi xảy ra',
+        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return signInType === 'CREDENTIALS' ? (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(submitHanlder)} className="space-y-4">
         <FormField
@@ -122,6 +148,28 @@ const UserSignInForm = () => {
         </Button>
       </form>
     </Form>
+  ) : (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="magic_link">Email</Label>
+        <Input
+          id="magic_link"
+          placeholder="Email"
+          type="email"
+          value={emailString}
+          disabled={isLoading}
+          onChange={(e) => setEmailString(e.target.value)}
+        />
+      </div>
+      <Button
+        disabled={isLoading}
+        isLoading={isLoading}
+        className="w-full"
+        onClick={() => magicLinkHandler()}
+      >
+        Đăng nhập
+      </Button>
+    </div>
   );
 };
 

@@ -16,7 +16,7 @@ const UserBanner: FC<UserBannerProps> = ({
 }) => {
   return (
     <AspectRatio ratio={16 / 9} className={ratioClassName}>
-      {user.banner !== null ? (
+      {user.banner ? (
         <Image
           fill
           sizes="40vw"

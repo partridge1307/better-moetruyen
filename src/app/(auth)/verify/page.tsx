@@ -4,7 +4,7 @@ import { AuthVeifyValidator } from '@/lib/validators/auth';
 import { Prisma } from '@prisma/client';
 import Link from 'next/link';
 import { FC } from 'react';
-import { z } from 'zod';
+import { ZodError } from 'zod';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -31,12 +31,22 @@ interface pageProps {
   params: {
     token: string;
   };
+  searchParams: {
+    token: string | string[] | undefined;
+  };
 }
 
-const Page: FC<pageProps> = async ({ params }) => {
-  const { token } = params;
+const Page: FC<pageProps> = async ({ searchParams }) => {
+  const tokenParam = searchParams['token'];
   try {
-    const decoded = verifyToken(token);
+    let decoded;
+    if (Array.isArray(tokenParam)) {
+      const firstToken = tokenParam[0];
+      decoded = verifyToken(firstToken);
+    } else if (typeof tokenParam === 'string') {
+      decoded = verifyToken(tokenParam);
+    } else throw new Error('Invalid URL');
+
     const { email, password } = AuthVeifyValidator.parse(decoded);
     await db.user.create({
       data: {
@@ -67,7 +77,7 @@ const Page: FC<pageProps> = async ({ params }) => {
       </div>
     );
   } catch (error) {
-    if (error instanceof z.ZodError) {
+    if (error instanceof Error) {
       return (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="h-fit max-w-2xl space-y-4">
@@ -75,7 +85,28 @@ const Page: FC<pageProps> = async ({ params }) => {
               Xin lỗi
             </h1>
             <p className="text-center">
-              Có vẻ như token không hợp lệ mất rồi
+              Đường dẫn không hợp lệ
+              <br />
+              Hãy thử{' '}
+              <Link href="/sign-up" className="underline underline-offset-2">
+                đăng ký
+              </Link>{' '}
+              lại nhé
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      return (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-fit max-w-2xl space-y-4">
+            <h1 className="text-center text-4xl font-bold tracking-tight text-red-500">
+              Xin lỗi
+            </h1>
+            <p className="text-center">
+              Có vẻ như tài khoản bị người khác tạo mất mất rồi
               <br />
               Hãy thử{' '}
               <Link href="/sign-up" className="underline underline-offset-2">
@@ -87,27 +118,7 @@ const Page: FC<pageProps> = async ({ params }) => {
         </div>
       );
     }
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P2002')
-        return (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="h-fit max-w-2xl space-y-4">
-              <h1 className="text-center text-4xl font-bold tracking-tight text-red-500">
-                Xin lỗi
-              </h1>
-              <p className="text-center">
-                Bạn tạo tài khoản này rồi
-                <br />
-                Hãy quay về{' '}
-                <Link href="/" className="underline underline-offset-2">
-                  Moetruyen
-                </Link>{' '}
-                nhé
-              </p>
-            </div>
-          </div>
-        );
-    }
+
     return (
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="h-fit max-w-2xl space-y-4">
@@ -115,13 +126,13 @@ const Page: FC<pageProps> = async ({ params }) => {
             Xin lỗi
           </h1>
           <p className="text-center">
-            Có vẻ như có người khác tạo tài khoản này rồi
+            Có vẻ như token không hợp lệ mất rồi
             <br />
             Hãy thử{' '}
             <Link href="/sign-up" className="underline underline-offset-2">
               đăng ký
             </Link>{' '}
-            tài khoản khác nhé
+            tài khoản lại nhé
           </p>
         </div>
       </div>

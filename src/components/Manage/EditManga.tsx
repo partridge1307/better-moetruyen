@@ -64,7 +64,8 @@ interface EditMangaProps {
 }
 
 const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, successToast, serverErrorToast } =
+    useCustomToast();
   const router = useRouter();
   const form = useForm<MangaUploadPayload>({
     resolver: zodResolver(MangaUploadValidator),
@@ -132,19 +133,13 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
           });
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       router.push(`/me/manga/${manga.id}`);
       router.refresh();
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
   const [previewImage, setPreviewImage] = useState<string | undefined>(

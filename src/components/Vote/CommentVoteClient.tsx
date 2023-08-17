@@ -1,7 +1,7 @@
 'use client';
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
+import { socket } from '@/lib/socket';
 import { cn } from '@/lib/utils';
 import { CommentVotePayload } from '@/lib/validators/vote';
 import { usePrevious } from '@mantine/hooks';
@@ -11,7 +11,6 @@ import axios, { AxiosError } from 'axios';
 import { Heart, HeartOff } from 'lucide-react';
 import { FC, memo, useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
-import { socket } from '@/lib/socket';
 
 interface CommentVoteClientProps {
   commentId: number;
@@ -24,7 +23,7 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
   currentVote: initialVote,
   voteAmt: initialVoteAmt,
 }) => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast } = useCustomToast();
   const [voteAmt, setVoteAmt] = useState<number>(initialVoteAmt);
   const [currentVote, setCurrentVote] = useState(initialVote);
   const prevVote = usePrevious(currentVote);
@@ -49,11 +48,7 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
         if (err.response?.status === 404) return notFoundToast();
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onMutate: (type: VoteType) => {
       if (currentVote === type) {

@@ -1,16 +1,16 @@
 'use client';
 
-import { toast } from '@/hooks/use-toast';
+import { useCustomToast } from '@/hooks/use-custom-toast';
 import { cn } from '@/lib/utils';
 import { useIntersection } from '@mantine/hooks';
 import type { Chapter, Manga } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import dynamic from 'next/dynamic';
 import { FC, useEffect, useRef, useState } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
 import HorizontalViewChapter from './HorizontalViewChapter';
 import VerticalViewChapter from './VerticalViewChapter';
-import dynamic from 'next/dynamic';
 const ChapterControll = dynamic(() => import('./ChapterControll'), {
   ssr: false,
   loading: () => (
@@ -31,6 +31,7 @@ interface ViewChapterProps {
 }
 
 const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
+  const { serverErrorToast } = useCustomToast();
   const { mutate: IncreaseView } = useMutation({
     mutationFn: async () => {
       const { data } = await axios.post(
@@ -40,11 +41,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
       return data;
     },
     onError: () => {
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Vui lòng liên hệ Admin để được hỗ trợ',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
   });
 

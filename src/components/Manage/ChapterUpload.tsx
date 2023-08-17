@@ -11,7 +11,7 @@ import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { ImagePlus, PlusCircle, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Suspense, useState } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '../ui/Button';
 import {
@@ -24,12 +24,12 @@ import {
 } from '../ui/Form';
 import { Input } from '../ui/Input';
 import { Progress } from '../ui/Progress';
-import { lazy } from 'react';
 const DnDChapterImage = lazy(() => import('../DragAndDrop'));
 const ChapterIndexUpload = lazy(() => import('./ChapterIndexUpload'));
 
 const ChapterUpload = ({ id }: { id: string }) => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
   const router = useRouter();
   const [disaleChapterIndex, setDisableChapterIndex] = useState<boolean>(true);
   const [images, setImages] = useState<{ src: string; name: string }[]>([]);
@@ -84,20 +84,14 @@ const ChapterUpload = ({ id }: { id: string }) => {
           });
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Vui lòng thử lại',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       router.push(`/me/manga/${id}/chapter`);
       router.refresh();
       setUploadProgres(null);
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
 

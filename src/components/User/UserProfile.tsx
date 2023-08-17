@@ -1,7 +1,6 @@
 'use client';
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
 import { cn, dataUrlToBlob } from '@/lib/utils';
 import { UserProfileEditPayload } from '@/lib/validators/user';
 import { Badge, User } from '@prisma/client';
@@ -70,7 +69,8 @@ const reducer = (state: StateProps, action: ActionState) => {
 };
 
 const UserProfile: FC<UserProfileProps> = ({ user }) => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
   const { push, refresh } = useRouter();
   const { update } = useSession();
   const avatarRef = useRef<HTMLInputElement>(null);
@@ -152,20 +152,14 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
         if (e.response?.status === 404) return notFoundToast();
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       update();
       refresh();
       push('/');
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
 

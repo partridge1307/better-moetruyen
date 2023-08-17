@@ -1,10 +1,14 @@
 'use client';
 
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { toast } from '@/hooks/use-toast';
 import {
   AuthSignUpValidator,
   CreateAuthSignUpPayload,
 } from '@/lib/validators/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
 import { useForm } from 'react-hook-form';
 import { Button } from '../ui/Button';
 import {
@@ -16,11 +20,9 @@ import {
   FormMessage,
 } from '../ui/Form';
 import { Input } from '../ui/Input';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import { toast } from '@/hooks/use-toast';
 
 const UserSignUpForm = () => {
+  const { serverErrorToast } = useCustomToast();
   const form = useForm<CreateAuthSignUpPayload>({
     resolver: zodResolver(AuthSignUpValidator),
     defaultValues: {
@@ -55,11 +57,7 @@ const UserSignUpForm = () => {
         }
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Vui lòng thử lại',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       return toast({

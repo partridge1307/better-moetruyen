@@ -1,6 +1,4 @@
 import { buttonVariants } from '@/components/ui/Button';
-import { cn } from '@/lib/utils';
-import { useMutation } from '@tanstack/react-query';
 import { toast } from './use-toast';
 
 export const useCustomToast = () => {
@@ -29,8 +27,19 @@ export const useCustomToast = () => {
       variant: 'destructive',
     });
 
+  const serverErrorToast = () =>
+    toast({
+      title: 'Có lỗi xảy ra',
+      description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
+      variant: 'destructive',
+    });
+
+  const successToast = () => toast({ title: 'Thành công' });
+
   return {
     loginToast,
     notFoundToast,
+    serverErrorToast,
+    successToast,
   };
 };

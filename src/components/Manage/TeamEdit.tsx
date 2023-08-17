@@ -22,7 +22,8 @@ interface TeamEditProps {
 }
 
 const TeamEdit: FC<TeamEditProps> = ({ team }) => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
   const router = useRouter();
   const [previewImage, setPreviewImage] = useState<{
     type: string;
@@ -73,19 +74,13 @@ const TeamEdit: FC<TeamEditProps> = ({ team }) => {
           });
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       router.push(`/me/team`);
       router.refresh();
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
 

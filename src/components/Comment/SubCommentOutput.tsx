@@ -1,6 +1,6 @@
 'use client';
 
-import { toast } from '@/hooks/use-toast';
+import { useCustomToast } from '@/hooks/use-custom-toast';
 import { formatTimeToNow } from '@/lib/utils';
 import type { Comment, CommentVote, Prisma, User } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
@@ -31,6 +31,7 @@ type ExtendedSubComment = Pick<
 };
 
 const SubCommentOutput: FC<SubCommentContentProps> = ({ commentId }) => {
+  const { serverErrorToast } = useCustomToast();
   const { data: session } = useSession();
   const { data: subComment, isLoading: isFetchSubComment } = useQuery({
     queryKey: [`sub-comment-query`, `${commentId}`],
@@ -40,11 +41,7 @@ const SubCommentOutput: FC<SubCommentContentProps> = ({ commentId }) => {
       return data as ExtendedSubComment[];
     },
     onError: () => {
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
   });
 

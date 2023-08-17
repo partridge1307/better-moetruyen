@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { Button } from '@/components/ui/Button';
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
 import { socket } from '@/lib/socket';
 import { cn } from '@/lib/utils';
 import { CommentContentPayload } from '@/lib/validators/upload';
@@ -24,7 +23,8 @@ export default function Submit({
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [hasText, setHasText] = useState<boolean>(false);
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
 
   const {
     data: oEmbedData,
@@ -63,19 +63,13 @@ export default function Submit({
         if (err.response?.status === 404) return notFoundToast();
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       if (!editor.isEditable()) editor.setEditable(true);
       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
 

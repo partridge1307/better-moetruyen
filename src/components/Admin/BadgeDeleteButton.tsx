@@ -1,7 +1,6 @@
 'use client';
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { Trash2 } from 'lucide-react';
@@ -13,7 +12,8 @@ interface BadgeDeleteButtonProps {
 }
 
 const BadgeDeleteButton: FC<BadgeDeleteButtonProps> = ({ id }) => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
   const router = useRouter();
 
   const { mutate: Delete, isLoading: isDeleting } = useMutation({
@@ -26,15 +26,11 @@ const BadgeDeleteButton: FC<BadgeDeleteButtonProps> = ({ id }) => {
         if (err.response?.status === 401) return loginToast();
         if (err.response?.status === 404) return notFoundToast();
       }
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       router.refresh();
-      return toast({ title: 'Thành công' });
+      return successToast();
     },
   });
 

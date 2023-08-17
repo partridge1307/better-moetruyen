@@ -1,20 +1,17 @@
 'use client';
 
+import { useCustomToast } from '@/hooks/use-custom-toast';
 import { cn, formatTimeToNow } from '@/lib/utils';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
 import { Clock, Loader2, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useContext, useRef, useState } from 'react';
 import { ConversationContext } from '../Navbar/ChatSidebar';
 import UserAvatar from '../User/UserAvatar';
 import Username from '../User/Username';
-import { ScrollArea } from '../ui/ScrollArea';
-import { Skeleton } from '../ui/Skeleton';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,11 +24,14 @@ import {
   AlertDialogTrigger,
 } from '../ui/AlertDialog';
 import { buttonVariants } from '../ui/Button';
+import { ScrollArea } from '../ui/ScrollArea';
+import { Skeleton } from '../ui/Skeleton';
 
 const ChatList = () => {
   const conversation = useContext(ConversationContext);
   const { data: session, status } = useSession();
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
   const router = useRouter();
   const [currentId, setCurrentId] = useState<number | null>(null);
   const dialogRef = useRef<HTMLButtonElement | null>(null);
@@ -50,19 +50,13 @@ const ChatList = () => {
         if (err.response?.status === 404) return notFoundToast();
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       router.push('/chat');
       router.refresh();
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
 

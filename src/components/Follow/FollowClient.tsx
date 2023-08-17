@@ -1,7 +1,6 @@
 'use client';
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
 import { FollowPayload } from '@/lib/validators/vote';
 import type { MangaFollow } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
@@ -21,6 +20,7 @@ interface FollowClientProps {
 }
 
 const FollowClient: FC<FollowClientProps> = ({ follow, mangaId }) => {
+  const { serverErrorToast } = useCustomToast();
   axios.post(`/api/manga/${mangaId}/history`).catch(() => {});
 
   const { loginToast, notFoundToast } = useCustomToast();
@@ -43,11 +43,7 @@ const FollowClient: FC<FollowClientProps> = ({ follow, mangaId }) => {
         if (err.response?.status === 404) return notFoundToast();
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onMutate: (type: FollowType) => {
       if (type === FollowType.FOLLOW) setCurrentFollow(FollowType.FOLLOW);

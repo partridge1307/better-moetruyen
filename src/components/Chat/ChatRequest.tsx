@@ -6,6 +6,7 @@ import { useDebouncedValue } from '@mantine/hooks';
 import type { User } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
 import { FC, useEffect, useState } from 'react';
 import Username from '../User/Username';
 import {
@@ -16,12 +17,12 @@ import {
   CommandItem,
   CommandList,
 } from '../ui/Command';
-import { useRouter } from 'next/navigation';
 
 interface ChatRequestProps {}
 
 const ChatRequest: FC<ChatRequestProps> = ({}) => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [debounced] = useDebouncedValue(query, 300);
@@ -61,19 +62,13 @@ const ChatRequest: FC<ChatRequestProps> = ({}) => {
           });
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: (data) => {
       router.push(`/chat?id=${data}`);
       router.refresh();
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
 

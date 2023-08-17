@@ -3,6 +3,7 @@
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
 import { Tags } from '@/lib/query';
+import { cn } from '@/lib/utils';
 import {
   MangaUploadPayload,
   MangaUploadValidator,
@@ -30,7 +31,6 @@ import {
 } from '../ui/Form';
 import { Input } from '../ui/Input';
 import type { authorResultProps } from './MangaAuthorUpload';
-import { cn } from '@/lib/utils';
 const Editor = dynamic(() => import('@/components/Editor'), {
   ssr: false,
   loading: () => <Loader2 className="h-6 w-6 animate-spin" />,
@@ -46,8 +46,10 @@ const MangaAuthorUpload = dynamic(() => import('./MangaAuthorUpload'), {
 });
 
 const MangaUpload = ({ tag }: { tag: Tags[] }) => {
-  const { notFoundToast, loginToast } = useCustomToast();
+  const { notFoundToast, loginToast, serverErrorToast, successToast } =
+    useCustomToast();
   const router = useRouter();
+
   const form = useForm<MangaUploadPayload>({
     resolver: zodResolver(MangaUploadValidator),
     defaultValues: {
@@ -83,11 +85,7 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
             variant: 'destructive',
           });
       }
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       return toast({
@@ -175,19 +173,13 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
         }
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       router.push('/me/manga');
       router.refresh();
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
 

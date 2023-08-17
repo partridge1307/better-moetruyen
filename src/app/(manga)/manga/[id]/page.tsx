@@ -6,11 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';
 import { List, ListTree } from 'lucide-react';
+import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { FC, Suspense, lazy } from 'react';
-import type { Metadata } from 'next';
 
 const MangaControll = dynamic(() => import('@/components/Manga/MangaControll'));
 const ListTreeChapter = dynamic(
@@ -252,7 +252,7 @@ const page: FC<pageProps> = async ({ params }) => {
             priority
             src={manga.image}
             alt="Manga Background Image"
-            className="absolute inset-0 -z-10 h-full w-full blur-sm brightness-[.2] md:brightness-[.3] object-cover rounded-md"
+            className="absolute inset-0 -z-10 h-full w-full blur-sm md:brightness-[.3] object-cover rounded-md"
           />
         </div>
 
@@ -311,7 +311,7 @@ const page: FC<pageProps> = async ({ params }) => {
                         <UserBanner user={manga.creator} className="rounded" />
                         <UserAvatar
                           user={manga.creator}
-                          className="absolute top-1/2 translate-y-1/3 translate-x-2 w-20 h-20 border-4"
+                          className="absolute top-1/2 translate-y-1/3 w-20 h-20 border-4"
                         />
                       </div>
 

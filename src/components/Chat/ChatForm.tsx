@@ -1,7 +1,6 @@
 'use client';
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
 import { socket } from '@/lib/socket';
 import { cn } from '@/lib/utils';
 import { ChatPayload, ChatValidator } from '@/lib/validators/chat';
@@ -29,7 +28,7 @@ interface ChatFormProps {
 }
 
 const ChatForm: FC<ChatFormProps> = ({ conversation, session, refetch }) => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast } = useCustomToast();
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const form = useForm<ChatPayload>({
@@ -50,11 +49,7 @@ const ChatForm: FC<ChatFormProps> = ({ conversation, session, refetch }) => {
         if (err.response?.status === 404) return notFoundToast();
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: (_, values) => {
       const { content, conversationId, senderId } = values;

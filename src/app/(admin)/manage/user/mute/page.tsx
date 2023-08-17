@@ -23,7 +23,8 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 const Page = () => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
   const [userInput, setUserInput] = useState('');
   const [debounced] = useDebouncedValue(userInput, 300);
 
@@ -77,15 +78,11 @@ const Page = () => {
             variant: 'destructive',
           });
       }
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       location.reload();
-      return toast({ title: 'Thành công' });
+      return successToast();
     },
   });
 

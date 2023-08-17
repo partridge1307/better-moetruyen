@@ -12,7 +12,6 @@ import {
 import { Input } from '@/components/ui/Input';
 import { Select, SelectItem, SelectTrigger } from '@/components/ui/Select';
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
 import { AddBadgePayload, AddBadgeValidator } from '@/lib/validators/admin';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Badge } from '@prisma/client';
@@ -29,7 +28,8 @@ const BadgeModifier = ({
 }: {
   badge?: Pick<Badge, 'image' | 'name' | 'description' | 'color'>;
 }) => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
   const [colorType, setColorType] = useState<'gradient' | 'normal'>('normal');
   const router = useRouter();
 
@@ -64,18 +64,13 @@ const BadgeModifier = ({
         if (err.response?.status === 404) return notFoundToast();
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       router.push('/manage/user/badge');
       router.refresh();
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
 

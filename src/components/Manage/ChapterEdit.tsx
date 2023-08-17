@@ -1,7 +1,6 @@
 'use client';
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
 import {
   ChapterUploadPayload,
   ChapterUploadValidator,
@@ -35,7 +34,8 @@ interface ChapterEditProps {
 }
 
 const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
   const router = useRouter();
   const [images, setImages] = useState<{ src: string; name: string }[]>(
     chapter.images.map((img, index) => ({
@@ -91,20 +91,14 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
         if (e.response?.status === 404) return notFoundToast();
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       router.push(`/me/manga/${chapter.mangaId}/chapter`);
       router.refresh();
       setUpdateProgress(null);
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
 

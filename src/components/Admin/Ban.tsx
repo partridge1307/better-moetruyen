@@ -13,7 +13,8 @@ import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const Ban = () => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
   const [userInput, setUserInput] = useState('');
   const [debounced] = useDebouncedValue(userInput, 300);
   const [userId, setUserId] = useState('');
@@ -57,15 +58,11 @@ const Ban = () => {
             variant: 'destructive',
           });
       }
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       location.reload();
-      return toast({ title: 'Thành công' });
+      return successToast();
     },
   });
 

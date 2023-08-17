@@ -1,5 +1,6 @@
 'use client';
 
+import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
 import {
   AuthSignInValidator,
@@ -27,6 +28,7 @@ const UserSignInForm = ({
 }: {
   signInType: 'MAGIC_LINK' | 'CREDENTIALS';
 }) => {
+  const { serverErrorToast, successToast } = useCustomToast();
   const [emailString, setEmailString] = useState('');
   const [isLoading, setLoading] = useState<boolean>(false);
   const router = useRouter();
@@ -48,11 +50,7 @@ const UserSignInForm = ({
         callbackUrl: '/',
       });
     } catch (error) {
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     } finally {
       setLoading(false);
     }
@@ -75,9 +73,7 @@ const UserSignInForm = ({
       router.back();
       router.refresh();
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     } catch (error) {
       if (error instanceof Error) {
         return toast({
@@ -87,11 +83,7 @@ const UserSignInForm = ({
         });
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     } finally {
       setLoading(false);
     }

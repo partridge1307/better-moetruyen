@@ -1,5 +1,4 @@
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { Loader2, X } from 'lucide-react';
@@ -29,7 +28,8 @@ const DeleteComment: FC<DeleteCommentProps> = ({
   session,
   authorId,
 }) => {
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
   const { mutate: Delete, isLoading: isDeleting } = useMutation({
     mutationKey: ['delete-comment', `${commentId}`],
     mutationFn: async () => {
@@ -41,16 +41,10 @@ const DeleteComment: FC<DeleteCommentProps> = ({
         if (err.response?.status === 404) return notFoundToast();
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
 

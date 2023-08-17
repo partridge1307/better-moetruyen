@@ -33,7 +33,8 @@ interface DataTableRowActionProps {
 function DataTableRowAction({ row }: DataTableRowActionProps) {
   const manga = row.original;
   const { refresh } = useRouter();
-  const { loginToast, notFoundToast } = useCustomToast();
+  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+    useCustomToast();
 
   const { mutate: publish, isLoading: isPublishLoading } = useMutation({
     mutationKey: ['publish-manga', manga.id],
@@ -54,18 +55,12 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
         if (e.response?.status === 404) return notFoundToast();
       }
 
-      return toast({
-        title: 'Có lỗi xảy ra',
-        description: 'Có lỗi xảy ra. Vui lòng thử lại sau',
-        variant: 'destructive',
-      });
+      return serverErrorToast();
     },
     onSuccess: () => {
       refresh();
 
-      return toast({
-        title: 'Thành công',
-      });
+      return successToast();
     },
   });
 

@@ -1,4 +1,3 @@
-import ForceSignOut from '@/components/ForceSignOut';
 import { buttonVariants } from '@/components/ui/Button';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
@@ -18,7 +17,7 @@ const ManageLayout = async ({ children }: { children: React.ReactNode }) => {
       role: true,
     },
   });
-  if (!user) return <ForceSignOut />;
+  if (!user) return notFound();
 
   if (user.role !== ('ADMIN' || 'MOD')) return notFound();
 

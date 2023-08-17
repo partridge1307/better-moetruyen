@@ -60,7 +60,7 @@ export async function PATCH(req: Request) {
         }),
         db.log.create({
           data: {
-            content: `${user.name} (${user.role}) đã Verify userId: ${target.userId}`,
+            content: `${user.name} (${user.role}) đã từ chối Verify userId: ${target.userId}`,
           },
         }),
       ]);

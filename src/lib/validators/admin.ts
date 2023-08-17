@@ -42,3 +42,11 @@ export const MuteValidator = z.object({
     ),
 });
 export type MutePayload = z.infer<typeof MuteValidator>;
+
+export const TagEditValidator = z.object({
+  id: z.number(),
+  name: z.string(),
+  description: z.string(),
+  category: z.string(),
+});
+export type TagEditPayload = z.infer<typeof TagEditValidator>;

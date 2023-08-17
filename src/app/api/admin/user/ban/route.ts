@@ -34,6 +34,8 @@ export async function PATCH(req: Request) {
           data: { content: `${user.name} đã ban user ${target.name}` },
         }),
       ]);
+
+      return new Response('OK');
     } else {
       return new Response('User already banned', { status: 400 });
     }

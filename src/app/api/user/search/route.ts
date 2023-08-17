@@ -1,12 +1,11 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   const url = new URL(req.url);
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
     const query = url.searchParams.get('query');
     if (!query) return new Response('Invalid', { status: 400 });
@@ -15,7 +14,7 @@ export async function GET(req: NextRequest) {
     const existConversation = await db.user
       .findUnique({
         where: {
-          id: token.id,
+          id: session.user.id,
         },
       })
       .conversation({
@@ -34,7 +33,7 @@ export async function GET(req: NextRequest) {
           name: { contains: q, mode: 'insensitive' },
         })),
         NOT: {
-          name: token.name,
+          name: session.user.name,
         },
         id: {
           notIn: existConversation?.flatMap((con) =>

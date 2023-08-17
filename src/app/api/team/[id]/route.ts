@@ -1,39 +1,25 @@
+import { getAuthSession } from '@/lib/auth';
 import { UploadTeamImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
 import { TeamFormEditValidator } from '@/lib/validators/team';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
-export async function PATCH(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function PATCH(req: Request, context: { params: { id: string } }) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const [, team] = await db.$transaction([
-      db.user.findFirstOrThrow({
-        where: {
-          id: token.id,
-        },
-        select: {
-          id: true,
-        },
-      }),
-      db.team.findFirstOrThrow({
-        where: {
-          id: +context.params.id,
-          ownerId: token.id,
-        },
-        select: {
-          id: true,
-          image: true,
-        },
-      }),
-    ]);
+    const team = await db.team.findFirstOrThrow({
+      where: {
+        id: +context.params.id,
+        ownerId: session.user.id,
+      },
+      select: {
+        id: true,
+        image: true,
+      },
+    });
 
     const form = await req.formData();
     const { image, name } = TeamFormEditValidator.parse(form);

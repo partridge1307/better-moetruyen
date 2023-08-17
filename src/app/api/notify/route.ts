@@ -1,7 +1,6 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
 const NotifyValidator = z.object({
@@ -9,10 +8,10 @@ const NotifyValidator = z.object({
   page: z.string(),
 });
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
     const url = new URL(req.url);
     const { limit, page } = NotifyValidator.parse({
@@ -20,42 +19,32 @@ export async function GET(req: NextRequest) {
       page: url.searchParams.get('page'),
     });
 
-    const [, notify] = await db.$transaction([
-      db.user.findFirstOrThrow({
-        where: {
-          id: token.id,
-        },
-        select: {
-          id: true,
-        },
-      }),
-      db.user.findUniqueOrThrow({
-        where: {
-          id: token.id,
-        },
-        select: {
-          notifications: {
-            take: parseInt(limit),
-            skip: (parseInt(page) - 1) * parseInt(limit),
-            orderBy: {
-              createdAt: 'desc',
-            },
-            select: {
-              fromUser: {
-                select: {
-                  name: true,
-                },
+    const notify = await db.user.findUniqueOrThrow({
+      where: {
+        id: session.user.id,
+      },
+      select: {
+        notifications: {
+          take: parseInt(limit),
+          skip: (parseInt(page) - 1) * parseInt(limit),
+          orderBy: {
+            createdAt: 'desc',
+          },
+          select: {
+            fromUser: {
+              select: {
+                name: true,
               },
-              id: true,
-              type: true,
-              createdAt: true,
-              content: true,
-              isRead: true,
             },
+            id: true,
+            type: true,
+            createdAt: true,
+            content: true,
+            isRead: true,
           },
         },
-      }),
-    ]);
+      },
+    });
 
     return new Response(JSON.stringify(notify.notifications));
   } catch (error) {

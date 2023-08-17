@@ -1,38 +1,27 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 
 export async function PATCH(
-  req: NextRequest,
+  req: Request,
   context: { params: { chapterId: string } }
 ) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const [user, targetChapter] = await db.$transaction([
-      db.user.findFirstOrThrow({
-        where: {
-          id: token.id,
+    const targetChapter = await db.chapter.findFirstOrThrow({
+      where: {
+        id: +context.params.chapterId,
+        manga: {
+          creatorId: session.user.id,
         },
-        select: {
-          id: true,
-        },
-      }),
-      db.chapter.findFirstOrThrow({
-        where: {
-          id: +context.params.chapterId,
-          manga: {
-            creatorId: token.id,
-          },
-        },
-        select: {
-          id: true,
-          mangaId: true,
-        },
-      }),
-    ]);
+      },
+      select: {
+        id: true,
+        mangaId: true,
+      },
+    });
 
     await db.$transaction([
       db.manga.findFirstOrThrow({

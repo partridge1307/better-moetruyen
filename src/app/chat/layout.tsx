@@ -1,19 +1,20 @@
-import ForceSignOut from '@/components/ForceSignOut';
 import ChatSidebar from '@/components/Navbar/ChatSidebar';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
   title: 'Chat',
   description: 'Trò chuyện tại Moetruyen',
   keywords: ['Chat', 'Trò chuyện', 'Moetruyen'],
   openGraph: {
+    siteName: 'Moetruyen',
     title: 'Chat',
     description: 'Trò chuyện | Moetruyen',
   },
   twitter: {
+    site: 'Moetruyen',
     title: 'Chat',
     description: 'Trò chuyện | Moetruyen',
   },
@@ -23,42 +24,31 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
 
-  const [user, conversation] = await db.$transaction([
-    db.user.findFirst({
+  const conversation = await db.user
+    .findUnique({
       where: {
         id: session.user.id,
       },
+    })
+    .conversation({
       select: {
         id: true,
-      },
-    }),
-    db.user
-      .findUnique({
-        where: {
-          id: session.user.id,
-        },
-      })
-      .conversation({
-        select: {
-          id: true,
-          createdAt: true,
-          users: {
-            where: {
-              id: {
-                not: session.user.id,
-              },
-            },
-            select: {
-              id: true,
-              name: true,
-              color: true,
-              image: true,
+        createdAt: true,
+        users: {
+          where: {
+            id: {
+              not: session.user.id,
             },
           },
+          select: {
+            id: true,
+            name: true,
+            color: true,
+            image: true,
+          },
         },
-      }),
-  ]);
-  if (!user) return <ForceSignOut />;
+      },
+    });
 
   return (
     <main className="relative container max-sm:px-2 h-full pt-16 md:pt-20 md:pb-4">

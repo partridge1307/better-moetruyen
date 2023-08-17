@@ -29,6 +29,7 @@ export const metadata: Metadata = {
     type: 'website',
   },
   twitter: {
+    site: 'Moetruyen',
     title: 'Moetruyen',
     description:
       'Web đọc truyện tranh online tiện ích nhất được cập nhật liên tục mỗi ngày - Cùng tham gia đọc truyện và thảo luận tại Moetruyen',

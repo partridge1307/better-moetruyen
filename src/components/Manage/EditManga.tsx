@@ -86,7 +86,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
     isLoading: isFetchingAuthor,
   } = useMutation({
     mutationFn: async (inputValue: string) => {
-      const { data } = await axios.get(`/api/manga/author/${inputValue}`);
+      const { data } = await axios.get(`/api/manga/author?q=${inputValue}`);
 
       return data as authorResultProps;
     },
@@ -116,7 +116,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
       author.map((a) => form.append('author', JSON.stringify(a)));
       tag.map((t) => form.append('tag', JSON.stringify(t)));
 
-      const { data } = await axios.patch(`/api/manga/${manga.id}/edit`, form);
+      const { data } = await axios.patch(`/api/manga/${manga.id}`, form);
 
       return data;
     },

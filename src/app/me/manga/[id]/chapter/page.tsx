@@ -1,4 +1,3 @@
-import ForceSignOut from '@/components/ForceSignOut';
 import { buttonVariants } from '@/components/ui/Button';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
@@ -19,34 +18,23 @@ const page = async ({ params }: { params: { id: string } }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
 
-  const [user, chapters] = await db.$transaction([
-    db.user.findFirst({
+  const chapters = await db.manga
+    .findUnique({
       where: {
-        id: session.user.id,
+        id: +params.id,
+        creatorId: session.user.id,
       },
+    })
+    .chapter({
       select: {
         id: true,
+        name: true,
+        isPublished: true,
+        mangaId: true,
+        updatedAt: true,
+        images: true,
       },
-    }),
-    db.manga
-      .findUnique({
-        where: {
-          id: +params.id,
-          creatorId: session.user.id,
-        },
-      })
-      .chapter({
-        select: {
-          id: true,
-          name: true,
-          isPublished: true,
-          mangaId: true,
-          updatedAt: true,
-          images: true,
-        },
-      }),
-  ]);
-  if (!user) return <ForceSignOut />;
+    });
 
   return (
     <div className="min-h-[400px] md:min-h-[500px]">

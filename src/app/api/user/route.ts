@@ -1,19 +1,18 @@
+import { getAuthSession } from '@/lib/auth';
 import { UploadUserImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
 import { UserFormUpdateValidator } from '@/lib/validators/user';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
-export async function PATCH(req: NextRequest) {
+export async function PATCH(req: Request) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
     const user = await db.user.findFirstOrThrow({
       where: {
-        id: token.id,
+        id: session.user.id,
       },
       select: {
         id: true,

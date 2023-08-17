@@ -1,17 +1,13 @@
+import { getAuthSession } from '@/lib/auth';
 import { UploadMangaImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
 import { MangaFormValidator } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 
-export async function PATCH(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function PATCH(req: Request, context: { params: { id: string } }) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
     const form = await req.formData();
     const {
@@ -26,26 +22,16 @@ export async function PATCH(
       discordLink,
     } = MangaFormValidator.parse(form);
 
-    const [, targetManga] = await db.$transaction([
-      db.user.findFirstOrThrow({
-        where: {
-          id: token.id,
-        },
-        select: {
-          id: true,
-        },
-      }),
-      db.manga.findFirstOrThrow({
-        where: {
-          id: +context.params.id,
-          creatorId: token.id,
-        },
-        select: {
-          id: true,
-          image: true,
-        },
-      }),
-    ]);
+    const targetManga = await db.manga.findFirstOrThrow({
+      where: {
+        id: +context.params.id,
+        creatorId: session.user.id,
+      },
+      select: {
+        id: true,
+        image: true,
+      },
+    });
 
     let image: string;
     if (typeof img === 'string') {

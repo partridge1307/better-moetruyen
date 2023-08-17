@@ -71,8 +71,9 @@ export async function generateMetadata({
       canonical: `${process.env.NEXTAUTH_URL}/manga/${manga.id}`,
     },
     openGraph: {
+      siteName: 'Moetruyen',
       title: `${manga.name} | Moetruyen`,
-      description: `Đọc ${manga.name} | Moetruyen`,
+      description: `Đọc ${manga.name} tại Moetruyen`,
       images: [
         {
           url: `${manga.image}`,
@@ -81,7 +82,8 @@ export async function generateMetadata({
       ],
     },
     twitter: {
-      title: `${manga.name} | Moetruyen`,
+      site: 'Moetruyen',
+      title: `${manga.name}`,
       description: `Đọc ${manga.name} | Moetruyen`,
       card: 'summary_large_image',
       images: [

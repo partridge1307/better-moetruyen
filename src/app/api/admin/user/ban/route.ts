@@ -1,10 +1,9 @@
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
-import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
-export async function PATCH(req: NextRequest) {
+export async function PATCH(req: Request) {
   try {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });

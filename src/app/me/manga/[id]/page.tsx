@@ -1,4 +1,3 @@
-import ForceSignOut from '@/components/ForceSignOut';
 import MangaImage from '@/components/Manga/MangaImage';
 import { buttonVariants } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
@@ -35,38 +34,27 @@ const page: FC<pageProps> = async ({ params }) => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
 
-  const [user, manga] = await db.$transaction([
-    db.user.findFirst({
-      where: {
-        id: session.user.id,
+  const manga = await db.manga.findFirst({
+    where: {
+      id: +params.id,
+      creatorId: session.user.id,
+    },
+    select: {
+      _count: {
+        select: { chapter: true },
       },
-      select: {
-        id: true,
-      },
-    }),
-    db.manga.findFirst({
-      where: {
-        id: +params.id,
-        creatorId: session.user.id,
-      },
-      select: {
-        _count: {
-          select: { chapter: true },
-        },
-        view: true,
-        id: true,
-        isPublished: true,
-        name: true,
-        image: true,
-        discordLink: true,
-        facebookLink: true,
-        description: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    }),
-  ]);
-  if (!user) return <ForceSignOut />;
+      view: true,
+      id: true,
+      isPublished: true,
+      name: true,
+      image: true,
+      discordLink: true,
+      facebookLink: true,
+      description: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
   if (!manga) return notFound();
 
   const [dailyView, weeklyView] = await Promise.all([

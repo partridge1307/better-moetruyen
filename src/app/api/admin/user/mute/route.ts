@@ -2,10 +2,9 @@ import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { MuteValidator } from '@/lib/validators/admin';
 import { Prisma } from '@prisma/client';
-import { NextRequest } from 'next/server';
 import { ZodError } from 'zod';
 
-export async function PATCH(req: NextRequest) {
+export async function PATCH(req: Request) {
   try {
     const { id, expiredAt } = MuteValidator.parse(await req.json());
     const session = await getAuthSession();

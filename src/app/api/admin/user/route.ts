@@ -1,10 +1,9 @@
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
-import { NextRequest } from 'next/server';
 import { ZodError } from 'zod';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   try {
     const queryName = new URL(req.url).searchParams.get('q');
     if (!queryName) throw Error();

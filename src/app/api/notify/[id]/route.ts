@@ -1,38 +1,37 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
+import { Prisma } from '@prisma/client';
 
-export async function PATCH(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function PATCH(req: Request, context: { params: { id: string } }) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const notify = await db.notify.findFirstOrThrow({
-      where: {
-        id: +context.params.id,
-      },
-      select: {
-        id: true,
-        isRead: true,
-      },
-    });
-
-    if (notify.isRead) return new Response('Invalid', { status: 422 });
-
-    await db.notify.update({
-      where: {
-        id: notify.id,
-      },
-      data: {
-        isRead: true,
-      },
-    });
+    await db.$transaction([
+      db.notify.findFirstOrThrow({
+        where: {
+          id: +context.params.id,
+          isRead: true,
+        },
+        select: {
+          id: true,
+        },
+      }),
+      db.notify.update({
+        where: {
+          id: +context.params.id,
+        },
+        data: {
+          isRead: true,
+        },
+      }),
+    ]);
 
     return new Response('OK');
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      return new Response('Not found', { status: 404 });
+    }
     return new Response('Something went wrong', { status: 500 });
   }
 }

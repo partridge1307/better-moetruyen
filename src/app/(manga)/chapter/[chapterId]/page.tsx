@@ -56,6 +56,7 @@ export async function generateMetadata({
       `${chapter.chapterIndex}`,
     ],
     openGraph: {
+      siteName: 'Moetruyen',
       title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
       description: `Đọc ${chapter.manga.name} | Moetruyen`,
       images: [
@@ -63,6 +64,7 @@ export async function generateMetadata({
       ],
     },
     twitter: {
+      site: 'Moetruyen',
       title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
       description: `Đọc ${chapter.manga.name} | Moetruyen`,
       card: 'summary_large_image',
@@ -75,7 +77,7 @@ export async function generateMetadata({
 
 interface pageProps {
   params: {
-    chapterId: string;
+    chapterId: string | string[];
   };
 }
 

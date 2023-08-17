@@ -1,4 +1,3 @@
-import ForceSignOut from '@/components/ForceSignOut';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import Image from 'next/image';
@@ -9,51 +8,40 @@ const FollowedManga = async () => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
 
-  const [user, mangaFollowed] = await db.$transaction([
-    db.user.findFirst({
-      where: {
-        id: session.user.id,
-      },
-      select: {
-        id: true,
-      },
-    }),
-    db.mangaFollow.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      select: {
-        manga: {
-          select: {
-            id: true,
-            image: true,
-            name: true,
-            _count: {
-              select: {
-                chapter: true,
-              },
+  const mangaFollowed = await db.mangaFollow.findMany({
+    where: {
+      userId: session.user.id,
+    },
+    select: {
+      manga: {
+        select: {
+          id: true,
+          image: true,
+          name: true,
+          _count: {
+            select: {
+              chapter: true,
             },
-            chapter: {
-              where: {
-                isPublished: true,
-              },
-              select: {
-                id: true,
-                name: true,
-                chapterIndex: true,
-                volume: true,
-              },
-              orderBy: {
-                createdAt: 'desc',
-              },
-              take: 1,
+          },
+          chapter: {
+            where: {
+              isPublished: true,
             },
+            select: {
+              id: true,
+              name: true,
+              chapterIndex: true,
+              volume: true,
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
+            take: 1,
           },
         },
       },
-    }),
-  ]);
-  if (!user) return <ForceSignOut />;
+    },
+  });
 
   return mangaFollowed.length ? (
     <ul className="flex flex-wrap gap-4">

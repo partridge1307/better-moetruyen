@@ -73,18 +73,14 @@ const ChapterEdit: FC<ChapterEditProps> = ({ chapter }) => {
         }
       }
 
-      const { data } = await axios.patch(
-        `/api/chapter/${chapter.id}/edit`,
-        form,
-        {
-          onDownloadProgress(progressEvent) {
-            const percentCompleted = Math.floor(
-              (progressEvent.loaded * 100) / progressEvent.total!
-            );
-            setUpdateProgress(percentCompleted);
-          },
-        }
-      );
+      const { data } = await axios.patch(`/api/chapter/${chapter.id}`, form, {
+        onDownloadProgress(progressEvent) {
+          const percentCompleted = Math.floor(
+            (progressEvent.loaded * 100) / progressEvent.total!
+          );
+          setUpdateProgress(percentCompleted);
+        },
+      });
       return data as string;
     },
     onError: (e) => {

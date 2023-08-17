@@ -40,6 +40,7 @@ export const CommentContentValidator = z.object({
     })
     .optional(),
   commentId: z.number().optional(),
+  id: z.string().optional(),
 });
 export type CommentContentPayload = z.infer<typeof CommentContentValidator>;
 

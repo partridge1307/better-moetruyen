@@ -1,11 +1,13 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { verifyToken } from '@/lib/jwt';
 import { AuthVeifyValidator } from '@/lib/validators/auth';
 import { Prisma } from '@prisma/client';
-import Link from 'next/link';
-import { FC } from 'react';
-import { ZodError } from 'zod';
 import type { Metadata } from 'next';
+import { signIn } from 'next-auth/react';
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { FC } from 'react';
 
 export const metadata: Metadata = {
   title: 'Xác thực tài khoản',
@@ -18,10 +20,12 @@ export const metadata: Metadata = {
     'Moetruyen',
   ],
   openGraph: {
+    siteName: 'Moetruyen',
     title: 'Xác thực tài khoản',
     description: 'Xác thực tài khoản | Moetruyen',
   },
   twitter: {
+    site: 'Moetruyen',
     title: 'Đăng ký',
     description: 'Đăng ký | Moetruyen',
   },
@@ -39,6 +43,9 @@ interface pageProps {
 const Page: FC<pageProps> = async ({ searchParams }) => {
   const tokenParam = searchParams['token'];
   try {
+    const session = await getAuthSession();
+    if (session) return redirect('/');
+
     let decoded;
     if (Array.isArray(tokenParam)) {
       const firstToken = tokenParam[0];
@@ -48,12 +55,21 @@ const Page: FC<pageProps> = async ({ searchParams }) => {
     } else throw new Error('Invalid URL');
 
     const { email, password } = AuthVeifyValidator.parse(decoded);
-    await db.user.create({
-      data: {
-        email,
-        password,
-      },
-    });
+
+    await Promise.all([
+      db.user.create({
+        data: {
+          email,
+          password,
+        },
+      }),
+      signIn('credentials', { email, password, redirect: false }),
+    ]);
+
+    setTimeout(() => {
+      return redirect('/');
+    }, 15 * 1000);
+
     return (
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="h-fit max-w-2xl space-y-4">
@@ -72,6 +88,10 @@ const Page: FC<pageProps> = async ({ searchParams }) => {
               Moetruyen
             </Link>{' '}
             ngay thôi nhé
+          </p>
+          <p className="text-sm">
+            <span className="text-red-500">*</span>Tự động chuyển về trang chủ
+            sau 15s
           </p>
         </div>
       </div>

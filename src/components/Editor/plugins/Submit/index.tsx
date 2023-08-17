@@ -48,9 +48,9 @@ export default function Submit({
           ...values,
           id,
         };
-        await axios.put(`/api/chapter/${chapterId}/comment/create`, payload);
+        await axios.post(`/api/chapter/${chapterId}/comment`, payload);
       } else {
-        await axios.put(`/api/manga/${id}/comment/create`, values);
+        await axios.post(`/api/manga/${id}/comment`, values);
 
         if (commentId) {
           socket.emit('notify', { type: 'COMMENT', payload: commentId });

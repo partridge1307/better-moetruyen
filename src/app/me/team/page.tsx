@@ -1,4 +1,3 @@
-import ForceSignOut from '@/components/ForceSignOut';
 import UserAvatar from '@/components/User/UserAvatar';
 import UserBanner from '@/components/User/UserBanner';
 import Username from '@/components/User/Username';
@@ -24,68 +23,57 @@ const page = async () => {
   const session = await getAuthSession();
   if (!session) return redirect('/sign-in');
 
-  const [user, memberOnTeam] = await db.$transaction([
-    db.user.findFirst({
-      where: {
-        id: session.user.id,
-      },
-      select: {
-        id: true,
-      },
-    }),
-    db.memberOnTeam.findUnique({
-      where: {
-        userId: session.user.id,
-      },
-      include: {
-        team: {
-          select: {
-            image: true,
-            name: true,
-            createdAt: true,
-            member: {
-              select: {
-                user: {
-                  select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                    banner: true,
-                    color: true,
-                  },
+  const memberOnTeam = await db.memberOnTeam.findUnique({
+    where: {
+      userId: session.user.id,
+    },
+    include: {
+      team: {
+        select: {
+          image: true,
+          name: true,
+          createdAt: true,
+          member: {
+            select: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
+                  banner: true,
+                  color: true,
                 },
               },
             },
-            owner: {
-              select: {
-                id: true,
-                image: true,
-                name: true,
-                color: true,
-              },
+          },
+          owner: {
+            select: {
+              id: true,
+              image: true,
+              name: true,
+              color: true,
             },
-            chapter: {
-              select: {
-                id: true,
-                name: true,
-                volume: true,
-                chapterIndex: true,
-                createdAt: true,
-                manga: {
-                  select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                  },
+          },
+          chapter: {
+            select: {
+              id: true,
+              name: true,
+              volume: true,
+              chapterIndex: true,
+              createdAt: true,
+              manga: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
                 },
               },
             },
           },
         },
       },
-    }),
-  ]);
-  if (!user) return <ForceSignOut />;
+    },
+  });
 
   return (
     <>
@@ -129,7 +117,7 @@ const page = async () => {
               </div>
             </div>
 
-            {memberOnTeam.team.owner.id === user.id ? (
+            {memberOnTeam.team.owner.id === session.user.id ? (
               <Link
                 href={`/me/team/${memberOnTeam.teamId}/edit`}
                 className={cn(buttonVariants(), 'space-x-2 max-sm:w-full')}

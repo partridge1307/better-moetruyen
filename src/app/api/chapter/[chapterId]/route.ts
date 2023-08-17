@@ -1,44 +1,33 @@
+import { getAuthSession } from '@/lib/auth';
 import { EditChapterImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
 import { ChapterFormEditValidator } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 import { ZodError } from 'zod';
 
 export async function PATCH(
-  req: NextRequest,
+  req: Request,
   context: { params: { chapterId: string } }
 ) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
     const { images, chapterIndex, chapterName, volume } =
       ChapterFormEditValidator.parse(await req.formData());
 
-    const [, chapter] = await db.$transaction([
-      db.user.findFirstOrThrow({
-        where: {
-          id: token.id,
+    const chapter = await db.chapter.findFirstOrThrow({
+      where: {
+        manga: {
+          creatorId: session.user.id,
         },
-        select: {
-          id: true,
-        },
-      }),
-      db.chapter.findFirstOrThrow({
-        where: {
-          manga: {
-            creatorId: token.id,
-          },
-          id: +context.params.chapterId,
-        },
-        select: {
-          mangaId: true,
-          images: true,
-        },
-      }),
-    ]);
+        id: +context.params.chapterId,
+      },
+      select: {
+        mangaId: true,
+        images: true,
+      },
+    });
 
     const edittedImages = await EditChapterImage(
       images,

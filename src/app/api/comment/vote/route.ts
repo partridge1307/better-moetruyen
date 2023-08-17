@@ -1,46 +1,37 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { commentVoteValidator } from '@/lib/validators/vote';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 import { ZodError } from 'zod';
 
-export async function PATCH(req: NextRequest) {
+export async function PATCH(req: Request) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
-
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
     const { voteType, commentId } = commentVoteValidator.parse(
       await req.json()
     );
 
-    const existingVote = await db.commentVote.findFirst({
-      where: {
-        userId: user.id,
-        commentId,
-      },
-      select: {
-        type: true,
-      },
-    });
-
-    await db.comment.findUniqueOrThrow({
-      where: {
-        id: commentId,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const [existingVote] = await db.$transaction([
+      db.commentVote.findFirst({
+        where: {
+          userId: session.user.id,
+          commentId,
+        },
+        select: {
+          type: true,
+        },
+      }),
+      db.comment.findUniqueOrThrow({
+        where: {
+          id: commentId,
+        },
+        select: {
+          id: true,
+        },
+      }),
+    ]);
 
     if (existingVote) {
       if (existingVote.type === voteType) {
@@ -48,7 +39,7 @@ export async function PATCH(req: NextRequest) {
           where: {
             userId_commentId: {
               commentId,
-              userId: user.id,
+              userId: session.user.id,
             },
           },
         });
@@ -59,7 +50,7 @@ export async function PATCH(req: NextRequest) {
         where: {
           userId_commentId: {
             commentId,
-            userId: user.id,
+            userId: session.user.id,
           },
         },
         data: {
@@ -72,7 +63,7 @@ export async function PATCH(req: NextRequest) {
       await db.commentVote.create({
         data: {
           type: voteType,
-          userId: user.id,
+          userId: session.user.id,
           commentId,
         },
       });

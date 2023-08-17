@@ -1,13 +1,12 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
-export async function PATCH(req: NextRequest) {
+export async function PATCH(req: Request) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
     const { id, type } = z
       .object({ id: z.string(), type: z.enum(['ACCEPT', 'REJECT']) })
@@ -16,7 +15,7 @@ export async function PATCH(req: NextRequest) {
     const [user, target] = await db.$transaction([
       db.user.findFirstOrThrow({
         where: {
-          id: token.id,
+          id: session.user.id,
           OR: [{ role: 'ADMIN' }, { role: 'MOD' }],
         },
         select: {

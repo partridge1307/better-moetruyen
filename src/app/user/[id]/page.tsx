@@ -57,7 +57,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
           <UserAvatar
             user={user}
-            className="w-40 h-40 lg:w-52 lg:h-52 border-8 rounded-full absolute top-1/2 translate-y-1/3 translate-x-1/3"
+            className="w-40 h-40 lg:w-52 lg:h-52 border-8 rounded-full absolute top-1/2 translate-y-1/3"
           />
         </div>
 

@@ -1,35 +1,23 @@
+import { getAuthSession } from '@/lib/auth';
 import { UploadChapterImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
 import { ChapterFormUploadValidator } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
-export async function POST(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function POST(req: Request, context: { params: { id: string } }) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
     const { images, volume, chapterIndex, chapterName } =
       ChapterFormUploadValidator.parse(await req.formData());
 
-    const [, manga, team] = await db.$transaction([
-      db.user.findFirstOrThrow({
-        where: {
-          id: token.id,
-        },
-        select: {
-          id: true,
-        },
-      }),
+    const [manga, team] = await db.$transaction([
       db.manga.findFirstOrThrow({
         where: {
           id: +context.params.id,
-          creatorId: token.id,
+          creatorId: session.user.id,
         },
         select: {
           id: true,
@@ -38,7 +26,7 @@ export async function POST(
       }),
       db.memberOnTeam.findFirst({
         where: {
-          userId: token.id,
+          userId: session.user.id,
         },
         select: {
           teamId: true,

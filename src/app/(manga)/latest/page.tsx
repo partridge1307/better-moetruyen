@@ -1,18 +1,20 @@
 import LatestMangaCard from '@/components/Manga/LatestMangaCard';
 import LatestMangaControll from '@/components/Manga/LatestMangaControll';
 import { db } from '@/lib/db';
-import { FC } from 'react';
 import type { Metadata } from 'next';
+import { FC } from 'react';
 
 export const metadata: Metadata = {
   title: 'Mới cập nhật',
   description: 'Manga mới cập nhật | Moetruyen',
   keywords: ['Mới cập nhật', 'Manga', 'Moetruyen'],
   openGraph: {
+    siteName: 'Moetruyen',
     title: 'Mới cập nhật',
     description: 'Mới cập nhật | Moetruyen',
   },
   twitter: {
+    site: 'Moetruyen',
     title: 'Mới cập nhật',
     description: 'Mới cập nhật | Moetruyen',
   },
@@ -30,7 +32,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
   const start = (Number(page) - 1) * Number(perPage);
   const end = start + Number(perPage);
 
-  const [latestManga, mangaCount] = await Promise.all([
+  const [latestManga, mangaCount] = await db.$transaction([
     db.chapter.findMany({
       distinct: ['mangaId'],
       where: {

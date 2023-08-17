@@ -1,4 +1,3 @@
-import ForceSignOut from '@/components/ForceSignOut';
 import Username from '@/components/User/Username';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
@@ -30,45 +29,34 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       </div>
     );
 
-  const [user, conversation] = await db.$transaction([
-    db.user.findFirst({
-      where: {
-        id: session.user.id,
+  const conversation = await db.conversation.findUnique({
+    where: {
+      id: parseInt(searchParams.id),
+      users: {
+        some: {
+          id: session.user.id,
+        },
       },
-      select: {
-        id: true,
-      },
-    }),
-    db.conversation.findUnique({
-      where: {
-        id: parseInt(searchParams.id),
-        users: {
-          some: {
-            id: session.user.id,
+    },
+    select: {
+      id: true,
+      users: {
+        select: {
+          id: true,
+          name: true,
+          color: true,
+        },
+        where: {
+          id: {
+            not: session.user.id,
           },
         },
       },
-      select: {
-        id: true,
-        users: {
-          select: {
-            id: true,
-            name: true,
-            color: true,
-          },
-          where: {
-            id: {
-              not: session.user.id,
-            },
-          },
-        },
-      },
-    }),
-  ]);
-  if (!user) return <ForceSignOut />;
+    },
+  });
   if (!conversation) return notFound();
 
-  const toUser = conversation.users.find((usr) => usr.id !== user.id);
+  const toUser = conversation.users.find((usr) => usr.id !== session.user.id);
   if (!toUser) return notFound();
 
   return (
@@ -77,7 +65,11 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         <Username user={toUser} className="md:text-start text-lg" />
       </div>
 
-      <MessageList me={user} conversation={conversation} session={session} />
+      <MessageList
+        me={session.user}
+        conversation={conversation}
+        session={session}
+      />
     </div>
   );
 };

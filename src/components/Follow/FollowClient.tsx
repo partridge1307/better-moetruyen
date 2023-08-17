@@ -35,7 +35,7 @@ const FollowClient: FC<FollowClientProps> = ({ follow, mangaId }) => {
         target: 'MANGA',
       };
 
-      await axios.post(`/api/user/follow/create`, payload);
+      await axios.post(`/api/user/follow`, payload);
     },
     onError: (err) => {
       if (err instanceof AxiosError) {

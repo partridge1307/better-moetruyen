@@ -1,9 +1,8 @@
-import ForceSignOut from '@/components/ForceSignOut';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import dynamic from 'next/dynamic';
 import { Loader2 } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { notFound, redirect } from 'next/navigation';
 const DataMangaTable = dynamic(
   () => import('@/components/Manage/Table/Manga/DataMangaTable'),
   {
@@ -30,7 +29,7 @@ const page = async () => {
         updatedAt: true,
       },
     });
-  if (!manga) return <ForceSignOut />;
+  if (!manga) return notFound();
 
   return (
     <div className="min-h-[400px] md:min-h-[500px]">

@@ -3,10 +3,9 @@ import { UploadBadgeImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
 import { AddBadgeFormValidator } from '@/lib/validators/admin';
 import { Prisma } from '@prisma/client';
-import { NextRequest } from 'next/server';
 import { ZodError, z } from 'zod';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });
@@ -56,7 +55,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest) {
+export async function DELETE(req: Request) {
   try {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });

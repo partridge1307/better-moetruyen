@@ -1,30 +1,20 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { userFollowValidator } from '@/lib/validators/vote';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
-
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
     const { id, target } = userFollowValidator.parse(await req.json());
 
     if (target === 'MANGA') {
       const existingFollow = await db.mangaFollow.findFirst({
         where: {
-          userId: user.id,
+          userId: session.user.id,
           mangaId: +id,
         },
       });
@@ -34,7 +24,7 @@ export async function POST(req: NextRequest) {
           where: {
             mangaId_userId: {
               mangaId: existingFollow.mangaId,
-              userId: user.id,
+              userId: session.user.id,
             },
           },
         });
@@ -42,7 +32,7 @@ export async function POST(req: NextRequest) {
         await db.mangaFollow.create({
           data: {
             mangaId: +id,
-            userId: user.id,
+            userId: session.user.id,
           },
         });
       }

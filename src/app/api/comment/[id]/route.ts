@@ -1,40 +1,31 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 
 export async function DELETE(
-  req: NextRequest,
+  req: Request,
   context: { params: { id: string } }
 ) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    const comment = await db.comment.findFirstOrThrow({
-      where: {
-        id: +context.params.id,
-        authorId: user.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    await db.comment.delete({
-      where: {
-        id: comment.id,
-      },
-    });
+    await db.$transaction([
+      db.comment.findFirstOrThrow({
+        where: {
+          id: +context.params.id,
+          authorId: session.user.id,
+        },
+        select: {
+          id: true,
+        },
+      }),
+      db.comment.delete({
+        where: {
+          id: +context.params.id,
+        },
+      }),
+    ]);
 
     return new Response('OK');
   } catch (error) {

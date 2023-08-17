@@ -42,7 +42,7 @@ const ChatForm: FC<ChatFormProps> = ({ conversation, session, refetch }) => {
   });
   const { mutate: createMessage, isLoading } = useMutation({
     mutationFn: async (values: ChatPayload) => {
-      await axios.post('/api/conversation/message/create', values);
+      await axios.post('/api/conversation/message', values);
     },
     onError: (err) => {
       if (err instanceof AxiosError) {

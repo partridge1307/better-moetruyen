@@ -1,4 +1,7 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { CommentContentValidator } from '@/lib/validators/upload';
+import { Prisma } from '@prisma/client';
 import { ZodError, z } from 'zod';
 
 const CommentQuery = z.object({
@@ -57,6 +60,51 @@ export async function GET(req: Request, context: { params: { id: string } }) {
 
     return new Response(JSON.stringify(comments));
   } catch (error) {
+    if (error instanceof ZodError) {
+      return new Response('Invalid', { status: 422 });
+    }
+
+    return new Response('Something went wrong', { status: 500 });
+  }
+}
+
+export async function POST(req: Request, context: { params: { id: string } }) {
+  try {
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
+
+    const { content, oEmbed, commentId } = CommentContentValidator.parse(
+      await req.json()
+    );
+
+    if (commentId) {
+      await db.comment.create({
+        data: {
+          content: { ...content },
+          oEmbed,
+          authorId: session.user.id,
+          mangaId: +context.params.id,
+          replyToId: commentId,
+        },
+      });
+    } else {
+      await db.comment.create({
+        data: {
+          content: { ...content },
+          oEmbed,
+          authorId: session.user.id,
+          mangaId: +context.params.id,
+        },
+      });
+    }
+
+    return new Response('OK');
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        return new Response('Not Found', { status: 404 });
+      }
+    }
     if (error instanceof ZodError) {
       return new Response('Invalid', { status: 422 });
     }

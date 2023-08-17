@@ -1,17 +1,16 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
     const [user, inQueue] = await db.$transaction([
       db.user.findFirstOrThrow({
         where: {
-          id: token.id,
+          id: session.user.id,
         },
         select: {
           id: true,
@@ -20,7 +19,7 @@ export async function POST(req: NextRequest) {
       }),
       db.verifyList.findFirst({
         where: {
-          userId: token.id,
+          userId: session.user.id,
         },
       }),
     ]);

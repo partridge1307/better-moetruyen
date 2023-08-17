@@ -1,39 +1,26 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 
-export async function PATCH(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
+export async function PATCH(req: Request, context: { params: { id: string } }) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const [, targetManga] = await db.$transaction([
-      db.user.findFirstOrThrow({
-        where: {
-          id: token.id,
-        },
-        select: {
-          id: true,
-        },
-      }),
-      db.manga.findFirstOrThrow({
-        where: {
-          id: +context.params.id,
-          creatorId: token.id,
-        },
-        select: {
-          _count: {
-            select: {
-              chapter: true,
-            },
+    const targetManga = await db.manga.findFirstOrThrow({
+      where: {
+        id: +context.params.id,
+        creatorId: session.user.id,
+      },
+      select: {
+        _count: {
+          select: {
+            chapter: true,
           },
-          id: true,
         },
-      }),
-    ]);
+        id: true,
+      },
+    });
+
     if (targetManga._count.chapter <= 0)
       return new Response('Must have at least 1 chapter', { status: 403 });
 

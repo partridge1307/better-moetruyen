@@ -1,13 +1,13 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { ChatValidator } from '@/lib/validators/chat';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 import { ZodError, z } from 'zod';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
     const url = new URL(req.url);
     const { id, limit, page } = z
@@ -22,22 +22,13 @@ export async function GET(req: NextRequest) {
         page: url.searchParams.get('page'),
       });
 
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
-
     const messages = await db.message.findMany({
       where: {
         conversationId: parseInt(id),
         conversation: {
           users: {
             some: {
-              id: user.id,
+              id: session.user.id,
             },
           },
         },
@@ -62,6 +53,36 @@ export async function GET(req: NextRequest) {
     });
 
     return new Response(JSON.stringify(messages));
+  } catch (error) {
+    if (error instanceof ZodError) {
+      return new Response(error.message, { status: 422 });
+    }
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      return new Response('Not found', { status: 404 });
+    }
+
+    return new Response('Something went wrong', { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
+
+    const { conversationId, content } = ChatValidator.parse(await req.json());
+
+    if (conversationId <= 0) return new Response('Invalid', { status: 400 });
+
+    await db.message.create({
+      data: {
+        conversationId,
+        senderId: session.user.id,
+        content,
+      },
+    });
+
+    return new Response('OK');
   } catch (error) {
     if (error instanceof ZodError) {
       return new Response(error.message, { status: 422 });

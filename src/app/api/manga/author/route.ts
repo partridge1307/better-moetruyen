@@ -1,11 +1,14 @@
 import { db } from '@/lib/db';
 
-export async function GET(req: Request, context: { params: { name: string } }) {
+export async function GET(req: Request) {
   try {
+    const authorQuery = new URL(req.url).searchParams.get('q');
+    if (!authorQuery) return new Response('Invalid URL', { status: 422 });
+
     const author = await db.mangaAuthor.findMany({
       where: {
         name: {
-          contains: context.params.name,
+          contains: authorQuery,
           mode: 'insensitive',
         },
       },

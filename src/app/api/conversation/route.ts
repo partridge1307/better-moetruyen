@@ -1,21 +1,13 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 import { ZodError, z } from 'zod';
 
-export async function DELETE(req: NextRequest) {
+export async function DELETE(req: Request) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
+
     const { id } = z.object({ id: z.number() }).parse(await req.json());
 
     await db.conversation.delete({
@@ -23,7 +15,7 @@ export async function DELETE(req: NextRequest) {
         id,
         users: {
           some: {
-            id: user.id,
+            id: session.user.id,
           },
         },
       },

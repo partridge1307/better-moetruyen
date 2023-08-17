@@ -1,34 +1,35 @@
+import { getAuthSession } from '@/lib/auth';
 import { UploadMangaImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
 import { MangaFormValidator } from '@/lib/validators/upload';
 import { Prisma } from '@prisma/client';
-import { getToken } from 'next-auth/jwt';
-import { NextRequest } from 'next/server';
 import { z } from 'zod';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const token = await getToken({ req });
-    if (!token) return new Response('Unauthorized', { status: 401 });
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const user = await db.user.findFirstOrThrow({
-      where: {
-        id: token.id,
-      },
-      select: {
-        id: true,
-        verified: true,
-      },
-    });
+    const [user, existedManga] = await db.$transaction([
+      db.user.findFirstOrThrow({
+        where: {
+          id: session.user.id,
+        },
+        select: {
+          id: true,
+          verified: true,
+        },
+      }),
+      db.manga.findFirst({
+        where: {
+          creatorId: session.user.id,
+        },
+        select: {
+          id: true,
+        },
+      }),
+    ]);
 
-    const existedManga = await db.manga.findFirst({
-      where: {
-        creatorId: user.id,
-      },
-      select: {
-        id: true,
-      },
-    });
     if (!user.verified && existedManga)
       return new Response('Need verify', { status: 400 });
 

@@ -1,9 +1,8 @@
-import ForceSignOut from '@/components/ForceSignOut';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { FC } from 'react';
 const UserProfile = dynamic(() => import('@/components/User/UserProfile'), {
   ssr: false,
@@ -28,7 +27,7 @@ const page: FC<pageProps> = async ({}) => {
       banner: true,
     },
   });
-  if (!user) return <ForceSignOut />;
+  if (!user) return notFound();
 
   return <UserProfile user={user} />;
 };

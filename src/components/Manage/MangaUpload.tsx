@@ -44,6 +44,9 @@ const MangaTagUpload = dynamic(() => import('./MangaTagUpload'), {
 const MangaAuthorUpload = dynamic(() => import('./MangaAuthorUpload'), {
   ssr: false,
 });
+const VerifyDialog = dynamic(() => import('@/components/User/VerifyDialog'), {
+  ssr: false,
+});
 
 const MangaUpload = ({ tag }: { tag: Tags[] }) => {
   const { notFoundToast, loginToast, serverErrorToast, successToast } =
@@ -65,6 +68,35 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
     },
   });
 
+  const { mutate: Verify, isLoading: isVerifing } = useMutation({
+    mutationKey: ['verify-request'],
+    mutationFn: async () => {
+      await axios.post('/api/user/verify');
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 401) return loginToast();
+        if (err.response?.status === 404) return notFoundToast();
+        if (err.response?.status === 400)
+          return toast({
+            title: 'Bạn đã Verify',
+            description: 'Bạn đã được Verify trước đó',
+            variant: 'destructive',
+          });
+        if (err.response?.status === 418)
+          return toast({
+            title: 'Bạn đang yêu cầu Verify',
+            description: 'Yêu cầu của bạn đang được xem xét',
+            variant: 'destructive',
+          });
+      }
+
+      return serverErrorToast();
+    },
+    onSuccess: () => {
+      return successToast();
+    },
+  });
   const {
     data: authorResult,
     mutate: FetchAuthor,
@@ -133,6 +165,11 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
               <button
                 className={cn(buttonVariants(), 'p-2')}
                 onClick={() => {
+                  const target = document.getElementById(
+                    'verify-button'
+                  ) as HTMLButtonElement;
+
+                  target.click();
                   dismiss();
                 }}
               >
@@ -190,130 +227,140 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-6">
-        <MangaImageUpload
-          form={form}
-          setPreviewImage={(value) => setPreviewImage(value)}
-          previewImage={previewImage}
-        />
-
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tên truyện</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="Tên truyện" autoComplete="off" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="altName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tên khác (Nếu có)</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="Tên khác" autoComplete="off" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <MangaAuthorUpload
-          form={form}
-          authorSelected={authorSelected}
-          setAuthorSelected={(value) => setAuthorSelected(value)}
-          authorInput={authorInput}
-          setAuthorInput={(value) => setAuthorInput(value)}
-          isFetchingAuthor={isFetchingAuthor}
-          authorResult={authorResult}
-        />
-
-        <MangaTagUpload
-          form={form}
-          tag={tag}
-          tagSelect={tagSelect}
-          setTagSelect={(value) => setTagSelect(value)}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={() => (
-            <FormItem>
-              <FormLabel>Mô tả</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Editor editorRef={editorRef} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="review"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel
-                className="after:content-['*'] after:text-red-500 after:ml-0.5"
-                title="Nội dung này sẽ được hiển thị bên ngoài trang chủ"
-              >
-                Sơ lược
-              </FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="Nhập nội dung..." {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="facebookLink"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Link Facebook (nếu có)</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="https://facebook.com/" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="discordLink"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Link Discord (nếu có)</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="https://discord.gg/" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <Button
-          type="submit"
-          isLoading={isUploadManga}
-          disabled={isUploadManga}
-          className="w-full"
+    <>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmitHandler)}
+          className="space-y-6"
         >
-          Đăng
-        </Button>
-      </form>
-    </Form>
+          <MangaImageUpload
+            form={form}
+            setPreviewImage={(value) => setPreviewImage(value)}
+            previewImage={previewImage}
+          />
+
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tên truyện</FormLabel>
+                <FormMessage />
+                <FormControl>
+                  <Input
+                    placeholder="Tên truyện"
+                    autoComplete="off"
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="altName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tên khác (Nếu có)</FormLabel>
+                <FormMessage />
+                <FormControl>
+                  <Input placeholder="Tên khác" autoComplete="off" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <MangaAuthorUpload
+            form={form}
+            authorSelected={authorSelected}
+            setAuthorSelected={(value) => setAuthorSelected(value)}
+            authorInput={authorInput}
+            setAuthorInput={(value) => setAuthorInput(value)}
+            isFetchingAuthor={isFetchingAuthor}
+            authorResult={authorResult}
+          />
+
+          <MangaTagUpload
+            form={form}
+            tag={tag}
+            tagSelect={tagSelect}
+            setTagSelect={(value) => setTagSelect(value)}
+          />
+
+          <FormField
+            control={form.control}
+            name="description"
+            render={() => (
+              <FormItem>
+                <FormLabel>Mô tả</FormLabel>
+                <FormMessage />
+                <FormControl>
+                  <Editor editorRef={editorRef} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="review"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel
+                  className="after:content-['*'] after:text-red-500 after:ml-0.5"
+                  title="Nội dung này sẽ được hiển thị bên ngoài trang chủ"
+                >
+                  Sơ lược
+                </FormLabel>
+                <FormMessage />
+                <FormControl>
+                  <Input placeholder="Nhập nội dung..." {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="facebookLink"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Link Facebook (nếu có)</FormLabel>
+                <FormMessage />
+                <FormControl>
+                  <Input placeholder="https://facebook.com/" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="discordLink"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Link Discord (nếu có)</FormLabel>
+                <FormMessage />
+                <FormControl>
+                  <Input placeholder="https://discord.gg/" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type="submit"
+            isLoading={isUploadManga}
+            disabled={isUploadManga}
+            className="w-full"
+          >
+            Đăng
+          </Button>
+        </form>
+      </Form>
+      <VerifyDialog Verify={() => Verify()} isVerifing={isVerifing} />
+    </>
   );
 };
 

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/Button';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { socket } from '@/lib/socket';
 import { cn } from '@/lib/utils';
-import { CommentContentPayload } from '@/lib/validators/chapter';
+import { CommentContentPayload } from '@/lib/validators/comment';
 import { AutoLinkNode } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useMutation } from '@tanstack/react-query';

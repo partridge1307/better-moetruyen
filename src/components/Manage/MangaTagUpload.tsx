@@ -1,8 +1,5 @@
 import { cn } from '@/lib/utils';
-import type {
-  MangaUploadPayload,
-  tagInfoProps,
-} from '@/lib/validators/chapter';
+import type { MangaUploadPayload, tagInfoProps } from '@/lib/validators/manga';
 import { Check, X } from 'lucide-react';
 import { FC } from 'react';
 import type { UseFormReturn } from 'react-hook-form';

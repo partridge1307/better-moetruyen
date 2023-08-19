@@ -5,7 +5,7 @@ import { toast } from '@/hooks/use-toast';
 import {
   ChapterUploadValidator,
   type ChapterUploadPayload,
-} from '@/lib/validators/upload';
+} from '@/lib/validators/chapter';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';

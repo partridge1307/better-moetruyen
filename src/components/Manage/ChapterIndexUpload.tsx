@@ -1,4 +1,4 @@
-import type { ChapterUploadPayload } from '@/lib/validators/upload';
+import type { ChapterUploadPayload } from '@/lib/validators/chapter';
 import { FC } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
@@ -63,7 +63,9 @@ const ChapterIndexUpload: FC<ChapterIndexUploadProps> = ({
                 ref={field.ref}
                 disabled={disaleChapterIndex}
                 type="number"
-                onChange={(e) => field.onChange(e)}
+                min={0}
+                step={0.1}
+                onChange={(e) => field.onChange(e.target.valueAsNumber)}
                 onBlur={field.onBlur}
               />
             </div>

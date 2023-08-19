@@ -16,10 +16,17 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
 import { Separator } from '../ui/Separator';
 import { useMediaQuery } from '@mantine/hooks';
+import dynamic from 'next/dynamic';
+const ReportChapter = dynamic(() => import('@/components/Report/Chapter'), {
+  ssr: false,
+});
 
 interface ChapterControllProps {
   currentImage: number;
-  chapter: Pick<Chapter, 'name' | 'chapterIndex' | 'volume' | 'images'> & {
+  chapter: Pick<
+    Chapter,
+    'id' | 'name' | 'chapterIndex' | 'volume' | 'images'
+  > & {
     manga: {
       name: string;
       id: number;
@@ -196,10 +203,19 @@ const ChapterControll: FC<ChapterControllProps> = ({
               </button>
             </div>
           )}
+
+          <ReportChapter id={chapter.id} />
         </PopoverContent>
       </Popover>
     );
-  }, [matches, onProgressBarHandler, progressBar, readingMode, setReadingMode]);
+  }, [
+    chapter.id,
+    matches,
+    onProgressBarHandler,
+    progressBar,
+    readingMode,
+    setReadingMode,
+  ]);
 
   return (
     <div className="space-y-4">

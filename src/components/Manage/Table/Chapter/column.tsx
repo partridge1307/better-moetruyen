@@ -7,6 +7,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import dynamic from 'next/dynamic';
 const DataTableRowAction = dynamic(() => import('./DataTableRowAction'), {
   ssr: false,
+  loading: () => <div className="h-6 w-6 animate-pulse dark:bg-zinc-900" />,
 });
 
 export type ChapterColumn = Pick<

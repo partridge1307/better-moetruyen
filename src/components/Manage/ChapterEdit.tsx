@@ -4,7 +4,7 @@ import { useCustomToast } from '@/hooks/use-custom-toast';
 import {
   ChapterUploadPayload,
   ChapterUploadValidator,
-} from '@/lib/validators/upload';
+} from '@/lib/validators/chapter';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Chapter } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';

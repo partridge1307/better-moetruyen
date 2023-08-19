@@ -1,206 +1,165 @@
 'use client';
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { toast } from '@/hooks/use-toast';
-import { cn, dataUrlToBlob } from '@/lib/utils';
-import { TeamEditPayload } from '@/lib/validators/team';
+import { TeamEditPayload, TeamEditValidator } from '@/lib/validators/team';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Team } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { Edit, Loader2, Pencil, Plus } from 'lucide-react';
-import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { FC, useEffect, useState } from 'react';
+import { FC } from 'react';
+import { useForm } from 'react-hook-form';
+import { Button } from '../ui/Button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '../ui/Form';
 import { Input } from '../ui/Input';
-const ImageCropModal = dynamic(() => import('../ImageCropModal'), {
-  ssr: false,
-});
 
 interface TeamEditProps {
-  team: Pick<Team, 'id' | 'name' | 'image'>;
+  team: Pick<Team, 'id' | 'name' | 'image' | 'description'>;
 }
 
 const TeamEdit: FC<TeamEditProps> = ({ team }) => {
-  const { loginToast, notFoundToast, serverErrorToast, successToast } =
+  const { loginToast, serverErrorToast, successToast, notFoundToast } =
     useCustomToast();
   const router = useRouter();
-  const [previewImage, setPreviewImage] = useState<{
-    type: string;
-    image: string;
-  } | null>(null);
-  const [dataUrl, setDataUrl] = useState<{
-    type: string;
-    data: string;
-  } | null>();
-  const [croppedImg, setCroppedImg] = useState<string | null>(null);
-  const [blobImg, setBlobImg] = useState<Blob | null>(null);
-  const [teamName, setTeamName] = useState<string>(team.name);
 
-  useEffect(() => {
-    const handler = async () => {
-      if (dataUrl?.type === 'image') {
-        const blobImg = dataUrlToBlob(dataUrl.data);
-        const url = URL.createObjectURL(blobImg);
-        setCroppedImg(url);
-        setBlobImg(blobImg);
-        setDataUrl(null);
-      }
-    };
-
-    handler();
-  }, [dataUrl]);
-
-  const { mutate: EditTeam, isLoading: isEditting } = useMutation({
-    mutationFn: async (values: TeamEditPayload) => {
-      const { image, name } = values;
-      const form = new FormData();
-      form.append('image', image ? image : '');
-      form.append('name', name);
-
-      const { data } = await axios.patch(`/api/team/${team.id}`, form);
-
-      return data;
+  const form = useForm<TeamEditPayload>({
+    resolver: zodResolver(TeamEditValidator),
+    defaultValues: {
+      image: team.image,
+      name: team.name,
+      description: team.description,
     },
-    onError: (e) => {
-      if (e instanceof AxiosError) {
-        if (e.response?.status === 401) return loginToast();
-        if (e.response?.status === 404) return notFoundToast();
-        if (e.response?.status === 422)
-          return toast({
-            title: 'Không hợp lệ',
-            description: 'Biểu mẫu không hợp lệ. Vui lòng thử lại',
-            variant: 'destructive',
-          });
+  });
+
+  const { mutate: Edit, isLoading: isEditting } = useMutation({
+    mutationFn: async (values: TeamEditPayload) => {
+      const { image, name, description } = values;
+
+      const form = new FormData();
+      if (image.startsWith('blob')) {
+        const blob = await fetch(image).then((res) => res.blob());
+        form.append('image', blob);
+      } else {
+        form.append('image', image);
+      }
+      form.append('name', name);
+      form.append('description', description);
+
+      await axios.patch(`/api/team/${team.id}`, form);
+    },
+    onError: (err) => {
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 401) return loginToast();
+        if (err.response?.status === 404) return notFoundToast();
       }
 
       return serverErrorToast();
     },
     onSuccess: () => {
-      router.push(`/me/team`);
+      router.push('/me/team');
       router.refresh();
 
       return successToast();
     },
   });
 
-  function onSubmitHandler() {
-    const payload: TeamEditPayload = {
-      image: blobImg ?? undefined,
-      name: teamName,
-    };
-
-    EditTeam(payload);
+  function onSubmitHandler(values: TeamEditPayload) {
+    Edit(values);
   }
 
   return (
-    <form
-      id="team-update"
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSubmitHandler();
-      }}
-    >
-      <div className="space-y-8 relative min-h-[60vh]">
-        <div className="space-y-4 max-sm:flex max-sm:flex-col max-sm:items-center">
-          <p className="max-sm:self-start">Ảnh team:</p>
-          <div className="relative w-32 h-32">
-            {croppedImg ? (
-              <Image
-                fill
-                sizes="0%"
-                priority
-                src={croppedImg}
-                alt="Preview Image"
-                className="rounded-full"
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Ảnh</FormLabel>
+              <FormMessage />
+              <FormControl>
+                <Image
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  priority
+                  src={field.value}
+                  alt="Team Image Preview"
+                  className="w-32 h-44 object-cover cursor-pointer"
+                  onClick={() => {
+                    const target = document.getElementById(
+                      'team-image-add'
+                    ) as HTMLInputElement;
+
+                    target.click();
+                  }}
+                />
+              </FormControl>
+              <Input
+                id="team-image-add"
+                type="file"
+                accept=".jpg, .jpeg, .png"
+                className="hidden"
+                onChange={(e) => {
+                  if (e.target.files?.length) {
+                    const file = e.target.files[0];
+                    if (file.size < 4 * 1000 * 1000) {
+                      const url = URL.createObjectURL(file);
+                      field.onChange(url);
+                    }
+                  }
+                }}
               />
-            ) : team.image ? (
-              <Image
-                fill
-                sizes="0%"
-                priority
-                src={team.image}
-                alt="Team Image"
-                className="rounded-full"
-              />
-            ) : (
-              <div className="h-full w-full rounded-full flex justify-center items-center dark:bg-zinc-900">
-                <Plus className="w-10 h-10" />
-              </div>
-            )}
+            </FormItem>
+          )}
+        />
 
-            <input
-              type="file"
-              accept=".jpg, .png, .jpeg"
-              className="absolute inset-0 rounded-full opacity-0 file:cursor-pointer cursor-pointer"
-              onChange={(e) => {
-                if (e.target.files?.length) {
-                  setPreviewImage({
-                    type: 'image',
-                    image: URL.createObjectURL(e.target.files[0]),
-                  });
-                  e.target.value = '';
-                  const target = document.getElementById('crop-modal=button');
-                  target?.click();
-                }
-              }}
-            />
-            <Edit className="w-6 h-6 absolute right-2 top-0 z-10 p-1 dark:bg-zinc-900 rounded-full" />
-          </div>
-        </div>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tên Team</FormLabel>
+              <FormMessage />
+              <FormControl>
+                <Input placeholder="Tên Team" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-        <div>
-          <p>Tên team:</p>
-          <div className="relative">
-            <Input
-              value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
-            />
-            <Pencil className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 -z-10" />
-          </div>
-        </div>
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Mô tả</FormLabel>
+              <FormMessage />
+              <FormControl>
+                <Input placeholder="Mô tả" {...field} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-        {(teamName !== team.name || croppedImg) && (
-          <div className="absolute inset-x-0 h-fit flex items-center justify-end gap-6 rounded-md p-3 px-4 bottom-0 dark:bg-zinc-900/70">
-            <button
-              disabled={isEditting}
-              className="hover:underline underline-offset-2"
-              onClick={(e) => {
-                e.preventDefault();
-                setTeamName(team.name);
-                setBlobImg(null);
-              }}
-            >
-              Reset
-            </button>
-            <button
-              form="team-update"
-              disabled={isEditting}
-              className={cn(
-                'bg-green-600 hover:bg-green-800 w-20 px-2 py-1 rounded-md',
-                isEditting && 'flex items-center gap-2'
-              )}
-            >
-              {isEditting && <Loader2 className="w-4 h-4 animate-spin" />}
-              Sửa
-            </button>
-          </div>
-        )}
-      </div>
-
-      <ImageCropModal
-        previewImage={previewImage}
-        aspect={1}
-        setCancel={() => {
-          setCroppedImg(null);
-          setPreviewImage(null);
-        }}
-        setDone={() => setPreviewImage(null)}
-        setDataUrl={(value) => {
-          setDataUrl(value);
-        }}
-      />
-    </form>
+        <Button
+          type="submit"
+          isLoading={isEditting}
+          disabled={isEditting}
+          className="w-full"
+        >
+          Sửa
+        </Button>
+      </form>
+    </Form>
   );
 };
 

@@ -1,6 +1,6 @@
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { CommentContentValidator } from '@/lib/validators/upload';
+import { CommentContentValidator } from '@/lib/validators/comment';
 import { Prisma } from '@prisma/client';
 import { ZodError, z } from 'zod';
 

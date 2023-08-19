@@ -30,21 +30,22 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
     <main className="container max-sm:px-2 h-full pt-20">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-[.6fr_1fr] lg:grid-cols-[.4fr_1fr]">
         <div className="h-fit rounded-lg space-y-2 dark:bg-zinc-900/75">
-          <div className="relative p-2 pb-20 dark:hover:bg-zinc-700 rounded-md">
-            <Link href="/me">
-              <UserBanner user={session.user} />
+          <Link href="/me">
+            <div className="relative p-2 dark:hover:bg-zinc-700 rounded-md">
+              <div className="relative">
+                <UserBanner user={session.user} className="rounded-md" />
 
-              <div className="absolute inset-x-4 left-4 top-1/2 translate-y-[20%] flex items-center gap-4">
                 <UserAvatar
                   user={session.user}
-                  className="w-24 h-24 lg:w-28 lg:h-28 z-10 border-4"
+                  className="w-24 h-24 lg:w-28 lg:h-28 absolute left-2 bottom-0 translate-y-1/2 border-4"
                 />
-                <div className="relative max-w-[80%] max-h-10 overflow-auto md:scrollbar md:dark:scrollbar--dark">
-                  <Username user={session.user} className="-pb-2 text-lg" />
-                </div>
               </div>
-            </Link>
-          </div>
+              <Username
+                user={session.user}
+                className="text-start text-lg font-semibold pl-3 mt-16 lg:mt-20"
+              />
+            </div>
+          </Link>
 
           <div className="space-y-4 p-4">
             <Link

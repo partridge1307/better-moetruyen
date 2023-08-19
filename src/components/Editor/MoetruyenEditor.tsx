@@ -71,7 +71,7 @@ const Editor = ({
             />
           </div>
           <div className="text-right">
-            <CharacterLimitPlugin charset="UTF-16" maxLength={1024} />
+            <CharacterLimitPlugin charset="UTF-8" maxLength={1024} />
           </div>
         </div>
         <Submit id={id} commentId={commentId} chapterId={chapterId} />

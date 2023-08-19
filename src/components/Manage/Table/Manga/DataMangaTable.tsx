@@ -22,6 +22,12 @@ import { useState } from 'react';
 import { MangaColumn } from './column';
 const DataToolbar = dynamic(() => import('./DataToolbar'), {
   ssr: false,
+  loading: () => (
+    <div className="flex items-center gap-4">
+      <div className="p-2 py-4 max-sm:w-24 w-36 h-10 rounded-xl animate-pulse dark:bg-zinc-900" />
+      <div className="p-2 py-4 max-sm:w-24 w-36 h-10 rounded-xl animate-pulse dark:bg-zinc-900" />
+    </div>
+  ),
 });
 const TableDataHeader = dynamic(() => import('@/components/TableDataHeader'), {
   ssr: false,

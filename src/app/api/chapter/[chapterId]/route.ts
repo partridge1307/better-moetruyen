@@ -1,7 +1,7 @@
 import { getAuthSession } from '@/lib/auth';
 import { EditChapterImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
-import { ChapterFormEditValidator } from '@/lib/validators/upload';
+import { ChapterFormEditValidator } from '@/lib/validators/chapter';
 import { Prisma } from '@prisma/client';
 import { ZodError } from 'zod';
 

@@ -11,7 +11,7 @@ import '@/styles/mteditor.css';
 
 interface LatestCommentProps {
   comments: (Pick<Comment, 'id' | 'mangaId' | 'content' | 'createdAt'> & {
-    author: Pick<User, 'id' | 'color' | 'image' | 'name'>;
+    author: Pick<User, 'color' | 'image' | 'name'>;
   })[];
 }
 
@@ -20,7 +20,7 @@ const LatestComment: FC<LatestCommentProps> = ({ comments }) => {
     <ul className="space-y-4 p-4 md:scrollbar md:dark:scrollbar--dark rounded-lg dark:bg-zinc-900/70">
       {comments.map((comment, idx) => (
         <li key={idx} className="flex gap-2 md:gap-4">
-          <Link href={`/user/${comment.author.id}`}>
+          <Link href={`/user/${comment.author.name?.split(' ').join('-')}`}>
             <UserAvatar
               user={comment.author}
               className="mt-2 max-w-[2.5rem] max-h-[2.5rem] md:max-w-[3rem] md:max-h-[3rem]"
@@ -28,7 +28,7 @@ const LatestComment: FC<LatestCommentProps> = ({ comments }) => {
           </Link>
 
           <div className="space-y-1">
-            <Link href={`/user/${comment.author.id}`}>
+            <Link href={`/user/${comment.author.name?.split(' ').join('-')}`}>
               <Username
                 user={comment.author}
                 className="max-sm:text-sm text-start"

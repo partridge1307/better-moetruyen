@@ -8,7 +8,7 @@ import {
   MangaUploadValidator,
   authorInfoProps,
   tagInfoProps,
-} from '@/lib/validators/upload';
+} from '@/lib/validators/manga';
 import type EditorJS from '@editorjs/editorjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebouncedValue } from '@mantine/hooks';

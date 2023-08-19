@@ -3,7 +3,7 @@
 import type {
   MangaUploadPayload,
   authorInfoProps,
-} from '@/lib/validators/upload';
+} from '@/lib/validators/manga';
 import { Loader2, X } from 'lucide-react';
 import { FC } from 'react';
 import type { UseFormReturn } from 'react-hook-form';

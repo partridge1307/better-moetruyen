@@ -10,7 +10,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '../ui/Accordion';
+} from '../../ui/Accordion';
 
 interface ListTreeChapterProps {
   mangaId: number;

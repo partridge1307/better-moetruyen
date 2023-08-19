@@ -29,7 +29,7 @@ const Page = async () => {
             .filter((user) => user.role === 'ADMIN')
             .map((user, idx) => (
               <li key={idx} className="p-2 dark:bg-zinc-700 rounded-lg">
-                <Link href={`/user/${user.id}`}>
+                <Link href={`/user/${user.name?.split(' ').join('-')}`}>
                   <p className="text-lg">{user.name}</p>
                   <p className="text-sm">
                     <span>ID:</span> {user.id}
@@ -47,7 +47,7 @@ const Page = async () => {
             .filter((user) => user.role === 'MOD')
             .map((user, idx) => (
               <li key={idx} className="p-2 dark:bg-zinc-700 rounded-lg">
-                <Link href={`/user/${user.id}`}>
+                <Link href={`/user/${user.name?.split(' ').join('-')}`}>
                   <p className="text-lg">{user.name}</p>
                   <p className="text-sm">
                     <span>ID:</span> {user.id}

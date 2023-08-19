@@ -9,7 +9,7 @@ import {
   MangaUploadValidator,
   authorInfoProps,
   tagInfoProps,
-} from '@/lib/validators/upload';
+} from '@/lib/validators/manga';
 import type EditorJS from '@editorjs/editorjs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -65,35 +65,6 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
     },
   });
 
-  const { mutate: verifyRequest } = useMutation({
-    mutationKey: ['verify-request'],
-    mutationFn: async () => {
-      await axios.post('/api/user/verify');
-    },
-    onError: (err) => {
-      if (err instanceof AxiosError) {
-        if (err.response?.status === 401) return loginToast();
-        if (err.response?.status === 404) return notFoundToast();
-        if (err.response?.status === 400)
-          return toast({
-            title: 'Bạn đã được Verify rồi',
-            variant: 'destructive',
-          });
-        if (err.response?.status === 418)
-          return toast({
-            title: 'Bạn đã trong hàng đợi xét duyệt rồi',
-            variant: 'destructive',
-          });
-      }
-      return serverErrorToast();
-    },
-    onSuccess: () => {
-      return toast({
-        title: 'Thành công',
-        description: 'Vui lòng chờ xét duyệt',
-      });
-    },
-  });
   const {
     data: authorResult,
     mutate: FetchAuthor,
@@ -160,16 +131,17 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
             variant: 'destructive',
             action: (
               <button
-                className={cn(buttonVariants(), 'text-sm')}
+                className={cn(buttonVariants(), 'p-2')}
                 onClick={() => {
-                  verifyRequest();
                   dismiss();
                 }}
               >
-                Xác thực
+                <span className="text-sm w-max">Xác thực</span>
               </button>
             ),
           });
+
+          return;
         }
       }
 

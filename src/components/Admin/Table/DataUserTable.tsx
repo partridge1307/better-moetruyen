@@ -80,7 +80,11 @@ const DataUserTable: FC<DataUserTableProps> = ({ data }) => {
                   } else {
                     return (
                       <TableCell key={cell.id}>
-                        <Link href={`/user/${row.original.userId}`}>
+                        <Link
+                          href={`/user/${row.original.user.name
+                            ?.split(' ')
+                            .join('-')}`}
+                        >
                           {flexRender(
                             cell.column.columnDef.cell,
                             cell.getContext()

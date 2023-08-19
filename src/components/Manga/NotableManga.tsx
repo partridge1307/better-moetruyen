@@ -1,7 +1,6 @@
 'use client';
 
 import '@/styles/swiper.css';
-import { useMediaQuery } from '@mantine/hooks';
 import type { Manga, MangaAuthor, Tag } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -22,36 +21,32 @@ interface NotableMangaProps {
 }
 
 const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
-  const matches = useMediaQuery('(min-width: 768px)');
-
   return mangas.length ? (
     <ImageGallery
       items={mangas.map((manga) => ({
         original: manga.image,
-        thumbnail: manga.image,
-        thumbnailClass: 'thumbnail-wrapper',
-        thumbnailLoading: 'lazy',
         renderItem(item) {
           return (
             <Link href={`/manga/${manga.id}`}>
-              <div className="relative w-full h-72">
-                <Image
-                  fill
-                  sizes="(max-width: 640px) 25vw, 35vw"
-                  quality={40}
-                  priority
-                  src={item.original}
-                  alt="Manga Image"
-                  className="object-cover rounded-md"
-                />
-                <div className="relative h-full w-full flex items-end px-2 md:px-10 py-8 bg-gradient-to-t dark:from-zinc-900">
-                  <div className="flex max-sm:flex-col gap-1 md:items-center md:justify-between w-full">
-                    <div className="text-start font-semibold">
-                      <p className="text-base md:text-lg">{manga.name}</p>
-                      <p className="text-sm max-sm:hidden">
-                        {manga.author.map((a) => a.name).join(', ')}
-                      </p>
-                    </div>
+              <div className="grid grid-cols-1 md:grid-cols-[.3fr_1fr] gap-4 p-2 rounded-lg dark:bg-zinc-900">
+                <div className="relative w-full h-44 md:h-60 rounded-md">
+                  <Image
+                    fill
+                    sizes="40vw"
+                    quality={40}
+                    src={item.original}
+                    alt={`${manga.name} Thumbnail`}
+                    className="object-contain object-top rounded-md"
+                  />
+                </div>
+
+                <div className="text-start text-base space-y-2 pb-16 md:pb-10">
+                  <h1 className="font-bold text-xl md:text-2xl">
+                    {manga.name}
+                  </h1>
+                  <p>{manga.author.map((a) => a.name).join(', ')}</p>
+                  <div className="space-y-1">
+                    <h2>Thể loại</h2>
                     <TagWrapper className="max-sm:gap-1">
                       {manga.tags.map((tag, idx) => (
                         <TagContent key={idx} title={tag.description}>
@@ -65,26 +60,13 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
             </Link>
           );
         },
-        renderThumbInner(item) {
-          return (
-            <div className="relative w-16 h-10 md:w-full md:h-14">
-              <Image
-                fill
-                sizes="10vw"
-                quality={10}
-                src={item.original}
-                alt="Manga Thumbnail Image"
-                className="object-cover rounded-md"
-              />
-            </div>
-          );
-        },
       }))}
       lazyLoad
       autoPlay
+      showIndex
+      showThumbnails={false}
       showPlayButton={false}
       showFullscreenButton={false}
-      thumbnailPosition={matches ? 'right' : 'bottom'}
       slideInterval={15000}
       renderLeftNav={(onClick, disabled) => (
         <LeftNav onClick={onClick} disabled={disabled} />

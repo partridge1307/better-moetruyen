@@ -50,10 +50,10 @@ const ManageLayout = async ({ children }: { children: React.ReactNode }) => {
 
         <div className="flex flex-col gap-3 p-2 pb-4 rounded-lg dark:bg-zinc-900">
           <h1 className="text-lg font-semibold text-center">Manga</h1>
-          <Link href="/manage/manga/died" className={cn(buttonVariants())}>
-            Manga Die
+          <Link href="/manage/manga/report" className={cn(buttonVariants())}>
+            Report
           </Link>
-          <Link href="/manage/manga/deleted" className={cn(buttonVariants())}>
+          <Link href="/manage/manga/delete" className={cn(buttonVariants())}>
             Manga đã xóa
           </Link>
           <Link href="/manage/manga/tag" className={cn(buttonVariants())}>

@@ -8,6 +8,7 @@ const Output = dynamic(
   async () => (await import('editorjs-react-renderer')).default,
   {
     ssr: false,
+    loading: () => <div className="h-72 animate-pulse dark:bg-zinc-700" />,
   }
 );
 

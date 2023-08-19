@@ -1,7 +1,7 @@
 import { getAuthSession } from '@/lib/auth';
 import { UploadMangaImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
-import { MangaFormValidator } from '@/lib/validators/upload';
+import { MangaFormValidator } from '@/lib/validators/manga';
 import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 

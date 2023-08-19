@@ -250,7 +250,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
               )}
             </AspectRatio>
 
-            <div className="absolute right-0 lg:right-4 top-0 p-2 md:p-2 rounded-full dark:bg-zinc-900/70">
+            <div className="absolute right-2 lg:right-3 top-0 p-1 rounded-full dark:bg-zinc-900/70">
               <EditIcon className="w-3 h-3 md:w-4 md:h-4" />
             </div>
           </div>

@@ -2,29 +2,40 @@ import { db } from '@/lib/db';
 import { ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
-  ssr: false,
+
+const Recommendation = dynamic(
+  () => import('@/components/Manga/Recommendation'),
+  {
+    loading: () => (
+      <div className="w-full h-60 animate-pulse dark:bg-zinc-900" />
+    ),
+  }
+);
+const LatestManga = dynamic(() => import('@/components/Manga/LatestManga'), {
   loading: () => (
-    <template className="grid grid-cols-1 max-sm:grid-rows-[1fr_.3fr] md:grid-cols-[1fr_.1fr] gap-2 w-full h-80 md:h-72">
-      <template className="animate-pulse dark:bg-zinc-900 rounded-lg" />
-      <template className="animate-pulse dark:bg-zinc-900 rounded-lg" />
-    </template>
+    <div className="w-full h-[400px] rounded-lg animate-pulse dark:bg-zinc-900" />
   ),
 });
-const Recommendation = dynamic(
-  () => import('@/components/Manga/Recommendation')
-);
-const LatestManga = dynamic(() => import('@/components/Manga/LatestManga'));
-const Leaderboard = dynamic(() => import('@/components/Leaderboard'));
+const Leaderboard = dynamic(() => import('@/components/Leaderboard'), {
+  loading: () => (
+    <div className="w-full h-[400px] rounded-lg animate-pulse dark:bg-zinc-900" />
+  ),
+});
 const LastestComment = dynamic(
   () => import('@/components/Comment/LatestComment'),
   {
     ssr: false,
     loading: () => (
-      <template className="w-full h-40 p-2 rounded-lg animate-pulse dark:bg-zinc-900" />
+      <div className="w-full h-96 p-2 rounded-lg animate-pulse dark:bg-zinc-900" />
     ),
   }
 );
+const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-96 md:h-64 rounded-lg animate-pulse dark:bg-zinc-900" />
+  ),
+});
 
 const Home = async () => {
   const [manga, lastestComment] = await db.$transaction([
@@ -65,7 +76,6 @@ const Home = async () => {
         createdAt: true,
         author: {
           select: {
-            id: true,
             image: true,
             name: true,
             color: true,

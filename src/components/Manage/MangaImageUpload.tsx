@@ -11,7 +11,7 @@ import {
 import { Input } from '../ui/Input';
 import Image from 'next/image';
 import { ImagePlus } from 'lucide-react';
-import type { MangaUploadPayload } from '@/lib/validators/upload';
+import type { MangaUploadPayload } from '@/lib/validators/manga';
 import type { UseFormReturn } from 'react-hook-form';
 
 interface MangaImageUploadProps {
@@ -31,15 +31,20 @@ const MangaImageUpload: FC<MangaImageUploadProps> = ({
       name="image"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Ảnh bìa</FormLabel>
+          <FormLabel
+            className="after:content-['*'] after:text-red-500 after:ml-0.5"
+            title="Xem trước ở tỉ lệ của Tiêu Điểm. Còn lại Ảnh sẽ tự fill vừa với khung"
+          >
+            Ảnh bìa
+          </FormLabel>
           <FormMessage />
           <FormControl>
-            <div className="relative h-40 md:h-56 w-full rounded-lg border">
+            <div className="relative h-44 lg:h-72 w-52 lg:w-64 rounded-lg border">
               <Input
                 ref={field.ref}
                 type="file"
                 accept=".jpg, .jpeg, .png"
-                className="absolute z-10 h-full w-full opacity-0 cursor-pointer"
+                className="absolute z-10 h-full w-52 opacity-0 cursor-pointer"
                 title=""
                 onChange={(e) => {
                   if (e.target.files?.length) {
@@ -52,10 +57,11 @@ const MangaImageUpload: FC<MangaImageUploadProps> = ({
                 <Image
                   fill
                   sizes="50vw"
+                  quality={40}
                   priority
                   src={previewImage!}
                   alt="Preview Manga Image"
-                  className="rounded-lg object-cover"
+                  className="rounded-lg object-contain object-top"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center">

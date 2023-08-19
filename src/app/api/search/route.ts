@@ -15,6 +15,7 @@ export async function GET(req: Request) {
           OR: splittedQuery.map((q) => ({
             name: { contains: q, mode: 'insensitive' },
           })),
+          isPublished: true,
         },
         select: {
           id: true,

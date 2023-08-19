@@ -196,9 +196,9 @@ const Page: FC<pageProps> = async ({ searchParams }) => {
       orderBy: orderQuery,
       select: {
         id: true,
+        name: true,
         image: true,
         review: true,
-        name: true,
         author: {
           select: {
             name: true,

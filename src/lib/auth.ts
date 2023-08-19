@@ -120,7 +120,7 @@ export const authOptionsWrapper = (
               if (isCredentialsCallback) {
                 const sessionToken = randomUUID();
                 const sessionExpiry = new Date(
-                  Date.now() + 30 * 24 * 60 * 60 * 1000
+                  Date.now() + 15 * 24 * 60 * 60 * 1000
                 );
 
                 await db.session.create({
@@ -195,7 +195,7 @@ export const authOptionsWrapper = (
         },
       },
       jwt: {
-        maxAge: 30 * 24 * 60 * 60,
+        maxAge: 15 * 24 * 60 * 60,
         encode: async (arg) => {
           if (isCredentialsCallback) {
             const cookie = cookies().get('next-auth.session-token');

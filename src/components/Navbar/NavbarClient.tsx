@@ -103,21 +103,19 @@ const NavbarClient = () => {
                 align="end"
                 className="w-[250px] md:w-[300px] p-2"
               >
-                <div className="relative w-full h-fit mb-16">
-                  <UserBanner user={session.user} />
-
-                  <div className="absolute left-2 top-2/3 translate-y-1/4 flex items-end gap-2">
+                <div>
+                  <div className="relative">
+                    <UserBanner user={session.user} className="rounded-md" />
                     <UserAvatar
                       user={session.user}
-                      className="z-10 w-20 h-20 border-4"
+                      className="w-20 h-20 lg:w-24 lg:h-24 border-4 absolute left-2 bottom-0 translate-y-1/2"
                     />
-                    <div className="relative max-w-[80%] max-h-10 overflow-auto md:scrollbar md:dark:scrollbar--dark">
-                      <Username
-                        user={session.user}
-                        className="pb-4 self-end line-clamp-2"
-                      />
-                    </div>
                   </div>
+
+                  <Username
+                    user={session.user}
+                    className="text-lg font-semibold text-start pl-2 mt-14 lg:pl-4 lg:mt-16"
+                  />
                 </div>
                 <DropdownMenuSeparator />
                 <div className="space-y-2">

@@ -21,6 +21,7 @@ const AdvancedMangaCard: FC<AdvancedMangaCardProps> = ({ manga }) => {
       <Image
         width={200}
         height={200}
+        quality={40}
         src={manga.image}
         alt="Advanced Search Manga Image"
         className="object-cover rounded-l-lg w-32 h-44 lg:w-40 lg:h-56"

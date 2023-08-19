@@ -58,8 +58,10 @@ const Index = () => {
       </SheetTrigger>
 
       <SheetContent side={'top'} className="p-2">
-        <form>
+        <form action={`/search/`} method="GET">
           <Input
+            name="q"
+            autoComplete="off"
             placeholder="Tìm kiếm"
             value={query}
             onChange={(e) => setQuery(e.target.value)}

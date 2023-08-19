@@ -6,13 +6,13 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '../ui/Button';
 
-interface LatestMangaControllProps {
+interface MangaPaginationControll {
   count: number;
   hasPrevPage: boolean;
   hasNextPage: boolean;
 }
 
-const LatestMangaControll: FC<LatestMangaControllProps> = ({
+const MangaPaginationControll: FC<MangaPaginationControll> = ({
   count,
   hasPrevPage,
   hasNextPage,
@@ -52,4 +52,4 @@ const LatestMangaControll: FC<LatestMangaControllProps> = ({
   );
 };
 
-export default LatestMangaControll;
+export default MangaPaginationControll;

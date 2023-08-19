@@ -1,3 +1,5 @@
+'use client';
+
 import type { User } from '@prisma/client';
 import { FC } from 'react';
 import UserAvatar from '../User/UserAvatar';

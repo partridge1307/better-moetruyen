@@ -1,5 +1,5 @@
 import LatestMangaCard from '@/components/Manga/LatestMangaCard';
-import LatestMangaControll from '@/components/Manga/LatestMangaControll';
+import MangaPaginationControll from '@/components/Manga/MangaPaginationControll';
 import { db } from '@/lib/db';
 import type { Metadata } from 'next';
 import { FC } from 'react';
@@ -42,7 +42,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         createdAt: 'desc',
       },
       skip: start,
-      take: end,
+      take: Number(perPage),
       select: {
         manga: {
           select: {
@@ -63,7 +63,9 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         createdAt: true,
       },
     }),
-    db.manga.count(),
+    db.manga.count({
+      where: { isPublished: true },
+    }),
   ]);
 
   return (
@@ -81,7 +83,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
           )}
         </ul>
 
-        <LatestMangaControll
+        <MangaPaginationControll
           count={mangaCount}
           hasPrevPage={start > 0}
           hasNextPage={end < mangaCount}

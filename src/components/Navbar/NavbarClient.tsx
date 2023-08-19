@@ -3,10 +3,10 @@
 import { cn } from '@/lib/utils';
 import { MessageCircle, User2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo, useRef } from 'react';
-import SignOutButton from '../Auth/SignOutButton';
 import { Icons } from '../Icons';
 import UserAvatar from '../User/UserAvatar';
 import UserBanner from '../User/UserBanner';
@@ -19,16 +19,36 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/DropdownMenu';
-import NavSidebar from './NavSidebar';
-import dynamic from 'next/dynamic';
+
+const NavSidebar = dynamic(() => import('./NavSidebar'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-8 h-8 rounded-md animate-pulse dark:bg-zinc-900" />
+  ),
+});
+const Search = dynamic(() => import('@/components/Search'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-8 h-8 rounded-md animate-pulse dark:bg-zinc-900" />
+  ),
+});
 const Notifications = dynamic(() => import('@/components/Notify'), {
   ssr: false,
+  loading: () => (
+    <div className="w-8 h-8 rounded-md animate-pulse dark:bg-zinc-900" />
+  ),
+});
+const SignOutButton = dynamic(() => import('@/components/Auth/SignOutButton'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-10 p-2 px-4 rounded-md dark:bg-zinc-900" />
+  ),
 });
 
 const viewChapterRegex = /^(\/chapter\/\d+$)/;
 
 const NavbarClient = () => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   const pathname = usePathname();
   const isFixed = useRef(true);
@@ -65,6 +85,8 @@ const NavbarClient = () => {
         </div>
 
         <div className="flex items-center gap-4 md:gap-6">
+          <Search />
+
           {!!session?.user && <Notifications session={session} />}
 
           <DropdownMenu>
@@ -141,8 +163,6 @@ const NavbarClient = () => {
                 <DropdownMenuSeparator className="mt-4" />
                 <SignOutButton />
               </DropdownMenuContent>
-            ) : status === 'loading' ? (
-              <template className="h-72 w-52 rounded-md dark:bg-zinc-900 animate-pulse"></template>
             ) : (
               <DropdownMenuContent align="end" className="min-w-[200px] p-2">
                 <DropdownMenuItem asChild>

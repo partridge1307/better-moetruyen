@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Book, Menu, Pin, SunMoon } from 'lucide-react';
+import { Book, Home, Menu, Pin, SunMoon } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -105,17 +105,19 @@ const NavSidebar = () => {
             Moetruyen
           </h1>
           <ul className="mt-2 flex flex-col gap-y-8 px-4">
-            <Link
-              href="/"
-              className={cn(
-                'w-full rounded-lg py-2 text-center text-xl font-medium',
-                {
-                  'bg-slate-200 dark:bg-zinc-900/70': pathname === '/',
-                  'hover:bg-slate-100 dark:hover:bg-zinc-700': pathname !== '/',
-                }
-              )}
-            >
-              <DialogClose>Trang chủ</DialogClose>
+            <Link href="/">
+              <DialogClose
+                className={cn(
+                  'flex justify-center items-center w-full gap-2 py-2 rounded-lg text-center text-xl font-medium',
+                  {
+                    'bg-slate-200 dark:bg-zinc-900/70': pathname === '/',
+                    'hover:bg-slate-100 dark:hover:bg-zinc-700':
+                      pathname !== '/',
+                  }
+                )}
+              >
+                <Home className="h-6 w-6" /> Trang chủ
+              </DialogClose>
             </Link>
 
             {NavContent.map((nc) => (
@@ -126,17 +128,20 @@ const NavSidebar = () => {
                 </div>
                 <div className="flex flex-col gap-2">
                   {nc.subMenu.map((nsm) => (
-                    <Link
-                      key={nsm.title}
-                      href={nsm.link}
-                      className={cn('rounded-lg py-2 pl-8 transition-colors', {
-                        'bg-slate-200 dark:bg-zinc-900/70':
-                          pathname === nsm.link,
-                        'hover:bg-slate-100 dark:hover:bg-zinc-700':
-                          pathname !== nsm.link,
-                      })}
-                    >
-                      <DialogClose>{nsm.title}</DialogClose>
+                    <Link key={nsm.title} href={nsm.link}>
+                      <DialogClose
+                        className={cn(
+                          'w-full py-2 pl-8 text-start rounded-lg transition-colors duration-100',
+                          {
+                            'bg-slate-200 dark:bg-zinc-900/70':
+                              pathname === nsm.link,
+                            'hover:bg-slate-100 dark:hover:bg-zinc-700':
+                              pathname !== nsm.link,
+                          }
+                        )}
+                      >
+                        {nsm.title}
+                      </DialogClose>
                     </Link>
                   ))}
                 </div>

@@ -26,7 +26,7 @@ const MangaImage = lazy(() => import('@/components/Manga/MangaImage'));
 
 interface pageProps {
   params: {
-    id: string;
+    id: string | string[];
   };
 }
 
@@ -38,12 +38,14 @@ type discordProps = {
 
 export async function generateMetadata({
   params,
-}: {
-  params: { id: string };
-}): Promise<Metadata> {
+}: pageProps): Promise<Metadata> {
+  let idParam;
+  if (typeof params.id === 'string') idParam = params.id;
+  else idParam = params.id[0];
+
   const manga = await db.manga.findFirst({
     where: {
-      id: +params.id,
+      id: +idParam,
     },
     select: {
       id: true,
@@ -99,10 +101,14 @@ export async function generateMetadata({
 }
 
 const page: FC<pageProps> = async ({ params }) => {
+  let idParams;
+  if (typeof params.id === 'string') idParams = params.id;
+  else idParams = params.id[0];
+
   const [manga, comments] = await db.$transaction([
     db.manga.findFirst({
       where: {
-        id: +params.id,
+        id: +idParams,
         isPublished: true,
       },
       select: {
@@ -148,7 +154,7 @@ const page: FC<pageProps> = async ({ params }) => {
     }),
     db.comment.findMany({
       where: {
-        mangaId: +params.id,
+        mangaId: +idParams,
         replyToId: null,
       },
       select: {
@@ -406,7 +412,7 @@ const page: FC<pageProps> = async ({ params }) => {
                   <template className="grid grid-cols-1 grid-rows-[.7fr_1fr] gap-20 dark:bg-zinc-900 animate-pulse" />
                 }
               >
-                <Comment id={params.id} initialComments={comments} />
+                <Comment id={idParams} initialComments={comments} />
               </Suspense>
             </TabsContent>
           </Tabs>

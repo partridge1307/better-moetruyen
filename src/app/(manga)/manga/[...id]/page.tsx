@@ -19,7 +19,7 @@ const ListTreeChapter = dynamic(
 const ListChapter = dynamic(
   () => import('@/components/Chapter/ListChapter/ListChapter')
 );
-const Comment = lazy(() => import('@/components/Comment'));
+const Comment = lazy(() => import('@/components/Comment/Manga'));
 const EditorOutput = lazy(() => import('@/components/EditorOutput'));
 const FBEmbed = lazy(() => import('@/components/FBEmbed'));
 const MangaImage = lazy(() => import('@/components/Manga/MangaImage'));
@@ -76,7 +76,7 @@ export async function generateMetadata({
     },
     openGraph: {
       siteName: 'Moetruyen',
-      title: `${manga.name} | Moetruyen`,
+      title: `${manga.name}`,
       description: `Đọc ${manga.name} tại Moetruyen`,
       images: [
         {
@@ -294,7 +294,7 @@ const page: FC<pageProps> = async ({ params }) => {
             <p className="font-semibold text-lg">Mô tả</p>
             <Suspense
               fallback={
-                <template className="w-full h-20 p-2 rounded-md dark:bg-zinc-900 animate-pulse" />
+                <div className="w-full h-20 p-2 rounded-md dark:bg-zinc-900 animate-pulse" />
               }
             >
               <EditorOutput data={manga.description} />
@@ -360,7 +360,7 @@ const page: FC<pageProps> = async ({ params }) => {
                 {manga.facebookLink && (
                   <Suspense
                     fallback={
-                      <template className="w-full h-[300px] rounded-md dark:bg-zinc-900 animate-pulse" />
+                      <div className="w-full h-[300px] rounded-md dark:bg-zinc-900 animate-pulse" />
                     }
                   >
                     <FBEmbed facebookLink={manga.facebookLink} />
@@ -369,10 +369,10 @@ const page: FC<pageProps> = async ({ params }) => {
 
                 {discord.code && (
                   <div className="p-1">
-                    <p className="text-lg px-1 w-full">
+                    <h1 className="text-lg px-1 w-full">
                       Discord:{' '}
                       <span className="font-semibold">{discord.name}</span>
-                    </p>
+                    </h1>
                     <iframe
                       height={300}
                       src={`https://discord.com/widget?id=${discord.id}&theme=dark`}
@@ -388,10 +388,16 @@ const page: FC<pageProps> = async ({ params }) => {
                 <div className="md:w-full md:flex md:justify-end">
                   <TabsList className="space-x-2 dark:bg-zinc-800 max-sm:grid max-sm:grid-cols-2">
                     <TabsTrigger value="list">
-                      <List className="max-sm:w-5 max-sm:h-5" />
+                      <List
+                        className="max-sm:w-5 max-sm:h-5"
+                        aria-label="List chapter button"
+                      />
                     </TabsTrigger>
                     <TabsTrigger value="group">
-                      <ListTree className="max-sm:w-5 max-sm:h-5" />
+                      <ListTree
+                        className="max-sm:w-5 max-sm:h-5"
+                        aria-label="List tree chapter button"
+                      />
                     </TabsTrigger>
                   </TabsList>
                 </div>
@@ -409,7 +415,7 @@ const page: FC<pageProps> = async ({ params }) => {
             <TabsContent value="comment">
               <Suspense
                 fallback={
-                  <template className="grid grid-cols-1 grid-rows-[.7fr_1fr] gap-20 dark:bg-zinc-900 animate-pulse" />
+                  <div className="grid grid-cols-1 grid-rows-[.7fr_1fr] gap-20 dark:bg-zinc-900 animate-pulse" />
                 }
               >
                 <Comment id={idParams} initialComments={comments} />

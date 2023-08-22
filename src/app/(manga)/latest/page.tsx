@@ -8,16 +8,6 @@ export const metadata: Metadata = {
   title: 'Mới cập nhật',
   description: 'Manga mới cập nhật | Moetruyen',
   keywords: ['Mới cập nhật', 'Manga', 'Moetruyen'],
-  openGraph: {
-    siteName: 'Moetruyen',
-    title: 'Mới cập nhật',
-    description: 'Mới cập nhật | Moetruyen',
-  },
-  twitter: {
-    site: 'Moetruyen',
-    title: 'Mới cập nhật',
-    description: 'Mới cập nhật | Moetruyen',
-  },
 };
 
 interface pageProps {

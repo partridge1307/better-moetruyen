@@ -1,14 +1,14 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Book, Home, Menu, Pin, SunMoon } from 'lucide-react';
+import { useColorScheme, useLocalStorage } from '@mantine/hooks';
+import { DialogClose } from '@radix-ui/react-dialog';
+import { Book, Home, Menu, Pin, SunMoon, Users2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/Sheet';
 import { SwitchWithIcon } from '../ui/Switch';
-import { useColorScheme, useLocalStorage } from '@mantine/hooks';
-import { DialogClose } from '@radix-ui/react-dialog';
 
 interface NavContentProps {
   icon: JSX.Element;
@@ -42,6 +42,20 @@ const NavSidebar = () => {
           {
             title: 'Ngẫu nhiên',
             link: '/random',
+          },
+        ],
+      },
+      {
+        icon: <Users2 />,
+        title: 'Cộng đồng',
+        subMenu: [
+          {
+            title: 'Thông báo',
+            link: '/m/announcements',
+          },
+          {
+            title: 'Feed',
+            link: '/m',
           },
         ],
       },

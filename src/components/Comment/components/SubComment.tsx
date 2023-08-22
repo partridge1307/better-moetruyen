@@ -1,22 +1,18 @@
 import { CornerDownRight } from 'lucide-react';
-import dynamic from 'next/dist/shared/lib/dynamic';
 import { FC, useState } from 'react';
-const SubCommentOutput = dynamic(() => import('./SubCommentOutput'), {
-  ssr: false,
-});
 
 interface SubCommentProps {
   subCommentLength: number;
-  commentId: number;
+  children: React.ReactNode;
 }
 
-const SubComment: FC<SubCommentProps> = ({ subCommentLength, commentId }) => {
+const SubComment: FC<SubCommentProps> = ({ subCommentLength, children }) => {
   const [showReplies, setShowReplies] = useState<boolean>(false);
 
   return (
     <div>
       {showReplies ? (
-        <SubCommentOutput commentId={commentId} />
+        children
       ) : (
         <button
           aria-label="commentreplies"

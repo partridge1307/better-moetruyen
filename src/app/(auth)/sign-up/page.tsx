@@ -10,16 +10,6 @@ export const metadata: Metadata = {
   title: 'Đăng ký',
   description: 'Đăng ký Moetruyen',
   keywords: ['Đăng ký', 'Manga', 'Moetruyen'],
-  openGraph: {
-    siteName: 'Moetruyen',
-    title: 'Đăng ký',
-    description: 'Đăng ký | Moetruyen',
-  },
-  twitter: {
-    site: 'Moetruyen',
-    title: 'Đăng ký',
-    description: 'Đăng ký | Moetruyen',
-  },
 };
 
 const Page = async () => {

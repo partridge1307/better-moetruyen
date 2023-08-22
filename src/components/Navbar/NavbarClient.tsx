@@ -45,7 +45,7 @@ const SignOutButton = dynamic(() => import('@/components/Auth/SignOutButton'), {
   ),
 });
 
-const viewChapterRegex = /^(\/chapter\/\d+$)/;
+const viewChapterRegex = /^\/chapter\/\d+(?:\/[\w-]+)?/;
 
 const NavbarClient = () => {
   const { data: session } = useSession();
@@ -75,12 +75,12 @@ const NavbarClient = () => {
               aria-label="Moetruyen logo"
               className="h-6 w-6 bg-black dark:bg-white"
             />
-            <p
+            <span
               aria-label="Moetruyen"
               className="text-2xl font-semibold max-sm:hidden"
             >
               Moetruyen
-            </p>
+            </span>
           </Link>
         </div>
 
@@ -94,7 +94,7 @@ const NavbarClient = () => {
               {session?.user ? (
                 <UserAvatar className="w-8 h-8" user={session.user} />
               ) : (
-                <User2 className="h-7 w-7" />
+                <User2 className="h-7 w-7" aria-label="User button" />
               )}
             </DropdownMenuTrigger>
 

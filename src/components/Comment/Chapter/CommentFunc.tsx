@@ -1,11 +1,11 @@
-import CommentVoteClient from '@/components/Vote/CommentVoteClient';
+import CommentVoteClient from '@/components/Comment/components/CommentVote';
 import { Button } from '@/components/ui/Button';
 import type { VoteType } from '@prisma/client';
 import { Loader2, MessageSquare } from 'lucide-react';
 import type { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
 import { FC, memo, useState } from 'react';
-import DeleteComment from '../DeleteComment';
+import DeleteComment from '../components/DeleteComment';
 const MoetruyenEditor = dynamic(
   () => import('@/components/Editor/MoetruyenEditor'),
   { ssr: false, loading: () => <Loader2 className="w-6 h-6" /> }

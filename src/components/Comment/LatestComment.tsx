@@ -2,7 +2,7 @@
 
 import type { Comment, User } from '@prisma/client';
 import { FC } from 'react';
-import CommentContent from './CommentContent';
+import CommentContent from './components/CommentContent';
 import Link from 'next/link';
 import UserAvatar from '../User/UserAvatar';
 import Username from '../User/Username';

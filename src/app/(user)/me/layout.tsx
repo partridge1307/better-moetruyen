@@ -12,14 +12,6 @@ import { redirect } from 'next/navigation';
 export const metadata: Metadata = {
   title: 'Quản lý',
   keywords: ['Quản lý', 'Moetruyen'],
-  openGraph: {
-    title: 'Quản lý',
-    description: 'Quản lý | Moetruyen',
-  },
-  twitter: {
-    title: 'Quản lý',
-    description: 'Quản lý | Moetruyen',
-  },
 };
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {

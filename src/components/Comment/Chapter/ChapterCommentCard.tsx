@@ -5,9 +5,9 @@ import type { Prisma } from '@prisma/client';
 import type { Session } from 'next-auth';
 import { FC } from 'react';
 import { ExtendedComment } from '.';
-import CommentContent from '../CommentContent';
-import CommentOEmbed from '../CommentOEmbed';
-import SubComment from '../SubComment';
+import CommentContent from '../components/CommentContent';
+import CommentOEmbed from '../components/CommentOEmbed';
+import SubComment from '../components/SubComment';
 import CommentFunc from './CommentFunc';
 
 interface ChapterCommentCardProps {

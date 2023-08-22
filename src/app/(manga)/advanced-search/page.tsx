@@ -16,16 +16,6 @@ export const metadata: Metadata = {
   title: 'Tìm kiếm nâng cao',
   description: 'Tìm kiếm nâng cao | Moetruyen',
   keywords: ['Tìm kiếm nâng cao', 'Nâng cao', 'Tìm kiếm', 'Manga', 'Moetruyen'],
-  openGraph: {
-    siteName: 'Moetruyen',
-    title: 'Tìm kiếm nâng cao',
-    description: 'Tìm kiếm nâng cao | Moetruyen',
-  },
-  twitter: {
-    site: 'Moetruyen',
-    title: 'Tìm kiếm nâng cao',
-    description: 'Tìm kiếm nâng cao | Moetruyen',
-  },
 };
 
 export type ExtendedTags = {

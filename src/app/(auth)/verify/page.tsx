@@ -19,16 +19,6 @@ export const metadata: Metadata = {
     'Manga',
     'Moetruyen',
   ],
-  openGraph: {
-    siteName: 'Moetruyen',
-    title: 'Xác thực tài khoản',
-    description: 'Xác thực tài khoản | Moetruyen',
-  },
-  twitter: {
-    site: 'Moetruyen',
-    title: 'Đăng ký',
-    description: 'Đăng ký | Moetruyen',
-  },
 };
 
 interface pageProps {

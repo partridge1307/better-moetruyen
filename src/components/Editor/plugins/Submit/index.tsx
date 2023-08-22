@@ -1,77 +1,30 @@
-/* eslint-disable no-unused-vars */
 import { Button } from '@/components/ui/Button';
-import { useCustomToast } from '@/hooks/use-custom-toast';
-import { socket } from '@/lib/socket';
+import { useFetchOEmbed } from '@/hooks/use-fetch-oEmbed';
+import { useUploadComment } from '@/hooks/use-upload-comment';
 import { cn } from '@/lib/utils';
-import { CommentContentPayload } from '@/lib/validators/comment';
 import { AutoLinkNode } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import { CLEAR_EDITOR_COMMAND } from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
-import { $isImageNode, ImageNode } from '../../nodes/Image';
+import { $isImageNode, type ImageNode } from '../../nodes/Image';
+import type { CreateCommentEnum } from '@/lib/validators/comment';
 
 export default function Submit({
   id,
-  commentId,
-  chapterId,
+  type,
+  callbackURL,
 }: {
-  id: string;
-  commentId?: number;
-  chapterId?: number;
+  id: number;
+  type: CreateCommentEnum;
+  callbackURL: string;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [hasText, setHasText] = useState<boolean>(false);
-  const { loginToast, notFoundToast, serverErrorToast, successToast } =
-    useCustomToast();
-
+  const { mutate: Upload, isLoading: isUpload } = useUploadComment(editor);
   const {
     data: oEmbedData,
     mutate: Embed,
     isLoading: isFetchingOEmbed,
-  } = useMutation({
-    mutationKey: ['oembed-query'],
-    mutationFn: async (linkUrl: string) => {
-      const { link, meta } = await (
-        await fetch(`/api/link?url=${linkUrl}`)
-      ).json();
-
-      return { link, meta };
-    },
-  });
-  const { mutate: Upload, isLoading: isUpload } = useMutation({
-    mutationKey: ['comment-upload-query'],
-    mutationFn: async (values: CommentContentPayload) => {
-      if (chapterId) {
-        const payload = {
-          ...values,
-          id,
-        };
-        await axios.post(`/api/chapter/${chapterId}/comment`, payload);
-      } else {
-        await axios.post(`/api/manga/${id}/comment`, values);
-
-        if (commentId) {
-          socket.emit('notify', { type: 'COMMENT', payload: commentId });
-        }
-      }
-    },
-    onError: (err) => {
-      if (err instanceof AxiosError) {
-        if (err.response?.status === 401) return loginToast();
-        if (err.response?.status === 404) return notFoundToast();
-      }
-
-      return serverErrorToast();
-    },
-    onSuccess: () => {
-      if (!editor.isEditable()) editor.setEditable(true);
-      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-
-      return successToast();
-    },
-  });
+  } = useFetchOEmbed();
 
   useEffect(() => {
     editor.registerTextContentListener((text) => {
@@ -86,18 +39,23 @@ export default function Submit({
   useEffect(() => {
     if (typeof oEmbedData !== 'undefined' && !isFetchingOEmbed) {
       Upload({
-        content: editor.getEditorState().toJSON(),
-        oEmbed: oEmbedData,
-        commentId,
+        payload: {
+          type,
+          id,
+          content: editor.getEditorState().toJSON(),
+          oEmbed: oEmbedData,
+        },
+        callbackURL,
       });
     }
-  }, [Upload, commentId, editor, isFetchingOEmbed, oEmbedData]);
+  }, [Upload, callbackURL, editor, id, isFetchingOEmbed, oEmbedData, type]);
 
   const onClick = useCallback(() => {
     const editorState = editor.getEditorState();
+    let autoLink: AutoLinkNode | undefined, imageNode: ImageNode | undefined;
+
     if (editor.isEditable()) editor.setEditable(false);
 
-    let autoLink: AutoLinkNode | undefined, imageNode: ImageNode | undefined;
     editorState._nodeMap.forEach((node) => {
       if (node instanceof AutoLinkNode) {
         autoLink = node;
@@ -106,22 +64,23 @@ export default function Submit({
       }
     });
 
-    if (imageNode) {
-      Upload({ content: editorState.toJSON(), commentId });
+    if (imageNode || !autoLink) {
+      Upload({
+        payload: { type, id, content: editorState.toJSON() },
+        callbackURL,
+      });
     } else {
-      if (autoLink) {
-        Embed(autoLink.__url);
-      } else {
-        Upload({ content: editorState.toJSON(), commentId });
-      }
+      Embed(autoLink.__url);
     }
-  }, [Embed, Upload, commentId, editor]);
+  }, [Embed, Upload, callbackURL, editor, id, type]);
 
   return (
     <Button
       disabled={!hasText}
       isLoading={isUpload}
-      className={cn('w-full transition-opacity', !hasText && 'opacity-50')}
+      className={cn('w-full transition-opacity', {
+        'opacity-50': !hasText,
+      })}
       onClick={() => onClick()}
     >
       Đăng

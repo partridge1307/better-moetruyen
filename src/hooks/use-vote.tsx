@@ -1,28 +1,17 @@
-'use client';
-
-import { useCustomToast } from '@/hooks/use-custom-toast';
-import { socket } from '@/lib/socket';
-import { cn } from '@/lib/utils';
 import { CommentVotePayload } from '@/lib/validators/vote';
 import { usePrevious } from '@mantine/hooks';
 import { VoteType } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { Heart, HeartOff } from 'lucide-react';
-import { FC, memo, useEffect, useState } from 'react';
-import { Button } from '../ui/Button';
+import { useState } from 'react';
+import { useCustomToast } from './use-custom-toast';
 
-interface CommentVoteClientProps {
-  commentId: number;
-  currentVote?: VoteType | null;
-  voteAmt: number;
-}
-
-const CommentVoteClient: FC<CommentVoteClientProps> = ({
-  commentId,
-  currentVote: initialVote,
-  voteAmt: initialVoteAmt,
-}) => {
+export const useVote = (
+  commentId: number,
+  callbackURL: string,
+  initialVoteAmt: number,
+  initialVote?: VoteType | null
+) => {
   const { loginToast, notFoundToast, serverErrorToast } = useCustomToast();
   const [voteAmt, setVoteAmt] = useState<number>(initialVoteAmt);
   const [currentVote, setCurrentVote] = useState(initialVote);
@@ -35,7 +24,7 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
         commentId,
       };
 
-      await axios.patch(`/api/comment/vote`, payload);
+      await axios.patch(`${callbackURL}/vote`, payload);
     },
     onError: (err, voteType) => {
       if (voteType === 'UP_VOTE') setVoteAmt((prev) => prev - 1);
@@ -59,46 +48,11 @@ const CommentVoteClient: FC<CommentVoteClientProps> = ({
         setCurrentVote(type);
         if (type === 'UP_VOTE') {
           setVoteAmt((prev) => prev + (currentVote ? 2 : 1));
-          socket.emit('notify', { type: 'LIKE', payload: commentId });
         } else if (type === 'DOWN_VOTE')
           setVoteAmt((prev) => prev - (currentVote ? 2 : 1));
       }
     },
   });
 
-  useEffect(() => {
-    setCurrentVote(initialVote);
-  }, [initialVote]);
-
-  return (
-    <div className="flex items-center gap-1">
-      <Button
-        onClick={() => Vote('UP_VOTE')}
-        variant={'ghost'}
-        size={'sm'}
-        aria-label="like"
-        className={cn('transition-colors', {
-          'text-red-500 hover:text-red-500': currentVote === 'UP_VOTE',
-        })}
-      >
-        <Heart className="w-5 h-5" />
-      </Button>
-
-      <p>{voteAmt}</p>
-
-      <Button
-        onClick={() => Vote('DOWN_VOTE')}
-        variant={'ghost'}
-        size={'sm'}
-        aria-label="dislike"
-        className={cn('transition-colors', {
-          'text-red-500 hover:text-red-500': currentVote === 'DOWN_VOTE',
-        })}
-      >
-        <HeartOff className="w-5 h-5" />
-      </Button>
-    </div>
-  );
+  return { Vote, voteAmt, currentVote };
 };
-
-export default memo(CommentVoteClient);

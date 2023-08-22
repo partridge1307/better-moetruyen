@@ -111,9 +111,6 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-  .no-scrollbar::-moz-scrollbar {
-    display: none;
-  }
 }
 
 button {

@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 'use client';
 
-import { toast } from '@/hooks/use-toast';
+import type { CreateCommentEnum } from '@/lib/validators/comment';
 import '@/styles/mteditor.css';
 import { CharacterLimitPlugin } from '@lexical/react/LexicalCharacterLimitPlugin';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
@@ -20,18 +19,12 @@ import { theme } from './Theme';
 import AutoEmbedPlugin from './plugins/AutoEmbed';
 import AutoLink from './plugins/AutoLink';
 import ImagesPlugin from './plugins/Image';
-import { MaxLengthPlugin } from './plugins/MaxLength';
+import MaxLengthPlugin from './plugins/MaxLength';
 import Submit from './plugins/Submit';
 import Toolbar from './plugins/Toolbar';
 import YouTubePlugin from './plugins/Youtube';
 
 function onError(error: Error): void {
-  toast({
-    title: 'Có lỗi xảy ra',
-    description: 'Có lỗi xảy ra với Text Editor',
-    variant: 'destructive',
-  });
-
   // eslint-disable-next-line no-console
   console.log(error);
 }
@@ -45,12 +38,12 @@ const editorConfig: InitialConfigType = {
 
 const Editor = ({
   id,
-  commentId,
-  chapterId,
+  type,
+  callbackURL,
 }: {
-  id: string;
-  commentId?: number;
-  chapterId?: number;
+  id: number;
+  type: CreateCommentEnum;
+  callbackURL: string;
 }): JSX.Element => {
   return (
     <LexicalComposer initialConfig={editorConfig}>
@@ -74,7 +67,7 @@ const Editor = ({
             <CharacterLimitPlugin charset="UTF-8" maxLength={1024} />
           </div>
         </div>
-        <Submit id={id} commentId={commentId} chapterId={chapterId} />
+        <Submit id={id} type={type} callbackURL={callbackURL} />
       </div>
       <ClearEditorPlugin />
       <HistoryPlugin />

@@ -8,6 +8,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
@@ -26,44 +28,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model User {
-  id              String           @id @default(cuid())
-  email           String           @unique
-  password        String
-  role            Role             @default(USER)
-  name            String?          @unique(sort: Asc)
-  image           String?
-  banner          String?
-  color           Json?
-  verified        Boolean          @default(false)
-  emailVerified   DateTime?
-  followToId      String?
-  isBanned        Boolean          @default(false)
-  muteExpires     DateTime?
-  createdAt       DateTime         @default(now())
-  comment         Comment[]
-  commentVote     CommentVote[]
-  manga           Manga[]
-  memberOnTeam    MemberOnTeam?
-  messages        Message[]
-  notifySent      Notify[]         @relation("fromUser")
-  notifications   Notify[]         @relation("toUser")
-  owner           Team?
-  followTo        User?            @relation("followTo", fields: [followToId], references: [id])
-  follows         User[]           @relation("followTo")
-  badge           Badge[]          @relation("BadgeToUser")
-  conversation    Conversation[]   @relation("ConversationToUser")
-  history         History[]
-  mangaFollow     MangaFollow[]
-  isWaitVeify     VerifyList?
-  session         Session[]
-  teamJoinRequest TeamJoinRequest?
-
-  @@index([followToId])
-  @@index([email], type: Hash)
-  @@index([name])
-}
-
 model VerifyList {
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
@@ -73,10 +37,79 @@ model VerifyList {
   @@index([userId])
 }
 
+model User {
+  id              String            @id @default(cuid())
+  email           String            @unique
+  password        String
+  role            Role              @default(USER)
+  name            String?           @unique(sort: Asc)
+  image           String?
+  banner          String?
+  color           Json?
+  verified        Boolean           @default(false)
+  emailVerified   DateTime?
+  followToId      String?
+  isBanned        Boolean           @default(false)
+  muteExpires     DateTime?
+  createdAt       DateTime          @default(now())
+  subForum        SubForum[]
+  post            Post[]
+  comment         Comment[]
+  commentVote     CommentVote[]
+  manga           Manga[]
+  memberOnTeam    MemberOnTeam?
+  messages        Message[]
+  notifySent      Notify[]          @relation("fromUser")
+  notifications   Notify[]          @relation("toUser")
+  owner           Team?
+  followTo        User?             @relation("followTo", fields: [followToId], references: [id])
+  follows         User[]            @relation("followTo")
+  badge           Badge[]           @relation("BadgeToUser")
+  conversation    Conversation[]    @relation("ConversationToUser")
+  history         History[]
+  mangaFollow     MangaFollow[]
+  isWaitVeify     VerifyList?
+  session         Session[]
+  teamJoinRequest TeamJoinRequest?
+  postComment     PostComment[]
+  postVote        PostVote[]
+  postCommentVote PostCommentVote[]
+
+  @@index([followToId])
+  @@index([email], type: Hash)
+  @@index([name])
+}
+
+model Badge {
+  id          Int    @id @default(autoincrement())
+  image       String
+  name        String
+  color       Json
+  description String
+  user        User[] @relation("BadgeToUser")
+}
+
+model Notify {
+  id         Int        @id @default(autoincrement())
+  type       NotifyType
+  fromUserId String
+  toUserId   String
+  content    Json
+  isRead     Boolean    @default(false)
+  createdAt  DateTime   @default(now())
+  fromUser   User       @relation("fromUser", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser     User       @relation("toUser", fields: [toUserId], references: [id], onDelete: Cascade)
+
+  @@index([fromUserId])
+  @@index([toUserId])
+}
+
+// Team
+
 model MemberOnTeam {
   userId String @unique
   teamId Int
-  team   Team   @relation(fields: [teamId], references: [id])
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, teamId])
@@ -112,13 +145,14 @@ model Team {
   @@index([ownerId])
 }
 
-model Badge {
-  id          Int    @id @default(autoincrement())
-  image       String
-  name        String
-  color       Json
+// Manga
+
+model Tag {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
   description String
-  user        User[] @relation("BadgeToUser")
+  category    String
+  manga       Manga[] @relation("MangaToTag")
 }
 
 model Manga {
@@ -164,14 +198,6 @@ model MangaAuthor {
   manga Manga[] @relation("MangaToMangaAuthor")
 
   @@index([name])
-}
-
-model Tag {
-  id          Int     @id @default(autoincrement())
-  name        String  @unique
-  description String
-  category    String
-  manga       Manga[] @relation("MangaToTag")
 }
 
 model Chapter {
@@ -264,20 +290,21 @@ model WeeklyView {
   @@index([chapterId])
 }
 
-model Notify {
-  id         Int        @id @default(autoincrement())
-  type       NotifyType
-  fromUserId String
-  toUserId   String
-  content    Json
-  isRead     Boolean    @default(false)
-  createdAt  DateTime   @default(now())
-  fromUser   User       @relation("fromUser", fields: [fromUserId], references: [id], onDelete: Cascade)
-  toUser     User       @relation("toUser", fields: [toUserId], references: [id], onDelete: Cascade)
+model History {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  mangaId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  manga     Manga    @relation(fields: [mangaId], references: [id], onDelete: Cascade)
 
-  @@index([fromUserId])
-  @@index([toUserId])
+  @@unique([userId, mangaId])
+  @@index([userId])
+  @@index([mangaId])
 }
+
+// Chat
 
 model Conversation {
   id        Int       @id @default(autoincrement())
@@ -299,24 +326,89 @@ model Message {
   @@index([senderId])
 }
 
-model History {
-  id        Int      @id @default(autoincrement())
-  userId    String
-  mangaId   Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  manga     Manga    @relation(fields: [mangaId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, mangaId])
-  @@index([userId])
-  @@index([mangaId])
-}
+// Manage
 
 model Log {
   id        Int      @id @default(autoincrement())
   content   String
   createdAt DateTime @default(now())
+}
+
+// Forum
+
+model SubForum {
+  id        Int      @id @default(autoincrement())
+  title     String   @unique
+  creatorId String
+  createdAt DateTime @default(now())
+  posts     Post[]
+
+  user User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@index([creatorId])
+}
+
+model Post {
+  id         Int           @id @default(autoincrement())
+  subForumId Int
+  title      String
+  content    Json
+  authorId   String
+  comments   PostComment[]
+  postVote   PostVote[]
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  subForum SubForum @relation(fields: [subForumId], references: [id])
+  author   User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([subForumId])
+  @@index([authorId])
+}
+
+model PostComment {
+  id              Int               @id @default(autoincrement())
+  content         Json
+  createdAt       DateTime          @default(now())
+  postId          Int
+  creatorId       String
+  replyToId       Int?
+  replies         PostComment[]     @relation("ReplyToPost")
+  postCommentVote PostCommentVote[]
+
+  post    Post         @relation(fields: [postId], references: [id])
+  creator User         @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  replyTo PostComment? @relation("ReplyToPost", fields: [replyToId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([creatorId])
+  @@index([replyToId])
+}
+
+model PostVote {
+  userId String
+  postId Int
+  type   VoteType
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id])
+
+  @@id([userId, postId])
+  @@index([userId, postId])
+  @@index([userId])
+}
+
+model PostCommentVote {
+  userId        String
+  postCommentId Int
+  type          VoteType
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  postComment PostComment @relation(fields: [postCommentId], references: [id])
+
+  @@id([userId, postCommentId])
+  @@index([userId, postCommentId])
+  @@index([userId])
 }
 
 enum VoteType {

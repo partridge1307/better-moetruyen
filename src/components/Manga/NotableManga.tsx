@@ -34,6 +34,7 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
                     fill
                     sizes="40vw"
                     quality={40}
+                    priority
                     src={item.original}
                     alt={`${manga.name} Thumbnail`}
                     className="object-contain object-top rounded-md"

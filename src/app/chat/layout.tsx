@@ -8,16 +8,6 @@ export const metadata: Metadata = {
   title: 'Chat',
   description: 'Trò chuyện tại Moetruyen',
   keywords: ['Chat', 'Trò chuyện', 'Moetruyen'],
-  openGraph: {
-    siteName: 'Moetruyen',
-    title: 'Chat',
-    description: 'Trò chuyện | Moetruyen',
-  },
-  twitter: {
-    site: 'Moetruyen',
-    title: 'Chat',
-    description: 'Trò chuyện | Moetruyen',
-  },
 };
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {

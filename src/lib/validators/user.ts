@@ -10,7 +10,7 @@ export const UserProfileEditValidator = z.object({
     .max(30, 'Tối đa 30 kí tự')
     .refine(
       (value) => /^[A-Za-z0-9\s]+$/.test(value),
-      'Tên phải là kí tự in hoa, in thường hoặc số'
+      'Tên chỉ chấp nhận kí tự in hoa, in thường, khoảng cách hoặc số'
     ),
   color: z.string().nullable(),
 });
@@ -48,7 +48,14 @@ export const UserFormUpdateValidator = zfd.formData({
       } else return true;
     }, 'Ảnh phải nhỏ dưới 4MB'),
   name: zfd.text(
-    z.string().min(5, 'Tối thiểu 5 kí tự').max(256, 'Tối đa 256 kí tự')
+    z
+      .string()
+      .min(5, 'Tối thiểu 5 kí tự')
+      .max(256, 'Tối đa 256 kí tự')
+      .refine(
+        (value) => /^[A-Za-z0-9\s]+$/.test(value),
+        'Tên chỉ chấp nhận kí tự in hoa, in thường, khoảng cách hoặc số'
+      )
   ),
   color: zfd
     .json(

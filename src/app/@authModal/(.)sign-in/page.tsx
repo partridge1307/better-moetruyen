@@ -8,14 +8,6 @@ export const metadata: Metadata = {
   title: 'Đăng nhập',
   description: 'Đăng nhập Moetruyen',
   keywords: ['sign in', 'Moetruyen'],
-  openGraph: {
-    title: 'Đăng nhập',
-    description: 'Đăng nhập | Moetruyen',
-  },
-  twitter: {
-    title: 'Đăng nhập',
-    description: 'Đăng nhập | Moetruyen',
-  },
 };
 
 const Page = () => {

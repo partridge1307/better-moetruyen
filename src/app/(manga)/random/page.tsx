@@ -6,16 +6,6 @@ export const metadata: Metadata = {
   title: 'Ngẫu nghiên',
   description: 'Manga ngẫu nhiên Moetruyen',
   keywords: ['Ngẫu nhiên', 'Manga', 'Moetruyen'],
-  openGraph: {
-    siteName: 'Moetruyen',
-    title: 'Ngẫu nhiên',
-    description: 'Ngẫu nhiên | Moetruyen',
-  },
-  twitter: {
-    site: 'Moetruyen',
-    title: 'Ngẫu nhiên',
-    description: 'Ngẫu nhiên | Moetruyen',
-  },
 };
 
 export const dynamic = 'force-dynamic';

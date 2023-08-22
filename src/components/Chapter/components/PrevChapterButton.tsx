@@ -1,9 +1,9 @@
-import { cn } from '@/lib/utils';
 import type { Chapter } from '@prisma/client';
-import { MoveRight } from 'lucide-react';
-import Link from 'next/link';
 import { FC, memo } from 'react';
-import { buttonVariants } from '../ui/Button';
+import { buttonVariants } from '../../ui/Button';
+import { cn } from '@/lib/utils';
+import { MoveLeft } from 'lucide-react';
+import Link from 'next/link';
 
 interface NextChapterButtonProps {
   currentChapterIndex: number;
@@ -14,7 +14,7 @@ interface NextChapterButtonProps {
   props?: React.HTMLAttributes<HTMLLinkElement>;
 }
 
-const NextChapterButton: FC<NextChapterButtonProps> = ({
+const PrevChapterButton: FC<NextChapterButtonProps> = ({
   chapterList,
   currentChapterIndex,
   className,
@@ -24,11 +24,11 @@ const NextChapterButton: FC<NextChapterButtonProps> = ({
     const idx = chapterList.findIndex(
       (chapter) => chapter.chapterIndex === currentChapterIndex
     );
-    if (idx === chapterList.length - 1) return null;
+    if (idx === 0) return null;
     else
       return (
         <Link
-          href={`/chapter/${chapterList[idx + 1].id}`}
+          href={`/chapter/${chapterList[idx - 1].id}`}
           className={cn(
             buttonVariants(),
             'flex items-center justify-center gap-4',
@@ -36,11 +36,11 @@ const NextChapterButton: FC<NextChapterButtonProps> = ({
           )}
           {...props}
         >
-          Chapter sau
-          <MoveRight className="w-6 h-6" />
+          <MoveLeft className="w-6 h-6" />
+          Chapter trước
         </Link>
       );
   } else return null;
 };
 
-export default memo(NextChapterButton);
+export default memo(PrevChapterButton);

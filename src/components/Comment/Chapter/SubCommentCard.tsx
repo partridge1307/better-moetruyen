@@ -1,20 +1,20 @@
 'use client';
 
-import UserAvatar from '@/components/User/UserAvatar';
-import Username from '@/components/User/Username';
 import { useSubComments } from '@/hooks/use-sub-comment';
-import { formatTimeToNow } from '@/lib/utils';
 import type {
   Comment,
-  CommentVote as CommentVoteType,
   User,
+  CommentVote as CommentVoteType,
 } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
-import dynamic from 'next/dynamic';
 import { FC } from 'react';
+import CommentVote from '../components/CommentVote';
+import UserAvatar from '@/components/User/UserAvatar';
+import Username from '@/components/User/Username';
+import { formatTimeToNow } from '@/lib/utils';
 import CommentContent from '../components/CommentContent';
 import CommentOEmbed from '../components/CommentOEmbed';
-import CommentVote from '../components/CommentVote';
+import dynamic from 'next/dynamic';
 
 const DeleteComment = dynamic(() => import('../components/DeleteComment'), {
   ssr: false,

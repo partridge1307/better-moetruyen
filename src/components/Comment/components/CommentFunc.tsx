@@ -11,21 +11,19 @@ import CommentVote from './CommentVote';
 const DeleteComment = dynamic(() => import('./DeleteComment'), { ssr: false });
 
 interface CommentFuncProps {
-  id: number;
+  commentId: number;
   isAuthor: boolean;
   voteAmt: number;
   currentVote?: VoteType | null;
   callbackURL: string;
-  showCommentInput?: boolean;
 }
 
 const CommentFunc: FC<CommentFuncProps> = ({
-  id,
+  commentId,
   isAuthor,
   voteAmt,
   currentVote,
   callbackURL,
-  showCommentInput = true,
 }) => {
   const [showEditor, setShowEditor] = useState<boolean>(false);
 
@@ -33,7 +31,7 @@ const CommentFunc: FC<CommentFuncProps> = ({
     <div className="space-y-4">
       <div className="flex items-center gap-4">
         <CommentVote
-          commentId={id}
+          commentId={commentId}
           callbackURL={callbackURL}
           currentVote={currentVote}
           voteAmt={voteAmt}
@@ -43,19 +41,22 @@ const CommentFunc: FC<CommentFuncProps> = ({
           onClick={() => setShowEditor((prev) => !prev)}
           variant={'ghost'}
           size={'sm'}
+          className="hover:bg-transparent"
         >
           <MessageSquare className="w-5 h-5" />
         </Button>
 
-        {isAuthor && <DeleteComment commentId={id} />}
+        {isAuthor && (
+          <DeleteComment commentId={commentId} callbackURL={callbackURL} />
+        )}
       </div>
 
-      {showEditor && showCommentInput && (
+      {showEditor && (
         <CommentInput
           isLoggedIn
-          id={id}
+          id={commentId}
           type="SUB_COMMENT"
-          callbackURL={`${callbackURL}/sub-comment`}
+          callbackURL={callbackURL}
         />
       )}
     </div>

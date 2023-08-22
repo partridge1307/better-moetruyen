@@ -34,7 +34,7 @@ const CommentVote: FC<CommentVoteProps> = ({
         variant={'ghost'}
         size={'sm'}
         aria-label="like"
-        className={cn('transition-colors', {
+        className={cn('transition-colors hover:bg-transparent', {
           'text-red-500 hover:text-red-500': currentVote === 'UP_VOTE',
         })}
       >
@@ -48,7 +48,7 @@ const CommentVote: FC<CommentVoteProps> = ({
         variant={'ghost'}
         size={'sm'}
         aria-label="dislike"
-        className={cn('transition-colors', {
+        className={cn('transition-colors hover:bg-transparent', {
           'text-red-500 hover:text-red-500': currentVote === 'DOWN_VOTE',
         })}
       >

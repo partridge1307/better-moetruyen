@@ -21,15 +21,6 @@ const Leaderboard = dynamic(() => import('@/components/Leaderboard'), {
     <div className="w-full h-[400px] rounded-lg animate-pulse dark:bg-zinc-900" />
   ),
 });
-const LastestComment = dynamic(
-  () => import('@/components/Comment/LatestComment'),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="w-full h-96 p-2 rounded-lg animate-pulse dark:bg-zinc-900" />
-    ),
-  }
-);
 const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
   ssr: false,
   loading: () => (
@@ -126,11 +117,6 @@ const Home = async () => {
             <div className="space-y-2">
               <h2 className="text-2xl font-semibold">Bảng xếp hạng</h2>
               <Leaderboard />
-            </div>
-
-            <div className="space-y-2">
-              <h2 className="text-2xl font-semibold">Bình luận</h2>
-              <LastestComment comments={lastestComment} />
             </div>
           </section>
         </div>

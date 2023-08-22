@@ -17,6 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
 import { Separator } from '../ui/Separator';
 import { useMediaQuery } from '@mantine/hooks';
 import dynamic from 'next/dynamic';
+
 const ReportChapter = dynamic(() => import('@/components/Report/Chapter'), {
   ssr: false,
 });
@@ -225,12 +226,15 @@ const ChapterControll: FC<ChapterControllProps> = ({
           Chapter {chapter.chapterIndex}
           {chapter.name && (
             <>
+              {' '}
               • <span>{chapter.name}</span>
             </>
           )}
         </p>
         <Link
-          href={`/manga/${chapter.manga.id}`}
+          href={`/manga/${chapter.manga.id}/${chapter.manga.name
+            .split(' ')
+            .join('-')}`}
           className="text-lg font-medium text-orange-500"
         >
           {chapter.manga.name}

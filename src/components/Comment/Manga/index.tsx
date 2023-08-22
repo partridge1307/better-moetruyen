@@ -57,10 +57,10 @@ const Comments: FC<CommentOutputProps> = ({ id }) => {
         isLoggedIn={!!session}
         id={id}
         type="COMMENT"
-        callbackURL="/api/comment/manga"
+        callbackURL={CALLBACK_URL}
       />
 
-      <RefetchButton refetch={() => refetch()} isRefetching={isRefetching} />
+      <RefetchButton refetch={refetch} isRefetching={isRefetching} />
 
       <ul className="space-y-10">
         {!!comments?.length ? (

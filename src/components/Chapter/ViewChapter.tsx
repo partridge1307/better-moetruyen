@@ -1,22 +1,22 @@
 'use client';
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { cn } from '@/lib/utils';
 import { useIntersection } from '@mantine/hooks';
 import type { Chapter, Manga } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { FC, useEffect, useRef, useState } from 'react';
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '../ui/HoverCard';
 import HorizontalViewChapter from './HorizontalViewChapter';
 import VerticalViewChapter from './VerticalViewChapter';
+
 const ChapterControll = dynamic(() => import('./ChapterControll'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-24 rounded-lg animate-pulse dark:bg-zinc-900" />
+    <div className="w-full h-24 rounded-md animate-pulse dark:bg-zinc-900" />
   ),
 });
+const ChapterProgressBar = dynamic(() => import('./ChapterProgressBar'));
 
 interface ViewChapterProps {
   chapter: Pick<
@@ -186,7 +186,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
 
   return (
     <div className="h-full space-y-16">
-      <div id="chapter-wrapper" className="container mx-auto space-y-4 px-3">
+      <div className="container mx-auto space-y-4 px-3">
         <ChapterControll
           currentImage={currentImage}
           chapter={chapter}
@@ -205,13 +205,10 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
             imageRef={ref}
             chapter={chapter}
             chapterList={chapterList}
-            currentChapterIndex={chapter.chapterIndex}
-            mangaId={chapter.manga.id}
-            currentChapterId={chapter.id}
             slideLeft={slideLeft}
             slideRight={slideRight}
             hasPrevImage={currentImage >= 0}
-            hasNextImage={currentImage >= chapter.images.length}
+            hasNextImage={currentImage < chapter.images.length}
           />
         ) : (
           <VerticalViewChapter
@@ -219,58 +216,15 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
             imageRef={ref}
             chapter={chapter}
             chapterList={chapterList}
-            currentChapterIndex={chapter.chapterIndex}
-            mangaId={chapter.manga.id}
-            currentChapterId={chapter.id}
           />
         )}
 
-        {currentImage < chapter.images.length && (
-          <div
-            className={cn(
-              'absolute bottom-0 flex h-8 w-full items-center gap-2 rounded-full p-2 px-6 transition-all dark:hover:bg-zinc-700 max-sm:hidden',
-              progressBar === 'hidden'
-                ? 'opacity-0 hover:opacity-100'
-                : progressBar === 'lightbar'
-                ? 'items-end p-0 dark:hover:bg-transparent gap-[0.15rem] h-6'
-                : null
-            )}
-          >
-            {chapter.images.map((_, idx) => (
-              <HoverCard key={idx} openDelay={100} closeDelay={100}>
-                {progressBar === 'lightbar' ? (
-                  <HoverCardTrigger asChild>
-                    <div
-                      className="relative h-3/4 w-full cursor-pointer rounded-t-md transition-all bg-gradient-to-t dark:from-zinc-900/70"
-                      onClick={() => jumptoImageHandler(idx)}
-                    >
-                      <div
-                        className={cn(
-                          'absolute bottom-0 h-[.15rem] w-full rounded-md',
-                          idx <= currentImage
-                            ? 'dark:bg-orange-500'
-                            : 'dark:bg-zinc-900'
-                        )}
-                      />
-                    </div>
-                  </HoverCardTrigger>
-                ) : (
-                  <HoverCardTrigger
-                    className={cn(
-                      'h-1/3 w-full cursor-pointer rounded-md transition-all hover:h-full dark:bg-zinc-900',
-                      idx <= currentImage ? 'dark:bg-orange-500' : null,
-                      progressBar === 'hidden' ? 'h-2/5' : null
-                    )}
-                    onClick={() => jumptoImageHandler(idx)}
-                  />
-                )}
-                <HoverCardContent className="w-fit rounded-2xl p-3 dark:bg-zinc-900/80 dark:text-white">
-                  {idx + 1}
-                </HoverCardContent>
-              </HoverCard>
-            ))}
-          </div>
-        )}
+        <ChapterProgressBar
+          currentImage={currentImage}
+          totalImage={chapter.images}
+          progressBar={progressBar}
+          jumptoImage={jumptoImageHandler}
+        />
       </div>
     </div>
   );

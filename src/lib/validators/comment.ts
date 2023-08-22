@@ -1,23 +1,6 @@
 import type { SerializedEditorState, SerializedLexicalNode } from 'lexical';
 import { ZodType, z } from 'zod';
 
-export const CommentContentValidator = z.object({
-  content: z.any() as ZodType<SerializedEditorState<SerializedLexicalNode>>,
-  oEmbed: z
-    .object({
-      link: z.string(),
-      meta: z.object({
-        title: z.string(),
-        description: z.string(),
-        image: z.object({ url: z.string() }),
-      }),
-    })
-    .optional(),
-  commentId: z.number().optional(),
-  id: z.string().optional(),
-});
-export type CommentContentPayload = z.infer<typeof CommentContentValidator>;
-
 const CreateCommentType = z.enum(['COMMENT', 'SUB_COMMENT']);
 export type CreateCommentEnum = z.infer<typeof CreateCommentType>;
 
@@ -45,3 +28,9 @@ export const CreateCommentValidator = z.object({
     .optional(),
 });
 export type CreateCommentPayload = z.infer<typeof CreateCommentValidator>;
+
+export const CommentVoteValidator = z.object({
+  commentId: z.number(),
+  voteType: z.enum(['UP_VOTE', 'DOWN_VOTE']),
+});
+export type CommentVotePayload = z.infer<typeof CommentVoteValidator>;

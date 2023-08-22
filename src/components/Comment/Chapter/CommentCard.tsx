@@ -1,13 +1,13 @@
+import UserAvatar from '@/components/User/UserAvatar';
+import Username from '@/components/User/Username';
 import { formatTimeToNow } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { memo } from 'react';
+import { FC } from 'react';
 import type { ExtendedComment } from '.';
-import UserAvatar from '../../User/UserAvatar';
-import Username from '../../User/Username';
-import SubComment from '../components/SubComment';
 import CommentContent from '../components/CommentContent';
 import CommentOEmbed from '../components/CommentOEmbed';
+import SubComment from '../components/SubComment';
 
 const CommentFunc = dynamic(() => import('../components/CommentFunc'), {
   ssr: false,
@@ -23,7 +23,11 @@ interface CommentCardProps {
   callbackURL: string;
 }
 
-const CommentCard = ({ comment, userId, callbackURL }: CommentCardProps) => {
+const CommentCard: FC<CommentCardProps> = ({
+  comment,
+  userId,
+  callbackURL,
+}) => {
   const voteAmt = comment.votes.reduce((acc, vote) => {
     if (vote.type === 'UP_VOTE') return acc + 1;
     if (vote.type === 'DOWN_VOTE') return acc - 1;
@@ -90,4 +94,4 @@ const CommentCard = ({ comment, userId, callbackURL }: CommentCardProps) => {
   );
 };
 
-export default memo(CommentCard);
+export default CommentCard;

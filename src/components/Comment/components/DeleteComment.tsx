@@ -20,15 +20,16 @@ import { buttonVariants } from '../../ui/Button';
 
 interface DeleteCommentProps {
   commentId: number;
+  callbackURL: string;
 }
 
-const DeleteComment: FC<DeleteCommentProps> = ({ commentId }) => {
+const DeleteComment: FC<DeleteCommentProps> = ({ commentId, callbackURL }) => {
   const { loginToast, notFoundToast, serverErrorToast, successToast } =
     useCustomToast();
   const { mutate: Delete, isLoading: isDeleting } = useMutation({
-    mutationKey: ['delete-comment', `${commentId}`],
+    mutationKey: ['delete-comment', commentId],
     mutationFn: async () => {
-      await axios.delete(`/api/comment/${commentId}`);
+      await axios.delete(`${callbackURL}/${commentId}`);
     },
     onError: (err) => {
       if (err instanceof AxiosError) {

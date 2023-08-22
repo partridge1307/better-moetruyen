@@ -4,27 +4,25 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { forwardRef, memo } from 'react';
 import { Button } from '../ui/Button';
-import PrevChapterButton from './PrevChapterButton';
-import NextChapterButton from './NextChapterButton';
-const Comment = dynamic(() => import('@/components/Comment/Chapter'), {
+import PrevChapterButton from './components/PrevChapterButton';
+import NextChapterButton from './components/NextChapterButton';
+
+const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
 });
 
 interface HorizontalViewChapterProps {
-  chapter: Pick<Chapter, 'images'> & {
+  chapter: Pick<Chapter, 'id' | 'images' | 'chapterIndex'> & {
     manga: Pick<Manga, 'name'>;
   };
   slideLeft(): void;
   slideRight(): void;
   // eslint-disable-next-line no-unused-vars
   imageRef: (element: any) => void;
-  currentChapterId: number;
-  currentChapterIndex: number;
   chapterList:
     | Pick<Chapter, 'id' | 'chapterIndex' | 'name' | 'volume' | 'isPublished'>[]
     | null;
-  mangaId: number;
   hasPrevImage: boolean;
   hasNextImage: boolean;
 }
@@ -39,10 +37,7 @@ const HorizontalViewChapter = forwardRef<
       slideLeft,
       slideRight,
       imageRef,
-      currentChapterId,
-      currentChapterIndex,
       chapterList,
-      mangaId,
       hasPrevImage,
       hasNextImage,
     },
@@ -68,7 +63,7 @@ const HorizontalViewChapter = forwardRef<
                   priority
                   tabIndex={-1}
                   src={img}
-                  alt={chapter.manga.name}
+                  alt={`${chapter.manga.name} - Trang ${idx + 1}`}
                   className="object-scale-down"
                 />
               </div>
@@ -86,7 +81,7 @@ const HorizontalViewChapter = forwardRef<
                   priority
                   tabIndex={-1}
                   src={img}
-                  alt={chapter.manga.name}
+                  alt={`${chapter.manga.name} - Trang ${idx + 1}`}
                   className="object-scale-down"
                 />
               </div>
@@ -111,12 +106,12 @@ const HorizontalViewChapter = forwardRef<
             <div className="space-y-6">
               <PrevChapterButton
                 chapterList={chapterList}
-                currentChapterIndex={currentChapterIndex}
+                currentChapterIndex={chapter.chapterIndex}
                 className="w-96 transition-transform hover:-translate-x-12"
               />
               <NextChapterButton
                 chapterList={chapterList}
-                currentChapterIndex={currentChapterIndex}
+                currentChapterIndex={chapter.chapterIndex}
                 className="w-96 transition-transform hover:translate-x-12"
               />
             </div>
@@ -140,9 +135,9 @@ const HorizontalViewChapter = forwardRef<
 
         <div
           id="comment-horizontal-section"
-          className="relative h-full w-full shrink-0"
+          className="relative w-full h-full shrink-0 pt-10 overflow-auto no-scrollbar"
         >
-          <div className="container py-10 space-y-20">
+          <div className="container space-y-10">
             <Button
               className="flex items-center justify-center gap-2 hover:dark:bg-zinc-700"
               variant={'ghost'}
@@ -158,11 +153,11 @@ const HorizontalViewChapter = forwardRef<
               Quay lại
             </Button>
 
-            <Comment mangaId={mangaId} chapterId={currentChapterId} />
+            <Comments id={chapter.id} />
           </div>
         </div>
 
-        {!hasNextImage && (
+        {hasNextImage && (
           <>
             <button
               onClick={slideLeft}

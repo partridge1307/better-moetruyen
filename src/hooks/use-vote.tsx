@@ -1,4 +1,4 @@
-import { CommentVotePayload } from '@/lib/validators/vote';
+import { CommentVotePayload } from '@/lib/validators/comment';
 import { usePrevious } from '@mantine/hooks';
 import { VoteType } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';

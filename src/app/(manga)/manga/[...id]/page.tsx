@@ -19,7 +19,7 @@ const ListTreeChapter = dynamic(
 const ListChapter = dynamic(
   () => import('@/components/Chapter/ListChapter/ListChapter')
 );
-const Comment = lazy(() => import('@/components/Comment/Manga'));
+const Comments = lazy(() => import('@/components/Comment/Manga'));
 const EditorOutput = lazy(() => import('@/components/EditorOutput'));
 const FBEmbed = lazy(() => import('@/components/FBEmbed'));
 const MangaImage = lazy(() => import('@/components/Manga/MangaImage'));
@@ -105,90 +105,52 @@ const page: FC<pageProps> = async ({ params }) => {
   if (typeof params.id === 'string') idParams = params.id;
   else idParams = params.id[0];
 
-  const [manga, comments] = await db.$transaction([
-    db.manga.findFirst({
-      where: {
-        id: +idParams,
-        isPublished: true,
+  const manga = await db.manga.findFirst({
+    where: {
+      id: +idParams,
+      isPublished: true,
+    },
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      description: true,
+      facebookLink: true,
+      discordLink: true,
+      author: true,
+      tags: true,
+      _count: {
+        select: {
+          mangaFollow: true,
+        },
       },
-      select: {
-        id: true,
-        name: true,
-        image: true,
-        description: true,
-        facebookLink: true,
-        discordLink: true,
-        author: true,
-        tags: true,
-        _count: {
-          select: {
-            mangaFollow: true,
-          },
+      view: {
+        select: {
+          totalView: true,
         },
-        view: {
-          select: {
-            totalView: true,
-          },
-        },
-        creator: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-            banner: true,
-            color: true,
-            memberOnTeam: {
-              select: {
-                team: {
-                  select: {
-                    id: true,
-                    name: true,
-                    image: true,
-                  },
+      },
+      creator: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          banner: true,
+          color: true,
+          memberOnTeam: {
+            select: {
+              team: {
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
                 },
               },
             },
           },
         },
       },
-    }),
-    db.comment.findMany({
-      where: {
-        mangaId: +idParams,
-        replyToId: null,
-      },
-      select: {
-        id: true,
-        content: true,
-        oEmbed: true,
-        createdAt: true,
-        authorId: true,
-        chapter: {
-          select: {
-            id: true,
-            chapterIndex: true,
-          },
-        },
-        author: {
-          select: {
-            name: true,
-            image: true,
-            color: true,
-          },
-        },
-        votes: true,
-        _count: {
-          select: {
-            replies: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      take: 10,
-    }),
-  ]);
+    },
+  });
   if (!manga) return notFound();
 
   let discord: discordProps = { code: false };
@@ -418,7 +380,7 @@ const page: FC<pageProps> = async ({ params }) => {
                   <div className="grid grid-cols-1 grid-rows-[.7fr_1fr] gap-20 dark:bg-zinc-900 animate-pulse" />
                 }
               >
-                <Comment id={idParams} initialComments={comments} />
+                <Comments id={manga.id} />
               </Suspense>
             </TabsContent>
           </Tabs>

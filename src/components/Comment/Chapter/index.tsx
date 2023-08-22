@@ -1,24 +1,16 @@
 'use client';
 
-import { buttonVariants } from '@/components/ui/Button';
-import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
-import { cn } from '@/lib/utils';
+import { useComments } from '@/hooks/use-comment';
 import { useIntersection } from '@mantine/hooks';
 import type { Comment, CommentVote, User } from '@prisma/client';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { Loader2, RefreshCcw } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { FC, Suspense, lazy, useEffect, useRef } from 'react';
-import ChapterCommentCard from './ChapterCommentCard';
-const MoetruyenEditor = lazy(
-  () => import('@/components/Editor/MoetruyenEditor')
-);
+import { FC, useEffect, useRef } from 'react';
+import CommentInput from '../components/CommentInput';
+import RefetchButton from '../components/RefetchButton';
+import CommentCard from './CommentCard';
 
-interface CommentOutputProps {
-  chapterId: number;
-  mangaId: number;
-}
+const CALLBACK_URL = '/api/comment/chapter';
 
 export type ExtendedComment = Pick<
   Comment,
@@ -29,12 +21,17 @@ export type ExtendedComment = Pick<
   _count: { replies: number };
 };
 
-const CommentOutput: FC<CommentOutputProps> = ({ chapterId, mangaId }) => {
+interface commentProps {
+  id: number;
+}
+
+const Comments: FC<commentProps> = ({ id }) => {
   const { data: session } = useSession();
-  const commentRef = useRef<HTMLElement>(null);
+
+  const lastCmtRef = useRef<HTMLElement>(null);
   const { ref, entry } = useIntersection({
-    root: commentRef.current,
     threshold: 1,
+    root: lastCmtRef.current,
   });
 
   const {
@@ -43,20 +40,7 @@ const CommentOutput: FC<CommentOutputProps> = ({ chapterId, mangaId }) => {
     isFetchingNextPage,
     refetch,
     isRefetching,
-  } = useInfiniteQuery(
-    ['comment-infinite-query', `${chapterId}`],
-    async ({ pageParam = 1 }) => {
-      const query = `/api/chapter/${chapterId}/comment/?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}`;
-
-      const { data } = await axios.get(query);
-      return data as ExtendedComment[];
-    },
-    {
-      getNextPageParam: (_, pages) => {
-        return pages.length + 1;
-      },
-    }
-  );
+  } = useComments<ExtendedComment>(id, CALLBACK_URL);
 
   useEffect(() => {
     if (entry?.isIntersecting) {
@@ -68,72 +52,45 @@ const CommentOutput: FC<CommentOutputProps> = ({ chapterId, mangaId }) => {
 
   return (
     <>
-      {session ? (
-        <Suspense
-          fallback={
-            <div className="h-44 w-full md:w-[600px] lg:w-[900px] rounded-lg mx-auto dark:bg-zinc-900 animate-pulse" />
-          }
-        >
-          <MoetruyenEditor id={`${mangaId}`} chapterId={chapterId} />
-        </Suspense>
-      ) : (
-        <div>
-          Vui lòng <span className="font-semibold">đăng nhập</span> hoặc{' '}
-          <span className="font-semibold">đăng ký</span> để comment
-        </div>
-      )}
+      <CommentInput
+        isLoggedIn={!!session}
+        id={id}
+        type="COMMENT"
+        callbackURL={CALLBACK_URL}
+      />
 
-      <div className="mt-20 mb-10 flex justify-end">
-        <button
-          onClick={() => refetch()}
-          disabled={isRefetching}
-          className={cn(buttonVariants(), 'flex items-center gap-1')}
-        >
-          {isRefetching ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Đang tải
-            </>
-          ) : (
-            <>
-              <RefreshCcw className="w-5 h-5" />
-              Làm mới
-            </>
-          )}
-        </button>
-      </div>
+      <RefetchButton refetch={refetch} isRefetching={isRefetching} />
+
       <ul className="space-y-10">
-        {comments && comments.length ? (
+        {comments?.length ? (
           comments.map((comment, idx) => {
             if (idx === comments.length - 1) {
               return (
                 <li key={idx} ref={ref} className="flex gap-3 md:gap-6">
-                  <ChapterCommentCard
-                    session={session}
-                    chapterId={chapterId}
-                    mangaId={mangaId}
+                  <CommentCard
                     comment={comment}
+                    userId={session?.user.id}
+                    callbackURL={CALLBACK_URL}
                   />
                 </li>
               );
             } else {
               return (
-                <li key={idx} className="flex gap-3 md:gap-6">
-                  <ChapterCommentCard
-                    session={session}
-                    chapterId={chapterId}
-                    mangaId={mangaId}
+                <li key={idx} ref={ref} className="flex gap-3 md:gap-6">
+                  <CommentCard
                     comment={comment}
+                    userId={session?.user.id}
+                    callbackURL={CALLBACK_URL}
                   />
                 </li>
               );
             }
           })
         ) : (
-          <p className="text-center">
+          <li className="text-center">
             Hãy làm người đầu tiên <span className="font-bold">comment</span>{' '}
-            Chapter này nào
-          </p>
+            nào
+          </li>
         )}
 
         {isFetchingNextPage && (
@@ -146,4 +103,4 @@ const CommentOutput: FC<CommentOutputProps> = ({ chapterId, mangaId }) => {
   );
 };
 
-export default CommentOutput;
+export default Comments;

@@ -51,7 +51,7 @@ export async function POST(req: Request, context: { params: { id: string } }) {
       )?.chapterIndex;
 
       if (!index) index = 1;
-      else index++;
+      else index = Math.floor(index++);
     } else {
       index = chapterIndex;
 

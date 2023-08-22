@@ -1,15 +1,16 @@
 import { db } from '@/lib/db';
-import { Loader2 } from 'lucide-react';
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
+
 const ViewChapter = dynamic(() => import('@/components/Chapter/ViewChapter'), {
   ssr: false,
   loading: () => (
-    <template className="flex justify-center items-center">
-      <Loader2 className="w-10 h-10 animate-spin" />
-    </template>
+    <div className="container px-3 h-full mt-8 space-y-16">
+      <div className="w-full h-24 rounded-md animate-pulse dark:bg-zinc-900" />
+      <div className="w-full h-full rounded-md animate-pulse dark:bg-zinc-900" />
+    </div>
   ),
 });
 
@@ -86,16 +87,12 @@ const page: FC<pageProps> = async ({ params }) => {
     where: {
       id: +params.chapterId,
       isPublished: true,
-      manga: {
-        isPublished: true,
-      },
     },
     select: {
       manga: {
         select: {
           name: true,
           id: true,
-          isPublished: true,
         },
       },
       images: true,

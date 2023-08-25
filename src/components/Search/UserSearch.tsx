@@ -16,11 +16,11 @@ const UserSearch: FC<UserSearchProps> = ({ users }) => {
     <div className="space-y-7">
       {users.map((user, idx) => (
         <Link key={idx} href={`/user/${user.name?.split(' ').join('-')}`}>
-          <DialogClose className="flex w-full gap-4 p-2 rounded-md text-start transition-colors duration-100 hover:dark:bg-zinc-800">
+          <DialogClose className="flex gap-4 p-2 rounded-md text-start transition-colors duration-100 hover:dark:bg-zinc-800">
             <UserAvatar user={user} className="w-16 h-16 border-4" />
             <Username
               user={user}
-              className="text-start font-medium text-lg pt-1"
+              className="text-start font-medium text-lg flex-1 pt-1"
             />
           </DialogClose>
         </Link>

@@ -1,11 +1,11 @@
-import { FC } from 'react';
-import { ExtendedComment } from '.';
 import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
 import { formatTimeToNow } from '@/lib/utils';
+import dynamic from 'next/dynamic';
+import { FC, memo } from 'react';
+import type { ExtendedComment } from '.';
 import CommentContent from '../components/CommentContent';
 import CommentOEmbed from '../components/CommentOEmbed';
-import dynamic from 'next/dynamic';
 import SubComment from '../components/SubComment';
 
 const CommentFunc = dynamic(() => import('../components/CommentFunc'), {
@@ -92,4 +92,4 @@ const CommentCard: FC<CommentCardProps> = ({
   );
 };
 
-export default CommentCard;
+export default memo(CommentCard);

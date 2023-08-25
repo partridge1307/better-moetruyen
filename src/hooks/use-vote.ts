@@ -1,9 +1,9 @@
-import { VotePayload } from '@/lib/validators/vote';
+import type { VotePayload } from '@/lib/validators/vote';
 import { usePrevious } from '@mantine/hooks';
-import { VoteType } from '@prisma/client';
+import type { VoteType } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCustomToast } from './use-custom-toast';
 
 export const useVote = (
@@ -16,6 +16,10 @@ export const useVote = (
   const [voteAmt, setVoteAmt] = useState<number>(initialVoteAmt);
   const [currentVote, setCurrentVote] = useState(initialVote);
   const prevVote = usePrevious(currentVote);
+
+  useEffect(() => {
+    setCurrentVote(initialVote);
+  }, [initialVote]);
 
   const { mutate: Vote } = useMutation({
     mutationKey: ['vote-query', callbackURL, id],
@@ -44,12 +48,13 @@ export const useVote = (
       if (currentVote === type) {
         setCurrentVote(undefined);
         if (type === 'UP_VOTE') setVoteAmt((prev) => prev - 1);
-        else if (type === 'DOWN_VOTE') setVoteAmt((prev) => prev + 1);
+        if (type === 'DOWN_VOTE') setVoteAmt((prev) => prev + 1);
       } else {
         setCurrentVote(type);
         if (type === 'UP_VOTE') {
           setVoteAmt((prev) => prev + (currentVote ? 2 : 1));
-        } else if (type === 'DOWN_VOTE')
+        }
+        if (type === 'DOWN_VOTE')
           setVoteAmt((prev) => prev - (currentVote ? 2 : 1));
       }
     },

@@ -1,20 +1,24 @@
 'use client';
 
+import UserAvatar from '@/components/User/UserAvatar';
+import Username from '@/components/User/Username';
 import { useSubComments } from '@/hooks/use-sub-comment';
+import { formatTimeToNow } from '@/lib/utils';
 import type {
   PostComment,
   PostVote as PostVoteType,
   User,
 } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { FC } from 'react';
-import CommentVote from '../components/CommentVote';
-import DeleteComment from '../components/DeleteComment';
-import CommentOEmbed from '../components/CommentOEmbed';
 import CommentContent from '../components/CommentContent';
-import { formatTimeToNow } from '@/lib/utils';
-import Username from '@/components/User/Username';
-import UserAvatar from '@/components/User/UserAvatar';
+import CommentOEmbed from '../components/CommentOEmbed';
+import CommentVote from '../components/CommentVote';
+
+const DeleteComment = dynamic(() => import('../components/DeleteComment'), {
+  ssr: false,
+});
 
 type ExtendedSubComment = Pick<
   PostComment,

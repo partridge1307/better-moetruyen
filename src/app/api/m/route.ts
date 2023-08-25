@@ -14,7 +14,7 @@ export async function GET(req: Request) {
   if (session) {
     const followedSubForums = await db.subscription.findMany({
       where: {
-        AND: [
+        OR: [
           { userId: session.user.id },
           { subForum: { creatorId: session.user.id } },
         ],

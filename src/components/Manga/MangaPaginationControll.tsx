@@ -10,12 +10,14 @@ interface MangaPaginationControll {
   count: number;
   hasPrevPage: boolean;
   hasNextPage: boolean;
+  route: string;
 }
 
 const MangaPaginationControll: FC<MangaPaginationControll> = ({
   count,
   hasPrevPage,
   hasNextPage,
+  route,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,7 +31,7 @@ const MangaPaginationControll: FC<MangaPaginationControll> = ({
         disabled={!hasPrevPage}
         className={cn(buttonVariants())}
         onClick={() =>
-          router.push(`/latest?page=${Number(page) - 1}&per-page=${perPage}`)
+          router.push(`${route}?page=${Number(page) - 1}&per-page=${perPage}`)
         }
       >
         <ChevronLeft />
@@ -43,7 +45,7 @@ const MangaPaginationControll: FC<MangaPaginationControll> = ({
         disabled={!hasNextPage}
         className={cn(buttonVariants())}
         onClick={() =>
-          router.push(`/latest?page=${Number(page) + 1}&per-page=${perPage}`)
+          router.push(`${route}?page=${Number(page) + 1}&per-page=${perPage}`)
         }
       >
         <ChevronRight />

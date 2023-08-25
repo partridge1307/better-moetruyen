@@ -1,7 +1,6 @@
 import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
 import { formatTimeToNow } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { FC, memo } from 'react';
 import type { ExtendedComment } from '.';
@@ -11,7 +10,6 @@ import SubComment from '../components/SubComment';
 
 const CommentFunc = dynamic(() => import('../components/CommentFunc'), {
   ssr: false,
-  loading: () => <Loader2 className="w-6 h-6" />,
 });
 const SubCommentCard = dynamic(() => import('./SubCommentCard'), {
   ssr: false,

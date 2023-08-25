@@ -21,6 +21,9 @@ const Leaderboard = dynamic(() => import('@/components/Leaderboard'), {
     <div className="w-full h-[400px] rounded-lg animate-pulse dark:bg-zinc-900" />
   ),
 });
+const LastActivityThread = dynamic(
+  () => import('@/components/Forum/LastActivityThread')
+);
 const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
   ssr: false,
   loading: () => (
@@ -29,52 +32,28 @@ const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
 });
 
 const Home = async () => {
-  const [manga, lastestComment] = await db.$transaction([
-    db.manga.findMany({
-      where: {
-        isPublished: true,
-      },
-      select: {
-        id: true,
-        name: true,
-        image: true,
-        author: {
-          select: {
-            name: true,
-          },
-        },
-        tags: {
-          select: {
-            name: true,
-            description: true,
-          },
+  const manga = await db.manga.findMany({
+    where: {
+      isPublished: true,
+    },
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      author: {
+        select: {
+          name: true,
         },
       },
-      take: 10,
-    }),
-    db.comment.findMany({
-      orderBy: {
-        createdAt: 'desc',
-      },
-      take: 10,
-      where: {
-        replyToId: null,
-      },
-      select: {
-        id: true,
-        content: true,
-        mangaId: true,
-        createdAt: true,
-        author: {
-          select: {
-            image: true,
-            name: true,
-            color: true,
-          },
+      tags: {
+        select: {
+          name: true,
+          description: true,
         },
       },
-    }),
-  ]);
+    },
+    take: 10,
+  });
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -97,12 +76,12 @@ const Home = async () => {
         <div className="flex max-sm:flex-col gap-4 mt-20">
           <section className="w-2/3 max-sm:w-full space-y-20 pb-10">
             <div className="space-y-2">
-              <h2 className="text-2xl font-semibold">Dành cho bạn</h2>
+              <h1 className="text-2xl font-semibold">Dành cho bạn</h1>
               <Recommendation />
             </div>
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-semibold">Mới cập nhật</h2>
+                <h1 className="text-2xl font-semibold">Mới cập nhật</h1>
                 <Link
                   href="/latest"
                   className="flex items-center gap-1 hover:underline hover:underline-offset-2"
@@ -115,8 +94,13 @@ const Home = async () => {
           </section>
           <section className="w-1/3 max-sm:w-full space-y-10">
             <div className="space-y-2">
-              <h2 className="text-2xl font-semibold">Bảng xếp hạng</h2>
+              <h1 className="text-2xl font-semibold">Bảng xếp hạng</h1>
               <Leaderboard />
+            </div>
+
+            <div className="space-y-2">
+              <h1 className="text-2xl font-semibold">Bài viết gần đây</h1>
+              <LastActivityThread />
             </div>
           </section>
         </div>

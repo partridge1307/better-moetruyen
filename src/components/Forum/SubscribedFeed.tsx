@@ -11,7 +11,7 @@ interface SubscribedFeedProps {
 const SubscribedFeed: FC<SubscribedFeedProps> = async ({ session }) => {
   const followedSubForums = await db.subscription.findMany({
     where: {
-      AND: [
+      OR: [
         { userId: session.user.id },
         { subForum: { creatorId: session.user.id } },
       ],

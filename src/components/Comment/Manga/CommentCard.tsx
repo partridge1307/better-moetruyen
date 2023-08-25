@@ -1,14 +1,14 @@
 import { formatTimeToNow } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { memo } from 'react';
 import type { ExtendedComment } from '.';
 import UserAvatar from '../../User/UserAvatar';
 import Username from '../../User/Username';
-import SubComment from '../components/SubComment';
 import CommentContent from '../components/CommentContent';
 import CommentOEmbed from '../components/CommentOEmbed';
-import Link from 'next/link';
+import SubComment from '../components/SubComment';
 
 const CommentFunc = dynamic(() => import('../components/CommentFunc'), {
   ssr: false,

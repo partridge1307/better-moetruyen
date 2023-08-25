@@ -1,11 +1,11 @@
 import { cn } from '@/lib/utils';
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { ChevronsDown, ChevronsUp } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { FC, useRef, useState } from 'react';
 
 const MoetruyenEditorOutput = dynamic(
-  () => import('../../Editor/MoetruyenEditorOutput'),
+  () => import('@/components/Editor/MoetruyenEditorOutput'),
   { ssr: false }
 );
 

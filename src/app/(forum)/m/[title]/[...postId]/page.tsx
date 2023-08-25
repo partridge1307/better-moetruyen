@@ -4,7 +4,7 @@ import Username from '@/components/User/Username';
 import { buttonVariants } from '@/components/ui/Button';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { cn } from '@/lib/utils';
+import { cn, formatTimeToNow } from '@/lib/utils';
 import { ArrowBigDown, ArrowBigUp, Loader2, Pencil } from 'lucide-react';
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
@@ -120,6 +120,8 @@ const page: FC<pageProps> = async ({ params }) => {
         id: true,
         title: true,
         content: true,
+        createdAt: true,
+        updatedAt: true,
         authorId: true,
         author: {
           select: {
@@ -145,6 +147,20 @@ const page: FC<pageProps> = async ({ params }) => {
                 <Username user={post.author} />
               </Link>
             </h2>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:divide-x-2 lg:dark:divide-zinc-500">
+              <p className="text-sm lg:pr-1">
+                Tạo:{' '}
+                <time dateTime={post.createdAt.toDateString()}>
+                  {formatTimeToNow(new Date(post.createdAt))}
+                </time>
+              </p>
+              <p className="text-sm lg:pl-1">
+                Cập nhật:{' '}
+                <time dateTime={post.updatedAt.toDateString()}>
+                  {formatTimeToNow(new Date(post.updatedAt))}
+                </time>
+              </p>
+            </div>
           </div>
 
           <MTEditorOutput id={post.id} content={post.content} />

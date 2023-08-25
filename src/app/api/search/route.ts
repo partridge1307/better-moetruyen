@@ -9,7 +9,7 @@ export async function GET(req: Request) {
 
     let splittedQuery = query.split(' ');
 
-    const [mangas, users] = await db.$transaction([
+    const [mangas, users, forums] = await db.$transaction([
       db.manga.findMany({
         where: {
           OR: splittedQuery.map((q) => ({
@@ -43,9 +43,21 @@ export async function GET(req: Request) {
         },
         take: 10,
       }),
+      db.subForum.findMany({
+        where: {
+          OR: splittedQuery.map((q) => ({
+            title: { contains: q, mode: 'insensitive' },
+          })),
+        },
+        select: {
+          banner: true,
+          title: true,
+        },
+        take: 10,
+      }),
     ]);
 
-    return new Response(JSON.stringify({ mangas, users }));
+    return new Response(JSON.stringify({ mangas, users, forums }));
   } catch (error) {
     return new Response('Something went wrong', { status: 500 });
   }

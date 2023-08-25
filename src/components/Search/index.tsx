@@ -2,7 +2,7 @@
 
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { useDebouncedValue } from '@mantine/hooks';
-import type { Manga, MangaAuthor, User } from '@prisma/client';
+import type { Manga, MangaAuthor, SubForum, User } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Search as SearchIcon } from 'lucide-react';
@@ -12,8 +12,15 @@ import { Input } from '../ui/Input';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/Sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/Tabs';
 
-const MangaSearch = dynamic(() => import('@/components/Search/MangaSearch'));
-const UserSearch = dynamic(() => import('@/components/Search/UserSearch'));
+const MangaSearch = dynamic(() => import('@/components/Search/MangaSearch'), {
+  ssr: false,
+});
+const UserSearch = dynamic(() => import('@/components/Search/UserSearch'), {
+  ssr: false,
+});
+const ForumSearch = dynamic(() => import('@/components/Search/ForumSearch'), {
+  ssr: false,
+});
 const SearchSkeleton = dynamic(
   () => import('@/components/Search/SearchSkeleton')
 );
@@ -23,6 +30,7 @@ export type SearchData = {
     author: Pick<MangaAuthor, 'name'>[];
   })[];
   users: Pick<User, 'name' | 'color' | 'image'>[];
+  forums: Pick<SubForum, 'title' | 'banner'>[];
 };
 
 const Index = () => {
@@ -80,6 +88,7 @@ const Index = () => {
             <TabsList>
               <TabsTrigger value="manga">Manga</TabsTrigger>
               <TabsTrigger value="user">User</TabsTrigger>
+              <TabsTrigger value="forum">Forum</TabsTrigger>
             </TabsList>
 
             <TabsContent value="manga">
@@ -88,6 +97,10 @@ const Index = () => {
 
             <TabsContent value="user">
               <UserSearch users={searchData?.users} />
+            </TabsContent>
+
+            <TabsContent value="forum">
+              <ForumSearch forums={searchData?.forums} />
             </TabsContent>
           </Tabs>
         )}

@@ -1,8 +1,9 @@
 import type { CreateCommentPayload } from '@/lib/validators/comment';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
+import type { LexicalEditor } from 'lexical';
+import { CLEAR_EDITOR_COMMAND } from 'lexical';
 import { useCustomToast } from './use-custom-toast';
-import { CLEAR_EDITOR_COMMAND, type LexicalEditor } from 'lexical';
 
 export const useUploadComment = (
   editor: LexicalEditor | null,

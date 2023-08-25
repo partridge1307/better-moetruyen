@@ -36,7 +36,7 @@ const ThreadThumbnailField: FC<ThreadThumbnailFieldProps> = ({ form }) => {
                   priority
                   src={field.value}
                   alt="Preview Sub Forum Banner Image"
-                  className="rounded-md object-cover"
+                  className="rounded-md object-top object-cover"
                   aria-label="change thumbnail button"
                   role="button"
                   onClick={(e) => {

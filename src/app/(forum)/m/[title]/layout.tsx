@@ -140,7 +140,7 @@ const layout: FC<layoutProps> = async ({ params, children }) => {
                 quality={40}
                 src={subForum.banner}
                 alt={`${subForum.title} Banner`}
-                className="rounded-t-md object-cover"
+                className="rounded-t-md object-top object-cover"
               />
             </AspectRatio>
           )}

@@ -77,6 +77,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
           count={mangaCount}
           hasPrevPage={start > 0}
           hasNextPage={end < mangaCount}
+          route="/latest"
         />
       </div>
     </section>

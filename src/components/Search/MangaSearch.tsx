@@ -22,7 +22,7 @@ const MangaSearch: FC<MangaSearchProps> = ({ mangas }) => {
             <div className="relative h-24">
               <Image
                 fill
-                sizes="(max-width: 640px) 25vw, 35vw"
+                sizes="(max-width: 640px) 25vw, 30vw"
                 quality={40}
                 src={manga.image}
                 alt={`${manga.name} Thumbnail`}

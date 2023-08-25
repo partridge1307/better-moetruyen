@@ -39,7 +39,11 @@ export const metadata: Metadata = {
   },
 };
 
-const roboto = Roboto({ subsets: ['vietnamese'], weight: '400' });
+const roboto = Roboto({
+  subsets: ['vietnamese'],
+  weight: '400',
+  variable: '--font-roboto',
+});
 
 export default function RootLayout({
   children,
@@ -53,7 +57,7 @@ export default function RootLayout({
       <body
         className={cn(
           'h-screen antialiased dark:bg-zinc-800 dark:text-slate-50 md:scrollbar md:scrollbar--dark',
-          roboto.className
+          `${roboto.variable} font-sans`
         )}
       >
         <Providers>

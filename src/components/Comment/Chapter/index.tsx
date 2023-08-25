@@ -46,7 +46,7 @@ const Comments: FC<commentProps> = ({ id }) => {
     if (entry?.isIntersecting) {
       fetchNextPage();
     }
-  }, [entry, fetchNextPage]);
+  }, [entry?.isIntersecting, fetchNextPage]);
 
   const comments = CommentData?.pages.flatMap((page) => page);
 
@@ -57,6 +57,7 @@ const Comments: FC<commentProps> = ({ id }) => {
         id={id}
         type="COMMENT"
         callbackURL={CALLBACK_URL}
+        refetch={refetch}
       />
 
       <RefetchButton refetch={refetch} isRefetching={isRefetching} />
@@ -66,7 +67,7 @@ const Comments: FC<commentProps> = ({ id }) => {
           comments.map((comment, idx) => {
             if (idx === comments.length - 1) {
               return (
-                <li key={idx} ref={ref} className="flex gap-3 md:gap-6">
+                <li key={comment.id} ref={ref} className="flex gap-3 md:gap-6">
                   <CommentCard
                     comment={comment}
                     userId={session?.user.id}
@@ -76,7 +77,7 @@ const Comments: FC<commentProps> = ({ id }) => {
               );
             } else {
               return (
-                <li key={idx} ref={ref} className="flex gap-3 md:gap-6">
+                <li key={comment.id} ref={ref} className="flex gap-3 md:gap-6">
                   <CommentCard
                     comment={comment}
                     userId={session?.user.id}

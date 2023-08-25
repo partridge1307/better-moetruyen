@@ -9,8 +9,11 @@ export const UserProfileEditValidator = z.object({
     .min(5, 'Tối thiểu 5 kí tự')
     .max(30, 'Tối đa 30 kí tự')
     .refine(
-      (value) => /^[A-Za-z0-9\s]+$/.test(value),
-      'Tên chỉ chấp nhận kí tự in hoa, in thường, khoảng cách hoặc số'
+      (value) =>
+        /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\w\s]+$/.test(
+          value
+        ),
+      'Tên chỉ chấp nhận kí tự in hoa, in thường, gạch dưới, khoảng cách hoặc số'
     ),
   color: z.string().nullable(),
 });

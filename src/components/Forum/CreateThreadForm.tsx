@@ -3,8 +3,8 @@
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
 import {
-  CreateThreadPayload,
   CreateThreadValidator,
+  type CreateThreadPayload,
 } from '@/lib/validators/forum';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
@@ -12,40 +12,51 @@ import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { Button } from '../ui/Button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../ui/Form';
-import { Input } from '../ui/Input';
+import { Form } from '../ui/Form';
+import ThreadCanSendField from './components/ThreadCanSendField';
+import ThreadThumbnailField from './components/ThreadThumbnailField';
+import ThreadTitleField from './components/ThreadTitleField';
 
 const CreateThreadForm = () => {
-  const { loginToast, serverErrorToast, successToast } = useCustomToast();
+  const { loginToast, serverErrorToast, successToast, verifyToast } =
+    useCustomToast();
   const router = useRouter();
 
   const form = useForm<CreateThreadPayload>({
     resolver: zodResolver(CreateThreadValidator),
     defaultValues: {
+      thumbnail: '',
       title: '',
+      canSend: true,
     },
   });
 
   const { mutate: Create, isLoading: isCreating } = useMutation({
     mutationFn: async (values: CreateThreadPayload) => {
-      const { data } = await axios.post('/api/m', values);
+      const { thumbnail, title, canSend } = values;
+
+      const form = new FormData();
+
+      if (thumbnail) {
+        const blob = await fetch(thumbnail).then((res) => res.blob());
+        form.append('thumbnail', blob);
+      }
+
+      form.append('title', title);
+      form.append('canSend', canSend ? 'true' : 'false');
+
+      const { data } = await axios.post('/api/m', form);
 
       return data as number;
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) return loginToast();
+        if (err.response?.status === 404) return verifyToast();
         if (err.response?.status === 406)
           return toast({
             title: 'Đã tồn tại',
-            description: 'Đã tồn tại SubMoeDit này rồi',
+            description: 'Đã tồn tại cộng đồng này rồi',
             variant: 'destructive',
           });
       }
@@ -67,32 +78,17 @@ const CreateThreadForm = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmitHandler)}
-        className="p-2 space-y-4"
+        className="p-2 space-y-10"
       >
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tên cộng đồng</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <p className="absolute left-2 w-8 inset-y-0 text-sm grid place-content-center">
-                    m/
-                  </p>
-                  <Input className="pl-10" {...field} />
-                </div>
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <ThreadThumbnailField form={form} />
+        <ThreadTitleField form={form} />
+        <ThreadCanSendField form={form} />
 
         <div className="flex justify-end gap-4">
           <Button
+            tabIndex={0}
+            type="button"
             disabled={isCreating}
-            isLoading={isCreating}
             variant={'destructive'}
             className="px-6"
             onClick={() => router.back()}
@@ -100,6 +96,7 @@ const CreateThreadForm = () => {
             Hủy
           </Button>
           <Button
+            tabIndex={1}
             disabled={isCreating}
             isLoading={isCreating}
             type="submit"

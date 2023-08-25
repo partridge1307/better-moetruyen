@@ -1,24 +1,3 @@
-@media (min-width: 768px) {
-  .moetruyen-editor-wrapper {
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-@media (min-width: 1024px) {
-  .moetruyen-editor-wrapper {
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-.moetruyen-editor-wrapper {
-  position: relative;
-  padding: 4px 4px;
-}
-
 .moetruyen-editor-inner {
   position: relative;
   margin-top: 0.5rem;
@@ -64,6 +43,13 @@
 
 .moetruyen-editor-paragraph {
   position: relative;
+}
+
+.moetruyen-editor-embed {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-top: 56.25%;
 }
 
 .ImageNode__contentEditable {

@@ -1,4 +1,4 @@
-import { CommentVotePayload } from '@/lib/validators/comment';
+import { VotePayload } from '@/lib/validators/vote';
 import { usePrevious } from '@mantine/hooks';
 import { VoteType } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useCustomToast } from './use-custom-toast';
 
 export const useVote = (
-  commentId: number,
+  id: number,
   callbackURL: string,
   initialVoteAmt: number,
   initialVote?: VoteType | null
@@ -18,10 +18,11 @@ export const useVote = (
   const prevVote = usePrevious(currentVote);
 
   const { mutate: Vote } = useMutation({
+    mutationKey: ['vote-query', callbackURL, id],
     mutationFn: async (type: VoteType) => {
-      const payload: CommentVotePayload = {
+      const payload: VotePayload = {
+        id,
         voteType: type,
-        commentId,
       };
 
       await axios.patch(`${callbackURL}/vote`, payload);

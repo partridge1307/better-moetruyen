@@ -33,7 +33,6 @@ export async function POST(req: Request) {
     if (!user.verified && existedManga)
       return new Response('Need verify', { status: 400 });
 
-    const form = await req.formData();
     const {
       image: img,
       name,
@@ -44,7 +43,7 @@ export async function POST(req: Request) {
       tag,
       facebookLink,
       discordLink,
-    } = MangaFormValidator.parse(form);
+    } = MangaFormValidator.parse(await req.formData());
 
     const mangaCreated = await db.manga.create({
       data: {

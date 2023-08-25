@@ -36,6 +36,12 @@ export async function GET(req: Request, context: { params: { id: string } }) {
             image: true,
           },
         },
+        chapter: {
+          select: {
+            id: true,
+            chapterIndex: true,
+          },
+        },
         _count: {
           select: {
             replies: true,
@@ -67,7 +73,7 @@ export async function DELETE(
     if (!session) return new Response('Unauthorized', { status: 401 });
 
     await db.$transaction([
-      db.comment.findFirstOrThrow({
+      db.comment.findUniqueOrThrow({
         where: {
           authorId: session.user.id,
           id: +context.params.id,

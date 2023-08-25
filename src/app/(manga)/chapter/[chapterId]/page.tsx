@@ -48,7 +48,10 @@ export async function generateMetadata({
     };
 
   return {
-    title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
+    title: {
+      default: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
+      absolute: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
+    },
     description: `Đọc ${chapter.manga.name} | Moetruyen`,
     keywords: [
       'Chapter',
@@ -56,7 +59,11 @@ export async function generateMetadata({
       `${chapter.manga.name}`,
       `${chapter.chapterIndex}`,
     ],
+    alternates: {
+      canonical: `${process.env.NEXTAUTH_URL}/chapter/${params.chapterId}`,
+    },
     openGraph: {
+      url: `${process.env.NEXTAUTH_URL}/chapter/${params.chapterId}`,
       siteName: 'Moetruyen',
       title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
       description: `Đọc ${chapter.manga.name} | Moetruyen`,

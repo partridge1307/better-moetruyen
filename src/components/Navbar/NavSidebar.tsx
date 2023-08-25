@@ -50,10 +50,6 @@ const NavSidebar = () => {
         title: 'Cộng đồng',
         subMenu: [
           {
-            title: 'Thông báo',
-            link: '/m/announcements',
-          },
-          {
             title: 'Feed',
             link: '/m',
           },

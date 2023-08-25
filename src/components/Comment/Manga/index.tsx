@@ -22,11 +22,11 @@ export type ExtendedComment = Pick<
   _count: { replies: number };
 };
 
-interface CommentOutputProps {
+interface CommentProps {
   id: number;
 }
 
-const Comments: FC<CommentOutputProps> = ({ id }) => {
+const Comments: FC<CommentProps> = ({ id }) => {
   const { data: session } = useSession();
 
   const lastCmtRef = useRef<HTMLElement>(null);
@@ -47,7 +47,7 @@ const Comments: FC<CommentOutputProps> = ({ id }) => {
     if (entry?.isIntersecting) {
       fetchNextPage();
     }
-  }, [entry, fetchNextPage]);
+  }, [entry?.isIntersecting, fetchNextPage]);
 
   const comments = CommentData?.pages.flatMap((page) => page);
 
@@ -58,6 +58,7 @@ const Comments: FC<CommentOutputProps> = ({ id }) => {
         id={id}
         type="COMMENT"
         callbackURL={CALLBACK_URL}
+        refetch={refetch}
       />
 
       <RefetchButton refetch={refetch} isRefetching={isRefetching} />
@@ -67,7 +68,7 @@ const Comments: FC<CommentOutputProps> = ({ id }) => {
           comments.map((comment, idx) => {
             if (idx === comments.length - 1) {
               return (
-                <li key={idx} ref={ref} className="flex gap-3 md:gap-6">
+                <li key={comment.id} ref={ref} className="flex gap-3 md:gap-6">
                   <CommentCard
                     comment={comment}
                     userId={session?.user.id}
@@ -77,7 +78,7 @@ const Comments: FC<CommentOutputProps> = ({ id }) => {
               );
             } else {
               return (
-                <li key={idx} className="flex gap-3 md:gap-6">
+                <li key={comment.id} className="flex gap-3 md:gap-6">
                   <CommentCard
                     comment={comment}
                     userId={session?.user.id}

@@ -3,7 +3,7 @@ import Username from '@/components/User/Username';
 import { formatTimeToNow } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { FC } from 'react';
+import { FC, memo } from 'react';
 import type { ExtendedComment } from '.';
 import CommentContent from '../components/CommentContent';
 import CommentOEmbed from '../components/CommentOEmbed';
@@ -94,4 +94,4 @@ const CommentCard: FC<CommentCardProps> = ({
   );
 };
 
-export default CommentCard;
+export default memo(CommentCard);

@@ -1,5 +1,6 @@
 import { buttonVariants } from '@/components/ui/Button';
 import { toast } from './use-toast';
+import { cn } from '@/lib/utils';
 
 export const useCustomToast = () => {
   const loginToast = () => {
@@ -36,10 +37,28 @@ export const useCustomToast = () => {
 
   const successToast = () => toast({ title: 'Thành công' });
 
+  const verifyToast = () => {
+    const { dismiss } = toast({
+      title: 'Yêu cầu Xác thực',
+      description: 'Để thực hiện hành động này bạn cần Xác thực',
+      action: (
+        <a
+          target="_blank"
+          href="/verify-request"
+          className={cn(buttonVariants(), 'p-2')}
+          onClick={() => dismiss()}
+        >
+          <span className="text-sm w-max">Xác thực</span>
+        </a>
+      ),
+    });
+  };
+
   return {
     loginToast,
     notFoundToast,
     serverErrorToast,
     successToast,
+    verifyToast,
   };
 };

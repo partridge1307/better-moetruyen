@@ -1,28 +1,41 @@
+import CommentSkeleton from '@/components/Comment/components/CommentSkeleton';
 import UserAvatar from '@/components/User/UserAvatar';
 import UserBanner from '@/components/User/UserBanner';
 import Username from '@/components/User/Username';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';
-import { List, ListTree } from 'lucide-react';
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { FC, Suspense, lazy } from 'react';
+import { FC } from 'react';
 
 const MangaControll = dynamic(() => import('@/components/Manga/MangaControll'));
-const ListTreeChapter = dynamic(
-  () => import('@/components/Chapter/ListChapter/ListTreeChapter')
-);
-const ListChapter = dynamic(
-  () => import('@/components/Chapter/ListChapter/ListChapter')
-);
-const Comments = lazy(() => import('@/components/Comment/Manga'));
-const EditorOutput = lazy(() => import('@/components/EditorOutput'));
-const FBEmbed = lazy(() => import('@/components/FBEmbed'));
-const MangaImage = lazy(() => import('@/components/Manga/MangaImage'));
+const ListChapter = dynamic(() => import('@/components/Chapter/ListChapter'));
+const Comments = dynamic(() => import('@/components/Comment/Manga'), {
+  ssr: false,
+  loading: () => <CommentSkeleton />,
+});
+const EditorOutput = dynamic(() => import('@/components/EditorOutput'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-72 p-2 rounded-md dark:bg-zinc-900 animate-pulse" />
+  ),
+});
+const FBEmbed = dynamic(() => import('@/components/FBEmbed'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[300px] rounded-md dark:bg-zinc-900 animate-pulse" />
+  ),
+});
+const MangaImage = dynamic(() => import('@/components/Manga/MangaImage'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-48 w-full md:w-40 dark:bg-zinc-900 animate-pulse" />
+  ),
+});
 
 interface pageProps {
   params: {
@@ -39,9 +52,7 @@ type discordProps = {
 export async function generateMetadata({
   params,
 }: pageProps): Promise<Metadata> {
-  let idParam;
-  if (typeof params.id === 'string') idParam = params.id;
-  else idParam = params.id[0];
+  const idParam = typeof params.id === 'string' ? params.id : params.id[0];
 
   const manga = await db.manga.findFirst({
     where: {
@@ -56,43 +67,44 @@ export async function generateMetadata({
   if (!manga)
     return {
       title: 'Manga',
-      openGraph: {
-        title: 'Manga | Moetruyen',
-        description: 'Đọc Manga | Moetruyen',
-        url: `${process.env.NEXTAUTH_URL}/manga/${params.id}`,
-      },
-      twitter: {
-        title: 'Manga | Moetruyen',
-        description: 'Đọc Manga | Moetruyen',
+      description: 'Đọc Manga | Moetruyen',
+      alternates: {
+        canonical: `${process.env.NEXTAUTH_URL}/manga/${idParam}`,
       },
     };
 
+  const mangaSlug = manga.name.split(' ').join('-');
+
   return {
-    title: `${manga.name}`,
+    title: {
+      default: manga.name,
+      absolute: manga.name,
+    },
     description: `Đọc ${manga.name} | Moetruyen`,
     keywords: [`Manga`, `${manga.name}`, 'Moetruyen'],
     alternates: {
-      canonical: `${process.env.NEXTAUTH_URL}/manga/${manga.id}`,
+      canonical: `${process.env.NEXTAUTH_URL}/manga/${manga.id}/${mangaSlug}`,
     },
     openGraph: {
+      url: `${process.env.NEXTAUTH_URL}/manga/${manga.id}/${mangaSlug}`,
       siteName: 'Moetruyen',
-      title: `${manga.name}`,
+      title: manga.name,
       description: `Đọc ${manga.name} tại Moetruyen`,
       images: [
         {
-          url: `${manga.image}`,
+          url: manga.image,
           alt: `Ảnh bìa ${manga.name}`,
         },
       ],
     },
     twitter: {
       site: 'Moetruyen',
-      title: `${manga.name}`,
+      title: manga.name,
       description: `Đọc ${manga.name} | Moetruyen`,
       card: 'summary_large_image',
       images: [
         {
-          url: `${manga.image}`,
+          url: manga.image,
           alt: `Ảnh bìa ${manga.name}`,
         },
       ],
@@ -101,13 +113,11 @@ export async function generateMetadata({
 }
 
 const page: FC<pageProps> = async ({ params }) => {
-  let idParams;
-  if (typeof params.id === 'string') idParams = params.id;
-  else idParams = params.id[0];
+  const idParam = typeof params.id === 'string' ? params.id : params.id[0];
 
   const manga = await db.manga.findFirst({
     where: {
-      id: +idParams,
+      id: +idParam,
       isPublished: true,
     },
     select: {
@@ -199,13 +209,7 @@ const page: FC<pageProps> = async ({ params }) => {
       <main className="container max-sm:px-2 mx-auto h-full pt-20 space-y-14">
         <div className="relative h-max">
           <div className="p-4 max-sm:space-y-4 md:flex md:gap-10">
-            <Suspense
-              fallback={
-                <template className="h-48 w-full md:w-40 dark:bg-zinc-900 animate-pulse" />
-              }
-            >
-              <MangaImage className="h-48 w-full md:w-40" manga={manga} />
-            </Suspense>
+            <MangaImage className="h-48 w-full md:w-40" manga={manga} />
 
             <div className="space-y-1 md:space-y-2">
               <p className="text-2xl md:text-4xl font-semibold">{manga.name}</p>
@@ -254,13 +258,8 @@ const page: FC<pageProps> = async ({ params }) => {
 
           <div className="space-y-2">
             <p className="font-semibold text-lg">Mô tả</p>
-            <Suspense
-              fallback={
-                <div className="w-full h-20 p-2 rounded-md dark:bg-zinc-900 animate-pulse" />
-              }
-            >
-              <EditorOutput data={manga.description} />
-            </Suspense>
+
+            <EditorOutput data={manga.description} />
           </div>
 
           <Tabs defaultValue="chapter">
@@ -320,13 +319,7 @@ const page: FC<pageProps> = async ({ params }) => {
                 </div>
 
                 {manga.facebookLink && (
-                  <Suspense
-                    fallback={
-                      <div className="w-full h-[300px] rounded-md dark:bg-zinc-900 animate-pulse" />
-                    }
-                  >
-                    <FBEmbed facebookLink={manga.facebookLink} />
-                  </Suspense>
+                  <FBEmbed facebookLink={manga.facebookLink} />
                 )}
 
                 {discord.code && (
@@ -346,42 +339,11 @@ const page: FC<pageProps> = async ({ params }) => {
                 )}
               </div>
 
-              <Tabs defaultValue="list">
-                <div className="md:w-full md:flex md:justify-end">
-                  <TabsList className="space-x-2 dark:bg-zinc-800 max-sm:grid max-sm:grid-cols-2">
-                    <TabsTrigger value="list">
-                      <List
-                        className="max-sm:w-5 max-sm:h-5"
-                        aria-label="List chapter button"
-                      />
-                    </TabsTrigger>
-                    <TabsTrigger value="group">
-                      <ListTree
-                        className="max-sm:w-5 max-sm:h-5"
-                        aria-label="List tree chapter button"
-                      />
-                    </TabsTrigger>
-                  </TabsList>
-                </div>
-
-                <TabsContent value="group">
-                  <ListTreeChapter mangaId={manga.id} />
-                </TabsContent>
-
-                <TabsContent value="list">
-                  <ListChapter mangaId={manga.id} />
-                </TabsContent>
-              </Tabs>
+              <ListChapter mangaId={manga.id} />
             </TabsContent>
 
             <TabsContent value="comment">
-              <Suspense
-                fallback={
-                  <div className="grid grid-cols-1 grid-rows-[.7fr_1fr] gap-20 dark:bg-zinc-900 animate-pulse" />
-                }
-              >
-                <Comments id={manga.id} />
-              </Suspense>
+              <Comments id={manga.id} />
             </TabsContent>
           </Tabs>
         </div>

@@ -8,6 +8,7 @@ import Username from '../../User/Username';
 import SubComment from '../components/SubComment';
 import CommentContent from '../components/CommentContent';
 import CommentOEmbed from '../components/CommentOEmbed';
+import Link from 'next/link';
 
 const CommentFunc = dynamic(() => import('../components/CommentFunc'), {
   ssr: false,
@@ -43,6 +44,17 @@ const CommentCard = ({ comment, userId, callbackURL }: CommentCardProps) => {
           <p className="text-sm">
             {formatTimeToNow(new Date(comment.createdAt))}
           </p>
+
+          {!!comment.chapter && (
+            <p>
+              •{' '}
+              <Link href={`/chapter/${comment.chapter.id}`}>
+                <span className="text-sm text-sky-500">
+                  Chap {comment.chapter.chapterIndex}
+                </span>
+              </Link>
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">

@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import { FC } from 'react';
-import CustomImage from './Renderer/CustomImage';
 import CustomLink from './Renderer/CustomLink';
 const Output = dynamic(
   async () => (await import('editorjs-react-renderer')).default,
@@ -14,7 +13,6 @@ const Output = dynamic(
 
 const renderers = {
   linktool: CustomLink,
-  image: CustomImage,
 };
 
 interface EditorOutputProps {

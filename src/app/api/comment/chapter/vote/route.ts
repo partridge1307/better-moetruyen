@@ -1,6 +1,6 @@
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { CommentVoteValidator } from '@/lib/validators/comment';
+import { VoteValidator } from '@/lib/validators/vote';
 import { Prisma } from '@prisma/client';
 import { ZodError } from 'zod';
 
@@ -9,29 +9,19 @@ export async function PATCH(req: Request) {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const { commentId, voteType } = CommentVoteValidator.parse(
-      await req.json()
-    );
+    const { id, voteType } = VoteValidator.parse(await req.json());
 
-    const [, existingVote] = await db.$transaction([
-      db.comment.findFirstOrThrow({
-        where: {
-          id: commentId,
-        },
-        select: {
-          id: true,
-        },
-      }),
-      db.commentVote.findFirst({
-        where: {
+    const existingVote = await db.commentVote.findUnique({
+      where: {
+        userId_commentId: {
           userId: session.user.id,
-          commentId,
+          commentId: id,
         },
-        select: {
-          type: true,
-        },
-      }),
-    ]);
+      },
+      select: {
+        type: true,
+      },
+    });
 
     if (existingVote) {
       if (existingVote.type === voteType) {
@@ -39,7 +29,7 @@ export async function PATCH(req: Request) {
           where: {
             userId_commentId: {
               userId: session.user.id,
-              commentId,
+              commentId: id,
             },
           },
         });
@@ -51,7 +41,7 @@ export async function PATCH(req: Request) {
         where: {
           userId_commentId: {
             userId: session.user.id,
-            commentId,
+            commentId: id,
           },
         },
         data: {
@@ -65,7 +55,7 @@ export async function PATCH(req: Request) {
         data: {
           type: voteType,
           userId: session.user.id,
-          commentId,
+          commentId: id,
         },
       });
 

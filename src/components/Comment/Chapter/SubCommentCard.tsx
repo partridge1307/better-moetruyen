@@ -1,20 +1,20 @@
 'use client';
 
-import { useSubComments } from '@/hooks/use-sub-comment';
-import type {
-  Comment,
-  User,
-  CommentVote as CommentVoteType,
-} from '@prisma/client';
-import { Loader2 } from 'lucide-react';
-import { FC } from 'react';
-import CommentVote from '../components/CommentVote';
 import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
+import { useSubComments } from '@/hooks/use-sub-comment';
 import { formatTimeToNow } from '@/lib/utils';
+import type {
+  Comment,
+  CommentVote as CommentVoteType,
+  User,
+} from '@prisma/client';
+import { Loader2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { FC } from 'react';
 import CommentContent from '../components/CommentContent';
 import CommentOEmbed from '../components/CommentOEmbed';
-import dynamic from 'next/dynamic';
+import CommentVote from '../components/CommentVote';
 
 const DeleteComment = dynamic(() => import('../components/DeleteComment'), {
   ssr: false,
@@ -49,7 +49,7 @@ const SubCommentCard: FC<SubCommentCardProps> = ({
   ) : (
     !!subComment?.length && (
       <ul className="mt-8 space-y-6">
-        {subComment.map((comment, idx) => {
+        {subComment.map((comment) => {
           const voteAmt = comment.votes.reduce((acc, vote) => {
             if (vote.type === 'UP_VOTE') return acc + 1;
             if (vote.type === 'DOWN_VOTE') return acc - 1;
@@ -61,7 +61,7 @@ const SubCommentCard: FC<SubCommentCardProps> = ({
           )?.type;
 
           return (
-            <li key={idx} className="flex gap-3 md:gap-6">
+            <li key={comment.id} className="flex gap-3 md:gap-6">
               <UserAvatar user={comment.author} />
 
               <div className="space-y-1">

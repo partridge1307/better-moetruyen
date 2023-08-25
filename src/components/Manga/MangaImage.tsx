@@ -30,7 +30,7 @@ const MangaImage: FC<MangaCardProps> = ({ manga, className }) => {
       <div className={cn('relative', className)}>
         <Image
           fill
-          sizes="50vw"
+          sizes="40vw"
           priority
           src={manga.image}
           placeholder="blur"

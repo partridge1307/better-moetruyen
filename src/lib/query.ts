@@ -7,7 +7,6 @@ export type Chapters =
         id: number;
         name: string | null;
         index: number;
-        isPublished: boolean;
         teamId: string | null;
         teamName: string | null;
         teamImage: string | null;
@@ -17,7 +16,7 @@ export type Chapters =
   | null;
 
 export const mangaChapterGroupByVolume = (mangaId: number) =>
-  db.$queryRaw`SELECT "volume", array_agg(json_build_object('id', c."id", 'name', c."name", 'index', "chapterIndex", 'isPublished', "isPublished", 'teamId', t."id", 'teamName', t."name", 'teamImage', t."image", 'createdAt', c."createdAt")) AS data FROM "Chapter" c LEFT JOIN "Team" t ON t."id" = c."teamId" WHERE "mangaId" = ${mangaId} GROUP BY "volume" ORDER BY "volume" DESC` as Promise<Chapters>;
+  db.$queryRaw`SELECT "volume", array_agg(json_build_object('id', c."id", 'name', c."name", 'index', "chapterIndex", 'teamId', t."id", 'teamName', t."name", 'teamImage', t."image", 'createdAt', c."createdAt")) AS data FROM "Chapter" c LEFT JOIN "Team" t ON t."id" = c."teamId" WHERE "mangaId" = ${mangaId} AND "isPublished" = true GROUP BY "volume" ORDER BY "volume" DESC` as Promise<Chapters>;
 
 export type Tags = {
   category: string;

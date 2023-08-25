@@ -28,9 +28,3 @@ export const CreateCommentValidator = z.object({
     .optional(),
 });
 export type CreateCommentPayload = z.infer<typeof CreateCommentValidator>;
-
-export const CommentVoteValidator = z.object({
-  commentId: z.number(),
-  voteType: z.enum(['UP_VOTE', 'DOWN_VOTE']),
-});
-export type CommentVotePayload = z.infer<typeof CommentVoteValidator>;

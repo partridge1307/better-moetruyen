@@ -31,6 +31,7 @@ import {
 } from '../ui/Form';
 import { Input } from '../ui/Input';
 import type { authorResultProps } from './MangaAuthorUpload';
+
 const Editor = dynamic(() => import('@/components/Editor'), {
   ssr: false,
   loading: () => <Loader2 className="h-6 w-6 animate-spin" />,
@@ -44,13 +45,15 @@ const MangaTagUpload = dynamic(() => import('./MangaTagUpload'), {
 const MangaAuthorUpload = dynamic(() => import('./MangaAuthorUpload'), {
   ssr: false,
 });
-const VerifyDialog = dynamic(() => import('@/components/User/VerifyDialog'), {
-  ssr: false,
-});
 
 const MangaUpload = ({ tag }: { tag: Tags[] }) => {
-  const { notFoundToast, loginToast, serverErrorToast, successToast } =
-    useCustomToast();
+  const {
+    notFoundToast,
+    loginToast,
+    serverErrorToast,
+    successToast,
+    verifyToast,
+  } = useCustomToast();
   const router = useRouter();
 
   const form = useForm<MangaUploadPayload>({
@@ -68,35 +71,6 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
     },
   });
 
-  const { mutate: Verify, isLoading: isVerifing } = useMutation({
-    mutationKey: ['verify-request'],
-    mutationFn: async () => {
-      await axios.post('/api/user/verify');
-    },
-    onError: (err) => {
-      if (err instanceof AxiosError) {
-        if (err.response?.status === 401) return loginToast();
-        if (err.response?.status === 404) return notFoundToast();
-        if (err.response?.status === 400)
-          return toast({
-            title: 'Bạn đã Verify',
-            description: 'Bạn đã được Verify trước đó',
-            variant: 'destructive',
-          });
-        if (err.response?.status === 418)
-          return toast({
-            title: 'Bạn đang yêu cầu Verify',
-            description: 'Yêu cầu của bạn đang được xem xét',
-            variant: 'destructive',
-          });
-      }
-
-      return serverErrorToast();
-    },
-    onSuccess: () => {
-      return successToast();
-    },
-  });
   const {
     data: authorResult,
     mutate: FetchAuthor,
@@ -149,37 +123,13 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
           });
         if (e.response?.status === 401) return loginToast();
         if (e.response?.status === 404) return notFoundToast();
+        if (e.response?.status === 400) return verifyToast();
         if (e.response?.status === 406)
           return toast({
             title: 'Đường dẫn không hợp lệ',
             description: 'Đường dẫn FB hoặc Discord không hợp lệ',
             variant: 'destructive',
           });
-        if (e.response?.status === 400) {
-          const { dismiss } = toast({
-            title: 'Yêu cầu xác thực',
-            description:
-              'Bạn đã đạt giới hạn số lượng Upload. Vui lòng xác thực',
-            variant: 'destructive',
-            action: (
-              <button
-                className={cn(buttonVariants(), 'p-2')}
-                onClick={() => {
-                  const target = document.getElementById(
-                    'verify-button'
-                  ) as HTMLButtonElement;
-
-                  target.click();
-                  dismiss();
-                }}
-              >
-                <span className="text-sm w-max">Xác thực</span>
-              </button>
-            ),
-          });
-
-          return;
-        }
       }
 
       return serverErrorToast();
@@ -359,7 +309,6 @@ const MangaUpload = ({ tag }: { tag: Tags[] }) => {
           </Button>
         </form>
       </Form>
-      <VerifyDialog Verify={() => Verify()} isVerifing={isVerifing} />
     </>
   );
 };

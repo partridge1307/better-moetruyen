@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     );
 
     if (type === 'SUB_COMMENT') {
-      const targetComment = await db.comment.findFirstOrThrow({
+      const targetComment = await db.comment.findUniqueOrThrow({
         where: {
           id,
         },

@@ -26,7 +26,6 @@ const Editor: FC<EditorProps> = ({ editorRef, initialData }) => {
   const [mounted, setMounted] = useState<boolean>(false);
   const initializeEditor = useCallback(async () => {
     const EditorJS = (await import('@editorjs/editorjs')).default;
-    const SimpleImage = (await import('@editorjs/simple-image')).default;
     const CheckList = (await import('@editorjs/checklist')).default;
     const Quote = (await import('@editorjs/quote')).default;
     const LinkTool = (await import('@editorjs/link')).default;
@@ -39,7 +38,6 @@ const Editor: FC<EditorProps> = ({ editorRef, initialData }) => {
         inlineToolbar: true,
         data: { blocks: [] },
         tools: {
-          image: SimpleImage,
           quote: Quote,
           checklist: {
             class: CheckList,

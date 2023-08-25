@@ -18,13 +18,13 @@ const CommentVote: FC<CommentVoteProps> = ({
   commentId,
   callbackURL,
   voteAmt: initialVoteAmt,
-  currentVote: initialCurrentVote,
+  currentVote: initialVote,
 }) => {
   const { Vote, voteAmt, currentVote } = useVote(
     commentId,
     callbackURL,
     initialVoteAmt,
-    initialCurrentVote
+    initialVote
   );
 
   return (

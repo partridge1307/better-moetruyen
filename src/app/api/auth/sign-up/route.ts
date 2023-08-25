@@ -22,7 +22,7 @@ export async function POST(req: Request) {
     if (userExists)
       return new Response('Tài khoản đã tồn tại', { status: 401 });
 
-    const hashedPwd = await hash(password, 10);
+    const hashedPwd = await hash(password, 12);
     const token = signToken({ email, password: hashedPwd }, '30m');
     const result = await transporter.sendMail({
       to: email,

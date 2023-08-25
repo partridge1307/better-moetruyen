@@ -53,6 +53,7 @@ model User {
   muteExpires     DateTime?
   createdAt       DateTime          @default(now())
   subForum        SubForum[]
+  subscription    Subscription[]
   post            Post[]
   comment         Comment[]
   commentVote     CommentVote[]
@@ -337,15 +338,29 @@ model Log {
 // Forum
 
 model SubForum {
-  id        Int      @id @default(autoincrement())
-  title     String   @unique
-  creatorId String
-  createdAt DateTime @default(now())
-  posts     Post[]
+  id            Int            @id @default(autoincrement())
+  title         String         @unique
+  banner        String?
+  canSend       Boolean        @default(true)
+  creatorId     String
+  createdAt     DateTime       @default(now())
+  posts         Post[]
+  subscriptions Subscription[]
 
-  user User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creator User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
 
   @@index([creatorId])
+  @@index([title])
+}
+
+model Subscription {
+  userId     String
+  subForumId Int
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subForum SubForum @relation(fields: [subForumId], references: [id], onDelete: Cascade)
+
+  @@id([userId, subForumId])
 }
 
 model Post {
@@ -355,11 +370,11 @@ model Post {
   content    Json
   authorId   String
   comments   PostComment[]
-  postVote   PostVote[]
+  votes      PostVote[]
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
 
-  subForum SubForum @relation(fields: [subForumId], references: [id])
+  subForum SubForum @relation(fields: [subForumId], references: [id], onDelete: Cascade)
   author   User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([subForumId])
@@ -367,14 +382,15 @@ model Post {
 }
 
 model PostComment {
-  id              Int               @id @default(autoincrement())
-  content         Json
-  createdAt       DateTime          @default(now())
-  postId          Int
-  creatorId       String
-  replyToId       Int?
-  replies         PostComment[]     @relation("ReplyToPost")
-  postCommentVote PostCommentVote[]
+  id        Int               @id @default(autoincrement())
+  content   Json
+  oEmbed    Json?
+  createdAt DateTime          @default(now())
+  postId    Int
+  creatorId String
+  replyToId Int?
+  votes     PostCommentVote[]
+  replies   PostComment[]     @relation("ReplyToPost")
 
   post    Post         @relation(fields: [postId], references: [id])
   creator User         @relation(fields: [creatorId], references: [id], onDelete: Cascade)
@@ -391,7 +407,7 @@ model PostVote {
   type   VoteType
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post Post @relation(fields: [postId], references: [id])
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([userId, postId])
   @@index([userId, postId])
@@ -404,7 +420,7 @@ model PostCommentVote {
   type          VoteType
 
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  postComment PostComment @relation(fields: [postCommentId], references: [id])
+  postComment PostComment @relation(fields: [postCommentId], references: [id], onDelete: Cascade)
 
   @@id([userId, postCommentId])
   @@index([userId, postCommentId])

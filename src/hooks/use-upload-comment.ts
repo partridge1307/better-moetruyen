@@ -1,10 +1,13 @@
-import { CreateCommentPayload } from '@/lib/validators/comment';
+import type { CreateCommentPayload } from '@/lib/validators/comment';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { useCustomToast } from './use-custom-toast';
 import { CLEAR_EDITOR_COMMAND, type LexicalEditor } from 'lexical';
 
-export const useUploadComment = (editor: LexicalEditor) => {
+export const useUploadComment = (
+  editor: LexicalEditor | null,
+  refetch?: () => void
+) => {
   const { loginToast, notFoundToast, serverErrorToast, successToast } =
     useCustomToast();
 
@@ -28,8 +31,10 @@ export const useUploadComment = (editor: LexicalEditor) => {
       return serverErrorToast();
     },
     onSuccess: () => {
-      if (!editor.isEditable()) editor.setEditable(true);
-      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+      if (!editor?.isEditable()) editor?.setEditable(true);
+      editor?.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+
+      !!refetch && refetch();
 
       return successToast();
     },

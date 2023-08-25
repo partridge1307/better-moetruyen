@@ -1,14 +1,15 @@
 import type { Chapter, Manga } from '@prisma/client';
-import { Loader2, MessagesSquare } from 'lucide-react';
+import { MessagesSquare } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { forwardRef, memo } from 'react';
+import CommentSkeleton from '../Comment/components/CommentSkeleton';
 import NextChapterButton from './components/NextChapterButton';
 import PrevChapterButton from './components/PrevChapterButton';
 
 const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
+  loading: () => <CommentSkeleton />,
 });
 
 interface VerticalViewChapterProps {

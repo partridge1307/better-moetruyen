@@ -40,14 +40,11 @@ function YouTubeComponent({
       nodeKey={nodeKey}
     >
       <iframe
-        height={315}
-        src={`https://www.youtube-nocookie.com/embed/${videoID}`}
+        src={`https://www.youtube-nocookie.com/embed/${videoID}?mute=1&hl=vi`}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen={true}
         title="YouTube video"
-        style={{
-          width: '100%',
-        }}
+        className="absolute inset-0 w-full h-full rounded-md"
       />
     </BlockWithAlignableContents>
   );

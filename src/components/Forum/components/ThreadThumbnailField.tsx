@@ -31,9 +31,13 @@ const ThreadThumbnailField: FC<ThreadThumbnailFieldProps> = ({ form }) => {
               <div className="relative w-full pt-[56.25%] rounded-md border-2 border-dashed">
                 <Image
                   fill
+                  sizes="70vw"
+                  quality={40}
+                  priority
                   src={field.value}
                   alt="Preview Sub Forum Banner Image"
                   className="rounded-md object-cover"
+                  aria-label="change thumbnail button"
                   role="button"
                   onClick={(e) => {
                     e.preventDefault();
@@ -65,6 +69,7 @@ const ThreadThumbnailField: FC<ThreadThumbnailFieldProps> = ({ form }) => {
               <div
                 role="button"
                 className="relative w-full pt-[56.25%] rounded-md border-2 border-dashed"
+                aria-label="add image button"
                 onClick={(e) => {
                   e.preventDefault();
 

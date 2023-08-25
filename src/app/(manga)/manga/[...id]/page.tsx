@@ -1,4 +1,5 @@
 import CommentSkeleton from '@/components/Comment/components/CommentSkeleton';
+import EditorOutput from '@/components/EditorOutput';
 import UserAvatar from '@/components/User/UserAvatar';
 import UserBanner from '@/components/User/UserBanner';
 import Username from '@/components/User/Username';
@@ -17,12 +18,6 @@ const ListChapter = dynamic(() => import('@/components/Chapter/ListChapter'));
 const Comments = dynamic(() => import('@/components/Comment/Manga'), {
   ssr: false,
   loading: () => <CommentSkeleton />,
-});
-const EditorOutput = dynamic(() => import('@/components/EditorOutput'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-72 p-2 rounded-md dark:bg-zinc-900 animate-pulse" />
-  ),
 });
 const FBEmbed = dynamic(() => import('@/components/FBEmbed'), {
   ssr: false,

@@ -4,7 +4,7 @@ import { db } from '@/lib/db';
 
 export async function GET(
   req: Request,
-  context: { params: { channelId: string } }
+  context: { params: { guildId: string } }
 ) {
   try {
     const session = await getAuthSession();
@@ -22,9 +22,13 @@ export async function GET(
       return new Response('Not found', { status: 404 });
 
     const res = await fetch(
-      `${socketServer}/api/v1/server/${context.params.channelId}/${user.account[0].providerAccountId}`
+      `${socketServer}/api/v1/server/${context.params.guildId}/${user.account[0].providerAccountId}`
     );
-    if (!res.ok) return new Response('Not found', { status: 406 });
+    if (!res.ok) {
+      if (res.status === 404)
+        return new Response('Not Acceptable', { status: 406 });
+      if (res.status === 422) return new Response('Invalid', { status: 422 });
+    }
 
     const data = await res.json();
 

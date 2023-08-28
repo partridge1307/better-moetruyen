@@ -75,6 +75,13 @@ const ChannelSend: FC<ChannelSendProps> = ({ channel, isLinked }) => {
 
           return;
         }
+        if (err.response?.status === 422) {
+          return toast({
+            title: 'Không thể thực hiện',
+            description: 'Hãy chắc chắn rằng bạn có quyền quản lý server',
+            variant: 'destructive',
+          });
+        }
       }
 
       return serverErrorToast();
@@ -151,6 +158,8 @@ const ChannelSend: FC<ChannelSendProps> = ({ channel, isLinked }) => {
     <>
       {isLinked && (
         <Button
+          isLoading={isSetting || isDeleting}
+          disabled={isSetting || isDeleting}
           variant={!!channel ? 'destructive' : 'default'}
           className="w-full"
           onClick={() => onClickButtonHandler()}
@@ -170,7 +179,7 @@ const ChannelSend: FC<ChannelSendProps> = ({ channel, isLinked }) => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {!!channel ? 'Gỡ liên kết' : 'Liên kết'} kênh Discord
+              {!!channel ? 'Gỡ liên kết' : 'Liên kết'} Discord
             </DialogTitle>
           </DialogHeader>
 

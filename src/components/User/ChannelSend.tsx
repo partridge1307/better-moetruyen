@@ -1,30 +1,33 @@
 'use client';
 
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { toast } from '@/hooks/use-toast';
 import type { DiscordChannel } from '@prisma/client';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
+import { useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
-import { Button } from '../ui/Button';
+import { Button, buttonVariants } from '../ui/Button';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '../ui/Dialog';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
 import { Input } from '../ui/Input';
-import { useCustomToast } from '@/hooks/use-custom-toast';
 import { Label } from '../ui/Label';
-import { useRouter } from 'next/navigation';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/Tabs';
+import { cn } from '@/lib/utils';
 import { DialogClose } from '@radix-ui/react-dialog';
-import { toast } from '@/hooks/use-toast';
 
 interface ChannelSendProps {
   channel: Pick<DiscordChannel, 'channelId' | 'channelName'> | null;
   isLinked: boolean;
 }
 
-type ChannelData = {
+type Data = {
   id: string;
   name: string;
 };
@@ -35,9 +38,11 @@ const ChannelSend: FC<ChannelSendProps> = ({ channel, isLinked }) => {
   const router = useRouter();
 
   const [channelIdStr, setChannelIdStr] = useState('');
+  const [targetChannel, setTargetChannel] = useState<Data>();
+  const [targetRole, setTargetRole] = useState<Data>();
 
   const {
-    data: channelsData,
+    data: Data,
     mutate: Fetch,
     isLoading: isFetching,
   } = useMutation({
@@ -45,22 +50,47 @@ const ChannelSend: FC<ChannelSendProps> = ({ channel, isLinked }) => {
     mutationFn: async () => {
       const { data } = await axios.get(`/api/channel/${channelIdStr}`);
 
-      return data as ChannelData[];
+      return data as { channels: Data[]; roles: Data[] };
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) return loginToast();
         if (err.response?.status === 404) return notFoundToast();
+        if (err.response?.status === 406) {
+          const { dismiss } = toast({
+            title: 'Không tìm thấy',
+            description: 'Hãy chắc chắn rằng đã thêm Bot hoặc đó là ID hợp lệ',
+            variant: 'destructive',
+            action: (
+              <a
+                target="_blank"
+                href="https://discord.com/api/oauth2/authorize?client_id=1112647992160292915&permissions=19456&scope=bot"
+                className={buttonVariants()}
+                onClick={() => dismiss()}
+              >
+                Thêm
+              </a>
+            ),
+          });
+
+          return;
+        }
       }
 
       return serverErrorToast();
+    },
+    onSuccess: () => {
+      setChannelIdStr('');
     },
   });
 
   const { mutate: Set, isLoading: isSetting } = useMutation({
     mutationKey: ['set-channel-query'],
-    mutationFn: async (payload: ChannelData) => {
-      await axios.post(`/api/channel`, payload);
+    mutationFn: async () => {
+      await axios.post(`/api/channel`, {
+        channel: targetChannel,
+        role: targetRole,
+      });
     },
     onError: (err) => {
       if (err instanceof AxiosError) {
@@ -120,14 +150,18 @@ const ChannelSend: FC<ChannelSendProps> = ({ channel, isLinked }) => {
   return (
     <>
       {isLinked && (
-        <Button onClick={() => onClickButtonHandler()}>
+        <Button
+          variant={!!channel ? 'destructive' : 'default'}
+          className="w-full"
+          onClick={() => onClickButtonHandler()}
+        >
           {!!channel ? 'Gỡ' : 'Liên kết'}
         </Button>
       )}
 
       <Dialog>
         <DialogTrigger
-          disabled={isSetting || isDeleting}
+          disabled={isSetting || isDeleting || !!channel}
           id="link-channel-button"
           className="hidden"
         >
@@ -150,7 +184,7 @@ const ChannelSend: FC<ChannelSendProps> = ({ channel, isLinked }) => {
             />
 
             <Button
-              disabled={isFetching}
+              disabled={isFetching || !channelIdStr.length}
               isLoading={isFetching}
               onClick={() => Fetch()}
             >
@@ -158,23 +192,84 @@ const ChannelSend: FC<ChannelSendProps> = ({ channel, isLinked }) => {
             </Button>
           </div>
 
-          <div className="max-h-72 overflow-auto space-y-3 scrollbar dark:scrollbar--dark">
-            {!!channelsData?.length &&
-              channelsData.map((c) => (
-                <DialogClose
-                  key={c.id}
-                  className="w-full text-start p-1 rounded-md hover:cursor-pointer transition-colors hover:dark:bg-zinc-700 dark:bg-zinc-800"
-                  onClick={() => Set(c)}
-                >
-                  <p>
-                    <span>ID: </span> {c.id}
-                  </p>
-                  <p className="line-clamp-1">
-                    <span>Tên: </span> {c.name}
-                  </p>
-                </DialogClose>
-              ))}
-          </div>
+          <Tabs defaultValue="channel">
+            <TabsList>
+              <TabsTrigger value="channel">Kênh có thể gửi</TabsTrigger>
+              <TabsTrigger value="role">Role có thể Tag</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="channel">
+              <ul className="max-h-64 lg:max-h-72 space-y-2 lg:space-y-3 overflow-auto scrollbar dark:scrollbar--dark">
+                {Data?.channels.length ? (
+                  Data.channels.map((channel) => (
+                    <li
+                      key={channel.id}
+                      className={cn(
+                        'p-1 rounded-md transition-colors hover:cursor-pointer hover:dark:bg-zinc-700 dark:bg-zinc-800',
+                        {
+                          'hover:dark:bg-green-600 dark:bg-green-600':
+                            channel === targetChannel,
+                        }
+                      )}
+                      onClick={() => setTargetChannel(channel)}
+                    >
+                      <p>
+                        <span>ID:</span> {channel.id}
+                      </p>
+                      <p>
+                        <span>Tên: </span> {channel.name}
+                      </p>
+                    </li>
+                  ))
+                ) : isFetching ? (
+                  <li>Đang tìm kiếm...</li>
+                ) : (
+                  <li>Không tìm thấy kênh</li>
+                )}
+              </ul>
+            </TabsContent>
+
+            <TabsContent value="role">
+              <ul className="max-h-64 lg:max-h-72 space-y-2 lg:space-y-3 overflow-auto scrollbar dark:scrollbar--dark">
+                {Data?.roles.length && !isFetching ? (
+                  Data.roles.map((role) => (
+                    <li
+                      key={role.id}
+                      className={cn(
+                        'p-1 rounded-md transition-colors hover:cursor-pointer hover:dark:bg-zinc-700 dark:bg-zinc-800',
+                        {
+                          'hover:dark:bg-green-600 dark:bg-green-600':
+                            role === targetRole,
+                        }
+                      )}
+                      onClick={() => setTargetRole(role)}
+                    >
+                      <p>
+                        <span>ID:</span> {role.id}
+                      </p>
+                      <p>
+                        <span>Tên: </span> {role.name}
+                      </p>
+                    </li>
+                  ))
+                ) : isFetching ? (
+                  <li>Đang tìm kiếm...</li>
+                ) : (
+                  <li>Không tìm thấy Role</li>
+                )}
+              </ul>
+            </TabsContent>
+          </Tabs>
+
+          <DialogFooter>
+            <DialogClose
+              disabled={isSetting || !targetChannel}
+              className={buttonVariants()}
+              onClick={() => Set()}
+            >
+              Xong
+            </DialogClose>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

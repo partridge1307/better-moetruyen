@@ -8,10 +8,18 @@ export async function POST(req: Request) {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const { id, name } = z
+    const { channel, role } = z
       .object({
-        id: z.string(),
-        name: z.string(),
+        channel: z.object({
+          id: z.string(),
+          name: z.string(),
+        }),
+        role: z
+          .object({
+            id: z.string(),
+            name: z.string(),
+          })
+          .optional(),
       })
       .parse(await req.json());
 
@@ -28,7 +36,7 @@ export async function POST(req: Request) {
       return new Response('Not found', { status: 404 });
 
     const res = await fetch(
-      `${socketServer}/api/v1/server/${id}/${user.account[0].providerAccountId}`,
+      `${socketServer}/api/v1/server/${channel.id}/${user.account[0].providerAccountId}`,
       {
         method: 'POST',
       }
@@ -50,8 +58,10 @@ export async function POST(req: Request) {
         db.discordChannel.create({
           data: {
             userId: session.user.id,
-            channelId: id,
-            channelName: name,
+            channelId: channel.id,
+            channelName: channel.name,
+            roleId: role?.id,
+            roleName: role?.name,
           },
         }),
       ]);
@@ -59,8 +69,10 @@ export async function POST(req: Request) {
       await db.discordChannel.create({
         data: {
           userId: session.user.id,
-          channelId: id,
-          channelName: name,
+          channelId: channel.id,
+          channelName: channel.name,
+          roleId: role?.id,
+          roleName: role?.name,
         },
       });
     }

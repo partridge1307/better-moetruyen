@@ -64,11 +64,18 @@ export async function DELETE(req: Request) {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });
 
-    await db.account.deleteMany({
-      where: {
-        userId: session.user.id,
-      },
-    });
+    await db.$transaction([
+      db.account.deleteMany({
+        where: {
+          userId: session.user.id,
+        },
+      }),
+      db.discordChannel.deleteMany({
+        where: {
+          userId: session.user.id,
+        },
+      }),
+    ]);
 
     return new Response('OK');
   } catch (error) {

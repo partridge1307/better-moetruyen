@@ -329,9 +329,11 @@ model History {
 }
 
 model DiscordChannel {
-  userId      String @unique
+  userId      String  @unique
   channelId   String
   channelName String
+  roleId      String?
+  roleName    String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

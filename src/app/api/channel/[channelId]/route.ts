@@ -24,9 +24,13 @@ export async function GET(
     const res = await fetch(
       `${socketServer}/api/v1/server/${context.params.channelId}/${user.account[0].providerAccountId}`
     );
-    if (!res.ok) return new Response('Not found', { status: 404 });
+    if (!res.ok) return new Response('Not found', { status: 406 });
 
-    return new Response(JSON.stringify((await res.json()).channels));
+    const data = await res.json();
+
+    return new Response(
+      JSON.stringify({ channels: data.channels, roles: data.roles })
+    );
   } catch (error) {
     return new Response('Something went wrong', { status: 500 });
   }

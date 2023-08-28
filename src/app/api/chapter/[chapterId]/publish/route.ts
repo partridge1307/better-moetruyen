@@ -31,6 +31,7 @@ export async function PATCH(
         },
         select: {
           channelId: true,
+          roleId: true,
         },
       }),
     ]);
@@ -59,6 +60,7 @@ export async function PATCH(
       const token = signPublicToken({
         id: targetChapter.id,
         channelId: channel.channelId,
+        roleId: channel.roleId,
       });
 
       fetch(`${socketServer}/api/v1/server`, {

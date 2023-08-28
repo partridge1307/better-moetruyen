@@ -46,9 +46,10 @@ const LinkWithDiscord: FC<LinkWithDiscordProps> = ({ account }) => {
 
   return (
     <div
+      id="discord-link"
       className={cn('flex items-center gap-10 w-fit p-2 rounded-md', {
-        'bg-green-600': account.length,
-        'bg-red-600': !account.length,
+        'bg-green-900': account.length,
+        'bg-red-900': !account.length,
       })}
     >
       <div className="flex items-center gap-2">

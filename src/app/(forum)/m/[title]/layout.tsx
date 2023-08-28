@@ -187,7 +187,7 @@ const layout: FC<layoutProps> = async ({ params, children }) => {
               </>
             )}
 
-            {subForum.creatorId !== session?.user.id && (
+            {!!session && subForum.creatorId !== session.user.id && (
               <SubscribeOrLeave
                 subForumId={subForum.id}
                 isSubscribed={!!subscription}

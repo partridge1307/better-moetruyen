@@ -10,7 +10,6 @@ import ImageResizer from '@/components/ui/ImageResizer';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
 import { mergeRegister } from '@lexical/utils';
-import { useMediaQuery } from '@mantine/hooks';
 import {
   $getNodeByKey,
   $getSelection,
@@ -93,6 +92,7 @@ function LazyImage({
       src={src}
       alt={altText}
       ref={imageRef}
+      loading="lazy"
       style={{
         width,
         height,

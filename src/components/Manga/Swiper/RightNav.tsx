@@ -15,7 +15,7 @@ const RightNav: FC<LeftNavProps> = ({ disabled, onClick }) => {
       aria-label="Next Slide"
       className="absolute right-0 z-[4] bottom-0 p-1"
     >
-      <ChevronRight className="w-10 h-10" />
+      <ChevronRight className="w-12 h-12" />
     </button>
   );
 };

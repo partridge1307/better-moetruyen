@@ -27,7 +27,7 @@ const LastActivityThread = dynamic(
 const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-96 md:h-64 rounded-lg animate-pulse dark:bg-zinc-900" />
+    <div className="w-full h-96 md:h-48 lg:h-64 rounded-lg animate-pulse dark:bg-zinc-900" />
   ),
 });
 

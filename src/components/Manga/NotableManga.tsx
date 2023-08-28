@@ -10,6 +10,7 @@ import 'react-image-gallery/styles/css/image-gallery.css';
 import { TagContent, TagWrapper } from '../ui/Tag';
 import LeftNav from './Swiper/LeftNav';
 import RightNav from './Swiper/RightNav';
+import { AspectRatio } from '../ui/AspectRatio';
 
 type ExtendedManga = Pick<Manga, 'id' | 'name' | 'image'> & {
   tags: Pick<Tag, 'name' | 'description'>[];
@@ -29,7 +30,7 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
           return (
             <Link href={`/manga/${manga.id}`}>
               <div className="grid grid-cols-1 md:grid-cols-[.3fr_1fr] gap-4 p-2 rounded-lg dark:bg-zinc-900">
-                <div className="relative w-full h-44 md:h-60 rounded-md">
+                <AspectRatio ratio={4 / 3}>
                   <Image
                     fill
                     sizes="40vw"
@@ -37,9 +38,9 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
                     priority
                     src={item.original}
                     alt={`${manga.name} Thumbnail`}
-                    className="object-contain object-top rounded-md"
+                    className="object-cover object-top rounded-lg"
                   />
-                </div>
+                </AspectRatio>
 
                 <div className="text-start text-base space-y-2 pb-16 md:pb-10">
                   <h1 className="font-bold text-xl md:text-2xl">

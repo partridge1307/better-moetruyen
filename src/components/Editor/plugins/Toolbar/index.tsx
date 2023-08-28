@@ -58,7 +58,7 @@ const Toolbar = () => {
   const [selectedInlineStyle, setSelectedInlineStyle] = useState<string[]>([]);
   const [isLink, setIsLink] = useState<boolean>(false);
   const [linkInput, setLinkInput] = useState<string>('');
-  const [isLinkDisabled, setIsLinkDisabled] = useState<boolean>(false);
+  const [isLinkDisabled, setIsLinkDisabled] = useState<boolean>(true);
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();

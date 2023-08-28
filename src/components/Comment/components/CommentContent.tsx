@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import type { Prisma } from '@prisma/client';
 import { ChevronsDown, ChevronsUp } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { FC, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 
 const MoetruyenEditorOutput = dynamic(
   () => import('@/components/Editor/MoetruyenEditorOutput'),
@@ -16,7 +16,16 @@ interface CommentProps {
 
 const CommentContent: FC<CommentProps> = ({ id, content }): JSX.Element => {
   const cmtRef = useRef<HTMLDivElement>(null);
+  const [cmtHeight, setCmtHeight] = useState(0);
   const [isCollapsed, setisCollapsed] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (cmtRef.current) {
+      setTimeout(() => {
+        !!cmtRef.current && setCmtHeight(cmtRef.current.clientHeight);
+      }, 100);
+    }
+  }, [cmtRef]);
 
   return (
     <div
@@ -29,7 +38,7 @@ const CommentContent: FC<CommentProps> = ({ id, content }): JSX.Element => {
     >
       <MoetruyenEditorOutput id={id} content={content} />
 
-      {cmtRef.current && cmtRef.current.clientHeight >= 320 ? (
+      {cmtHeight >= 320 ? (
         <div
           role="button"
           onClick={() => setisCollapsed((prev) => !prev)}

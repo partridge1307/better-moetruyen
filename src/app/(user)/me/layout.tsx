@@ -67,6 +67,16 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
                 Quản lý team
                 <ChevronRight className="w-5 h-5" />
               </Link>
+              <Link
+                href="/me/setting"
+                className={cn(
+                  buttonVariants({ variant: 'ghost' }),
+                  'w-full py-6 pl-6 flex items-center gap-1'
+                )}
+              >
+                Thiết lập
+                <ChevronRight className="w-5 h-5" />
+              </Link>
             </div>
           </div>
         </div>

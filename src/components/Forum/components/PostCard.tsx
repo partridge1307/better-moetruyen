@@ -6,7 +6,7 @@ import { formatTimeToNow } from '@/lib/utils';
 import type { VoteType } from '@prisma/client';
 import { MessageSquare } from 'lucide-react';
 import dynamic from 'next/dist/shared/lib/dynamic';
-import { FC, memo, useRef, useState } from 'react';
+import { FC, memo, useEffect, useRef, useState } from 'react';
 import type { ExtendedPost } from '../PostFeed';
 import PostVoteClient from './PostVoteClient';
 
@@ -37,15 +37,19 @@ const PostCard: FC<PostCardProps> = ({
   const [postHeight, setPostHeight] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  setTimeout(() => {
-    !!contentRef.current && setPostHeight(contentRef.current.clientHeight);
-  }, 100);
+  useEffect(() => {
+    if (contentRef.current) {
+      setTimeout(() => {
+        !!contentRef.current && setPostHeight(contentRef.current.clientHeight);
+      }, 100);
+    }
+  }, [contentRef]);
 
   return (
     <div className="p-2 rounded-md transition-colors hover:dark:bg-zinc-900">
       <a
         target="_blank"
-        href={`/m/${subForumSlug}/${post.id}/${post.title
+        href={`/m/${subForumSlug}/${post.id}?title=${post.title
           .split(' ')
           .join('-')}`}
       >
@@ -74,7 +78,7 @@ const PostCard: FC<PostCardProps> = ({
         />
         <a
           target="_blank"
-          href={`/m/${subForumSlug}/${post.id}/${post.title
+          href={`/m/${subForumSlug}/${post.id}?title=${post.title
             .split(' ')
             .join('-')}`}
           className="flex items-end gap-2"

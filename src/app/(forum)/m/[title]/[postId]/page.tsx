@@ -42,12 +42,9 @@ interface pageProps {
 export async function generateMetadata({
   params,
 }: pageProps): Promise<Metadata> {
-  const postId =
-    typeof params.postId === 'string' ? params.postId : params.postId[0];
-
   const post = await db.post.findFirst({
     where: {
-      id: +postId,
+      id: +params.postId,
     },
     select: {
       title: true,
@@ -74,14 +71,10 @@ export async function generateMetadata({
     description: `Bài viết ${post.title} - ${post.subForum.title} | Moetruyen`,
     keywords: ['Post', 'Forum', post.title, post.subForum.title, 'Moetruyen'],
     alternates: {
-      canonical: `${process.env.NEXTAUTH_URL}/m/${
-        params.title
-      }/${postId}/${post.title.split(' ').join('-')}`,
+      canonical: `${process.env.NEXTAUTH_URL}/m/${params.title}/${params.postId}`,
     },
     openGraph: {
-      url: `${process.env.NEXTAUTH_URL}/m/${params.title}/${postId}/${post.title
-        .split(' ')
-        .join('-')}`,
+      url: `${process.env.NEXTAUTH_URL}/m/${params.title}/${params.postId}`,
       siteName: 'Moetruyen',
       title: post.title,
       description: `Bài viết ${post.title} - ${post.subForum.title} | Moetruyen`,
@@ -108,13 +101,10 @@ export async function generateMetadata({
 }
 
 const page: FC<pageProps> = async ({ params }) => {
-  const postId =
-    typeof params.postId === 'string' ? params.postId : params.postId[0];
-
   const [post, session] = await Promise.all([
     db.post.findFirst({
       where: {
-        id: +postId,
+        id: +params.postId,
       },
       select: {
         id: true,
@@ -173,7 +163,7 @@ const page: FC<pageProps> = async ({ params }) => {
               getData={() =>
                 db.post.findUnique({
                   where: {
-                    id: +postId,
+                    id: +params.postId,
                   },
                   select: {
                     id: true,

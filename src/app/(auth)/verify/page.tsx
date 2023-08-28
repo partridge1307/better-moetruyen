@@ -22,9 +22,6 @@ export const metadata: Metadata = {
 };
 
 interface pageProps {
-  params: {
-    token: string;
-  };
   searchParams: {
     token: string | string[] | undefined;
   };

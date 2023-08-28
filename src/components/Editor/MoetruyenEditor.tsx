@@ -13,8 +13,8 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import type { Prisma } from '@prisma/client';
 import type { EditorState, LexicalEditor } from 'lexical';
-import { memo } from 'react';
 import { nodes } from './Node';
 import { theme } from './Theme';
 import AutoEmbedPlugin from './plugins/AutoEmbed';
@@ -24,7 +24,7 @@ import ImagesPlugin from './plugins/Image';
 import MaxLengthPlugin from './plugins/MaxLength';
 import Toolbar from './plugins/Toolbar';
 import YouTubePlugin from './plugins/Youtube';
-import type { Prisma } from '@prisma/client';
+import SteamPlugin from './plugins/Steam';
 
 function onError(error: Error): void {
   // eslint-disable-next-line no-console
@@ -84,6 +84,7 @@ const Editor = ({
       <LinkPlugin />
       <MaxLengthPlugin maxLength={maxLength} />
       <ImagesPlugin />
+      <SteamPlugin />
       <YouTubePlugin />
       <OnChangePlugin
         onChange={(editorState) => !!onChange && onChange(editorState)}
@@ -95,4 +96,4 @@ const Editor = ({
   );
 };
 
-export default memo(Editor);
+export default Editor;

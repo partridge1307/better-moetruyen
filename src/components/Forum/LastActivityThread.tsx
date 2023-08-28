@@ -25,7 +25,7 @@ const LastActivityThread = async () => {
             target="_blank"
             href={`/m/${post.subForum.title.split(' ').join('-')}/${
               post.id
-            }/${post.title.split(' ').join('-')}`}
+            }?title=${post.title.split(' ').join('-')}`}
           >
             <dl className="p-4 rounded-lg hover:cursor-pointer hover:dark:bg-zinc-900">
               <dt className="font-medium">{post.title}</dt>

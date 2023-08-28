@@ -1,5 +1,7 @@
+import { socketServer } from '@/config';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { signPublicToken } from '@/lib/jwt';
 import { Prisma } from '@prisma/client';
 
 export async function PATCH(
@@ -10,18 +12,28 @@ export async function PATCH(
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const targetChapter = await db.chapter.findFirstOrThrow({
-      where: {
-        id: +context.params.chapterId,
-        manga: {
-          creatorId: session.user.id,
+    const [targetChapter, channel] = await db.$transaction([
+      db.chapter.findFirstOrThrow({
+        where: {
+          id: +context.params.chapterId,
+          manga: {
+            creatorId: session.user.id,
+          },
         },
-      },
-      select: {
-        id: true,
-        mangaId: true,
-      },
-    });
+        select: {
+          id: true,
+          mangaId: true,
+        },
+      }),
+      db.discordChannel.findUnique({
+        where: {
+          userId: session.user.id,
+        },
+        select: {
+          channelId: true,
+        },
+      }),
+    ]);
 
     await db.$transaction([
       db.manga.findFirstOrThrow({
@@ -42,6 +54,20 @@ export async function PATCH(
         },
       }),
     ]);
+
+    if (channel) {
+      const token = signPublicToken({
+        id: targetChapter.id,
+        channelId: channel.channelId,
+      });
+
+      fetch(`${socketServer}/api/v1/server`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
 
     return new Response('OK');
   } catch (error) {

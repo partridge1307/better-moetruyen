@@ -7,13 +7,14 @@ import {
 import { LexicalEditor } from 'lexical';
 import { createPortal } from 'react-dom';
 import { INSERT_YOUTUBE_COMMAND } from '../Youtube';
+import { INSERT_STEAM_COMMAND } from '../Steam';
 
 interface MoetruyenEmbedConfig extends EmbedConfig {
   // Human readable name of the embeded content e.g. Tweet or Google Map.
   contentName: string;
 }
 
-export const YoutubeEmbedConfig: MoetruyenEmbedConfig = {
+const YoutubeEmbedConfig: MoetruyenEmbedConfig = {
   contentName: 'Video Youtube',
 
   insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
@@ -40,7 +41,34 @@ export const YoutubeEmbedConfig: MoetruyenEmbedConfig = {
   type: 'youtube-video',
 };
 
-export const EmbedConfigs = [YoutubeEmbedConfig];
+const SteamEmbedConfig: MoetruyenEmbedConfig = {
+  contentName: 'Steam Game',
+
+  insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
+    editor.dispatchCommand(INSERT_STEAM_COMMAND, result.id);
+  },
+
+  // Determine if a given URL is a match and return url data.
+  parseUrl: async (url: string) => {
+    const match =
+      /^.*(https:\/\/)?store.steampowered.com\/app\/([0-9]*).*/.exec(url);
+
+    const id = match ? (match?.[2].length > 0 ? match[2] : null) : null;
+
+    if (id != null) {
+      return {
+        id,
+        url,
+      };
+    }
+
+    return null;
+  },
+
+  type: 'steam-app',
+};
+
+const EmbedConfigs = [YoutubeEmbedConfig, SteamEmbedConfig];
 
 function AutoEmbedMenuItem({
   index,
@@ -83,7 +111,9 @@ function AutoEmbedMenu({
   onOptionMouseEnter,
 }: {
   selectedItemIndex: number | null;
+  // eslint-disable-next-line no-unused-vars
   onOptionClick: (option: AutoEmbedOption, index: number) => void;
+  // eslint-disable-next-line no-unused-vars
   onOptionMouseEnter: (index: number) => void;
   options: Array<AutoEmbedOption>;
 }) {

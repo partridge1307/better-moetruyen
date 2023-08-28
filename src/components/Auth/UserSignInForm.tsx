@@ -104,7 +104,11 @@ const UserSignInForm = ({
                   type="email"
                   placeholder="Email của bạn"
                   className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
-                  {...field}
+                  value={emailString}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    setEmailString(e.target.value);
+                  }}
                 />
               </FormControl>
             </FormItem>

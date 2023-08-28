@@ -77,7 +77,7 @@ const PostFeed: FC<PostFeedProps> = ({ subForumId, initialPosts, session }) => {
           defaultValue={sortBy}
           onValueChange={(value) => setSortBy(value as 'asc' | 'desc' | 'hot')}
         >
-          <SelectTrigger className="w-fit">
+          <SelectTrigger className="w-fit" aria-label="sort by button">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -90,6 +90,7 @@ const PostFeed: FC<PostFeedProps> = ({ subForumId, initialPosts, session }) => {
               }}
               value="hot"
               className="hover:cursor-pointer"
+              aria-label="hot"
             >
               Hàng đầu
             </SelectItem>
@@ -102,6 +103,7 @@ const PostFeed: FC<PostFeedProps> = ({ subForumId, initialPosts, session }) => {
               }}
               value="asc"
               className="hover:cursor-pointer"
+              aria-label="oldest"
             >
               Cũ nhất
             </SelectItem>
@@ -114,6 +116,7 @@ const PostFeed: FC<PostFeedProps> = ({ subForumId, initialPosts, session }) => {
               }}
               value="desc"
               className="hover:cursor-pointer"
+              aria-label="newest"
             >
               Mới nhất
             </SelectItem>

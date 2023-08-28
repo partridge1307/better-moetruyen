@@ -34,7 +34,7 @@ const MangaImage = dynamic(() => import('@/components/Manga/MangaImage'), {
 
 interface pageProps {
   params: {
-    id: string | string[];
+    id: string;
   };
 }
 
@@ -47,11 +47,9 @@ type discordProps = {
 export async function generateMetadata({
   params,
 }: pageProps): Promise<Metadata> {
-  const idParam = typeof params.id === 'string' ? params.id : params.id[0];
-
   const manga = await db.manga.findFirst({
     where: {
-      id: +idParam,
+      id: +params.id,
     },
     select: {
       id: true,
@@ -64,11 +62,9 @@ export async function generateMetadata({
       title: 'Manga',
       description: 'Đọc Manga | Moetruyen',
       alternates: {
-        canonical: `${process.env.NEXTAUTH_URL}/manga/${idParam}`,
+        canonical: `${process.env.NEXTAUTH_URL}/manga/${params.id}`,
       },
     };
-
-  const mangaSlug = manga.name.split(' ').join('-');
 
   return {
     title: {
@@ -78,10 +74,10 @@ export async function generateMetadata({
     description: `Đọc ${manga.name} | Moetruyen`,
     keywords: [`Manga`, `${manga.name}`, 'Moetruyen'],
     alternates: {
-      canonical: `${process.env.NEXTAUTH_URL}/manga/${manga.id}/${mangaSlug}`,
+      canonical: `${process.env.NEXTAUTH_URL}/manga/${manga.id}`,
     },
     openGraph: {
-      url: `${process.env.NEXTAUTH_URL}/manga/${manga.id}/${mangaSlug}`,
+      url: `${process.env.NEXTAUTH_URL}/manga/${manga.id}`,
       siteName: 'Moetruyen',
       title: manga.name,
       description: `Đọc ${manga.name} tại Moetruyen`,
@@ -108,11 +104,9 @@ export async function generateMetadata({
 }
 
 const page: FC<pageProps> = async ({ params }) => {
-  const idParam = typeof params.id === 'string' ? params.id : params.id[0];
-
   const manga = await db.manga.findFirst({
     where: {
-      id: +idParam,
+      id: +params.id,
       isPublished: true,
     },
     select: {
@@ -215,13 +209,13 @@ const page: FC<pageProps> = async ({ params }) => {
           </div>
 
           <Image
-            width={500}
-            height={300}
-            quality={50}
+            fill
+            sizes="(max-width: 648px) 25vw, 30vw"
+            quality={40}
             priority
             src={manga.image}
             alt="Manga Background Image"
-            className="absolute inset-0 -z-10 h-full w-full blur-sm md:brightness-[.3] object-cover rounded-md"
+            className="absolute inset-0 -z-10 h-full w-full blur-sm brightness-[.3] object-cover rounded-md"
           />
         </div>
 

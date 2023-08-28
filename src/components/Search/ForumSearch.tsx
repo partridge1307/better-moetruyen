@@ -23,7 +23,7 @@ const ForumSearch: FC<ForumSearchProps> = ({ forums }) => {
               {!!forum.banner && (
                 <Image
                   fill
-                  sizes="(max-width: 640px) 25vw, 30vw"
+                  sizes="(max-width: 640px) 20vw, 25vw"
                   quality={40}
                   src={forum.banner}
                   alt={`${forum.title} Thumbnail`}

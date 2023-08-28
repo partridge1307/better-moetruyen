@@ -43,6 +43,7 @@ const roboto = Roboto({
   subsets: ['vietnamese'],
   weight: '400',
   variable: '--font-roboto',
+  preload: true,
 });
 
 export default function RootLayout({

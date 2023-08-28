@@ -10,10 +10,11 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import type { Prisma } from '@prisma/client';
-import { FC, memo } from 'react';
+import { FC } from 'react';
 import { theme } from '../Editor/Theme';
 import { ImageNode } from './nodes/Image';
 import { YouTubeNode } from './nodes/Youtube';
+import { SteamNode } from './nodes/Steam';
 
 function onError(err: Error): void {
   // eslint-disable-next-line no-console
@@ -35,7 +36,7 @@ const MoetruyenEditorOutput: FC<MoetruyenEditorOutputProps> = ({
     theme,
     editable: false,
     editorState: JSON.stringify(content),
-    nodes: [AutoLinkNode, ImageNode, YouTubeNode, LinkNode],
+    nodes: [AutoLinkNode, ImageNode, SteamNode, YouTubeNode, LinkNode],
   };
 
   return (
@@ -49,4 +50,4 @@ const MoetruyenEditorOutput: FC<MoetruyenEditorOutputProps> = ({
   );
 };
 
-export default memo(MoetruyenEditorOutput);
+export default MoetruyenEditorOutput;

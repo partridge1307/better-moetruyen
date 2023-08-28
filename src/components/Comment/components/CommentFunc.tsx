@@ -5,9 +5,11 @@ import { MessageSquare } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { FC, useState } from 'react';
 import { Button } from '../../ui/Button';
-import CommentInput from './CommentInput';
 import CommentVote from './CommentVote';
 
+const CommentInput = dynamic(() => import('./CommentInput'), {
+  ssr: false,
+});
 const DeleteComment = dynamic(() => import('./DeleteComment'), { ssr: false });
 
 interface CommentFuncProps {

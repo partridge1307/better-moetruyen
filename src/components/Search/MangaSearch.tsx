@@ -16,7 +16,7 @@ const MangaSearch: FC<MangaSearchProps> = ({ mangas }) => {
       {mangas.map((manga, idx) => (
         <Link
           key={idx}
-          href={`/manga/${manga.id}/${manga.name.split(' ').join('-')}`}
+          href={`/manga/${manga.id}?title=${manga.name.split(' ').join('-')}`}
         >
           <DialogClose className="grid grid-cols-[.4fr_1fr] lg:grid-cols-[.15fr_1fr] gap-4 p-2 rounded-md text-start transition-colors duration-100 hover:dark:bg-zinc-800">
             <div className="relative h-24">

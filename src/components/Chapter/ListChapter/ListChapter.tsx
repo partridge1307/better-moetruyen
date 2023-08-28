@@ -33,7 +33,7 @@ const ListChapter: FC<ListChapterProps> = async ({ mangaId }) => {
   });
 
   return (
-    chapters?.length && (
+    !!chapters?.length && (
       <ul className="space-y-4">
         {chapters
           .sort((a, b) => b.chapterIndex - a.chapterIndex)

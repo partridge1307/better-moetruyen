@@ -20,7 +20,7 @@ const ListTreeChapter: FC<ListTreeChapterProps> = async ({ mangaId }) => {
   const volumes = await mangaChapterGroupByVolume(mangaId);
 
   return (
-    volumes && (
+    !!volumes?.length && (
       <Accordion
         type="multiple"
         defaultValue={volumes.map((v) => `${v.volume}`)}

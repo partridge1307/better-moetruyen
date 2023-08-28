@@ -1,9 +1,10 @@
-import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { PrismaAdapter } from '@auth/prisma-adapter';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
-import { AuthOptions, getServerSession } from 'next-auth';
+import { type AuthOptions, getServerSession } from 'next-auth';
 import { decode, encode } from 'next-auth/jwt';
 import Credentials from 'next-auth/providers/credentials';
+import Discord from 'next-auth/providers/discord';
 import Email from 'next-auth/providers/email';
 import { cookies, headers } from 'next/headers';
 import { NextRequest } from 'next/server';
@@ -34,6 +35,8 @@ export const authOptionsWrapper = (
       adapter: PrismaAdapter(db),
       pages: {
         signIn: '/sign-in',
+        error: '/auth-error',
+        verifyRequest: '/verify-request',
       },
       session: { strategy: 'database' },
       secret: process.env.NEXTAUTH_SECRET,
@@ -112,41 +115,71 @@ export const authOptionsWrapper = (
             }
           },
         }),
+        Discord({
+          clientId: process.env.DISC_CLIENT_ID!,
+          clientSecret: process.env.DISC_CLIENT_SECRET!,
+          authorization: { params: { scope: 'identify' } },
+        }),
       ],
       callbacks: {
-        async signIn({ user }) {
-          try {
-            if (user) {
-              if (isCredentialsCallback) {
-                const sessionToken = randomUUID();
-                const sessionExpiry = new Date(
-                  Date.now() + 15 * 24 * 60 * 60 * 1000
-                );
+        async signIn({ user, account }) {
+          if (user) {
+            if (isCredentialsCallback) {
+              const sessionToken = randomUUID();
+              const sessionExpiry = new Date(
+                Date.now() + 15 * 24 * 60 * 60 * 1000
+              );
 
-                await db.session.create({
-                  data: {
-                    sessionToken,
-                    userId: user.id,
-                    expires: sessionExpiry,
-                  },
-                });
-
-                cookies().set('next-auth.session-token', sessionToken, {
+              await db.session.create({
+                data: {
+                  sessionToken,
+                  userId: user.id,
                   expires: sessionExpiry,
-                });
-              } else {
-                await db.user.findUniqueOrThrow({
+                },
+              });
+
+              cookies().set('next-auth.session-token', sessionToken, {
+                expires: sessionExpiry,
+              });
+
+              return true;
+            } else {
+              if (account?.provider === 'email') {
+                const userExist = await db.user.findUnique({
                   where: {
                     id: user.id,
                   },
                 });
+
+                if (!userExist) return false;
+              } else if (account?.provider === 'discord') {
+                const existAccount = await db.user.findUnique({
+                  where: {
+                    id: user.id,
+                    account: {
+                      some: {
+                        provider: 'discord',
+                      },
+                    },
+                  },
+                  select: {
+                    id: true,
+                  },
+                });
+                if (existAccount) {
+                  await db.account.deleteMany({
+                    where: {
+                      userId: existAccount.id,
+                    },
+                  });
+                }
+
+                return true;
               }
 
-              return true;
-            } else throw new Error();
-          } catch (error) {
-            return `/sign-up`;
-          }
+              return false;
+            }
+          } else return false;
         },
         session: async ({ session, user: dbUser }) => {
           const { expires } = session;
@@ -161,22 +194,24 @@ export const authOptionsWrapper = (
           }
 
           if (!dbUser.name) {
-            const updatedUser = await db.user.update({
+            const generatedName = generateRandomName;
+
+            db.user.update({
               where: {
                 id: dbUser.id,
               },
               data: {
-                name: generateRandomName,
+                name: generatedName,
               },
             });
 
             return {
               user: {
-                id: updatedUser.id,
-                name: updatedUser.name,
-                image: updatedUser.image,
-                banner: updatedUser.banner,
-                color: updatedUser.color,
+                id: dbUser.id,
+                name: generatedName,
+                image: dbUser.image,
+                banner: dbUser.banner,
+                color: dbUser.color,
               },
               expires,
             };
@@ -213,19 +248,21 @@ export const authOptionsWrapper = (
           return decode(arg);
         },
       },
-      // events: {
-      //   async signOut({ session }) {
-      //     const { sessionToken = '', userId } = session as unknown as {
-      //       sessionToken?: string;
-      //       userId: string;
-      //     };
+      events: {
+        signOut: async ({ session }) => {
+          const { sessionToken = '' } = session as unknown as {
+            sessionToken?: string;
+          };
 
-      //     console.log(session, sessionToken);
-
-      //     if (sessionToken.length) {
-      //     }
-      //   },
-      // },
+          if (sessionToken) {
+            await db.session.deleteMany({
+              where: {
+                sessionToken,
+              },
+            });
+          }
+        },
+      },
     } as AuthOptions,
   ] as const;
 };

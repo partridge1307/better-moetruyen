@@ -13,7 +13,7 @@ import type {
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents';
 import {
   DecoratorBlockNode,
-  SerializedDecoratorBlockNode,
+  type SerializedDecoratorBlockNode,
 } from '@lexical/react/LexicalDecoratorBlockNode';
 import * as React from 'react';
 
@@ -43,7 +43,8 @@ function YouTubeComponent({
         src={`https://www.youtube-nocookie.com/embed/${videoID}?mute=1&hl=vi`}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen={true}
-        title="YouTube video"
+        loading="lazy"
+        title="YouTube Video"
         className="absolute inset-0 w-full h-full rounded-md"
       />
     </BlockWithAlignableContents>

@@ -3,7 +3,7 @@ import { usePrevious } from '@mantine/hooks';
 import type { VoteType } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useCustomToast } from './use-custom-toast';
 
 export const useVote = (
@@ -16,10 +16,6 @@ export const useVote = (
   const [voteAmt, setVoteAmt] = useState<number>(initialVoteAmt);
   const [currentVote, setCurrentVote] = useState(initialVote);
   const prevVote = usePrevious(currentVote);
-
-  useEffect(() => {
-    setCurrentVote(initialVote);
-  }, [initialVote]);
 
   const { mutate: Vote } = useMutation({
     mutationKey: ['vote-query', callbackURL, id],

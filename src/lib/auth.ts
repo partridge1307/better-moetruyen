@@ -151,7 +151,7 @@ export const authOptionsWrapper = (
                   },
                 });
 
-                if (!userExist) return false;
+                if (userExist) return true;
               } else if (account?.provider === 'discord') {
                 const existAccount = await db.user.findUnique({
                   where: {

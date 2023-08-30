@@ -18,7 +18,7 @@ const MiniCreatePost = dynamic(
 
 interface pageProps {
   params: {
-    title: string;
+    slug: string;
   };
 }
 
@@ -27,7 +27,7 @@ const page: FC<pageProps> = async ({ params }) => {
     getAuthSession(),
     db.subForum.findFirst({
       where: {
-        title: params.title.split('-').join(' '),
+        slug: params.slug,
       },
       select: {
         id: true,
@@ -53,6 +53,7 @@ const page: FC<pageProps> = async ({ params }) => {
         subForum: {
           select: {
             title: true,
+            slug: true,
           },
         },
         author: {

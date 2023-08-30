@@ -40,6 +40,7 @@ export async function GET(req: Request, context: { params: { id: string } }) {
         subForum: {
           select: {
             title: true,
+            slug: true,
           },
         },
         author: {

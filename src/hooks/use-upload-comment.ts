@@ -4,6 +4,7 @@ import axios, { AxiosError } from 'axios';
 import type { LexicalEditor } from 'lexical';
 import { CLEAR_EDITOR_COMMAND } from 'lexical';
 import { useCustomToast } from './use-custom-toast';
+import { socket } from '@/lib/socket';
 
 export const useUploadComment = (
   editor: LexicalEditor | null,
@@ -20,6 +21,7 @@ export const useUploadComment = (
     }: {
       payload: CreateCommentPayload;
       callbackURL: string;
+      mentionUsers?: Set<{ id: string; name: string }>;
     }) => {
       await axios.post(callbackURL, payload);
     },
@@ -31,11 +33,31 @@ export const useUploadComment = (
 
       return serverErrorToast();
     },
-    onSuccess: () => {
+    onSuccess: (_, data) => {
       if (!editor?.isEditable()) editor?.setEditable(true);
       editor?.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
 
       !!refetch && refetch();
+
+      if (data.mentionUsers) {
+        let users: { id: string; name: string }[] = [];
+        data.mentionUsers.forEach((user) => users.push(user));
+
+        socket.emit('notify', {
+          type: 'MENTION',
+          id: data.payload.id,
+          users: users,
+          callbackURL: data.callbackURL,
+        });
+      }
+
+      if (data.payload.type === 'SUB_COMMENT') {
+        socket.emit('notify', {
+          type: 'COMMENT',
+          id: data.payload.id,
+          callbackURL: data.callbackURL,
+        });
+      }
 
       return successToast();
     },

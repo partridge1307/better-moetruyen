@@ -15,6 +15,7 @@ import { theme } from '../Editor/Theme';
 import { ImageNode } from './nodes/Image';
 import { YouTubeNode } from './nodes/Youtube';
 import { SteamNode } from './nodes/Steam';
+import { MentionNode } from './nodes/Mention';
 
 function onError(err: Error): void {
   // eslint-disable-next-line no-console
@@ -36,7 +37,14 @@ const MoetruyenEditorOutput: FC<MoetruyenEditorOutputProps> = ({
     theme,
     editable: false,
     editorState: JSON.stringify(content),
-    nodes: [AutoLinkNode, ImageNode, SteamNode, YouTubeNode, LinkNode],
+    nodes: [
+      AutoLinkNode,
+      MentionNode,
+      ImageNode,
+      SteamNode,
+      YouTubeNode,
+      LinkNode,
+    ],
   };
 
   return (

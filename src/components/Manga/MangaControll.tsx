@@ -19,27 +19,31 @@ interface MangaControllProps {
 }
 
 const MangaControll: FC<MangaControllProps> = async ({ manga }) => {
-  const session = await getAuthSession();
-  const firstChapter = await db.chapter.findFirst({
-    where: {
-      mangaId: manga.id,
-      isPublished: true,
-    },
-    select: {
-      id: true,
-    },
-    orderBy: {
-      chapterIndex: 'asc',
-    },
-    take: 1,
-  });
+  const [session, firstChapter] = await Promise.all([
+    getAuthSession(),
+    db.chapter.findFirst({
+      where: {
+        mangaId: manga.id,
+        isPublished: true,
+      },
+      select: {
+        id: true,
+      },
+      orderBy: {
+        chapterIndex: 'asc',
+      },
+      take: 1,
+    }),
+  ]);
 
   let existingFollow: MangaFollow | null = null;
   if (session) {
-    existingFollow = await db.mangaFollow.findFirst({
+    existingFollow = await db.mangaFollow.findUnique({
       where: {
-        mangaId: manga.id,
-        userId: session.user.id,
+        mangaId_userId: {
+          mangaId: manga.id,
+          userId: session.user.id,
+        },
       },
     });
   }

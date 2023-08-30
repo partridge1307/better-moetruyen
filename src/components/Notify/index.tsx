@@ -1,12 +1,13 @@
 'use client';
 
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
-import type { Notify, Prisma, User } from '@prisma/client';
+import { socket } from '@/lib/socket';
+import type { Notify, NotifyType } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { Bell, Loader2 } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import type { Session } from 'next-auth';
-import { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
 import {
   DropdownMenu,
@@ -14,102 +15,77 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '../ui/DropdownMenu';
-import { Tabs, TabsList, TabsTrigger } from '../ui/Tabs';
-import General from './General';
-import { socket } from '@/lib/socket';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/Tabs';
+import Follow from './follow';
+import General from './general';
+import System from './system';
 
-interface NotificationsProps {
-  session: Session;
-}
 export type ExtendedNotify = Pick<
   Notify,
-  'id' | 'type' | 'createdAt' | 'content' | 'isRead'
-> & {
-  fromUser: Pick<User, 'name'>;
-};
+  'id' | 'type' | 'createdAt' | 'content' | 'endPoint' | 'isRead'
+>;
 
-export enum notifyType {
-  // eslint-disable-next-line no-unused-vars
-  LIKE = 'LIKE',
-  // eslint-disable-next-line no-unused-vars
-  COMMENT = 'COMMENT',
-  // eslint-disable-next-line no-unused-vars
-  MENTION = 'MENTION',
-  // eslint-disable-next-line no-unused-vars
-  FOLLOW = 'FOLLOW',
-  // eslint-disable-next-line no-unused-vars
-  SYSTEM = 'SYSTEM',
-}
-
-const Notifications: FC<NotificationsProps> = ({ session }) => {
+const Notifications = ({ session }: { session: Session }) => {
   const [generalNotify, setGeneralNotify] = useState<ExtendedNotify[]>([]);
-  const [isClear, setIsClear] = useState<boolean>(true);
+  const [followNotify, setFollowNotify] = useState<ExtendedNotify[]>([]);
+  const [systemNotify, setSystemNotify] = useState<ExtendedNotify[]>([]);
 
   const {
     data: notifyData,
     fetchNextPage,
+    hasNextPage,
     isFetchingNextPage,
+    refetch,
   } = useInfiniteQuery(
     ['notify-infinite-query'],
-    async ({ pageParam = 1 }) => {
-      const query = `/api/notify?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}`;
+    async ({ pageParam }) => {
+      let query = `/api/notify?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}`;
+      if (pageParam) {
+        query = `/api/notify?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&cursor=${pageParam}`;
+      }
 
       const { data } = await axios.get(query);
-      return data as ExtendedNotify[];
+      return data as { notifications: ExtendedNotify[]; lastCursor: number };
     },
     {
-      getNextPageParam: (_, pages) => {
-        return pages.length + 1;
+      getNextPageParam: (lastPage) => {
+        return lastPage.lastCursor ?? false;
       },
+      refetchInterval: 5000,
     }
   );
 
   useEffect(() => {
     socket.connect();
-
     socket.emit('userConnect', session.user.id);
-
-    return () => {
-      socket.close();
-    };
-  }, [session.user]);
+  }, [session.user.id]);
 
   useEffect(() => {
     socket.on(
       'notify',
-      (data: {
-        type: notifyType;
-        data: {
-          id: number;
-          fromUser: Pick<User, 'name'>;
-          mangaId?: number;
-          chapterId?: number | null;
-        };
+      ({
+        type,
+        content,
+        notifyId,
+        endPoint,
+      }: {
+        type: NotifyType;
+        content: string;
+        notifyId: number;
+        endPoint: string;
       }) => {
-        const { id, fromUser, mangaId, chapterId } = data.data;
+        if (type === 'COMMENT') {
+          const notify: ExtendedNotify = {
+            id: notifyId,
+            type,
+            content,
+            endPoint,
+            createdAt: new Date(Date.now()),
+            isRead: false,
+          };
 
-        if (
-          data.type === notifyType.LIKE ||
-          data.type === notifyType.MENTION ||
-          data.type === notifyType.COMMENT
-        ) {
-          setGeneralNotify((prev) => [
-            {
-              id,
-              type: data.type,
-              createdAt: new Date(Date.now()),
-              fromUser: fromUser,
-              isRead: false,
-              content: {
-                mangaId,
-                chapterId,
-              } as Prisma.JsonValue,
-            },
-            ...prev,
-          ]);
+          setGeneralNotify((prev) => [notify, ...prev]);
         }
-
-        setIsClear(false);
       }
     );
 
@@ -119,16 +95,18 @@ const Notifications: FC<NotificationsProps> = ({ session }) => {
   }, []);
 
   useEffect(() => {
-    let notifications = notifyData?.pages.flatMap((page) => page);
+    const notifies = notifyData?.pages.flatMap((page) => page.notifications);
 
-    if (notifications?.length) {
-      setGeneralNotify(
-        notifications?.filter(
-          (noti) => noti.type !== 'SYSTEM' && noti.type !== 'FOLLOW'
-        )
+    if (notifies) {
+      const general = notifies.filter(
+        (notify) => notify.type === 'COMMENT' || notify.type === 'MENTION'
       );
+      const follow = notifies.filter((notify) => notify.type === 'FOLLOW');
+      const system = notifies.filter((notify) => notify.type === 'SYSTEM');
 
-      notifications.some((noti) => noti.isRead === false) && setIsClear(false);
+      setGeneralNotify(general);
+      setFollowNotify(follow);
+      setSystemNotify(system);
     }
   }, [notifyData?.pages]);
 
@@ -137,9 +115,10 @@ const Notifications: FC<NotificationsProps> = ({ session }) => {
       <DropdownMenuTrigger>
         <div className="relative">
           <Bell aria-label="Notify button" className="w-7 h-7" />
-          {!isClear ? (
-            <span className="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full animate-pulse" />
-          ) : null}
+          {(!!generalNotify.some((notify) => !notify.isRead) ||
+            !!followNotify.some((notify) => !notify.isRead)) && (
+            <span className="absolute w-3 h-3 rounded-full top-0 right-0 animate-pulse dark:bg-red-600" />
+          )}
         </div>
       </DropdownMenuTrigger>
 
@@ -153,27 +132,59 @@ const Notifications: FC<NotificationsProps> = ({ session }) => {
 
         <Tabs defaultValue="general">
           <TabsList className="dark:bg-zinc-900 grid grid-cols-3 gap-2">
-            <TabsTrigger value="general">Chung</TabsTrigger>
-            <TabsTrigger value="follow">Theo dõi</TabsTrigger>
-            <TabsTrigger value="system">Hệ thống</TabsTrigger>
+            <TabsTrigger value="general" className="relative">
+              Chung
+              {!!generalNotify.some((notify) => !notify.isRead) && (
+                <span className="absolute w-3 h-3 rounded-full top-0 right-0 animate-pulse dark:bg-red-600" />
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="follow" className="relative">
+              Theo dõi
+              {!!followNotify.some((notify) => !notify.isRead) && (
+                <span className="absolute w-3 h-3 rounded-full top-0 right-0 animate-pulse dark:bg-red-600" />
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="system" className="relative">
+              Hệ thống
+              {!!systemNotify.some((notify) => !notify.isRead) && (
+                <span className="absolute w-3 h-3 rounded-full top-0 right-0 animate-pulse dark:bg-red-600" />
+              )}
+            </TabsTrigger>
           </TabsList>
 
-          <General general={generalNotify} />
-        </Tabs>
+          <TabsContent
+            value="general"
+            className="max-h-72 overflow-auto space-y-2 scrollbar dark:scrollbar--dark"
+          >
+            <General generalNotify={generalNotify} />
+          </TabsContent>
 
+          <TabsContent
+            value="follow"
+            className="max-h-72 overflow-auto space-y-2 scrollbar dark:scrollbar--dark"
+          >
+            <Follow followNotify={followNotify} />
+          </TabsContent>
+
+          <TabsContent
+            value="system"
+            className="max-h-72 overflow-auto space-y-2 scrollbar dark:scrollbar--dark"
+          >
+            <System systemNotify={systemNotify} />
+          </TabsContent>
+        </Tabs>
         <Button
-          disabled={isFetchingNextPage}
+          disabled={!hasNextPage}
           isLoading={isFetchingNextPage}
-          size={'sm'}
+          onClick={() => {
+            refetch();
+            fetchNextPage();
+          }}
+          className="w-full"
           variant={'ghost'}
-          className="w-full hover:dark:bg-zinc-900"
-          onClick={() => fetchNextPage()}
+          size={'sm'}
         >
-          {isFetchingNextPage ? (
-            <Loader2 className="w-6 h-6 animate-spin" />
-          ) : (
-            'Tải thêm'
-          )}
+          Tải thêm
         </Button>
       </DropdownMenuContent>
     </DropdownMenu>

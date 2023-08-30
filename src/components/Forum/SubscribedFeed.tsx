@@ -43,6 +43,7 @@ const SubscribedFeed: FC<SubscribedFeedProps> = async ({ session }) => {
       subForum: {
         select: {
           title: true,
+          slug: true,
         },
       },
       author: {

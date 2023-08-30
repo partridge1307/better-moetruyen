@@ -12,10 +12,12 @@ export async function POST(req: Request) {
     const { id, target } = userFollowValidator.parse(await req.json());
 
     if (target === 'MANGA') {
-      const existingFollow = await db.mangaFollow.findFirst({
+      const existingFollow = await db.mangaFollow.findUnique({
         where: {
-          userId: session.user.id,
-          mangaId: +id,
+          mangaId_userId: {
+            mangaId: +id,
+            userId: session.user.id,
+          },
         },
       });
 

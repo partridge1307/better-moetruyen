@@ -28,7 +28,7 @@ export type ExtendedPost = Pick<
   Post,
   'id' | 'title' | 'content' | 'createdAt'
 > & {
-  subForum: Pick<SubForum, 'title'>;
+  subForum: Pick<SubForum, 'title' | 'slug'>;
   author: Pick<User, 'name' | 'color' | 'image'>;
   votes: PostVote[];
   _count: {
@@ -139,7 +139,7 @@ const PostFeed: FC<PostFeedProps> = ({ subForumId, initialPosts, session }) => {
               return (
                 <li ref={ref} key={post.id} className="py-4">
                   <PostCard
-                    subForumSlug={post.subForum.title.split(' ').join('-')}
+                    subForumSlug={post.subForum.slug}
                     post={post}
                     voteAmt={voteAmt}
                     currentVote={currentVote}
@@ -150,7 +150,7 @@ const PostFeed: FC<PostFeedProps> = ({ subForumId, initialPosts, session }) => {
               return (
                 <li key={post.id} className="py-4">
                   <PostCard
-                    subForumSlug={post.subForum.title.split(' ').join('-')}
+                    subForumSlug={post.subForum.slug}
                     post={post}
                     voteAmt={voteAmt}
                     currentVote={currentVote}

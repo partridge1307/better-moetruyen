@@ -15,7 +15,7 @@ const ThreadEditForm = dynamic(
 
 interface pageProps {
   params: {
-    title: string;
+    slug: string;
   };
 }
 
@@ -25,7 +25,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
   const subForum = await db.subForum.findUnique({
     where: {
-      title: params.title.split('-').join(' '),
+      slug: params.slug,
       creatorId: session.user.id,
     },
     select: {

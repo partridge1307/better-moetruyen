@@ -8,10 +8,11 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
     if (!session) return new Response('Unauthorized', { status: 401 });
 
     await db.$transaction([
-      db.notify.findFirstOrThrow({
+      db.notify.findUniqueOrThrow({
         where: {
           id: +context.params.id,
-          isRead: true,
+          isRead: false,
+          toUserId: session.user.id,
         },
         select: {
           id: true,

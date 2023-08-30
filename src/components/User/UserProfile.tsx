@@ -73,6 +73,7 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
     useCustomToast();
   const { push, refresh } = useRouter();
   const { update } = useSession();
+
   const avatarRef = useRef<HTMLInputElement>(null);
   const bannerRef = useRef<HTMLInputElement>(null);
   const [aspect, setAspect] = useState(1);

@@ -21,6 +21,7 @@ const page: FC<pageProps> = async ({}) => {
       select: {
         id: true,
         title: true,
+        slug: true,
         _count: {
           select: {
             subscriptions: true,
@@ -55,7 +56,7 @@ const page: FC<pageProps> = async ({}) => {
               <ul className="space-y-2">
                 {subForums.map((subForum) => (
                   <li key={subForum.id}>
-                    <Link href={`/m/${subForum.title.split(' ').join('-')}`}>
+                    <Link href={`/m/${subForum.slug}`}>
                       <div className="p-2 rounded-md hover:dark:bg-zinc-800">
                         <p>
                           m/<span>{subForum.title}</span>

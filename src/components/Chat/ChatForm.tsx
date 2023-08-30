@@ -93,7 +93,7 @@ const ChatForm: FC<ChatFormProps> = ({ conversation, session, refetch }) => {
                     className="focus-visible:ring-1 dark:border-white dark:focus-visible:ring-offset-0 dark:focus-visible:ring-white"
                   />
                 </FormControl>
-                <FormMessage className="absolute left-2 -top-1/3 text-red-500" />
+                <FormMessage className="absolute left-2 -top-1/3" />
 
                 <button
                   type="submit"

@@ -23,7 +23,7 @@ const DeleteThreadButton = dynamic(
 
 interface layoutProps {
   params: {
-    title: string;
+    slug: string;
   };
   children: React.ReactNode;
 }
@@ -31,11 +31,9 @@ interface layoutProps {
 export async function generateMetadata({
   params,
 }: layoutProps): Promise<Metadata> {
-  const title = params.title.split('-').join(' ');
-
-  const subForum = await db.subForum.findFirst({
+  const subForum = await db.subForum.findUnique({
     where: {
-      title,
+      slug: params.slug,
     },
     select: {
       title: true,
@@ -57,10 +55,10 @@ export async function generateMetadata({
     description: `Cộng đồng ${subForum.title} | Moetruyen`,
     keywords: [`Forum`, `${subForum.title}`, 'Moetruyen'],
     alternates: {
-      canonical: `${process.env.NEXTAUTH_URL}/m/${params.title}`,
+      canonical: `${process.env.NEXTAUTH_URL}/m/${params.slug}`,
     },
     openGraph: {
-      url: `${process.env.NEXTAUTH_URL}/m/${params.title}`,
+      url: `${process.env.NEXTAUTH_URL}/m/${params.slug}`,
       siteName: 'Moetruyen',
       title: subForum.title,
       description: `Cộng đồng ${subForum.title} | Moetruyen`,
@@ -87,13 +85,12 @@ export async function generateMetadata({
 }
 
 const layout: FC<layoutProps> = async ({ params, children }) => {
-  const title = params.title.split('-').join(' ');
   const session = await getAuthSession();
 
   const [subForum, subscription] = await db.$transaction([
-    db.subForum.findFirst({
+    db.subForum.findUnique({
       where: {
-        title,
+        slug: params.slug,
       },
       select: {
         id: true,
@@ -117,7 +114,7 @@ const layout: FC<layoutProps> = async ({ params, children }) => {
     db.subscription.findFirst({
       where: {
         subForum: {
-          title,
+          slug: params.slug,
         },
         userId: session?.user.id,
       },
@@ -130,7 +127,7 @@ const layout: FC<layoutProps> = async ({ params, children }) => {
       <section className="grid grid-cols-1 lg:grid-cols-[1fr_.45fr] gap-6">
         <div className="flex flex-col gap-y-6">{children}</div>
 
-        <div className="max-sm:order-first h-fit rounded-md dark:bg-zinc-900">
+        <div className="order-first lg:order-last h-fit rounded-md dark:bg-zinc-900">
           {!!subForum.banner && (
             <AspectRatio ratio={16 / 9}>
               <Image

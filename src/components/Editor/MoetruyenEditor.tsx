@@ -25,6 +25,7 @@ import MaxLengthPlugin from './plugins/MaxLength';
 import Toolbar from './plugins/Toolbar';
 import YouTubePlugin from './plugins/Youtube';
 import SteamPlugin from './plugins/Steam';
+import MentionsPlugin from './plugins/Mention';
 
 function onError(error: Error): void {
   // eslint-disable-next-line no-console
@@ -83,6 +84,7 @@ const Editor = ({
       <HistoryPlugin />
       <LinkPlugin />
       <MaxLengthPlugin maxLength={maxLength} />
+      <MentionsPlugin />
       <ImagesPlugin />
       <SteamPlugin />
       <YouTubePlugin />

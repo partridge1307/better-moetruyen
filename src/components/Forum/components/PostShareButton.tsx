@@ -24,10 +24,10 @@ import {
 
 interface PostShareButtonProps {
   url: string;
-  subForumSlug: string;
+  title: string;
 }
 
-const PostShareButton: FC<PostShareButtonProps> = ({ url, subForumSlug }) => {
+const PostShareButton: FC<PostShareButtonProps> = ({ url, title }) => {
   const clipboard = useClipboard({ timeout: 500 });
 
   return (
@@ -46,29 +46,26 @@ const PostShareButton: FC<PostShareButtonProps> = ({ url, subForumSlug }) => {
           <div className="flex flex-wrap items-center gap-2">
             <FacebookShareButton
               url={`${serverDomain}${url}`}
-              title={`${subForumSlug.split('-').join(' ')}`}
+              title={title}
               hashtag="#Moetruyen"
             >
               <Facebook className="w-8 h-8" />
             </FacebookShareButton>
             <FacebookMessengerShareButton
               url={`${serverDomain}${url}`}
-              title={`${subForumSlug.split('-').join(' ')}`}
+              title={title}
               appId="1042446022855517"
             >
               <FacebookMessengerIcon size={'2rem'} round />
             </FacebookMessengerShareButton>
             <TwitterShareButton
               url={`${serverDomain}${url}`}
-              title={`${subForumSlug.split('-').join(' ')}`}
-              hashtags={['Moetruyen', `${subForumSlug.split('-').join('')}`]}
+              title={title}
+              hashtags={['Moetruyen', `${title.split(' ').join('')}`]}
             >
               <Icons.twitterX className="w-8 h-8 dark:fill-white" />
             </TwitterShareButton>
-            <TelegramShareButton
-              url={`${serverDomain}${url}`}
-              title={`${subForumSlug.split('-').join(' ')}`}
-            >
+            <TelegramShareButton url={`${serverDomain}${url}`} title={title}>
               <TelegramIcon size={'2rem'} round />
             </TelegramShareButton>
           </div>

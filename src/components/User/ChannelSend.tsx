@@ -75,13 +75,6 @@ const ChannelSend: FC<ChannelSendProps> = ({ channel, isLinked }) => {
 
           return;
         }
-        if (err.response?.status === 422) {
-          return toast({
-            title: 'Không thể thực hiện',
-            description: 'Hãy chắc chắn rằng bạn có quyền quản lý server',
-            variant: 'destructive',
-          });
-        }
       }
 
       return serverErrorToast();

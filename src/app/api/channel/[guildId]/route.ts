@@ -24,11 +24,7 @@ export async function GET(
     const res = await fetch(
       `${socketServer}/api/v1/server/${context.params.guildId}/${user.account[0].providerAccountId}`
     );
-    if (!res.ok) {
-      if (res.status === 404)
-        return new Response('Not Acceptable', { status: 406 });
-      if (res.status === 422) return new Response('Invalid', { status: 422 });
-    }
+    if (!res.ok) return new Response('Not Acceptable', { status: 406 });
 
     const data = await res.json();
 

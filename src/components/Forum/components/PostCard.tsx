@@ -87,7 +87,7 @@ const PostCard: FC<PostCardProps> = ({
         </a>
         <PostShareButton
           url={`/m/${subForumSlug}/${post.id}`}
-          subForumSlug={subForumSlug}
+          title={post.title}
         />
       </div>
     </div>

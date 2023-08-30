@@ -6,7 +6,7 @@ import type { Chapter, Manga } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import HorizontalViewChapter from './HorizontalViewChapter';
 import VerticalViewChapter from './VerticalViewChapter';
 
@@ -60,15 +60,18 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
     threshold: 0,
   });
 
-  const ReadingModeHanlder = (mode: 'vertical' | 'horizontal') => {
+  const ReadingModeHanlder = useCallback((mode: 'vertical' | 'horizontal') => {
     localStorage.setItem('readingMode', mode);
     setReadingMode(mode);
-  };
-  const progressBarHandler = (mode: 'hidden' | 'fixed' | 'lightbar') => {
-    localStorage.setItem('progressBar', mode);
-    setProgressBar(mode);
-  };
-  const slideLeft = () => {
+  }, []);
+  const progressBarHandler = useCallback(
+    (mode: 'hidden' | 'fixed' | 'lightbar') => {
+      localStorage.setItem('progressBar', mode);
+      setProgressBar(mode);
+    },
+    []
+  );
+  const slideLeft = useCallback(() => {
     if (currentImage === 0) return;
 
     if (slider.current !== null) {
@@ -80,8 +83,8 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
       currentImageRef.current.scrollIntoView({ behavior: 'smooth' });
       setCurrentImage(currentImage - 1);
     }
-  };
-  const slideRight = () => {
+  }, [currentImage]);
+  const slideRight = useCallback(() => {
     if (slider.current !== null) {
       const target = document.getElementById(
         `${currentImage + 1}`
@@ -91,16 +94,16 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
       currentImageRef.current.scrollIntoView({ behavior: 'smooth' });
       setCurrentImage(currentImage + 1);
     }
-  };
-  const IndexInputHandler = (idx: number) => {
+  }, [currentImage]);
+  const IndexInputHandler = useCallback((idx: number) => {
     if (slider.current !== null) {
       const target = document.getElementById(`${idx}`) as HTMLImageElement;
       currentImageRef.current = target;
       currentImageRef.current.scrollIntoView({ behavior: 'instant' });
       setCurrentImage(idx);
     }
-  };
-  const jumptoImageHandler = (idx: number) => {
+  }, []);
+  const jumptoImageHandler = useCallback((idx: number) => {
     if (slider.current !== null) {
       const target = document.getElementById(`${idx}`) as HTMLImageElement;
       currentImageRef.current = target;
@@ -108,7 +111,7 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
 
       setCurrentImage(idx);
     }
-  };
+  }, []);
 
   useEffect(() => {
     sessionStorage.setItem('startPage', `${Date.now()}`);

@@ -1,6 +1,7 @@
 'use client';
 
 import { $isImageNode, type ImageNode } from '@/components/Editor/nodes/Image';
+import { $isMentionNode } from '@/components/Editor/nodes/Mention';
 import { Button } from '@/components/ui/Button';
 import { useFetchOEmbed } from '@/hooks/use-fetch-oEmbed';
 import { useUploadComment } from '@/hooks/use-upload-comment';
@@ -32,6 +33,8 @@ const CommentInput: FC<CommentInputProps> = ({
   const [editor, setEditor] = useState<LexicalEditor | null>(null);
   const [editorState, setEditorState] = useState<EditorState | null>(null);
   const [hasText, setHasText] = useState(false);
+  const [mentionUsers, setMentionUsers] =
+    useState<Set<{ id: string; name: string }>>();
 
   const { mutate: Upload, isLoading: isUpload } = useUploadComment(
     editor,
@@ -61,14 +64,25 @@ const CommentInput: FC<CommentInputProps> = ({
           oEmbed: oEmbedData,
         },
         callbackURL,
+        mentionUsers: mentionUsers,
       });
     }
-  }, [Upload, callbackURL, editor, id, isFetchingOEmbed, oEmbedData, type]);
+  }, [
+    Upload,
+    callbackURL,
+    editor,
+    id,
+    isFetchingOEmbed,
+    mentionUsers,
+    oEmbedData,
+    type,
+  ]);
 
   const onClick = useCallback(() => {
     if (editor) {
       if (editor.isEditable()) editor.setEditable(false);
 
+      const mentionUsers = new Set<{ id: string; name: string }>();
       let autoLinkNode: AutoLinkNode | undefined,
         imageNode: ImageNode | undefined;
 
@@ -77,13 +91,18 @@ const CommentInput: FC<CommentInputProps> = ({
           autoLinkNode = node;
         } else if ($isImageNode(node)) {
           imageNode = node;
+        } else if ($isMentionNode(node)) {
+          mentionUsers.add(node._user);
         }
       });
+
+      setMentionUsers(mentionUsers);
 
       if (imageNode || !autoLinkNode) {
         Upload({
           payload: { type, id, content: editor.getEditorState().toJSON() },
           callbackURL,
+          mentionUsers,
         });
       } else {
         Embed(autoLinkNode.__url);

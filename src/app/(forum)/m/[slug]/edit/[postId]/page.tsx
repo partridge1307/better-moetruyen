@@ -10,7 +10,7 @@ const PostEditForm = dynamic(() => import('@/components/Forum/PostEditForm'), {
 
 interface pageProps {
   params: {
-    title: string;
+    slug: string;
     postId: string;
   };
 }

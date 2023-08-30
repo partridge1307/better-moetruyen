@@ -1,6 +1,7 @@
 import { getAuthSession } from '@/lib/auth';
 import { DeleteSubForumImage, UploadForumImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
+import { normalizeText } from '@/lib/utils';
 import { CreateThreadFormValidator } from '@/lib/validators/forum';
 import { Prisma } from '@prisma/client';
 import { ZodError, z } from 'zod';
@@ -57,6 +58,7 @@ export async function GET(req: Request) {
         subForum: {
           select: {
             title: true,
+            slug: true,
           },
         },
         author: {
@@ -104,12 +106,18 @@ export async function POST(req: Request) {
       }),
       db.subForum.create({
         data: {
+          slug: '',
           title,
           creatorId: session.user.id,
           canSend: canSend === 'true' ? true : false,
         },
       }),
     ]);
+
+    const subForumSlug = `${normalizeText(createdSubForum.title)
+      .toLowerCase()
+      .split(' ')
+      .join('-')}-${createdSubForum.id}`;
 
     if (thumbnail) {
       const image =
@@ -123,13 +131,21 @@ export async function POST(req: Request) {
         },
         data: {
           banner: image,
+          slug: subForumSlug,
+        },
+      });
+    } else {
+      await db.subForum.update({
+        where: {
+          id: createdSubForum.id,
+        },
+        data: {
+          slug: subForumSlug,
         },
       });
     }
 
-    return new Response(
-      JSON.stringify(createdSubForum.title.split(' ').join('-'))
-    );
+    return new Response(JSON.stringify(subForumSlug));
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response('Invalid', { status: 422 });
@@ -155,7 +171,7 @@ export async function DELETE(req: Request) {
       .parse(await req.json());
 
     await Promise.all([
-      db.subForum.findFirstOrThrow({
+      db.subForum.findUniqueOrThrow({
         where: {
           id: subForumId,
           creatorId: session.user.id,

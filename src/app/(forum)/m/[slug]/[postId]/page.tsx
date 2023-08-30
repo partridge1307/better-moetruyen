@@ -34,15 +34,15 @@ const Comments = dynamic(() => import('@/components/Comment/Post'), {
 
 interface pageProps {
   params: {
-    title: string;
-    postId: string | string[];
+    slug: string;
+    postId: string;
   };
 }
 
 export async function generateMetadata({
   params,
 }: pageProps): Promise<Metadata> {
-  const post = await db.post.findFirst({
+  const post = await db.post.findUnique({
     where: {
       id: +params.postId,
     },
@@ -71,10 +71,10 @@ export async function generateMetadata({
     description: `Bài viết ${post.title} - ${post.subForum.title} | Moetruyen`,
     keywords: ['Post', 'Forum', post.title, post.subForum.title, 'Moetruyen'],
     alternates: {
-      canonical: `${process.env.NEXTAUTH_URL}/m/${params.title}/${params.postId}`,
+      canonical: `${process.env.NEXTAUTH_URL}/m/${params.slug}/${params.postId}`,
     },
     openGraph: {
-      url: `${process.env.NEXTAUTH_URL}/m/${params.title}/${params.postId}`,
+      url: `${process.env.NEXTAUTH_URL}/m/${params.slug}/${params.postId}`,
       siteName: 'Moetruyen',
       title: post.title,
       description: `Bài viết ${post.title} - ${post.subForum.title} | Moetruyen`,
@@ -102,7 +102,7 @@ export async function generateMetadata({
 
 const page: FC<pageProps> = async ({ params }) => {
   const [post, session] = await Promise.all([
-    db.post.findFirst({
+    db.post.findUnique({
       where: {
         id: +params.postId,
       },
@@ -177,7 +177,7 @@ const page: FC<pageProps> = async ({ params }) => {
           <div className="flex items-center gap-4">
             {!!(post.authorId === session?.user.id) && (
               <Link
-                href={`/m/${params.title}/edit/${post.id}`}
+                href={`/m/${params.slug}/edit/${post.id}`}
                 className={cn(
                   buttonVariants({ size: 'sm' }),
                   'flex items-center gap-2'
@@ -188,8 +188,8 @@ const page: FC<pageProps> = async ({ params }) => {
             )}
 
             <PostShareButton
-              url={`/m/${params.title}/${post.id}`}
-              subForumSlug={params.title}
+              url={`/m/${params.slug}/${post.id}`}
+              title={post.title}
             />
           </div>
         </div>

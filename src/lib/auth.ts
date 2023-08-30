@@ -194,24 +194,22 @@ export const authOptionsWrapper = (
           }
 
           if (!dbUser.name) {
-            const generatedName = generateRandomName;
-
-            db.user.update({
+            const updatedUser = await db.user.update({
               where: {
                 id: dbUser.id,
               },
               data: {
-                name: generatedName,
+                name: generateRandomName,
               },
             });
 
             return {
               user: {
-                id: dbUser.id,
-                name: generatedName,
-                image: dbUser.image,
-                banner: dbUser.banner,
-                color: dbUser.color,
+                id: updatedUser.id,
+                name: updatedUser.name,
+                image: updatedUser.image,
+                banner: updatedUser.banner,
+                color: updatedUser.color,
               },
               expires,
             };

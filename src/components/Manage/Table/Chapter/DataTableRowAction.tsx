@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
+import { socket } from '@/lib/socket';
 import type { Chapter } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import type { Row } from '@tanstack/react-table';
@@ -62,8 +63,14 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
 
       return serverErrorToast();
     },
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       refresh();
+
+      socket.emit('notify', {
+        type: 'FOLLOW',
+        id,
+      });
+
       return successToast();
     },
   });

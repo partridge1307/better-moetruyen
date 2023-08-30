@@ -18,6 +18,7 @@ const GeneralFeed = async () => {
       subForum: {
         select: {
           title: true,
+          slug: true,
         },
       },
       author: {

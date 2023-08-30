@@ -89,3 +89,20 @@ export async function GET(req: Request) {
     return new Response('Something went wrong', { status: 500 });
   }
 }
+
+export async function DELETE(req: Request) {
+  try {
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
+
+    await db.notify.deleteMany({
+      where: {
+        toUserId: session.user.id,
+      },
+    });
+
+    return new Response('OK');
+  } catch (error) {
+    return new Response('Something went wrong', { status: 500 });
+  }
+}

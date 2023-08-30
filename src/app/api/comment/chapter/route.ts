@@ -13,7 +13,7 @@ export async function POST(req: Request) {
       await req.json()
     );
 
-    const targetChapter = await db.chapter.findFirstOrThrow({
+    const targetChapter = await db.chapter.findUniqueOrThrow({
       where: {
         id,
       },
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     });
 
     if (type === 'SUB_COMMENT') {
-      const targetComment = await db.comment.findFirstOrThrow({
+      const targetComment = await db.comment.findUniqueOrThrow({
         where: {
           id,
         },

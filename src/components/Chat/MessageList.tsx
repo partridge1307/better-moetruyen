@@ -12,10 +12,11 @@ import { useRouter } from 'next/navigation';
 import { FC, useEffect, useRef, useState } from 'react';
 import { ScrollArea } from '../ui/ScrollArea';
 import MessageCard from './MessageCard';
+
 const ChatForm = dynamic(() => import('./ChatForm'), {
   ssr: false,
   loading: () => (
-    <template className="h-14 w-full px-2 rounded-md dark:bg-zinc-900 animate-pulse" />
+    <div className="h-14 w-full px-2 rounded-md dark:bg-zinc-900 animate-pulse" />
   ),
 });
 

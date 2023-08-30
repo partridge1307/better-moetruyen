@@ -130,6 +130,21 @@ const Notifications = ({ session }: { session: Session }) => {
           Thông báo
         </DropdownMenuLabel>
 
+        {(!!generalNotify.length ||
+          !!followNotify.length ||
+          !!systemNotify.length) && (
+          <Button
+            size={'sm'}
+            variant={'destructive'}
+            className="w-full"
+            onClick={() =>
+              fetch(`/api/notify`, { method: 'DELETE' }).then(() => refetch())
+            }
+          >
+            Xóa
+          </Button>
+        )}
+
         <Tabs defaultValue="general">
           <TabsList className="dark:bg-zinc-900 grid grid-cols-3 gap-2">
             <TabsTrigger value="general" className="relative">

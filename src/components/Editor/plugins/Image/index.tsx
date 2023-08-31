@@ -5,6 +5,7 @@ import {
   AlertDialogContent,
   AlertDialogTrigger,
 } from '@/components/ui/AlertDialog';
+import { buttonVariants } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,7 +37,6 @@ import {
   ImageNode,
   ImagePayload,
 } from '../../nodes/Image';
-import { buttonVariants } from '@/components/ui/Button';
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> =
@@ -66,11 +66,13 @@ export function InsertURLImageUploaded({
       />
       <div className="flex items-stretch justify-end gap-4">
         <AlertDialogCancel
+          type="button"
           className={buttonVariants({ variant: 'destructive' })}
         >
           Hủy
         </AlertDialogCancel>
         <AlertDialogAction
+          type="button"
           disabled={isDisabled}
           onClick={() => {
             onClick({ src, altText: 'Image' });
@@ -115,11 +117,13 @@ export function InsertImageUploaded({
       />
       <div className="flex items-stretch justify-end gap-4">
         <AlertDialogCancel
+          type="button"
           className={buttonVariants({ variant: 'destructive' })}
         >
           Hủy
         </AlertDialogCancel>
         <AlertDialogAction
+          type="button"
           disabled={isDisabled}
           onClick={() => onClick({ src, altText: 'Image' })}
         >
@@ -183,12 +187,15 @@ export function ImageInputBody({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger type="button">
         <ImageIcon className="w-5 h-5" />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="flex flex-col items-center gap-3 p-2 dark:bg-zinc-900 text-white">
         <AlertDialog>
-          <AlertDialogTrigger className="flex items-center justify-center gap-1 p-1 rounded-md text-base hover:dark:bg-zinc-800 w-full">
+          <AlertDialogTrigger
+            type="button"
+            className="flex items-center justify-center gap-1 p-1 rounded-md text-base hover:dark:bg-zinc-800 w-full"
+          >
             <FileImage className="w-[1.2rem] h-[1.2rem]" />
             <p>Từ máy</p>
           </AlertDialogTrigger>
@@ -198,7 +205,10 @@ export function ImageInputBody({
         </AlertDialog>
 
         <AlertDialog>
-          <AlertDialogTrigger className="flex items-center justify-center gap-1 p-1 rounded-md text-base hover:dark:bg-zinc-800 w-full">
+          <AlertDialogTrigger
+            type="button"
+            className="flex items-center justify-center gap-1 p-1 rounded-md text-base hover:dark:bg-zinc-800 w-full"
+          >
             <Link2 className="w-5 h-5" />
             <p>Từ Link</p>
           </AlertDialogTrigger>

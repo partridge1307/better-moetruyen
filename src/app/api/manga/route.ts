@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     if (!session) return new Response('Unauthorized', { status: 401 });
 
     const [user, existedManga] = await db.$transaction([
-      db.user.findFirstOrThrow({
+      db.user.findUniqueOrThrow({
         where: {
           id: session.user.id,
         },
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     const mangaCreated = await db.manga.create({
       data: {
         name,
-        description,
+        description: { ...description },
         review,
         image: '',
         altName,

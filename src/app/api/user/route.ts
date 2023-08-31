@@ -33,19 +33,26 @@ export async function PATCH(req: Request) {
     if (banner)
       bannerUrl = await UploadUserImage(banner, user.banner, user.id, 'banner');
 
-    await db.user.update({
+    const updatedUser = await db.user.update({
       where: {
         id: user.id,
       },
       data: {
         name,
-        image: !avatarUrl ? user.image : avatarUrl,
-        banner: !bannerUrl ? user.banner : bannerUrl,
-        color: color ? (color as any) : user.color,
+        image: avatarUrl ? avatarUrl : user.image,
+        banner: bannerUrl ? bannerUrl : user.banner,
+        color: color && color !== null ? color : user.color ?? {},
       },
     });
 
-    return new Response('OK');
+    return new Response(
+      JSON.stringify({
+        avatar: updatedUser.image,
+        banner: updatedUser.banner,
+        name: updatedUser.name,
+        color: updatedUser.color,
+      })
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response(error.message, { status: 422 });

@@ -2,6 +2,7 @@
 
 import '@/styles/mteditor.css';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
+import { ListItemNode, ListNode } from '@lexical/list';
 import {
   LexicalComposer,
   type InitialConfigType,
@@ -9,13 +10,14 @@ import {
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { QuoteNode } from '@lexical/rich-text';
 import type { Prisma } from '@prisma/client';
 import { FC } from 'react';
 import { theme } from '../Editor/Theme';
 import { ImageNode } from './nodes/Image';
-import { YouTubeNode } from './nodes/Youtube';
-import { SteamNode } from './nodes/Steam';
 import { MentionNode } from './nodes/Mention';
+import { SteamNode } from './nodes/Steam';
+import { YouTubeNode } from './nodes/Youtube';
 
 function onError(err: Error): void {
   // eslint-disable-next-line no-console
@@ -39,7 +41,10 @@ const MoetruyenEditorOutput: FC<MoetruyenEditorOutputProps> = ({
     editorState: JSON.stringify(content),
     nodes: [
       AutoLinkNode,
+      ListNode,
+      ListItemNode,
       MentionNode,
+      QuoteNode,
       ImageNode,
       SteamNode,
       YouTubeNode,

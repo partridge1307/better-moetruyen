@@ -26,6 +26,7 @@ import Toolbar from './plugins/Toolbar';
 import YouTubePlugin from './plugins/Youtube';
 import SteamPlugin from './plugins/Steam';
 import MentionsPlugin from './plugins/Mention';
+import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 
 function onError(error: Error): void {
   // eslint-disable-next-line no-console
@@ -81,6 +82,7 @@ const Editor = ({
       <AutoLink />
       <AutoEmbedPlugin />
       <ClearEditorPlugin />
+      <CheckListPlugin />
       <HistoryPlugin />
       <LinkPlugin />
       <MaxLengthPlugin maxLength={maxLength} />

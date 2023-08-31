@@ -6,42 +6,31 @@ import { Tags } from '@/lib/query';
 import {
   MangaUploadPayload,
   MangaUploadValidator,
-  authorInfoProps,
-  tagInfoProps,
 } from '@/lib/validators/manga';
-import type EditorJS from '@editorjs/editorjs';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useDebouncedValue } from '@mantine/hooks';
 import { Manga, MangaAuthor, Tag } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '../ui/Button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '../ui/Form';
-import { Input } from '../ui/Input';
-import type { authorResultProps } from './MangaAuthorUpload';
-const Editor = dynamic(() => import('@/components/Editor'), {
-  ssr: false,
-  loading: () => <Loader2 className="h-6 w-6 animate-spin" />,
-});
-const MangaImageUpload = dynamic(() => import('./MangaImageUpload'), {
+import { Form } from '../ui/Form';
+import MangaAltNameForm from './components/MangaAltNameForm';
+import MangaDescForm from './components/MangaDescForm';
+import MangaDiscForm from './components/MangaDiscForm';
+import MangaFBForm from './components/MangaFBForm';
+import MangaNameForm from './components/MangaNameForm';
+import MangaReviewForm from './components/MangaReviewForm';
+
+const MangaImageForm = dynamic(() => import('./components/MangaImageForm'), {
   ssr: false,
 });
-const MangaTagUpload = dynamic(() => import('./MangaTagUpload'), {
+const MangaTagForm = dynamic(() => import('./components/MangaTagForm'), {
   ssr: false,
 });
-const MangaAuthorUpload = dynamic(() => import('./MangaAuthorUpload'), {
+const MangaAuthorForm = dynamic(() => import('./components/MangaAuthorForm'), {
   ssr: false,
 });
 
@@ -67,6 +56,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
   const { loginToast, notFoundToast, successToast, serverErrorToast } =
     useCustomToast();
   const router = useRouter();
+
   const form = useForm<MangaUploadPayload>({
     resolver: zodResolver(MangaUploadValidator),
     defaultValues: {
@@ -81,17 +71,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
       discordLink: manga.discordLink ?? '',
     },
   });
-  const {
-    data: authorResult,
-    mutate: FetchAuthor,
-    isLoading: isFetchingAuthor,
-  } = useMutation({
-    mutationFn: async (inputValue: string) => {
-      const { data } = await axios.get(`/api/manga/author?q=${inputValue}`);
 
-      return data as authorResultProps;
-    },
-  });
   const { mutate: Update, isLoading: isUpdatingManga } = useMutation({
     mutationFn: async (values: MangaUploadPayload) => {
       const {
@@ -107,7 +87,14 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
       } = values;
 
       const form = new FormData();
-      form.append('image', image);
+
+      if (image.startsWith('blob')) {
+        const blob = await fetch(image).then((res) => res.blob());
+        form.append('image', blob);
+      } else {
+        form.append('image', image);
+      }
+
       form.append('name', name);
       form.append('description', JSON.stringify(description));
       form.append('review', review);
@@ -142,157 +129,31 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
       return successToast();
     },
   });
-  const [previewImage, setPreviewImage] = useState<string | undefined>(
-    manga.image
-  );
-  const [authorSelected, setAuthorSelected] = useState<authorInfoProps[]>(
-    manga.author
-  );
-  const [tagSelect, setTagSelect] = useState<tagInfoProps[]>(manga.tags);
-  const editorRef = useRef<EditorJS>();
-  const [authorInput, setAuthorInput] = useState<string>('');
-  const [debouncedValue] = useDebouncedValue(authorInput, 300);
 
-  useEffect(() => {
-    if (debouncedValue) FetchAuthor(debouncedValue);
-  }, [FetchAuthor, debouncedValue]);
-
-  async function onSubmitHandler(values: MangaUploadPayload) {
-    const editor = await editorRef.current?.save();
-    if (!editor?.blocks.length)
-      return form.setError('description', {
-        type: 'custom',
-        message: 'Phải có mô tả',
-      });
-
-    const payload: MangaUploadPayload = {
-      image: values.image,
-      name: values.name,
-      author: values.author,
-      tag: values.tag,
-      description: editor,
-      review: values.review,
-      facebookLink: values.facebookLink,
-      discordLink: values.discordLink,
-    };
-
-    Update(payload);
+  function onSubmitHandler(values: MangaUploadPayload) {
+    Update(values);
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-6">
-        <MangaImageUpload
-          form={form}
-          previewImage={previewImage}
-          setPreviewImage={(value) => setPreviewImage(value)}
-        />
+        <MangaImageForm form={form} />
 
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tên truyện</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="Tên truyện" autoComplete="off" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <MangaNameForm form={form} />
 
-        <FormField
-          control={form.control}
-          name="altName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tên khác(Nếu có)</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="Tên khác" autoComplete="off" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <MangaAltNameForm form={form} />
 
-        <MangaAuthorUpload
-          form={form}
-          authorSelected={authorSelected}
-          setAuthorSelected={(value) => setAuthorSelected(value)}
-          authorInput={authorInput}
-          setAuthorInput={(value) => setAuthorInput(value)}
-          isFetchingAuthor={isFetchingAuthor}
-          authorResult={authorResult}
-        />
+        <MangaAuthorForm form={form} existAuthors={manga.author} />
 
-        <MangaTagUpload
-          form={form}
-          tag={tags}
-          tagSelect={tagSelect}
-          setTagSelect={(value) => setTagSelect(value)}
-        />
+        <MangaTagForm form={form} tag={tags} existTags={manga.tags} />
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={() => (
-            <FormItem>
-              <FormLabel>Mô tả</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Editor editorRef={editorRef} initialData={manga.description} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <MangaDescForm form={form} initialContent={manga.description} />
 
-        <FormField
-          control={form.control}
-          name="review"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel
-                className="after:content-['*'] after:text-red-500 after:ml-0.5"
-                title="Nội dung này sẽ được hiển thị bên ngoài trang chủ"
-              >
-                Sơ lược
-              </FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="Nhập nội dung..." {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <MangaReviewForm form={form} />
 
-        <FormField
-          control={form.control}
-          name="facebookLink"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Link Facebook (nếu có)</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="https://facebook.com/" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <MangaFBForm form={form} />
 
-        <FormField
-          control={form.control}
-          name="discordLink"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Link Discord (nếu có)</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="https://discord.gg/" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <MangaDiscForm form={form} />
 
         <Button
           type="submit"

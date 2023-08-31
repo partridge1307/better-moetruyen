@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn, dataUrlToBlob } from '@/lib/utils';
 import { FC, useEffect, useRef, useState } from 'react';
 import type { Crop, PixelCrop } from 'react-image-crop';
 import { ReactCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
@@ -16,16 +16,10 @@ import { buttonVariants } from './ui/Button';
 import { Slider } from './ui/Slider';
 
 interface ImageCropModalProps {
-  previewImage: {
-    type: string;
-    image: string;
-  } | null;
-  // eslint-disable-next-line no-unused-vars
-  setCancel: (type: string) => void;
-  setDone: () => void;
+  image: string;
   aspect: number;
   // eslint-disable-next-line no-unused-vars
-  setDataUrl: ({ type, data }: { type: string; data: string }) => void;
+  setImageCropped: (value: string) => void;
 }
 
 function centerAspectCrop(
@@ -79,18 +73,16 @@ function cropImage(image: HTMLImageElement, crop: PixelCrop) {
     image.naturalWidth,
     image.naturalHeight
   );
-  const res = canvas.toDataURL('image/webp');
+  const res = canvas.toDataURL('image/jpeg');
   canvas.remove();
 
   return res;
 }
 
 const ImageCropModal: FC<ImageCropModalProps> = ({
-  previewImage,
-  setCancel,
-  setDone,
+  image,
   aspect,
-  setDataUrl,
+  setImageCropped,
 }) => {
   const [completeCrop, setCompleteCrop] = useState<PixelCrop>();
   const [crop, setCrop] = useState<Crop>({
@@ -119,11 +111,13 @@ const ImageCropModal: FC<ImageCropModalProps> = ({
       completeCrop?.width &&
       completeCrop?.height &&
       imageRef.current &&
-      previewImage
+      image
     ) {
       const dataUrl = cropImage(imageRef.current, completeCrop);
-      setDataUrl({ type: previewImage.type, data: dataUrl });
-      setDone();
+      const blob = dataUrlToBlob(dataUrl);
+      const url = URL.createObjectURL(blob);
+
+      setImageCropped(url);
     }
   }
 
@@ -148,12 +142,12 @@ const ImageCropModal: FC<ImageCropModalProps> = ({
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger id="crop-modal=button" className="hidden">
+      <AlertDialogTrigger id="crop-modal-button" className="hidden">
         Cropper
       </AlertDialogTrigger>
       <AlertDialogContent>
         <div className="space-y-10">
-          {previewImage && (
+          {!!image && (
             <div className="flex justify-center">
               <ReactCrop
                 locked
@@ -168,7 +162,7 @@ const ImageCropModal: FC<ImageCropModalProps> = ({
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   ref={imageRef}
-                  src={previewImage.image}
+                  src={image}
                   alt="Profile Banner"
                   onLoad={onImageLoad}
                   style={{
@@ -235,9 +229,6 @@ const ImageCropModal: FC<ImageCropModalProps> = ({
                 buttonVariants({ variant: 'destructive' }),
                 'bg-red-600 w-20'
               )}
-              onClick={() => {
-                setCancel(previewImage?.type!);
-              }}
             >
               Hủy
             </AlertDialogCancel>

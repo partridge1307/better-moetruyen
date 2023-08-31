@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import type { MangaUploadPayload, tagInfoProps } from '@/lib/validators/manga';
 import { Check, X } from 'lucide-react';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
   Command,
@@ -10,16 +10,16 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '../ui/Command';
+} from '../../ui/Command';
 import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/Form';
-import { Input } from '../ui/Input';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
+} from '../../ui/Form';
+import { Input } from '../../ui/Input';
+import { Popover, PopoverContent, PopoverTrigger } from '../../ui/Popover';
 
 type Tags = {
   category: string;
@@ -30,20 +30,15 @@ type Tags = {
   }[];
 };
 
-interface MangaTagUploadProps {
-  tag: Tags[];
-  tagSelect: tagInfoProps[];
+interface MangaTagFormProps {
   form: UseFormReturn<MangaUploadPayload>;
-  setTagSelect: React.Dispatch<React.SetStateAction<tagInfoProps[]>>;
+  tag: Tags[];
+  existTags?: tagInfoProps[];
 }
 
-const MangaTagUpload: FC<MangaTagUploadProps> = ({
-  form,
-  tag,
-  tagSelect,
-  setTagSelect,
-}) => {
+const MangaTagForm: FC<MangaTagFormProps> = ({ form, tag, existTags }) => {
   const tagCopy = tag.flatMap((t) => t.data);
+  const [tagSelect, setTagSelect] = useState<tagInfoProps[]>(existTags ?? []);
 
   return (
     <FormField
@@ -143,4 +138,4 @@ const MangaTagUpload: FC<MangaTagUploadProps> = ({
   );
 };
 
-export default MangaTagUpload;
+export default MangaTagForm;

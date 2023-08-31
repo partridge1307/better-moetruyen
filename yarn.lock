@@ -827,7 +827,7 @@
   dependencies:
     "@lexical/utils" "0.12.0"
 
-"@lexical/list@0.12.0":
+"@lexical/list@0.12.0", "@lexical/list@^0.12.0":
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/@lexical/list/-/list-0.12.0.tgz#076a99f6a7541db49cf139d71fc5cd1b555d3b09"
   integrity sha512-l+5H753UQpmsqD8aEZ/LZd3YNysZ1SH693aEIgM1VIKmTftzd9+MTcqovnLNBzZQ98a5e4i1xgapOGIWkJ/MrQ==
@@ -892,7 +892,7 @@
     "@lexical/yjs" "0.12.0"
     react-error-boundary "^3.1.4"
 
-"@lexical/rich-text@0.12.0":
+"@lexical/rich-text@0.12.0", "@lexical/rich-text@^0.12.0":
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/@lexical/rich-text/-/rich-text-0.12.0.tgz#6bbb8cccfd0a521bda3ea2f6200896823755cc07"
   integrity sha512-Rhz3tzzTQFZX5k5XJSlJgyy8BJPz+/Jmw7RuEXzVTGxniAcovEll9TLXbZQ7SJLeHkPmJ65PdXR0om29KhjFVg==

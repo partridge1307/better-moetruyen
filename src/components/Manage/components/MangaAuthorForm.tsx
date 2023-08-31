@@ -4,8 +4,11 @@ import type {
   MangaUploadPayload,
   authorInfoProps,
 } from '@/lib/validators/manga';
+import { useDebouncedValue } from '@mantine/hooks';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { Loader2, X } from 'lucide-react';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
   FormControl,
@@ -13,33 +16,45 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/Form';
-import { Input } from '../ui/Input';
+} from '../../ui/Form';
+import { Input } from '../../ui/Input';
 
-export type authorResultProps = {
+type authorResultProps = {
   author: authorInfoProps[];
 };
 
-interface MangaAuthorUploadProps {
+interface MangaAuthorFormProps {
   form: UseFormReturn<MangaUploadPayload>;
-  authorSelected: authorInfoProps[];
-  setAuthorSelected: React.Dispatch<React.SetStateAction<authorInfoProps[]>>;
-  authorInput: string;
-  // eslint-disable-next-line no-unused-vars
-  setAuthorInput: (value: string) => void;
-  isFetchingAuthor: boolean;
-  authorResult?: authorResultProps;
+  existAuthors?: authorInfoProps[];
 }
 
-const MangaAuthorUpload: FC<MangaAuthorUploadProps> = ({
-  form,
-  authorSelected,
-  setAuthorSelected,
-  authorInput,
-  setAuthorInput,
-  isFetchingAuthor,
-  authorResult,
-}) => {
+const MangaAuthorForm: FC<MangaAuthorFormProps> = ({ form, existAuthors }) => {
+  const [authorInput, setAuthorInput] = useState('');
+  const [debouncedValue] = useDebouncedValue(authorInput, 300);
+  const [authorSelected, setAuthorSelected] = useState<authorInfoProps[]>(
+    existAuthors ?? []
+  );
+
+  const {
+    data: authorsResult,
+    refetch,
+    isFetching: isFetchingAuthor,
+  } = useQuery({
+    queryKey: ['fetch-author'],
+    enabled: false,
+    queryFn: async () => {
+      const { data } = await axios.get(`/api/manga/author?q=${debouncedValue}`);
+
+      return data as authorResultProps;
+    },
+  });
+
+  useEffect(() => {
+    if (debouncedValue.length) {
+      refetch();
+    }
+  }, [debouncedValue.length, refetch]);
+
   return (
     <FormField
       control={form.control}
@@ -77,7 +92,7 @@ const MangaAuthorUpload: FC<MangaAuthorUploadProps> = ({
                 onChange={(e) => {
                   setAuthorInput(e.target.value.trim());
                 }}
-                className="border-none focus:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-transparent"
+                className="border-none focus:ring-0 focus-visible:ring-transparent ring-offset-transparent"
               />
             </div>
           </FormControl>
@@ -116,8 +131,9 @@ const MangaAuthorUpload: FC<MangaAuthorUploadProps> = ({
             )}
 
             {!isFetchingAuthor &&
-              !!authorResult?.author.length &&
-              authorResult.author.map((auth) => (
+              !!authorsResult?.author.length &&
+              !!authorInput.length &&
+              authorsResult.author.map((auth) => (
                 <li
                   key={auth.id}
                   className={`cursor-pointer rounded-md bg-slate-800 p-1 ${
@@ -141,4 +157,4 @@ const MangaAuthorUpload: FC<MangaAuthorUploadProps> = ({
   );
 };
 
-export default MangaAuthorUpload;
+export default MangaAuthorForm;

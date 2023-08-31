@@ -16,20 +16,19 @@ const Username: FC<UsernameProps> = ({ user, className }) => {
         className
       )}
       style={{
-        backgroundImage: user.color
-          ? // @ts-ignore
-            user.color.from || user.color.to
+        backgroundImage:
+          !!user.color && // @ts-ignore
+          !!user.color.from && // @ts-ignore
+          !!user.color.to
             ? // @ts-ignore
               `linear-gradient(to right, ${user.color.from}, ${user.color.to})`
-            : ''
-          : '',
-        backgroundColor: user.color
-          ? // @ts-ignore
-            user.color.color
+            : '',
+        backgroundColor:
+          !!user.color && // @ts-ignore
+          !!user.color.color
             ? // @ts-ignore
               user.color.color
-            : ''
-          : '',
+            : '',
       }}
     >
       {user.name}

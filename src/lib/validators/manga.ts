@@ -1,6 +1,7 @@
+import type { SerializedEditorState, SerializedLexicalNode } from 'lexical';
 import { ZodType, z } from 'zod';
-import { disRegex, fbRegex } from '../utils';
 import { zfd } from 'zod-form-data';
+import { disRegex, fbRegex } from '../utils';
 
 export const authorInfo = z.object({
   id: z.number(),
@@ -15,34 +16,23 @@ export const tagInfo = z.object({
 });
 export type tagInfoProps = z.infer<typeof tagInfo>;
 
-const blocksInfo = z.object({
-  id: z.string(),
-  type: z.string(),
-  data: z.any(),
-});
-
-const descriptionInfo = z.object({
-  time: z.number(),
-  blocks: z.array(blocksInfo),
-  version: z.string(),
-});
-
 export const MangaUploadValidator = z
   .object({
     image: z
-      .any()
+      .string()
       .refine(
-        (file) =>
-          typeof file === 'string' ||
-          (file?.size <= 4 * 1000 * 1000 &&
-            ['image/jpeg', 'image/png', 'image/jpg'].includes(file?.type)),
-        'Ảnh phải dưới 4MB và có định dạng là .jpg, .png, .jpeg'
-      ) as ZodType<File | string>,
+        (value) =>
+          value.startsWith('blob') ||
+          value.startsWith('https://i.moetruyen.net'),
+        'Ảnh không hợp lệ'
+      ),
     name: z
       .string()
       .min(3, { message: 'Tối thiểu 3 kí tự' })
       .max(255, { message: 'Tối đa 255 kí tự' }),
-    description: z.any(descriptionInfo),
+    description: z.any() as ZodType<
+      SerializedEditorState<SerializedLexicalNode>
+    >,
     review: z.string().min(5, 'Tối thiểu 5 kí tự').max(256, 'Tối đa 256 kí tự'),
     altName: z
       .string()
@@ -102,7 +92,9 @@ export const MangaFormValidator = zfd.formData({
   name: zfd.text(
     z.string().min(3, 'Tối thiểu 3 kí tự').max(255, 'Tối đa 255 kí tự')
   ),
-  description: zfd.json(descriptionInfo),
+  description: zfd.json(
+    z.any() as ZodType<SerializedEditorState<SerializedLexicalNode>>
+  ),
   review: zfd.text(
     z.string().min(5, 'Tối thiểu 5 kí tự').max(255, 'Tối đa 255 kí tự')
   ),

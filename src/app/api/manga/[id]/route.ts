@@ -9,7 +9,6 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const form = await req.formData();
     const {
       image: img,
       name,
@@ -20,9 +19,9 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
       tag,
       facebookLink,
       discordLink,
-    } = MangaFormValidator.parse(form);
+    } = MangaFormValidator.parse(await req.formData());
 
-    const targetManga = await db.manga.findFirstOrThrow({
+    const targetManga = await db.manga.findUniqueOrThrow({
       where: {
         id: +context.params.id,
         creatorId: session.user.id,
@@ -47,7 +46,7 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
       data: {
         image,
         name,
-        description,
+        description: { ...description },
         review,
         altName,
         facebookLink: !facebookLink ? null : facebookLink,

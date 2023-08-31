@@ -13,4 +13,11 @@ export const theme = {
   link: 'moetruyen-editor-link',
   paragraph: 'moetruyen-editor-paragraph',
   image: 'moetruyen-editor-image',
+  list: {
+    listitem: 'moetruyen-editor-listItem',
+    listitemChecked: 'moetruyen-editor-listItemChecked',
+    listitemUnchecked: 'moetruyen-editor-listItemUnchecked',
+    ul: 'moetruyen-editor-ul',
+  },
+  quote: 'moetruyen-editor-quote',
 };

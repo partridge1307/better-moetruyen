@@ -14,8 +14,18 @@ import {
 } from '@/components/ui/Select';
 import { cn } from '@/lib/utils';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
+import {
+  $isListNode,
+  INSERT_CHECK_LIST_COMMAND,
+  ListNode,
+  REMOVE_LIST_COMMAND,
+} from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { mergeRegister } from '@lexical/utils';
+import {
+  $findMatchingParent,
+  $getNearestNodeOfType,
+  mergeRegister,
+} from '@lexical/utils';
 import {
   $getSelection,
   $isRangeSelection,
@@ -25,6 +35,7 @@ import {
   FORMAT_TEXT_COMMAND,
   REDO_COMMAND,
   UNDO_COMMAND,
+  $isRootOrShadowRoot,
 } from 'lexical';
 import {
   AlignCenter,
@@ -33,6 +44,8 @@ import {
   Bold,
   Italic,
   Link as LinkIcon,
+  ListChecks,
+  Quote,
   Redo,
   Strikethrough,
   Underline,
@@ -42,6 +55,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ImageInputBody } from '../Image';
 import { FloatingLinkEditor, getSelectedNode } from '../Link';
+import { $createQuoteNode } from '@lexical/rich-text';
+import { $setBlocksType } from '@lexical/selection';
 
 const lowPriority = 1;
 
@@ -59,6 +74,7 @@ const Toolbar = () => {
   const [isLink, setIsLink] = useState<boolean>(false);
   const [linkInput, setLinkInput] = useState<string>('');
   const [isLinkDisabled, setIsLinkDisabled] = useState<boolean>(true);
+  const [blockType, setBlockType] = useState('paragraph');
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -86,6 +102,33 @@ const Toolbar = () => {
         ? setIsLinkDisabled(true)
         : setIsLinkDisabled(false);
 
+      const anchorNode = selection.anchor.getNode();
+      let element =
+        anchorNode.getKey() === 'root'
+          ? anchorNode
+          : $findMatchingParent(anchorNode, (node) => {
+              const parent = node.getParent();
+              return parent !== null && $isRootOrShadowRoot(parent);
+            });
+      if (element === null) {
+        element = anchorNode.getTopLevelElementOrThrow();
+      }
+
+      const elementKey = editor.getKey();
+      const elementDom = editor.getElementByKey(elementKey);
+      if (elementDom !== null) {
+        if ($isListNode(element)) {
+          const parentList = $getNearestNodeOfType<ListNode>(
+            anchorNode,
+            ListNode
+          );
+          const type = parentList
+            ? parentList.getListType()
+            : element.getListType();
+          setBlockType(type);
+        }
+      }
+
       const node = getSelectedNode(selection);
       const parent = node.getParent();
       if ($isLinkNode(parent) || $isLinkNode(node)) {
@@ -94,7 +137,7 @@ const Toolbar = () => {
         setIsLink(false);
       }
     }
-  }, [selectedInlineStyle]);
+  }, [editor, selectedInlineStyle]);
 
   useEffect(() => {
     return mergeRegister(
@@ -136,21 +179,21 @@ const Toolbar = () => {
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-1">
           <button
+            type="button"
             title="Ctrl + B"
-            className={cn(
-              'p-1 rounded-md transition-colors',
-              selectedInlineStyle.includes('bold') ? 'dark:bg-zinc-700' : ''
-            )}
+            className={cn('p-1 rounded-md transition-colors', {
+              'dark:bg-zinc-700': selectedInlineStyle.includes('bold'),
+            })}
             onClick={() => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold')}
           >
             <Bold className="w-5 h-5" />
           </button>
           <button
+            type="button"
             title="Ctrl + I"
-            className={cn(
-              'p-1 rounded-md transition-colors',
-              selectedInlineStyle.includes('italic') ? 'dark:bg-zinc-700' : ''
-            )}
+            className={cn('p-1 rounded-md transition-colors', {
+              'dark:bg-zinc-700': selectedInlineStyle.includes('italic'),
+            })}
             onClick={() =>
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic')
             }
@@ -158,13 +201,11 @@ const Toolbar = () => {
             <Italic className="w-5 h-5" />
           </button>
           <button
+            type="button"
             title="Ctrl + U"
-            className={cn(
-              'p-1 rounded-md transition-colors',
-              selectedInlineStyle.includes('underline')
-                ? 'dark:bg-zinc-700'
-                : ''
-            )}
+            className={cn('p-1 rounded-md transition-colors', {
+              'dark:bg-zinc-700': selectedInlineStyle.includes('underline'),
+            })}
             onClick={() =>
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline')
             }
@@ -172,21 +213,51 @@ const Toolbar = () => {
             <Underline className="w-5 h-5" />
           </button>
           <button
-            className={cn(
-              'p-1 rounded-md transition-colors',
-              selectedInlineStyle.includes('strikethrough')
-                ? 'dark:bg-zinc-700'
-                : ''
-            )}
+            type="button"
+            className={cn('p-1 rounded-md transition-colors', {
+              'dark:bg-zinc-700': selectedInlineStyle.includes('strikethrough'),
+            })}
             onClick={() =>
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough')
             }
           >
             <Strikethrough className="w-5 h-5" />
           </button>
+          <button
+            type="button"
+            className="p-1 rounded-md transition-colors"
+            onClick={() => {
+              if (blockType !== 'check') {
+                editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
+              } else {
+                editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+              }
+            }}
+          >
+            <ListChecks className="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            className="p-1 rounded-md transition-colors"
+            onClick={() => {
+              if (blockType !== 'quote') {
+                editor.update(() => {
+                  const selection = $getSelection();
+                  if ($isRangeSelection(selection)) {
+                    $setBlocksType(selection, () => $createQuoteNode());
+                  }
+                });
+              }
+            }}
+          >
+            <Quote className="w-5 h-5" />
+          </button>
         </div>
         <Select defaultValue={'left-align'}>
-          <SelectTrigger className="w-fit px-1 border-none">
+          <SelectTrigger
+            type="button"
+            className="w-fit px-1 border-none focus:ring-transparent ring-offset-transparent"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -222,6 +293,7 @@ const Toolbar = () => {
         <ImageInputBody editor={editor} />
         <DropdownMenu>
           <DropdownMenuTrigger
+            type="button"
             className={cn('transition-opacity', isLinkDisabled && 'opacity-50')}
             disabled={isLinkDisabled}
           >
@@ -253,6 +325,7 @@ const Toolbar = () => {
 
       <div className="flex items-center gap-2 pr-2">
         <button
+          type="button"
           title="Ctrl + Z"
           disabled={!canUndo}
           className={cn('transition-opacity', !canUndo && 'opacity-50')}
@@ -263,6 +336,7 @@ const Toolbar = () => {
           <Undo className="w-5 h-5" />
         </button>
         <button
+          type="button"
           disabled={!canRedo}
           className={cn('transition-opacity', !canRedo && 'opacity-50')}
           onClick={() => editor.dispatchCommand(REDO_COMMAND, undefined)}

@@ -31,7 +31,6 @@ export const columns: ColumnDef<ChapterColumn>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tên chapter" />
     ),
-    enableHiding: false,
   },
   {
     id: 'Số lượng ảnh',
@@ -59,7 +58,9 @@ export const columns: ColumnDef<ChapterColumn>[] = [
   {
     id: 'Cập nhật',
     accessorKey: 'updatedAt',
-    header: 'Cập nhật',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Cập nhật" />
+    ),
     cell: ({ row }) => {
       const formattedDate = formatTimeToNow(row.getValue('Cập nhật'));
       return <div>{formattedDate}</div>;

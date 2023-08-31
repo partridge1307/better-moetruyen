@@ -31,7 +31,6 @@ export const columns: ColumnDef<MangaColumn>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Tên truyện" />
     ),
-    enableHiding: false,
   },
   {
     id: 'Trạng thái',
@@ -40,7 +39,7 @@ export const columns: ColumnDef<MangaColumn>[] = [
     cell: ({ row }) => {
       const formattedStatus = row.getValue('Trạng thái')
         ? 'Đã đăng'
-        : 'Chờ publish';
+        : 'Chờ đăng';
 
       return <div>{formattedStatus}</div>;
     },
@@ -48,7 +47,9 @@ export const columns: ColumnDef<MangaColumn>[] = [
   {
     id: 'Cập nhật',
     accessorKey: 'updatedAt',
-    header: 'Cập nhật',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Cập nhật" />
+    ),
     cell: ({ row }) => {
       const formattedDate = formatTimeToNow(row.getValue('Cập nhật'));
       return <div>{formattedDate}</div>;

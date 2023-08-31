@@ -40,8 +40,8 @@ function DataToolbar<TValue>({ column, table }: DataToolbarProps<TValue>) {
               {typeof statusValues === 'undefined'
                 ? 'Trạng thái'
                 : statusValues === true
-                ? 'Published'
-                : 'Chờ publish'}
+                ? 'Đã đăng'
+                : 'Chờ đăng'}
             </Button>
           </PopoverTrigger>
           <PopoverContent>
@@ -71,7 +71,7 @@ function DataToolbar<TValue>({ column, table }: DataToolbarProps<TValue>) {
                     >
                       <Check className={cn('h-4 w-4')} />
                     </div>
-                    <span>Published</span>
+                    <span>Đã đăng</span>
                   </CommandItem>
 
                   <CommandItem
@@ -96,7 +96,7 @@ function DataToolbar<TValue>({ column, table }: DataToolbarProps<TValue>) {
                     >
                       <Check className="h-4 w-4" />
                     </div>
-                    <span>Chờ publish</span>
+                    <span>Chờ đăng</span>
                   </CommandItem>
                 </CommandGroup>
               </CommandList>

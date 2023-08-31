@@ -11,6 +11,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { FC } from 'react';
+
 const DailyView = dynamic(() => import('@/components/Manage/View/DailyView'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
@@ -19,10 +20,10 @@ const WeeklyView = dynamic(
   () => import('@/components/Manage/View/WeeklyView'),
   { ssr: false, loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }
 );
-const EditorOutput = dynamic(() => import('@/components/EditorOutput'), {
-  ssr: false,
-  loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
-});
+const MTEditorOutput = dynamic(
+  () => import('@/components/Editor/MoetruyenEditorOutput'),
+  { ssr: false }
+);
 
 interface pageProps {
   params: {
@@ -147,7 +148,7 @@ const page: FC<pageProps> = async ({ params }) => {
           <dl className="space-y-1">
             <dt>Mô tả:</dt>
             <dd className="dark:bg-zinc-600/60 rounded-md">
-              <EditorOutput data={manga.description} />
+              <MTEditorOutput id={manga.id} content={manga.description} />
             </dd>
           </dl>
 

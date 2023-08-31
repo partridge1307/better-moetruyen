@@ -1,5 +1,4 @@
 import CommentSkeleton from '@/components/Comment/components/CommentSkeleton';
-import EditorOutput from '@/components/EditorOutput';
 import UserAvatar from '@/components/User/UserAvatar';
 import UserBanner from '@/components/User/UserBanner';
 import Username from '@/components/User/Username';
@@ -31,6 +30,10 @@ const MangaImage = dynamic(() => import('@/components/Manga/MangaImage'), {
     <div className="h-48 w-full md:w-40 dark:bg-zinc-900 animate-pulse" />
   ),
 });
+const MTEditorOutput = dynamic(
+  () => import('@/components/Editor/MoetruyenEditorOutput'),
+  { ssr: false }
+);
 
 interface pageProps {
   params: {
@@ -247,8 +250,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
           <div className="space-y-2">
             <p className="font-semibold text-lg">Mô tả</p>
-
-            <EditorOutput data={manga.description} />
+            <MTEditorOutput id={manga.id} content={manga.description} />
           </div>
 
           <Tabs defaultValue="chapter">

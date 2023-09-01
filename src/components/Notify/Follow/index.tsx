@@ -1,14 +1,14 @@
 import { FC } from 'react';
-import type { ExtendedNotify } from '.';
+import type { ExtendedNotify } from '..';
 import { cn, formatTimeToNow } from '@/lib/utils';
 
-interface generalProps {
-  generalNotify: ExtendedNotify[];
+interface followProps {
+  followNotify: ExtendedNotify[];
 }
 
-const General: FC<generalProps> = ({ generalNotify }) => {
-  return !!generalNotify.length ? (
-    generalNotify.map((notify) => (
+const Follow: FC<followProps> = ({ followNotify }) => {
+  return !!followNotify.length ? (
+    followNotify.map((notify) => (
       <a
         key={notify.id}
         target="_blank"
@@ -36,4 +36,4 @@ const General: FC<generalProps> = ({ generalNotify }) => {
   );
 };
 
-export default General;
+export default Follow;

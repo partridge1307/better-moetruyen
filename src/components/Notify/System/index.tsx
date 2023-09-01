@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { ExtendedNotify } from '.';
+import { ExtendedNotify } from '..';
 import { cn, formatTimeToNow } from '@/lib/utils';
 
 interface systemProps {

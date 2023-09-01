@@ -16,9 +16,9 @@ import {
   DropdownMenuTrigger,
 } from '../ui/DropdownMenu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/Tabs';
-import Follow from '@/components/Notify/follow';
-import General from '@/components/Notify/general';
-import System from '@/components/Notify/system';
+import Follow from '@/components/Notify/Follow';
+import General from '@/components/Notify/General';
+import System from '@/components/Notify/System';
 
 export type ExtendedNotify = Pick<
   Notify,

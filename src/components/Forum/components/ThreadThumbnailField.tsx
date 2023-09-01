@@ -9,9 +9,14 @@ import {
 import { cn } from '@/lib/utils';
 import type { CreateThreadPayload } from '@/lib/validators/forum';
 import { ImagePlus, Trash2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { FC } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
+
+const ImageCropModal = dynamic(() => import('@/components/ImageCropModal'), {
+  ssr: false,
+});
 
 interface ThreadThumbnailFieldProps {
   form: UseFormReturn<CreateThreadPayload>;
@@ -93,10 +98,19 @@ const ThreadThumbnailField: FC<ThreadThumbnailFieldProps> = ({ form }) => {
                 e.target.files?.length &&
                 e.target.files[0].size < 4 * 1000 * 1000
               ) {
-                const url = URL.createObjectURL(e.target.files[0]);
-                field.onChange(url);
+                field.onChange(URL.createObjectURL(e.target.files[0]));
+
+                const target = document.getElementById(
+                  'crop-modal-button'
+                ) as HTMLButtonElement;
+                target.click();
               }
             }}
+          />
+          <ImageCropModal
+            image={field.value ?? ''}
+            aspect={16 / 9}
+            setImageCropped={(value) => field.onChange(value)}
           />
         </FormItem>
       )}

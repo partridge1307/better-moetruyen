@@ -1,15 +1,5 @@
-import { ZodType, z } from 'zod';
+import { z } from 'zod';
 import { zfd } from 'zod-form-data';
-
-export const TeamEditValidator = z.object({
-  image: z.string(),
-  name: z.string().min(3, 'Tối thiểu 3 kí tự').max(64, 'Tối đa 64 kí tự'),
-  description: z
-    .string()
-    .min(5, 'Tối thiểu 5 kí tự')
-    .max(255, 'Tối đa 255 kí tự'),
-});
-export type TeamEditPayload = z.infer<typeof TeamEditValidator>;
 
 export const TeamFormValidator = zfd.formData({
   image: zfd
@@ -34,21 +24,18 @@ export const TeamFormValidator = zfd.formData({
   ),
 });
 
-export const TeamCreateValidator = z.object({
+export const TeamValidator = z.object({
   image: z
-    .any()
+    .string()
     .refine(
-      (file) => ['image/jpg', 'image/jpeg', 'image/png'].includes(file.type),
-      'Chỉ nhận định dạng ảnh .jpg, .jpeg, .png'
-    )
-    .refine(
-      (file) => file.size < 4 * 1000 * 1000,
-      'Ảnh phải nhỏ hơn 4MB'
-    ) as ZodType<File>,
+      (value) =>
+        value.startsWith('blob') || value.startsWith('https://i.moetruyen.net'),
+      'Ảnh không hợp lệ'
+    ),
   name: z.string().min(3, 'Tối thiểu 3 kí tự').max(64, 'Tối đa 64 kí tự'),
   description: z
     .string()
     .min(5, 'Tối thiểu 5 kí tự')
     .max(255, 'Tối đa 255 kí tự'),
 });
-export type TeamCreatePayload = z.infer<typeof TeamCreateValidator>;
+export type TeamPayload = z.infer<typeof TeamValidator>;

@@ -1,10 +1,7 @@
 'use client';
 
-import { useCustomToast } from '@/hooks/use-custom-toast';
 import { useIntersection } from '@mantine/hooks';
 import type { Chapter, Manga } from '@prisma/client';
-import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import HorizontalViewChapter from './HorizontalViewChapter';
@@ -23,7 +20,7 @@ interface ViewChapterProps {
     Chapter,
     'id' | 'name' | 'chapterIndex' | 'images' | 'volume'
   > & {
-    manga: Pick<Manga, 'id' | 'name'>;
+    manga: Pick<Manga, 'slug' | 'name'>;
   };
   chapterList:
     | Pick<Chapter, 'id' | 'chapterIndex' | 'name' | 'volume' | 'isPublished'>[]
@@ -31,20 +28,6 @@ interface ViewChapterProps {
 }
 
 const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
-  const { serverErrorToast } = useCustomToast();
-  const { mutate: IncreaseView } = useMutation({
-    mutationFn: async () => {
-      const { data } = await axios.post(
-        `/api//manga/${chapter.manga.id}/chapter/${chapter.id}`
-      );
-
-      return data;
-    },
-    onError: () => {
-      return serverErrorToast();
-    },
-  });
-
   const [currentImage, setCurrentImage] = useState(0);
   const [readingMode, setReadingMode] = useState<'vertical' | 'horizontal'>(
     'vertical'
@@ -182,10 +165,13 @@ const ViewChapter: FC<ViewChapterProps> = ({ chapter, chapterList }) => {
         30 * 1000
       ) {
         sessionStorage.removeItem('startPage');
-        IncreaseView();
+        fetch(`/api/chapter`, {
+          method: 'POST',
+          body: JSON.stringify({ id: chapter.id }),
+        });
       }
     }
-  }, [IncreaseView, entry]);
+  }, [chapter.id, entry?.isIntersecting]);
 
   return (
     <div className="h-full space-y-16">

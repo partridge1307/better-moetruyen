@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { zfd } from 'zod-form-data';
+import { vieRegex } from '../utils';
 
 export const UserProfileEditValidator = z.object({
   avatar: z
@@ -21,10 +22,7 @@ export const UserProfileEditValidator = z.object({
     .min(5, 'Tối thiểu 5 kí tự')
     .max(32, 'Tối đa 30 kí tự')
     .refine(
-      (value) =>
-        /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\w\s]+$/.test(
-          value
-        ),
+      (value) => vieRegex.test(value),
       'Tên chỉ chấp nhận kí tự in hoa, in thường, gạch dưới, khoảng cách hoặc số'
     ),
   color: z
@@ -74,10 +72,7 @@ export const UserFormUpdateValidator = zfd.formData({
       .min(5, 'Tối thiểu 5 kí tự')
       .max(32, 'Tối đa 32 kí tự')
       .refine(
-        (value) =>
-          /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\w\s]+$/.test(
-            value
-          ),
+        (value) => vieRegex.test(value),
         'Tên chỉ chấp nhận kí tự in hoa, in thường, gạch dưới, khoảng cách hoặc số'
       )
   ),

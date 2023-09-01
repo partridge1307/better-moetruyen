@@ -91,12 +91,16 @@ export class MentionNode extends TextNode {
   }
 
   createDOM(config: EditorConfig): HTMLElement {
-    const domOuter = document.createElement('span');
+    const domOuter = document.createElement('a');
     domOuter.contentEditable = 'false';
 
     const domChild = super.createDOM(config);
     domChild.className = 'mention';
     domChild.contentEditable = 'false';
+
+    !!domChild.textContent &&
+      (domOuter.href = `/user/${domChild.textContent.split(' ').join('-')}`);
+
     domChild.textContent = `@${domChild.textContent}`;
 
     const spacer = document.createElement('span');

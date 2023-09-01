@@ -1,7 +1,5 @@
 import { db } from '@/lib/db';
-import { formatTimeToNow } from '@/lib/utils';
-import parseJSON from 'date-fns/parseJSON';
-import { Clock } from 'lucide-react';
+import { cn, formatTimeToNow } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -15,6 +13,9 @@ const ListChapter: FC<ListChapterProps> = async ({ mangaId }) => {
     where: {
       mangaId,
       isPublished: true,
+    },
+    orderBy: {
+      chapterIndex: 'desc',
     },
     select: {
       id: true,
@@ -34,66 +35,66 @@ const ListChapter: FC<ListChapterProps> = async ({ mangaId }) => {
 
   return (
     !!chapters?.length && (
-      <ul className="space-y-4">
-        {chapters
-          .sort((a, b) => b.chapterIndex - a.chapterIndex)
-          .map((chapter, idx) => (
-            <li
-              key={idx}
-              className="dark:bg-zinc-800 px-3 py-2 md:py-3 rounded-lg space-y-1 md:space-y-2"
-            >
-              <Link
-                href={`/chapter/${chapter.id}`}
-                className="flex items-center justify-between max-sm:flex-col max-sm:items-start"
-              >
-                <div className="flex items-center gap-1 max-sm:text-sm">
-                  <p>Vol. {chapter.volume}</p>
-                  <p>Ch. {chapter.chapterIndex}</p>
-                  {chapter.name && (
-                    <>
-                      <p>-</p>
-                      <p
-                        title={`Chapter ${chapter.name}`}
-                        className="line-clamp-2 capitalize md:line-clamp-3"
-                      >
-                        {chapter.name}
-                      </p>
-                    </>
-                  )}
-                </div>
-
-                <dl className="flex items-center gap-1 max-sm:text-sm">
-                  <dt>
-                    <Clock className="h-4 w-4" />
-                  </dt>
-                  <dd>{formatTimeToNow(parseJSON(chapter.createdAt))}</dd>
-                </dl>
-              </Link>
-
-              {chapter.team && (
-                <Link
-                  href={`/team/${chapter.teamId}`}
-                  className="flex items-center gap-1"
-                >
-                  {chapter.team.image && (
-                    <div className="relative h-5 w-5 md:h-6 md:w-6">
-                      <Image
-                        fill
-                        sizes="0%"
-                        src={chapter.team.image}
-                        alt="Team Image"
-                        className="rounded-full"
-                      />
-                    </div>
-                  )}
-
-                  <p className="text-sm md:text-base font-medium">
-                    {chapter.team.name}
-                  </p>
-                </Link>
+      <ul className="px-2 lg:space-y-4 divide-y dark:divide-zinc-700">
+        {chapters.map((chapter) => (
+          <li
+            key={chapter.id}
+            className={
+              !!chapter.teamId && !!chapter.team
+                ? 'flex flex-wrap items-center lg:gap-3 max-sm:py-4'
+                : undefined
+            }
+          >
+            <Link
+              scroll={false}
+              href={`/chapter/${chapter.id}`}
+              className={cn(
+                'relative block p-2',
+                !!chapter.teamId &&
+                  !!chapter.team &&
+                  "flex-1 pl-4 after:content-[''] after:absolute after:inset-0 after:-z-10 after:-skew-x-12 after:transition-colors after:dark:bg-zinc-700/90 after:hover:dark:bg-zinc-700/60",
+                !!!chapter.teamId &&
+                  !!!chapter.team &&
+                  'rounded-md hover:transition-colors dark:bg-zinc-800/90 hover:dark:bg-zinc-800/70'
               )}
-            </li>
-          ))}
+            >
+              <div className="flex items-center gap-1">
+                <p>
+                  <span>Vol. {chapter.volume}</span>{' '}
+                  <span>Ch. {chapter.chapterIndex}</span>
+                </p>
+                {!!chapter.name && <p>- {chapter.name}</p>}
+              </div>
+              <time
+                dateTime={chapter.createdAt.toDateString()}
+                className="text-sm"
+              >
+                {formatTimeToNow(new Date(chapter.createdAt))}
+              </time>
+            </Link>
+
+            {!!chapter.teamId && !!chapter.team && (
+              <Link
+                href={`/team/${chapter.teamId}`}
+                className="max-sm:hidden relative flex items-center gap-3 p-2 pr-4 after:content-[''] after:absolute after:inset-0 after:-z-10 after:-skew-x-12 after:transition-colors after:dark:bg-zinc-700/90 after:hover:dark:bg-zinc-700/60"
+              >
+                <div className="relative aspect-square w-12 h-12">
+                  <Image
+                    fill
+                    sizes="(max-width: 640px) 5vw, 15vw"
+                    quality={40}
+                    src={chapter.team.image}
+                    alt={`${chapter.team.name} Thumbnail`}
+                    className="rounded-full object-cover"
+                  />
+                </div>
+                <p className="max-w-[10rem] line-clamp-1">
+                  {chapter.team.name}
+                </p>
+              </Link>
+            )}
+          </li>
+        ))}
       </ul>
     )
   );

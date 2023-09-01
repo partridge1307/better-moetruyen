@@ -41,6 +41,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       },
       select: {
         id: true,
+        slug: true,
         name: true,
         image: true,
         review: true,

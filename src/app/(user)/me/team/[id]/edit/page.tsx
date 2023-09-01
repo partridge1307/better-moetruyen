@@ -3,7 +3,8 @@ import { db } from '@/lib/db';
 import dynamic from 'next/dynamic';
 import { notFound, redirect } from 'next/navigation';
 import { FC } from 'react';
-const TeamEdit = dynamic(() => import('@/components/Manage/TeamEdit'), {
+
+const TeamEditForm = dynamic(() => import('@/components/Team/TeamEditForm'), {
   ssr: false,
 });
 
@@ -31,7 +32,7 @@ const page: FC<pageProps> = async ({ params }) => {
   });
   if (!team) return notFound();
 
-  return <TeamEdit team={team} />;
+  return <TeamEditForm team={team} />;
 };
 
 export default page;

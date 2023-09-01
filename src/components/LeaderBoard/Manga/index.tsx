@@ -1,15 +1,15 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import Daily from './Daily';
 import Weekly from './Weekly';
-import AllTime from './AllTime';
+import All from './All';
 
-const Top = () => {
+const Manga = () => {
   return (
     <Tabs defaultValue="daily">
-      <TabsList className="grid grid-cols-3 gap-2 dark:bg-zinc-900 overflow-auto">
+      <TabsList className="grid grid-cols-3 gap-2 dark:bg-zinc-900/60">
         <TabsTrigger value="daily">Ngày</TabsTrigger>
         <TabsTrigger value="weekly">Tuần</TabsTrigger>
-        <TabsTrigger value="all-time">Mọi lúc</TabsTrigger>
+        <TabsTrigger value="all">Mọi lúc</TabsTrigger>
       </TabsList>
 
       <TabsContent value="daily">
@@ -20,11 +20,11 @@ const Top = () => {
         <Weekly />
       </TabsContent>
 
-      <TabsContent value="all-time">
-        <AllTime />
+      <TabsContent value="all">
+        <All />
       </TabsContent>
     </Tabs>
   );
 };
 
-export default Top;
+export default Manga;

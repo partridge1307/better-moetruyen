@@ -9,10 +9,10 @@ interface UsernameProps extends HTMLAttributes<HTMLHeadElement> {
 
 const Username: FC<UsernameProps> = ({ user, className }) => {
   return (
-    <h2
+    <p
       className={cn(
         'text-center font-medium bg-clip-text text-transparent animate-rainbow',
-        !user.color && 'text-white',
+        !!!user.color && 'text-white',
         className
       )}
       style={{
@@ -22,17 +22,17 @@ const Username: FC<UsernameProps> = ({ user, className }) => {
           !!user.color.to
             ? // @ts-ignore
               `linear-gradient(to right, ${user.color.from}, ${user.color.to})`
-            : '',
+            : undefined,
         backgroundColor:
           !!user.color && // @ts-ignore
           !!user.color.color
             ? // @ts-ignore
               user.color.color
-            : '',
+            : undefined,
       }}
     >
       {user.name}
-    </h2>
+    </p>
   );
 };
 

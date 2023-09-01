@@ -1,15 +1,13 @@
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { randomManga } from '@/lib/query';
-import { cn, formatTimeToNow, groupArray } from '@/lib/utils';
+import { formatTimeToNow, groupArray } from '@/lib/utils';
 import type { Session } from 'next-auth';
+import { AspectRatio } from '../ui/AspectRatio';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Card, CardContent, CardFooter } from '../ui/Card';
 
 const getMangas = async (session: Session | null) => {
-  let manga;
-
   if (session) {
     const history = await db.history.findMany({
       where: {
@@ -28,33 +26,33 @@ const getMangas = async (session: Session | null) => {
       take: 10,
     });
 
-    if (!history.length) manga = await randomManga(12);
-    else {
+    if (!history.length) {
+      return await randomManga(10);
+    } else {
       const tags = history.flatMap((h) => h.manga.tags.map((tag) => tag.name));
       const groupedTags = (
         Object.entries(groupArray(tags)) as [string, number][]
       ).sort((a, b) => b[1] - a[1]);
       const filterdTags = groupedTags.slice(0, 3).map((tag) => tag[0]);
 
-      manga = await db.manga.findMany({
+      return await db.manga.findMany({
         where: {
           isPublished: true,
           OR: filterdTags.map((tag) => ({ tags: { some: { name: tag } } })),
         },
         select: {
           id: true,
+          slug: true,
           image: true,
           name: true,
           createdAt: true,
         },
-        take: 12,
+        take: 10,
       });
     }
   } else {
-    manga = await randomManga(12);
+    return await randomManga(10);
   }
-
-  return manga;
 };
 
 const Recommendation = async () => {
@@ -62,39 +60,32 @@ const Recommendation = async () => {
   const mangas = await getMangas(session);
 
   return (
-    <div
-      className={cn(
-        'flex gap-4 py-2 overflow-auto max-sm:snap-proximity max-sm:snap-x rounded-lg dark:bg-zinc-900/75',
-        'md:grid md:place-items-center md:grid-cols-4 md:scrollbar md:dark:scrollbar--dark'
-      )}
-    >
-      {mangas.map((manga, idx) => (
+    <div className="space-y-3 rounded-md dark:bg-zinc-900/60">
+      {mangas.map((manga) => (
         <Link
-          key={idx}
-          href={`/manga/${manga.id}`}
-          className="w-fit snap-start"
+          key={manga.id}
+          scroll={false}
+          href={`/manga/${manga.slug}`}
+          className="grid grid-cols-[.6fr_1fr] lg:grid-cols-[.3fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-900"
         >
-          <Card className="relative overflow-hidden w-fit">
-            <div className="relative w-32 h-44 lg:w-40 lg:h-56">
-              <Image
-                fill
-                sizes="(max-width: 640px) 25vw, 35vw"
-                quality={40}
-                src={manga.image}
-                alt="Recommend Manga Image"
-                className="object-cover rounded-lg"
-              />
-            </div>
-
-            <div className="absolute inset-0 transition-opacity opacity-0 hover:opacity-100 hover:bg-gradient-to-t dark:from-zinc-900 flex items-end">
-              <div className="p-2">
-                <CardContent className="p-0 text-lg">{manga.name}</CardContent>
-                <CardFooter className="p-0 text-sm">
-                  {formatTimeToNow(new Date(manga.createdAt))}
-                </CardFooter>
-              </div>
-            </div>
-          </Card>
+          <AspectRatio ratio={4 / 3}>
+            <Image
+              fill
+              sizes="(max-width: 640px) 25vw, 30vw"
+              quality={40}
+              src={manga.image}
+              alt={`${manga.name} Thumbnail`}
+              className="object-cover rounded-md"
+            />
+          </AspectRatio>
+          <div>
+            <h1 className="text-lg lg:text-xl font-semibold line-clamp-2">
+              {manga.name}
+            </h1>
+            <time dateTime={manga.createdAt.toDateString()} className="text-sm">
+              {formatTimeToNow(new Date(manga.createdAt))}
+            </time>
+          </div>
         </Link>
       ))}
     </div>

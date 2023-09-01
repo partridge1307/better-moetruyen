@@ -1,4 +1,3 @@
-import MangaImage from '@/components/Manga/MangaImage';
 import { buttonVariants } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { getAuthSession } from '@/lib/auth';
@@ -12,6 +11,10 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { FC } from 'react';
 
+const MangaImage = dynamic(
+  () => import('@/components/Manga/components/MangaImage'),
+  { ssr: false }
+);
 const DailyView = dynamic(() => import('@/components/Manage/View/DailyView'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,
@@ -44,8 +47,9 @@ const page: FC<pageProps> = async ({ params }) => {
       _count: {
         select: { chapter: true },
       },
-      view: true,
       id: true,
+      slug: true,
+      view: true,
       isPublished: true,
       name: true,
       image: true,
@@ -91,7 +95,7 @@ const page: FC<pageProps> = async ({ params }) => {
         value="info"
         className="flex flex-col max-sm:items-center md:p-2 gap-4"
       >
-        <MangaImage className="h-48 w-40" manga={manga} />
+        <MangaImage manga={manga} />
 
         <div className="space-y-6">
           <dl className="flex gap-1">
@@ -137,7 +141,7 @@ const page: FC<pageProps> = async ({ params }) => {
               <Newspaper className="w-4 h-4" />
             </Link>
             <Link
-              href={`/manga/${manga.id}`}
+              href={`/manga/${manga.slug}`}
               className={cn(buttonVariants(), 'w-full flex items-center gap-1')}
             >
               Đến xem truyện

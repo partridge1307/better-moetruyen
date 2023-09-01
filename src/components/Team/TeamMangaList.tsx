@@ -1,21 +1,16 @@
 import { cn, groupBy } from '@/lib/utils';
+import type { Chapter, Manga } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 
 interface TeamMangaListProps {
-  chapter: {
-    id: number;
-    name?: string | null;
-    chapterIndex: number;
-    volume: number;
-    createdAt: Date;
-    manga: {
-      id: number;
-      name: string;
-      image: string;
-    };
-  }[];
+  chapter: (Pick<
+    Chapter,
+    'id' | 'name' | 'chapterIndex' | 'volume' | 'createdAt'
+  > & {
+    manga: Pick<Manga, 'slug' | 'name' | 'image'>;
+  })[];
 }
 
 const TeamMangaList: FC<TeamMangaListProps> = ({ chapter }) => {
@@ -25,14 +20,14 @@ const TeamMangaList: FC<TeamMangaListProps> = ({ chapter }) => {
         Object.entries(
           groupBy(
             chapter.flatMap((c) => ({
-              id: c.manga.id,
+              slug: c.manga.slug,
               name: c.manga.name,
               image: c.manga.image,
             })),
             (c) => c.name
           )
         ).map(([K, V]) => (
-          <Link key={K} href={`/manga/${V[0].id}`} className="relative w-fit">
+          <Link key={K} href={`/manga/${V[0].slug}`} className="relative w-fit">
             <div
               className={cn(
                 'absolute z-10 inset-0 flex items-end justify-center',

@@ -1,83 +1,136 @@
 'use client';
 
-import '@/styles/swiper.css';
+import { Carousel } from '@mantine/carousel';
+import { createStyles, getStylesRef, rem } from '@mantine/core';
 import type { Manga, MangaAuthor, Tag } from '@prisma/client';
+import Autoplay from 'embla-carousel-autoplay';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
-import { FC } from 'react';
-import ImageGallery from 'react-image-gallery';
-import 'react-image-gallery/styles/css/image-gallery.css';
-import { TagContent, TagWrapper } from '../ui/Tag';
-import LeftNav from './Swiper/LeftNav';
-import RightNav from './Swiper/RightNav';
+import { FC, useRef } from 'react';
 import { AspectRatio } from '../ui/AspectRatio';
-
-type ExtendedManga = Pick<Manga, 'id' | 'name' | 'image'> & {
-  tags: Pick<Tag, 'name' | 'description'>[];
-  author: Pick<MangaAuthor, 'name'>[];
-};
+import { TagContent, TagWrapper } from '../ui/Tag';
+import Link from 'next/link';
 
 interface NotableMangaProps {
-  mangas: ExtendedManga[];
+  mangas: (Pick<Manga, 'id' | 'slug' | 'image' | 'name'> & {
+    author: Pick<MangaAuthor, 'name'>[];
+    tags: Pick<Tag, 'name' | 'description'>[];
+  })[];
 }
 
+const useStyles = createStyles(() => ({
+  controls: {
+    ref: getStylesRef('controls'),
+    transition: 'opacity 150ms ease',
+    top: 'auto',
+    bottom: rem(1),
+    justifyContent: 'end',
+    '@media (min-width: 1024px)': {
+      opacity: 0,
+      gap: rem(20),
+    },
+  },
+  control: {
+    ref: getStylesRef('control'),
+    border: 'none',
+  },
+
+  indicator: {
+    ref: getStylesRef('indicator'),
+    'html.dark &': {
+      backgroundColor: 'white !important',
+    },
+  },
+
+  root: {
+    '&:hover': {
+      [`& .${getStylesRef('controls')}`]: {
+        opacity: 1,
+      },
+    },
+  },
+}));
+
 const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
-  return mangas.length ? (
-    <ImageGallery
-      items={mangas.map((manga) => ({
-        original: manga.image,
-        renderItem(item) {
-          return (
-            <Link href={`/manga/${manga.id}`}>
-              <div className="grid grid-cols-1 md:grid-cols-[.3fr_1fr] gap-4 p-2 rounded-lg dark:bg-zinc-900">
+  const autoplay = useRef(Autoplay({ delay: 5000 }));
+  const { classes } = useStyles();
+
+  return (
+    !!mangas.length && (
+      <Carousel
+        loop
+        withIndicators
+        plugins={[autoplay.current]}
+        onMouseEnter={autoplay.current.stop}
+        onMouseLeave={autoplay.current.reset}
+        classNames={classes}
+        breakpoints={[
+          { maxWidth: 'sm', slideSize: '100%', slideGap: 'md' },
+          { minWidth: 'lg', slideSize: '100%', slideGap: 'xl' },
+        ]}
+        styles={{
+          indicator: {
+            width: rem(8),
+            height: rem(8),
+            transition: 'width 250ms ease',
+            '&[data-active]': {
+              width: rem(40),
+            },
+          },
+          control: {
+            '&[data-inactive]': {
+              opacity: 0,
+              cursor: 'default',
+            },
+          },
+        }}
+        nextControlIcon={
+          <ChevronRight className="dark:text-white w-12 h-12 max-sm:hidden" />
+        }
+        previousControlIcon={
+          <ChevronLeft className="dark:text-white w-12 h-12 max-sm:hidden" />
+        }
+      >
+        {mangas.map((manga) => (
+          <Carousel.Slide key={manga.id}>
+            <Link scroll={false} href={`/manga/${manga.slug}`}>
+              <div className="grid grid-cols-1 lg:grid-cols-[.3fr_1fr] gap-2 lg:gap-4 rounded-md p-2 max-sm:pb-10 dark:bg-zinc-900">
                 <AspectRatio ratio={4 / 3}>
                   <Image
                     fill
-                    sizes="40vw"
+                    sizes="(max-width: 640px) 50vw, 30vw"
                     quality={40}
                     priority
-                    src={item.original}
+                    src={manga.image}
                     alt={`${manga.name} Thumbnail`}
-                    className="object-cover object-top rounded-lg"
+                    className="object-cover rounded-md"
                   />
                 </AspectRatio>
-
-                <div className="text-start text-base space-y-2 pb-16 md:pb-10">
-                  <h1 className="font-bold text-xl md:text-2xl">
+                <div className="space-y-1 lg:space-y-2">
+                  <h1 className="font-semibold text-lg lg:text-xl line-clamp-2">
                     {manga.name}
                   </h1>
-                  <p>{manga.author.map((a) => a.name).join(', ')}</p>
-                  <div className="space-y-1">
-                    <h2>Thể loại</h2>
-                    <TagWrapper className="max-sm:gap-1">
-                      {manga.tags.map((tag, idx) => (
-                        <TagContent key={idx} title={tag.description}>
-                          {tag.name}
-                        </TagContent>
-                      ))}
-                    </TagWrapper>
-                  </div>
+
+                  <p>{manga.author.map((author) => author.name).join(', ')}</p>
+
+                  <TagWrapper>
+                    {manga.tags.slice(0, 5).map((tag, idx) => (
+                      <TagContent key={idx} title={tag.description}>
+                        {tag.name}
+                      </TagContent>
+                    ))}
+                    {manga.tags.length > 5 && (
+                      <TagContent>+{manga.tags.length - 5}</TagContent>
+                    )}
+                  </TagWrapper>
                 </div>
               </div>
             </Link>
-          );
-        },
-      }))}
-      lazyLoad
-      autoPlay
-      showIndex
-      showThumbnails={false}
-      showPlayButton={false}
-      showFullscreenButton={false}
-      slideInterval={15000}
-      renderLeftNav={(onClick, disabled) => (
-        <LeftNav onClick={onClick} disabled={disabled} />
-      )}
-      renderRightNav={(onClick, disabled) => (
-        <RightNav onClick={onClick} disabled={disabled} />
-      )}
-    />
-  ) : null;
+          </Carousel.Slide>
+        ))}
+      </Carousel>
+    )
+  );
 };
 
 export default NotableManga;

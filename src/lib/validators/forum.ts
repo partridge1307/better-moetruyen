@@ -1,6 +1,7 @@
 import type { SerializedEditorState, SerializedLexicalNode } from 'lexical';
 import { ZodType, z } from 'zod';
 import { zfd } from 'zod-form-data';
+import { vieRegex } from '../utils';
 
 export const CreateThreadValidator = z.object({
   thumbnail: z.string().optional(),
@@ -9,10 +10,7 @@ export const CreateThreadValidator = z.object({
     .min(3, 'Tối thiểu 3 kí tự')
     .max(64, 'Tối đa 64 kí tự')
     .refine(
-      (value) =>
-        /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\w\s]+$/.test(
-          value
-        ),
+      (value) => vieRegex.test(value),
       'Chỉ chấp nhận kí tự in hoa, in thường, gạch dưới, khoảng cách hoặc số'
     ),
   canSend: z.boolean(),
@@ -43,10 +41,7 @@ export const CreateThreadFormValidator = zfd.formData({
       .min(3, 'Tối thiểu 3 kí tự')
       .max(64, 'Tối đa 64 kí tự')
       .refine(
-        (value) =>
-          /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\w\s]+$/.test(
-            value
-          ),
+        (value) => vieRegex.test(value),
         'Chỉ chấp nhận kí tự in hoa, in thường, gạch dưới, khoảng cách hoặc số'
       )
   ),
@@ -67,10 +62,7 @@ export const CreatePostValidator = z.object({
     .min(5, 'Tối thiểu 5 kí tự')
     .max(256, 'Tối đa 256 kí tự')
     .refine(
-      (value) =>
-        /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\w\s]+$/.test(
-          value
-        ),
+      (value) => vieRegex.test(value),
       'Chỉ chấp nhận kí tự in hoa, in thường, gạch dưới, khoảng cách hoặc số'
     ),
   content: z.any() as ZodType<SerializedEditorState<SerializedLexicalNode>>,

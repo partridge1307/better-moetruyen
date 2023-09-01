@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { FC, memo } from 'react';
 
 interface AdvancedMangaCardProps {
-  manga: Pick<Manga, 'id' | 'image' | 'review' | 'name'> & {
+  manga: Pick<Manga, 'slug' | 'image' | 'review' | 'name'> & {
     _count: {
       chapter: number;
     };
@@ -15,7 +15,7 @@ interface AdvancedMangaCardProps {
 const AdvancedMangaCard: FC<AdvancedMangaCardProps> = ({ manga }) => {
   return (
     <Link
-      href={`/manga/${manga.id}`}
+      href={`/manga/${manga.slug}`}
       className="relative flex gap-4 dark:bg-zinc-900/75 rounded-lg pr-2 max-sm:pr-4 max-sm:w-max"
     >
       <Image

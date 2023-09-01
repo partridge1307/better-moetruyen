@@ -21,6 +21,8 @@ import {
   REMOVE_LIST_COMMAND,
 } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $createQuoteNode } from '@lexical/rich-text';
+import { $setBlocksType } from '@lexical/selection';
 import {
   $findMatchingParent,
   $getNearestNodeOfType,
@@ -29,13 +31,13 @@ import {
 import {
   $getSelection,
   $isRangeSelection,
+  $isRootOrShadowRoot,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
   REDO_COMMAND,
   UNDO_COMMAND,
-  $isRootOrShadowRoot,
 } from 'lexical';
 import {
   AlignCenter,
@@ -55,8 +57,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ImageInputBody } from '../Image';
 import { FloatingLinkEditor, getSelectedNode } from '../Link';
-import { $createQuoteNode } from '@lexical/rich-text';
-import { $setBlocksType } from '@lexical/selection';
 
 const lowPriority = 1;
 
@@ -66,15 +66,25 @@ export function FillURL() {
   return srcfile;
 }
 
+const blockTypeToBlockName = {
+  paragraph: 'Normal',
+  quote: 'Quote',
+  bullet: 'Bulleted List',
+  check: 'Check List',
+  number: 'Numbered List',
+};
+
 const Toolbar = () => {
   const [editor] = useLexicalComposerContext();
+
+  const [blockType, setBlockType] =
+    useState<keyof typeof blockTypeToBlockName>('paragraph');
   const [canUndo, setCanUndo] = useState<boolean>(false);
   const [canRedo, setCanRedo] = useState<boolean>(false);
   const [selectedInlineStyle, setSelectedInlineStyle] = useState<string[]>([]);
-  const [isLink, setIsLink] = useState<boolean>(false);
   const [linkInput, setLinkInput] = useState<string>('');
+  const [isLink, setIsLink] = useState<boolean>(false);
   const [isLinkDisabled, setIsLinkDisabled] = useState<boolean>(true);
-  const [blockType, setBlockType] = useState('paragraph');
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -91,6 +101,22 @@ const Toolbar = () => {
     };
 
     if ($isRangeSelection(selection)) {
+      const anchorNode = selection.anchor.getNode();
+      let element =
+        anchorNode.getKey() === 'root'
+          ? anchorNode
+          : $findMatchingParent(anchorNode, (node) => {
+              const parent = node.getParent();
+              return parent !== null && $isRootOrShadowRoot(parent);
+            });
+
+      if (element === null) {
+        element = anchorNode.getTopLevelElementOrThrow();
+      }
+
+      const elementKey = element.getKey();
+      const elementDom = editor.getElementByKey(elementKey);
+
       updateInlineStyle(selection.hasFormat('bold'), 'bold');
       updateInlineStyle(selection.hasFormat('italic'), 'italic');
       updateInlineStyle(selection.hasFormat('underline'), 'underline');
@@ -102,20 +128,6 @@ const Toolbar = () => {
         ? setIsLinkDisabled(true)
         : setIsLinkDisabled(false);
 
-      const anchorNode = selection.anchor.getNode();
-      let element =
-        anchorNode.getKey() === 'root'
-          ? anchorNode
-          : $findMatchingParent(anchorNode, (node) => {
-              const parent = node.getParent();
-              return parent !== null && $isRootOrShadowRoot(parent);
-            });
-      if (element === null) {
-        element = anchorNode.getTopLevelElementOrThrow();
-      }
-
-      const elementKey = editor.getKey();
-      const elementDom = editor.getElementByKey(elementKey);
       if (elementDom !== null) {
         if ($isListNode(element)) {
           const parentList = $getNearestNodeOfType<ListNode>(
@@ -126,6 +138,11 @@ const Toolbar = () => {
             ? parentList.getListType()
             : element.getListType();
           setBlockType(type);
+        } else {
+          const type = element.getType();
+          if (type in blockTypeToBlockName) {
+            setBlockType(type as keyof typeof blockTypeToBlockName);
+          }
         }
       }
 
@@ -223,35 +240,46 @@ const Toolbar = () => {
           >
             <Strikethrough className="w-5 h-5" />
           </button>
-          <button
-            type="button"
-            className="p-1 rounded-md transition-colors"
-            onClick={() => {
-              if (blockType !== 'check') {
-                editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
-              } else {
-                editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
-              }
-            }}
-          >
-            <ListChecks className="w-5 h-5" />
-          </button>
-          <button
-            type="button"
-            className="p-1 rounded-md transition-colors"
-            onClick={() => {
-              if (blockType !== 'quote') {
-                editor.update(() => {
-                  const selection = $getSelection();
-                  if ($isRangeSelection(selection)) {
-                    $setBlocksType(selection, () => $createQuoteNode());
+          {blockType in blockTypeToBlockName && (
+            <>
+              <button
+                type="button"
+                className={`p-1 rounded-md transition-colors ${
+                  blockType === 'check' && 'dark:bg-zinc-700'
+                }`}
+                onClick={() => {
+                  if (blockType !== 'check') {
+                    editor.dispatchCommand(
+                      INSERT_CHECK_LIST_COMMAND,
+                      undefined
+                    );
+                  } else {
+                    editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
                   }
-                });
-              }
-            }}
-          >
-            <Quote className="w-5 h-5" />
-          </button>
+                }}
+              >
+                <ListChecks className="w-5 h-5" />
+              </button>
+              <button
+                type="button"
+                className={`p-1 rounded-md transition-colors ${
+                  blockType === 'quote' && 'dark:bg-zinc-700'
+                }`}
+                onClick={() => {
+                  if (blockType !== 'quote') {
+                    editor.update(() => {
+                      const selection = $getSelection();
+                      if ($isRangeSelection(selection)) {
+                        $setBlocksType(selection, () => $createQuoteNode());
+                      }
+                    });
+                  }
+                }}
+              >
+                <Quote className="w-5 h-5" />
+              </button>
+            </>
+          )}
         </div>
         <Select defaultValue={'left-align'}>
           <SelectTrigger

@@ -1,31 +1,26 @@
 import { formatTimeToNow, groupBy } from '@/lib/utils';
+import type { Chapter, Manga } from '@prisma/client';
 import { Clock } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 
 interface ChapterListProps {
-  chapter: {
-    id: number;
-    name?: string | null;
-    chapterIndex: number;
-    volume: number;
-    createdAt: Date;
-    manga: {
-      id: number;
-      name: string;
-      image: string;
-    };
-  }[];
+  chapter: (Pick<
+    Chapter,
+    'id' | 'name' | 'chapterIndex' | 'volume' | 'createdAt'
+  > & {
+    manga: Pick<Manga, 'slug' | 'name' | 'image'>;
+  })[];
 }
 
 const TeamChapterList: FC<ChapterListProps> = ({ chapter }) => {
   return (
-    chapter &&
+    !!chapter &&
     Object.entries(
       groupBy(
         chapter.flatMap((c) => ({
-          mangaId: c.manga.id,
+          mangaSlug: c.manga.slug,
           mangaName: c.manga.name,
           mangaImage: c.manga.image,
           chapterId: c.id,
@@ -42,7 +37,7 @@ const TeamChapterList: FC<ChapterListProps> = ({ chapter }) => {
         className="flex max-sm:flex-col gap-4 p-2 dark:bg-zinc-700 rounded-md"
       >
         <Link
-          href={`/manga/${V[0].mangaId}`}
+          href={`/manga/${V[0].mangaSlug}`}
           className="relative max-sm:self-center w-24 h-32"
         >
           <Image
@@ -55,7 +50,7 @@ const TeamChapterList: FC<ChapterListProps> = ({ chapter }) => {
         </Link>
         <div className="w-full space-y-2">
           <Link
-            href={`/manga/${V[0].mangaId}`}
+            href={`/manga/${V[0].mangaSlug}`}
             className="text-lg font-semibold"
           >
             {V[0].mangaName}

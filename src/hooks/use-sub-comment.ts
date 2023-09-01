@@ -15,5 +15,6 @@ export const useSubComments = <TData>(commentId: number, APIQuery: string) => {
     onError: () => {
       return serverErrorToast();
     },
+    refetchInterval: 15000,
   });
 };

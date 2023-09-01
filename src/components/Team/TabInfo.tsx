@@ -37,13 +37,13 @@ interface TabInfoProps {
       Chapter,
       'id' | 'name' | 'chapterIndex' | 'volume' | 'createdAt'
     > & {
-      manga: Pick<Manga, 'id' | 'name' | 'image'>;
+      manga: Pick<Manga, 'slug' | 'name' | 'image'>;
     })[];
   };
   session: Session | null;
 }
 
-const TabInfo: FC<TabInfoProps> = async ({ team, session }) => {
+const TabInfo: FC<TabInfoProps> = ({ team, session }) => {
   return (
     <Tabs defaultValue="info">
       <TabsList className="md:space-x-4 dark:bg-zinc-800 max-sm:w-full max-sm:justify-start overflow-auto">

@@ -59,7 +59,7 @@ const ChapterUpload = ({ id }: { id: string }) => {
         form.append('images', blob, image.name);
       }
 
-      const { data } = await axios.post(`/api/manga/${id}/chapter`, form, {
+      const { data } = await axios.post(`/api/chapter/${id}`, form, {
         onUploadProgress(progressEvent) {
           const percentCompleted = Math.floor(
             (progressEvent.loaded * 100) / progressEvent.total!

@@ -295,13 +295,13 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                               !!badge.color.to
                                 ? // @ts-ignore
                                   `linear-gradient(to right, ${badge.color.from}, ${badge.color.to})`
-                                : '',
+                                : undefined,
                             backgroundColor:
                               // @ts-ignore
                               !!badge.color && !!badge.color.color
                                 ? // @ts-ignore
                                   badge.color.color
-                                : '',
+                                : undefined,
                           }}
                         />
                         <p>{badge.name}</p>
@@ -341,13 +341,13 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                         !!badge.color.to
                           ? // @ts-ignore
                             `linear-gradient(to right, ${badge.color.from}, ${badge.color.to})`
-                          : '',
+                          : undefined,
                       backgroundColor:
                         // @ts-ignore
                         !!badge.color && !!badge.color.color
                           ? // @ts-ignore
                             badge.color.color
-                          : '',
+                          : undefined,
                     }}
                   >
                     {badge.name}
@@ -375,13 +375,13 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
                           !!badge.color.to
                             ? // @ts-ignore
                               `linear-gradient(to right, ${badge.color.from}, ${badge.color.to})`
-                            : '',
+                            : undefined,
                         backgroundColor:
                           // @ts-ignore
                           !!badge.color && !!badge.color.color
                             ? // @ts-ignore
                               badge.color.color
-                            : '',
+                            : undefined,
                       }}
                     >
                       {badge.name}

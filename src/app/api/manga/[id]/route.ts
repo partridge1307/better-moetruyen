@@ -1,6 +1,7 @@
 import { getAuthSession } from '@/lib/auth';
 import { UploadMangaImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
+import { normalizeText } from '@/lib/utils';
 import { MangaFormValidator } from '@/lib/validators/manga';
 import { Prisma } from '@prisma/client';
 
@@ -33,10 +34,10 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
     });
 
     let image: string;
-    if (typeof img === 'string') {
-      image = img;
-    } else {
+    if (img instanceof File) {
       image = await UploadMangaImage(img, targetManga.id, targetManga.image);
+    } else {
+      image = img;
     }
 
     await db.manga.update({
@@ -45,6 +46,12 @@ export async function PATCH(req: Request, context: { params: { id: string } }) {
       },
       data: {
         image,
+        slug: `${normalizeText(name)
+          .toLowerCase()
+          .slice(0, 32)
+          .trim()
+          .split(' ')
+          .join('-')}-${targetManga.id}`,
         name,
         description: { ...description },
         review,

@@ -1,6 +1,7 @@
 import { getAuthSession } from '@/lib/auth';
 import { UploadMangaImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
+import { normalizeText } from '@/lib/utils';
 import { MangaFormValidator } from '@/lib/validators/manga';
 import { Prisma } from '@prisma/client';
 import { z } from 'zod';
@@ -48,6 +49,7 @@ export async function POST(req: Request) {
     const mangaCreated = await db.manga.create({
       data: {
         name,
+        slug: '',
         description: { ...description },
         review,
         image: '',
@@ -70,9 +72,11 @@ export async function POST(req: Request) {
     });
 
     let uploadedImage;
-    if (typeof img === 'string') {
+    if (img instanceof File) {
+      uploadedImage = await UploadMangaImage(img, mangaCreated.id, null);
+    } else {
       uploadedImage = img;
-    } else uploadedImage = await UploadMangaImage(img, mangaCreated.id, null);
+    }
 
     await db.manga.update({
       where: {
@@ -80,6 +84,12 @@ export async function POST(req: Request) {
       },
       data: {
         image: uploadedImage,
+        slug: `${normalizeText(mangaCreated.name)
+          .toLowerCase()
+          .slice(0, 32)
+          .trim()
+          .split(' ')
+          .join('-')}-${mangaCreated.id}`,
       },
     });
 

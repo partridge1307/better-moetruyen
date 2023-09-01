@@ -1,34 +1,25 @@
 'use client';
 
 import { Button } from '@/components/ui/Button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
+import { Form } from '@/components/ui/Form';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
-import { TeamCreatePayload, TeamCreateValidator } from '@/lib/validators/team';
+import { TeamPayload, TeamValidator } from '@/lib/validators/team';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { Image as ImageIcon } from 'lucide-react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import TeamDescForm from './components/TeamDescForm';
+import TeamImageForm from './components/TeamImageForm';
+import TeamNameForm from './components/TeamNameForm';
 
 const TeamCreateForm = () => {
   const router = useRouter();
-  const [imageStr, setImageStr] = useState<string>('');
   const { loginToast, serverErrorToast, successToast } = useCustomToast();
 
-  const form = useForm<TeamCreatePayload>({
-    resolver: zodResolver(TeamCreateValidator),
+  const form = useForm<TeamPayload>({
+    resolver: zodResolver(TeamValidator),
     defaultValues: {
       image: undefined,
       name: '',
@@ -37,11 +28,14 @@ const TeamCreateForm = () => {
   });
 
   const { mutate: Create, isLoading: isCreating } = useMutation({
-    mutationFn: async (values: TeamCreatePayload) => {
+    mutationFn: async (values: TeamPayload) => {
       const { image, name, description } = values;
 
       const form = new FormData();
-      form.append('image', image);
+
+      const blob = await fetch(image).then((res) => res.blob());
+      form.append('image', blob);
+
       form.append('name', name);
       form.append('description', description);
 
@@ -69,98 +63,18 @@ const TeamCreateForm = () => {
     },
   });
 
-  function onSubmitHandler(values: TeamCreatePayload) {
+  function onSubmitHandler(values: TeamPayload) {
     Create(values);
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmitHandler)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="image"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ảnh</FormLabel>
-              <FormMessage />
-              <FormControl>
-                {imageStr.length ? (
-                  <Image
-                    width={0}
-                    height={0}
-                    sizes="100vw"
-                    src={imageStr}
-                    alt="Team Image Preview"
-                    className="w-32 h-44 object-cover rounded-md cursor-pointer"
-                    onClick={() => {
-                      const target = document.getElementById(
-                        'team-image-add'
-                      ) as HTMLInputElement;
+        <TeamImageForm form={form} />
 
-                      target.click();
-                    }}
-                  />
-                ) : (
-                  <div
-                    role="button"
-                    className="w-32 h-44 flex justify-center items-center border-2 border-dashed rounded-md"
-                    onClick={() => {
-                      const target = document.getElementById(
-                        'team-image-add'
-                      ) as HTMLInputElement;
+        <TeamNameForm form={form} />
 
-                      target.click();
-                    }}
-                  >
-                    <ImageIcon className="w-8 h-8 opacity-50" />
-                  </div>
-                )}
-              </FormControl>
-              <Input
-                id="team-image-add"
-                type="file"
-                accept=".jpg, .png, .jpeg"
-                className="hidden"
-                onChange={(e) => {
-                  if (e.target.files?.length) {
-                    field.onChange(e.target.files[0]);
-                    const url = URL.createObjectURL(e.target.files[0]);
-                    setImageStr(url);
-                    e.target.value = '';
-                  }
-                }}
-              />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tên Team</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="Tên Team" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Mô tả</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input placeholder="Mô tả" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <TeamDescForm form={form} />
 
         <Button
           isLoading={isCreating}

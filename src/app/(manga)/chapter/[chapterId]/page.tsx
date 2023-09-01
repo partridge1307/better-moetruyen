@@ -1,3 +1,4 @@
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
@@ -90,43 +91,80 @@ interface pageProps {
 }
 
 const page: FC<pageProps> = async ({ params }) => {
-  const chapter = await db.chapter.findFirst({
-    where: {
-      id: +params.chapterId,
-      isPublished: true,
-    },
-    select: {
-      manga: {
-        select: {
-          name: true,
-          id: true,
-        },
+  const [chapter, session] = await Promise.all([
+    db.chapter.findFirst({
+      where: {
+        id: +params.chapterId,
+        isPublished: true,
       },
-      images: true,
-      id: true,
-      name: true,
-      chapterIndex: true,
-      volume: true,
-    },
-  });
+      select: {
+        manga: {
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+          },
+        },
+        images: true,
+        id: true,
+        name: true,
+        chapterIndex: true,
+        volume: true,
+      },
+    }),
+    getAuthSession(),
+  ]);
   if (!chapter) return notFound();
 
-  const chapterList = await db.manga
-    .findUnique({
-      where: {
-        id: chapter.manga.id,
-        isPublished: true,
-      },
-    })
-    .chapter({
-      select: {
-        id: true,
-        chapterIndex: true,
-        name: true,
-        volume: true,
-        isPublished: true,
-      },
-    });
+  let chapterList;
+  if (session) {
+    [chapterList] = await db.$transaction([
+      db.manga
+        .findUnique({
+          where: {
+            id: chapter.manga.id,
+            isPublished: true,
+          },
+        })
+        .chapter({
+          select: {
+            id: true,
+            chapterIndex: true,
+            name: true,
+            volume: true,
+            isPublished: true,
+          },
+        }),
+      db.history.update({
+        where: {
+          userId_mangaId: {
+            userId: session.user.id,
+            mangaId: chapter.manga.id,
+          },
+        },
+        data: {
+          chapterId: chapter.id,
+        },
+      }),
+    ]);
+  } else {
+    chapterList = await db.manga
+      .findUnique({
+        where: {
+          id: chapter.manga.id,
+          isPublished: true,
+        },
+      })
+      .chapter({
+        select: {
+          id: true,
+          chapterIndex: true,
+          name: true,
+          volume: true,
+          isPublished: true,
+        },
+      });
+  }
 
   return (
     <div className="mt-8 h-full">

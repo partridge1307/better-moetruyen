@@ -13,6 +13,7 @@ export function sleep(second: number) {
 
 export const groupBy = <T>(
   array: T[],
+  // eslint-disable-next-line no-unused-vars
   predicate: (value: T, index: number, array: T[]) => any
 ) =>
   array.reduce(
@@ -75,6 +76,8 @@ export const fbRegex =
   /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\.\-]*)/;
 export const disRegex =
   /(https:\/\/)?(www)?discord.?(gg|com)?\/?(invite)?\/([^\/\?\&\%]*)\S/;
+export const vieRegex =
+  /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\w ]+$/;
 
 type targetProps = {
   time: number;

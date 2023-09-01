@@ -25,6 +25,8 @@
     --ring: 240 5.9% 10%;
     --radius: 0.5rem;
     --message-destructive: 0 100% 79%;
+    --read-btn: 20.5 90.2% 48.2%;
+    --read-btn-foreground: 60 9.1% 97.8%;
   }
 
   .dark {

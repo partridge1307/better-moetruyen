@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import type { Chapter } from '@prisma/client';
+import type { Chapter, Manga } from '@prisma/client';
 import { ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import { FC, useCallback, useMemo } from 'react';
@@ -28,10 +28,7 @@ interface ChapterControllProps {
     Chapter,
     'id' | 'name' | 'chapterIndex' | 'volume' | 'images'
   > & {
-    manga: {
-      name: string;
-      id: number;
-    };
+    manga: Pick<Manga, 'name' | 'slug'>;
   };
   chapterList:
     | Pick<Chapter, 'id' | 'chapterIndex' | 'name' | 'volume' | 'isPublished'>[]
@@ -232,9 +229,7 @@ const ChapterControll: FC<ChapterControllProps> = ({
           )}
         </p>
         <Link
-          href={`/manga/${chapter.manga.id}/${chapter.manga.name
-            .split(' ')
-            .join('-')}`}
+          href={`/manga/${chapter.manga.slug}`}
           className="text-lg font-medium text-orange-500"
         >
           {chapter.manga.name}

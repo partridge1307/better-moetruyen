@@ -17,58 +17,60 @@ const page: FC<pageProps> = async ({ params }) => {
   if (typeof params.teamId === 'string') teamId = params.teamId;
   else teamId = params.teamId[0];
 
-  const session = await getAuthSession();
-  if (!session) return redirect('/sign-in');
+  const [session, team] = await Promise.all([
+    getAuthSession(),
+    db.team.findFirst({
+      where: {
+        id: +teamId,
+      },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        description: true,
+        createdAt: true,
+        member: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                image: true,
+                banner: true,
+                color: true,
+              },
+            },
+          },
+        },
+        owner: {
+          select: {
+            id: true,
+            image: true,
+            name: true,
+            color: true,
+          },
+        },
+        chapter: {
+          select: {
+            id: true,
+            name: true,
+            volume: true,
+            chapterIndex: true,
+            createdAt: true,
+            manga: {
+              select: {
+                slug: true,
+                name: true,
+                image: true,
+              },
+            },
+          },
+        },
+      },
+    }),
+  ]);
 
-  const team = await db.team.findFirst({
-    where: {
-      id: +teamId,
-    },
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      description: true,
-      createdAt: true,
-      member: {
-        select: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
-              banner: true,
-              color: true,
-            },
-          },
-        },
-      },
-      owner: {
-        select: {
-          id: true,
-          image: true,
-          name: true,
-          color: true,
-        },
-      },
-      chapter: {
-        select: {
-          id: true,
-          name: true,
-          volume: true,
-          chapterIndex: true,
-          createdAt: true,
-          manga: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  if (!session) return redirect('/sign-in');
   if (!team) return notFound();
 
   return (

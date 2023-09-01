@@ -5,9 +5,7 @@ import type {
   authorInfoProps,
 } from '@/lib/validators/manga';
 import { useDebouncedValue } from '@mantine/hooks';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { Loader2, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { FC, useEffect, useState } from 'react';
 import type { UseFormReturn } from 'react-hook-form';
 import {
@@ -19,14 +17,24 @@ import {
 } from '../../ui/Form';
 import { Input } from '../../ui/Input';
 
-type authorResultProps = {
-  author: authorInfoProps[];
-};
-
 interface MangaAuthorFormProps {
   form: UseFormReturn<MangaUploadPayload>;
   existAuthors?: authorInfoProps[];
 }
+
+const authorCache = new Map<string, authorInfoProps[] | null>();
+
+const authorLookUpService = {
+  search: async (
+    query: string,
+    // eslint-disable-next-line no-unused-vars
+    callback: (results: authorInfoProps[]) => void
+  ) => {
+    fetch(`/api/manga/author?q=${query}`, { method: 'GET' })
+      .then((res) => res.json())
+      .then((res) => callback(res));
+  },
+};
 
 const MangaAuthorForm: FC<MangaAuthorFormProps> = ({ form, existAuthors }) => {
   const [authorInput, setAuthorInput] = useState('');
@@ -34,26 +42,27 @@ const MangaAuthorForm: FC<MangaAuthorFormProps> = ({ form, existAuthors }) => {
   const [authorSelected, setAuthorSelected] = useState<authorInfoProps[]>(
     existAuthors ?? []
   );
-
-  const {
-    data: authorsResult,
-    refetch,
-    isFetching: isFetchingAuthor,
-  } = useQuery({
-    queryKey: ['fetch-author'],
-    enabled: false,
-    queryFn: async () => {
-      const { data } = await axios.get(`/api/manga/author?q=${debouncedValue}`);
-
-      return data as authorResultProps;
-    },
-  });
+  const [authorsResult, setAuthorsResult] = useState<authorInfoProps[]>([]);
 
   useEffect(() => {
     if (debouncedValue.length) {
-      refetch();
+      const cachedResults = authorCache.get(debouncedValue);
+
+      if (cachedResults === null) {
+        return;
+      }
+      if (cachedResults !== undefined) {
+        setAuthorsResult(cachedResults);
+        return;
+      }
+
+      authorCache.set(debouncedValue, null);
+      authorLookUpService.search(debouncedValue, (results) => {
+        authorCache.set(debouncedValue, results);
+        setAuthorsResult(results);
+      });
     }
-  }, [debouncedValue.length, refetch]);
+  }, [debouncedValue, debouncedValue.length]);
 
   return (
     <FormField
@@ -69,7 +78,7 @@ const MangaAuthorForm: FC<MangaAuthorFormProps> = ({ form, existAuthors }) => {
                 {authorSelected.map((auth) => (
                   <li
                     key={auth.id}
-                    className="flex items-center gap-x-1 rounded-md bg-zinc-800 p-1"
+                    className="flex flex-wrap items-center gap-x-1 rounded-md bg-zinc-800 p-1"
                   >
                     <span>{auth.name}</span>
                     <X
@@ -97,46 +106,40 @@ const MangaAuthorForm: FC<MangaAuthorFormProps> = ({ form, existAuthors }) => {
             </div>
           </FormControl>
           <ul className="flex flex-wrap items-center gap-2">
-            {isFetchingAuthor ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              !!authorInput.length && (
-                <li
-                  className={`flex items-center gap-x-2 rounded-md ${
-                    authorSelected.some((a) => a.name === authorInput) &&
-                    'hidden'
-                  }`}
+            {!!authorInput.length && (
+              <li
+                className={`flex items-center gap-x-2 rounded-md ${
+                  authorSelected.some((a) => a.name === authorInput) && 'hidden'
+                }`}
+              >
+                Thêm:{' '}
+                <span
+                  className="cursor-pointer bg-zinc-800 p-1"
+                  onClick={() => {
+                    if (!authorSelected.some((a) => a.name === authorInput)) {
+                      form.setValue('author', [
+                        ...authorSelected,
+                        { id: -1, name: authorInput },
+                      ]);
+                      setAuthorSelected([
+                        ...authorSelected,
+                        { id: -1, name: authorInput },
+                      ]);
+                      setAuthorInput('');
+                    }
+                  }}
                 >
-                  Thêm:{' '}
-                  <span
-                    className="cursor-pointer bg-zinc-800 p-1"
-                    onClick={() => {
-                      if (!authorSelected.some((a) => a.name === authorInput)) {
-                        form.setValue('author', [
-                          ...authorSelected,
-                          { id: -1, name: authorInput },
-                        ]);
-                        setAuthorSelected([
-                          ...authorSelected,
-                          { id: -1, name: authorInput },
-                        ]);
-                        setAuthorInput('');
-                      }
-                    }}
-                  >
-                    {authorInput}
-                  </span>
-                </li>
-              )
+                  {authorInput}
+                </span>
+              </li>
             )}
 
-            {!isFetchingAuthor &&
-              !!authorsResult?.author.length &&
+            {!!authorsResult?.length &&
               !!authorInput.length &&
-              authorsResult.author.map((auth) => (
+              authorsResult.map((auth) => (
                 <li
                   key={auth.id}
-                  className={`cursor-pointer rounded-md bg-slate-800 p-1 ${
+                  className={`cursor-pointer rounded-md bg-zinc-800 p-1 ${
                     authorSelected.some((a) => a.name === auth.name) && 'hidden'
                   }`}
                   onClick={() => {

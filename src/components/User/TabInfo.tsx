@@ -11,7 +11,7 @@ interface TabsProps {
 const TabInfo: FC<TabsProps> = async ({ userId }) => {
   const mangas = await db.manga.findMany({
     where: { creatorId: userId, isPublished: true },
-    select: { id: true, name: true, image: true },
+    select: { id: true, slug: true, name: true, image: true },
   });
 
   return (
@@ -24,10 +24,10 @@ const TabInfo: FC<TabsProps> = async ({ userId }) => {
         value="manga"
         className="p-1 rounded-md space-y-4 dark:bg-zinc-800"
       >
-        {mangas.map((manga, idx) => (
+        {mangas.map((manga) => (
           <Link
-            key={idx}
-            href={`/manga/${manga.id}`}
+            key={manga.id}
+            href={`/manga/${manga.slug}`}
             className="flex gap-4 p-1 rounded-md transition-colors hover:dark:bg-zinc-900"
           >
             <div className="relative w-48 h-32">

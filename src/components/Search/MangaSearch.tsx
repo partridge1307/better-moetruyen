@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { FC } from 'react';
 
 interface MangaSearchProps {
-  mangas?: (Pick<Manga, 'id' | 'image' | 'name' | 'review'> & {
+  mangas?: (Pick<Manga, 'id' | 'slug' | 'image' | 'name' | 'review'> & {
     author: Pick<MangaAuthor, 'name'>[];
   })[];
 }
@@ -13,11 +13,8 @@ interface MangaSearchProps {
 const MangaSearch: FC<MangaSearchProps> = ({ mangas }) => {
   return !!mangas?.length ? (
     <div className="space-y-7">
-      {mangas.map((manga, idx) => (
-        <Link
-          key={idx}
-          href={`/manga/${manga.id}?title=${manga.name.split(' ').join('-')}`}
-        >
+      {mangas.map((manga) => (
+        <Link key={manga.id} href={`/manga/${manga.slug}}`}>
           <DialogClose className="grid grid-cols-[.4fr_1fr] lg:grid-cols-[.15fr_1fr] gap-4 p-2 rounded-md text-start transition-colors duration-100 hover:dark:bg-zinc-800">
             <div className="relative h-24">
               <Image

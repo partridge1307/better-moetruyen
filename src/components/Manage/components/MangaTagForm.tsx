@@ -49,7 +49,7 @@ const MangaTagForm: FC<MangaTagFormProps> = ({ form, tag, existTags }) => {
           <FormLabel>Thể loại</FormLabel>
           <FormMessage />
           <Popover>
-            <ul className="flex items-center gap-x-2">
+            <ul className="flex flex-wrap items-center gap-x-2">
               {tagSelect.map((t, i) => (
                 <li
                   key={i}

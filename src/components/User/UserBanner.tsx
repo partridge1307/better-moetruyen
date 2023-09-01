@@ -27,7 +27,7 @@ const UserBanner: FC<UserBannerProps> = ({
           className={className}
         />
       ) : (
-        <div className="absolute inset-0 top-0 left-0 dark:bg-zinc-900" />
+        <div className="absolute inset-0 top-0 left-0 rounded-md dark:bg-zinc-900" />
       )}
     </AspectRatio>
   );

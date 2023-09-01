@@ -1,11 +1,7 @@
 import { db } from '@/lib/db';
-import { cn } from '@/lib/utils';
-import { FC } from 'react';
-import LatestMangaCard from './LatestMangaCard';
+import LastestMangaCard from './components/LastestMangaCard';
 
-interface LatestMangaProps {}
-
-const LatestManga: FC<LatestMangaProps> = async ({}) => {
+const LatestManga = async ({}) => {
   const chapters = await db.chapter.findMany({
     take: 10,
     distinct: ['mangaId'],
@@ -19,14 +15,10 @@ const LatestManga: FC<LatestMangaProps> = async ({}) => {
       manga: {
         select: {
           id: true,
+          slug: true,
           name: true,
           image: true,
           review: true,
-          author: {
-            select: {
-              name: true,
-            },
-          },
         },
       },
       volume: true,
@@ -37,18 +29,11 @@ const LatestManga: FC<LatestMangaProps> = async ({}) => {
   });
 
   return (
-    <ul
-      className={cn(
-        'flex relative overflow-auto gap-4 p-2 snap-proximity',
-        'md:flex-col md:scrollbar md:dark:scrollbar--dark'
-      )}
-    >
-      {chapters.map((chapter, idx) => (
-        <li key={idx} className="snap-start">
-          <LatestMangaCard chapter={chapter} />
-        </li>
+    <div className="space-y-3 rounded-md dark:bg-zinc-900/60">
+      {chapters.map((chapter) => (
+        <LastestMangaCard key={chapter.manga.id} chapter={chapter} />
       ))}
-    </ul>
+    </div>
   );
 };
 

@@ -1,4 +1,4 @@
-import LatestMangaCard from '@/components/Manga/LatestMangaCard';
+import LatestMangaCard from '@/components/Manga/components/LastestMangaCard';
 import MangaPaginationControll from '@/components/Manga/MangaPaginationControll';
 import { db } from '@/lib/db';
 import type { Metadata } from 'next';
@@ -36,7 +36,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       select: {
         manga: {
           select: {
-            id: true,
+            slug: true,
             image: true,
             name: true,
             review: true,
@@ -60,8 +60,8 @@ const page: FC<pageProps> = async ({ searchParams }) => {
 
   return (
     <section className="container mx-auto max-sm:px-2 h-screen pt-20">
-      <div className="space-y-8">
-        <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 gap-y-6 p-2 dark:bg-zinc-700 rounded-lg">
+      <div className="space-y-10">
+        <ul className="space-y-3 rounded-md dark:bg-zinc-900/60">
           {latestManga.length ? (
             latestManga.map((data, idx) => (
               <li key={idx}>

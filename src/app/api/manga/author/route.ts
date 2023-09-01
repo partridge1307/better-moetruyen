@@ -15,7 +15,7 @@ export async function GET(req: Request) {
       take: 5,
     });
 
-    return new Response(JSON.stringify({ author: [...author] }), {
+    return new Response(JSON.stringify(author), {
       status: 200,
     });
   } catch (error) {

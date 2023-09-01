@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+
 const TabInfo = dynamic(() => import('@/components/Team/TabInfo'));
 
 const page = async () => {
@@ -55,7 +56,7 @@ const page = async () => {
           createdAt: true,
           manga: {
             select: {
-              id: true,
+              slug: true,
               name: true,
               image: true,
             },

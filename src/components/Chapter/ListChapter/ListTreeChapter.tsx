@@ -29,7 +29,7 @@ const ListTreeChapter: FC<ListTreeChapterProps> = async ({ mangaId }) => {
               Volume {volume.volume}
             </AccordionTrigger>
             <AccordionContent>
-              <ul className="text-base px-2 lg:space-y-4 divide-y dark:divide-zinc-700">
+              <ul className="text-base px-2 divide-y dark:divide-zinc-700">
                 {volume.data
                   .sort((a, b) => b.index - a.index)
                   .map((chapter) => (
@@ -39,7 +39,7 @@ const ListTreeChapter: FC<ListTreeChapterProps> = async ({ mangaId }) => {
                         !!chapter.teamId &&
                         !!chapter.teamImage &&
                         !!chapter.teamName
-                          ? 'flex flex-wrap items-center lg:gap-3 max-sm:py-4'
+                          ? 'flex flex-wrap items-center py-4'
                           : undefined
                       }
                     >

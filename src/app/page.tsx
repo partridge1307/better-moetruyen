@@ -1,7 +1,7 @@
-import LastActivityThreadSkeletion from '@/components/Skeletion/LastActivityThreadSkeletion';
-import LastestMangaSkeleton from '@/components/Skeletion/LastestMangaSkeleton';
-import LeaderboardSkeletion from '@/components/Skeletion/LeaderboardSkeletion';
-import NotableMangaSkeleton from '@/components/Skeletion/NotableMangaSkeleton';
+import LastActivityThreadSkeletion from '@/components/Skeleton/LastActivityThreadSkeletion';
+import LastestMangaSkeleton from '@/components/Skeleton/LastestMangaSkeleton';
+import LeaderboardSkeletion from '@/components/Skeleton/LeaderboardSkeletion';
+import NotableMangaSkeleton from '@/components/Skeleton/NotableMangaSkeleton';
 import { db } from '@/lib/db';
 import dynamic from 'next/dynamic';
 

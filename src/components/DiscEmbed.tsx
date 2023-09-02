@@ -45,8 +45,10 @@ const DiscEmbed: FC<DiscEmbedProps> = async ({ manga }) => {
       <div className="space-y-2">
         <h1>Discord{!!discord.name && <span>: {discord.name}</span>}</h1>
         <iframe
+          height={300}
           src={`https://discord.com/widget?id=${discord.id}&theme=dark`}
           sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+          loading="lazy"
           className="w-full border dark:border-zinc-700 rounded-md"
         />
       </div>

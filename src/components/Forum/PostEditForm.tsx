@@ -1,8 +1,11 @@
 'use client';
 
+import { useCustomToast } from '@/hooks/use-custom-toast';
 import { CreatePostPayload, CreatePostValidator } from '@/lib/validators/forum';
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { Post, SubForum } from '@prisma/client';
+import { useMutation } from '@tanstack/react-query';
+import axios, { AxiosError } from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
@@ -17,9 +20,6 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/Form';
-import { useMutation } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
-import { useCustomToast } from '@/hooks/use-custom-toast';
 
 const MoetruyenEditor = dynamic(
   () => import('@/components/Editor/MoetruyenEditor'),
@@ -28,7 +28,7 @@ const MoetruyenEditor = dynamic(
 
 interface PostEditFormProps {
   post: Pick<Post, 'id' | 'content' | 'title'> & {
-    subForum: Pick<SubForum, 'title'>;
+    subForum: Pick<SubForum, 'slug'>;
   };
 }
 
@@ -49,12 +49,8 @@ const PostEditForm: FC<PostEditFormProps> = ({ post }) => {
 
       return serverErrorToast();
     },
-    onSuccess: (_, values) => {
-      router.push(
-        `/m/${post.subForum.title.split(' ').join('-')}/${
-          post.id
-        }/${values.title.split(' ').join('-')}`
-      );
+    onSuccess: () => {
+      router.push(`/m/${post.subForum.slug}/${post.id}}`);
       router.refresh();
 
       return successToast();

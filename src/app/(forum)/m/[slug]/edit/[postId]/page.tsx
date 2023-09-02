@@ -1,8 +1,8 @@
-import { db } from '@/lib/db';
-import { FC } from 'react';
-import { notFound, redirect } from 'next/navigation';
 import { getAuthSession } from '@/lib/auth';
+import { db } from '@/lib/db';
 import dynamic from 'next/dynamic';
+import { notFound, redirect } from 'next/navigation';
+import { FC } from 'react';
 
 const PostEditForm = dynamic(() => import('@/components/Forum/PostEditForm'), {
   ssr: false,
@@ -30,7 +30,7 @@ const page: FC<pageProps> = async ({ params }) => {
       content: true,
       subForum: {
         select: {
-          title: true,
+          slug: true,
         },
       },
     },

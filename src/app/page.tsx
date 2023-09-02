@@ -1,17 +1,28 @@
+import LastActivityThreadSkeletion from '@/components/Skeletion/LastActivityThreadSkeletion';
+import LastestMangaSkeleton from '@/components/Skeletion/LastestMangaSkeleton';
+import LeaderboardSkeletion from '@/components/Skeletion/LeaderboardSkeletion';
+import NotableMangaSkeleton from '@/components/Skeletion/NotableMangaSkeleton';
 import { db } from '@/lib/db';
 import dynamic from 'next/dynamic';
 
 const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
   ssr: false,
+  loading: () => <NotableMangaSkeleton />,
 });
 const LastActivityThread = dynamic(
-  () => import('@/components/Forum/LastActivityThread')
+  () => import('@/components/Forum/LastActivityThread'),
+  { loading: () => <LastActivityThreadSkeletion /> }
 );
 const Recommendation = dynamic(
-  () => import('@/components/Manga/Recommendation')
+  () => import('@/components/Manga/Recommendation'),
+  { loading: () => <LastestMangaSkeleton /> }
 );
-const LatestManga = dynamic(() => import('@/components/Manga/LatestManga'));
-const Leaderboard = dynamic(() => import('@/components/LeaderBoard'));
+const LatestManga = dynamic(() => import('@/components/Manga/LatestManga'), {
+  loading: () => <LastestMangaSkeleton />,
+});
+const Leaderboard = dynamic(() => import('@/components/LeaderBoard'), {
+  loading: () => <LeaderboardSkeletion />,
+});
 
 const Home = async () => {
   const manga = await db.manga.findMany({

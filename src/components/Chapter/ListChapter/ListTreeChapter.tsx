@@ -39,7 +39,7 @@ const ListTreeChapter: FC<ListTreeChapterProps> = async ({ mangaId }) => {
                         !!chapter.teamId &&
                         !!chapter.teamImage &&
                         !!chapter.teamName
-                          ? 'flex flex-wrap items-center py-4'
+                          ? 'flex flex-wrap items-center gap-3 py-4'
                           : undefined
                       }
                     >

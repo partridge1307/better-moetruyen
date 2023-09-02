@@ -41,7 +41,8 @@ export async function PATCH(req: Request) {
         name,
         image: avatarUrl ? avatarUrl : user.image,
         banner: bannerUrl ? bannerUrl : user.banner,
-        color: color && color !== null ? color : user.color ?? {},
+        // @ts-ignore
+        color: color ? color : user.color,
       },
     });
 
@@ -66,7 +67,7 @@ export async function PATCH(req: Request) {
   }
 }
 
-export async function DELETE(req: Request) {
+export async function DELETE() {
   try {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });

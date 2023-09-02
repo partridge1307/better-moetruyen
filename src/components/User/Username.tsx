@@ -12,9 +12,7 @@ const Username: FC<UsernameProps> = ({ user, className }) => {
     <p
       className={cn(
         'text-center font-medium bg-clip-text animate-rainbow',
-        !!!user.color || user.color === null
-          ? 'text-black dark:text-white'
-          : 'text-transparent',
+        !!!user.color ? 'text-black dark:text-white' : 'text-transparent',
         className
       )}
       style={{

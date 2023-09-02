@@ -31,20 +31,19 @@ const UploadChapterImage = async (
     })
   );
 
-  let imagesLink: string[] = [];
-  for (const image of optimizedImages) {
-    const command = new PutObjectCommand({
-      Body: image.buffer,
-      Bucket: `chapter`,
-      Key: `${mangaId}/${chapterIndex}/${image.name}.webp`,
-    });
+  const imagesLink = await Promise.all(
+    optimizedImages.map(async (image) => {
+      const command = new PutObjectCommand({
+        Body: image.buffer,
+        Bucket: 'chapter',
+        Key: `${mangaId}/${chapterIndex}/${image.name}.webp`,
+      });
 
-    await sendCommand(contabo, command, 5);
+      await sendCommand(contabo, command, 5);
 
-    imagesLink.push(
-      `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${image.name}.webp`
-    );
-  }
+      return `${process.env.IMG_DOMAIN}/chapter/${mangaId}/${chapterIndex}/${image.name}.webp`;
+    })
+  );
 
   return imagesLink;
 };
@@ -55,20 +54,30 @@ const EditChapterImage = async (
   mangaId: number,
   chapterIndex: number
 ) => {
-  const [serializedNewImages, serializedExistImages] = await Promise.all([
-    newImages.map((image, index) => ({ index, image })),
-    existingImages.map((image, index) => ({ index, image })),
-  ]);
-  const [blobImages, linkImages] = await Promise.all([
-    serializedNewImages.filter((image) => image.image instanceof File) as {
+  const serializedNewImages = newImages.map((image, index) => ({
+      index,
+      image,
+    })),
+    serializedExistImages = existingImages.map((image, index) => ({
+      index,
+      image,
+    }));
+
+  const blobImages = serializedNewImages.filter(
+      (image) => image.image instanceof File
+    ) as {
       index: number;
       image: File;
     }[],
-    serializedNewImages.filter((image) => typeof image.image === 'string') as {
+    linkImages = serializedNewImages.filter(
+      (image) => typeof image.image === 'string'
+    ) as {
       index: number;
       image: string;
     }[],
-  ]);
+    deletedImages = serializedExistImages.filter(
+      (img) => !linkImages.some((image) => image.image === img.image)
+    );
 
   const blobImagesHandler = await Promise.all(
     blobImages.map(async (img) => {
@@ -142,26 +151,23 @@ const EditChapterImage = async (
     })
   );
 
-  let uploadedNewImages: { index: number; image: string }[] = [];
-  for (const blobImage of blobImagesHandler) {
-    await sendCommand(contabo, blobImage.command, 5);
+  const [uploadedNewImages] = await Promise.all([
+    blobImagesHandler.map(async (blobImage) => {
+      await sendCommand(contabo, blobImage.command, 5);
 
-    uploadedNewImages.push({ index: blobImage.index, image: blobImage.image });
-  }
+      return { index: blobImage.index, image: blobImage.image };
+    }),
+    deletedImages.map(async (deletedImage) => {
+      const image = new URL(deletedImage.image).pathname.split('/').pop();
 
-  const deletedImages = serializedExistImages.filter(
-    (img) => !linkImages.some((image) => image.image === img.image)
-  );
-  for (const deletedImage of deletedImages) {
-    const image = new URL(deletedImage.image).pathname.split('/').pop();
+      const command = new DeleteObjectCommand({
+        Bucket: 'chapter',
+        Key: `${mangaId}/${chapterIndex}/${image}`,
+      });
 
-    const command = new DeleteObjectCommand({
-      Bucket: 'chapter',
-      Key: `${mangaId}/${chapterIndex}/${image}`,
-    });
-
-    await sendCommand(contabo, command, 5);
-  }
+      await sendCommand(contabo, command, 5);
+    }),
+  ]);
 
   return [...linkImages, ...uploadedNewImages];
 };

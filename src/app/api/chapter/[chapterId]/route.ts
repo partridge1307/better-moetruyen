@@ -68,7 +68,10 @@ export async function PATCH(
   }
 }
 
-export async function POST(req: Request, context: { params: { id: string } }) {
+export async function POST(
+  req: Request,
+  context: { params: { chapterId: string } }
+) {
   try {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });
@@ -76,10 +79,10 @@ export async function POST(req: Request, context: { params: { id: string } }) {
     const { images, volume, chapterIndex, chapterName } =
       ChapterFormUploadValidator.parse(await req.formData());
 
-    const [manga, team] = await db.$transaction([
+    const [manga, user] = await db.$transaction([
       db.manga.findUniqueOrThrow({
         where: {
-          id: +context.params.id,
+          id: +context.params.chapterId,
           creatorId: session.user.id,
         },
         select: {
@@ -87,12 +90,12 @@ export async function POST(req: Request, context: { params: { id: string } }) {
           name: true,
         },
       }),
-      db.memberOnTeam.findFirst({
+      db.user.findUniqueOrThrow({
         where: {
-          userId: session.user.id,
+          id: session.user.id,
         },
         select: {
-          teamId: true,
+          memberOnTeam: true,
         },
       }),
     ]);
@@ -134,7 +137,7 @@ export async function POST(req: Request, context: { params: { id: string } }) {
 
     const uploadedImages = await UploadChapterImage(images, manga.id, index);
 
-    if (team) {
+    if (user.memberOnTeam) {
       await db.chapter.create({
         data: {
           chapterIndex: index,
@@ -145,7 +148,7 @@ export async function POST(req: Request, context: { params: { id: string } }) {
             connect: { id: manga.id },
           },
           team: {
-            connect: { id: team.teamId },
+            connect: { id: user.memberOnTeam.teamId },
           },
         },
       });

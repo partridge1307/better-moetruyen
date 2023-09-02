@@ -42,7 +42,7 @@ export async function PATCH(req: Request) {
         image: avatarUrl ? avatarUrl : user.image,
         banner: bannerUrl ? bannerUrl : user.banner,
         // @ts-ignore
-        color: color ? color : user.color,
+        color: color && color !== null ? color : user.color,
       },
     });
 

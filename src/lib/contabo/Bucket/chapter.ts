@@ -151,12 +151,14 @@ const EditChapterImage = async (
     })
   );
 
-  const [uploadedNewImages] = await Promise.all([
+  const uploadedNewImages = await Promise.all(
     blobImagesHandler.map(async (blobImage) => {
       await sendCommand(contabo, blobImage.command, 5);
 
       return { index: blobImage.index, image: blobImage.image };
-    }),
+    })
+  );
+  await Promise.all(
     deletedImages.map(async (deletedImage) => {
       const image = new URL(deletedImage.image).pathname.split('/').pop();
 
@@ -166,8 +168,8 @@ const EditChapterImage = async (
       });
 
       await sendCommand(contabo, command, 5);
-    }),
-  ]);
+    })
+  );
 
   return [...linkImages, ...uploadedNewImages];
 };

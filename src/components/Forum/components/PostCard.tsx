@@ -45,7 +45,7 @@ const PostCard: FC<PostCardProps> = ({
         className="block space-y-2"
       >
         <div className="text-sm">
-          <p className="pl-1">m/{post.title}</p>
+          <p className="pl-1">m/{post.subForum.title}</p>
           <div className="flex items-center gap-2">
             <UserAvatar user={post.author} className="w-5 h-5" />
             <Username user={post.author} />

@@ -11,7 +11,7 @@ interface FBEmbedProps {
 const FBEmbed: FC<FBEmbedProps> = ({ facebookLink }) => {
   return (
     <>
-      <div className="space-y-2 p-1">
+      <div className="space-y-2">
         <h1 className="text-lg px-1">Facebook</h1>
         <div className="relative w-full">
           <FacebookProvider lazy appId="1042446022855517">

@@ -6,6 +6,12 @@ import { CreateThreadFormValidator } from '@/lib/validators/forum';
 import { Prisma } from '@prisma/client';
 import { ZodError, z } from 'zod';
 
+const PostValidator = z.object({
+  limit: z.string(),
+  cursor: z.string().nullish().optional(),
+  sortBy: z.enum(['asc', 'desc', 'hot']),
+});
+
 export async function GET(req: Request) {
   const url = new URL(req.url);
 
@@ -13,33 +19,43 @@ export async function GET(req: Request) {
   let followedSubForumIds: number[] = [];
 
   if (session) {
-    const followedSubForums = await db.subscription.findMany({
+    const user = await db.user.findUnique({
       where: {
-        OR: [
-          { userId: session.user.id },
-          { subForum: { creatorId: session.user.id } },
-        ],
+        id: session.user.id,
       },
       select: {
-        subForumId: true,
+        subscription: {
+          select: {
+            subForumId: true,
+          },
+        },
+        subForum: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
+    if (!user) return new Response('Unauthorized', { status: 401 });
 
-    followedSubForumIds = followedSubForums.map((sub) => sub.subForumId);
+    const subForums = [
+      ...user.subForum,
+      ...user.subscription.map((sub) => ({ id: sub.subForumId })),
+    ];
+
+    followedSubForumIds = subForums.map((sub) => sub.id);
   }
 
   try {
-    const { page, limit, sortBy } = z
-      .object({
-        page: z.string(),
-        limit: z.string(),
-        sortBy: z.enum(['asc', 'desc', 'hot']),
-      })
-      .parse({
-        page: url.searchParams.get('page'),
-        limit: url.searchParams.get('limit'),
-        sortBy: url.searchParams.get('sortBy'),
-      });
+    const {
+      limit,
+      cursor: userCursor,
+      sortBy,
+    } = PostValidator.parse({
+      limit: url.searchParams.get('limit'),
+      cursor: url.searchParams.get('cursor'),
+      sortBy: url.searchParams.get('sortBy'),
+    });
 
     const orderBy: Prisma.PostOrderByWithRelationAndSearchRelevanceInput =
       sortBy === 'hot' ? { votes: { _count: 'desc' } } : { createdAt: sortBy };
@@ -47,39 +63,86 @@ export async function GET(req: Request) {
       ? { subForum: { id: { in: followedSubForumIds } } }
       : {};
 
-    const posts = await db.post.findMany({
-      where: whereClause,
-      select: {
-        id: true,
-        title: true,
-        content: true,
-        createdAt: true,
-        votes: true,
-        subForum: {
-          select: {
-            title: true,
-            slug: true,
-          },
-        },
-        author: {
-          select: {
-            name: true,
-            color: true,
-            image: true,
-          },
-        },
-        _count: {
-          select: {
-            comments: true,
-          },
-        },
-      },
-      orderBy,
-      take: parseInt(limit),
-      skip: (parseInt(page) - 1) * parseInt(limit),
-    });
+    const cursor = userCursor ? parseInt(userCursor) : undefined;
 
-    return new Response(JSON.stringify(posts));
+    let posts;
+    if (cursor) {
+      posts = await db.post.findMany({
+        where: whereClause,
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          createdAt: true,
+          votes: true,
+          subForum: {
+            select: {
+              title: true,
+              slug: true,
+            },
+          },
+          author: {
+            select: {
+              name: true,
+              color: true,
+              image: true,
+            },
+          },
+          _count: {
+            select: {
+              comments: true,
+            },
+          },
+        },
+        orderBy,
+        take: parseInt(limit),
+        skip: 1,
+        cursor: {
+          id: cursor,
+        },
+      });
+    } else {
+      posts = await db.post.findMany({
+        where: whereClause,
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          createdAt: true,
+          votes: true,
+          subForum: {
+            select: {
+              title: true,
+              slug: true,
+            },
+          },
+          author: {
+            select: {
+              name: true,
+              color: true,
+              image: true,
+            },
+          },
+          _count: {
+            select: {
+              comments: true,
+            },
+          },
+        },
+        orderBy,
+        take: parseInt(limit),
+      });
+    }
+
+    return new Response(
+      JSON.stringify({
+        posts,
+        lastCursor:
+          posts.length === parseInt(limit)
+            ? posts[posts.length - 1].id
+            : undefined,
+      })
+    );
   } catch (error) {
     if (error instanceof ZodError) {
       return new Response('Invalid', { status: 422 });

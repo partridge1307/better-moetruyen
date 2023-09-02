@@ -38,7 +38,7 @@ export type ExtendedPost = Pick<
 
 interface PostFeedProps {
   subForumId?: number;
-  initialPosts: ExtendedPost[];
+  initialPosts: { posts: ExtendedPost[]; lastCursor?: number };
   session: Session | null;
 }
 
@@ -54,21 +54,23 @@ const PostFeed: FC<PostFeedProps> = ({ subForumId, initialPosts, session }) => {
   const {
     data: postsData,
     fetchNextPage,
+    hasNextPage,
     isFetchingNextPage,
     refetch,
   } = usePosts<ExtendedPost>(`/api/m`, initialPosts, sortBy, subForumId);
 
   useEffect(() => {
-    if (entry?.isIntersecting) {
+    if (entry?.isIntersecting && hasNextPage) {
       fetchNextPage();
     }
-  }, [entry?.isIntersecting, fetchNextPage]);
+  }, [entry?.isIntersecting, fetchNextPage, hasNextPage]);
 
   useEffect(() => {
     refetch();
   }, [refetch, sortBy]);
 
-  const posts = postsData?.pages.flatMap((page) => page) ?? initialPosts;
+  const posts =
+    postsData?.pages.flatMap((page) => page.posts) ?? initialPosts.posts;
 
   return (
     <>
@@ -77,7 +79,10 @@ const PostFeed: FC<PostFeedProps> = ({ subForumId, initialPosts, session }) => {
           defaultValue={sortBy}
           onValueChange={(value) => setSortBy(value as 'asc' | 'desc' | 'hot')}
         >
-          <SelectTrigger className="w-fit" aria-label="sort by button">
+          <SelectTrigger
+            className="w-fit focus:ring-transparent ring-offset-transparent"
+            aria-label="sort by button"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -123,6 +128,7 @@ const PostFeed: FC<PostFeedProps> = ({ subForumId, initialPosts, session }) => {
           </SelectContent>
         </Select>
       </div>
+
       <ul className="divide-y-2 dark:divide-zinc-700">
         {posts.length ? (
           posts.map((post, idx) => {

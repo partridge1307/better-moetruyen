@@ -2,7 +2,7 @@ import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
 import { formatTimeToNow } from '@/lib/utils';
 import dynamic from 'next/dynamic';
-import { FC, memo } from 'react';
+import { memo } from 'react';
 import type { ExtendedComment } from '.';
 import CommentContent from '../components/CommentContent';
 import CommentOEmbed from '../components/CommentOEmbed';
@@ -21,11 +21,7 @@ interface CommentCardProps {
   callbackURL: string;
 }
 
-const CommentCard: FC<CommentCardProps> = ({
-  comment,
-  userId,
-  callbackURL,
-}) => {
+const CommentCard = ({ comment, userId, callbackURL }: CommentCardProps) => {
   const voteAmt = comment.votes.reduce((acc, vote) => {
     if (vote.type === 'UP_VOTE') return acc + 1;
     if (vote.type === 'DOWN_VOTE') return acc - 1;

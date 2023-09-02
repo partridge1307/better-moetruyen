@@ -19,7 +19,7 @@ const UserBanner: FC<UserBannerProps> = ({
       {user.banner ? (
         <Image
           fill
-          sizes="(max-width: 640px) 25vw, 30vw"
+          sizes="30vw"
           quality={40}
           priority
           src={user.banner}

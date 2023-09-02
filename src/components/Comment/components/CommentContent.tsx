@@ -1,3 +1,5 @@
+'use client';
+
 import { Spoiler, createStyles, getStylesRef } from '@mantine/core';
 import type { Prisma } from '@prisma/client';
 import dynamic from 'next/dynamic';

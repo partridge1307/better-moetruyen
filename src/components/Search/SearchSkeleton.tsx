@@ -7,28 +7,28 @@ const SearchSkeleton = () => {
       </div>
 
       <div className="mt-2">
-        <div className="grid grid-cols-[.15fr_1fr] gap-4 p-2 px-4">
-          <div className="h-24 rounded-md animate-pulse dark:bg-zinc-800" />
+        <div className="grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2">
+          <div className="aspect-video rounded-md animate-pulse dark:bg-zinc-800" />
           <div className="w-full h-4 rounded-full animate-pulse dark:bg-zinc-800" />
         </div>
 
-        <div className="grid grid-cols-[.15fr_1fr] gap-4 p-2 px-4">
-          <div className="h-24 rounded-md animate-pulse dark:bg-zinc-800" />
+        <div className="grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2">
+          <div className="aspect-video rounded-md animate-pulse dark:bg-zinc-800" />
           <div className="w-full h-4 rounded-full animate-pulse dark:bg-zinc-800" />
         </div>
 
-        <div className="grid grid-cols-[.15fr_1fr] gap-4 p-2 px-4">
-          <div className="h-24 rounded-md animate-pulse dark:bg-zinc-800" />
+        <div className="grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2">
+          <div className="aspect-video rounded-md animate-pulse dark:bg-zinc-800" />
           <div className="w-full h-4 rounded-full animate-pulse dark:bg-zinc-800" />
         </div>
 
-        <div className="grid grid-cols-[.15fr_1fr] gap-4 p-2 px-4">
-          <div className="h-24 rounded-md animate-pulse dark:bg-zinc-800" />
+        <div className="grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2">
+          <div className="aspect-video rounded-md animate-pulse dark:bg-zinc-800" />
           <div className="w-full h-4 rounded-full animate-pulse dark:bg-zinc-800" />
         </div>
 
-        <div className="grid grid-cols-[.15fr_1fr] gap-4 p-2 px-4">
-          <div className="h-24 rounded-md animate-pulse dark:bg-zinc-800" />
+        <div className="grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2">
+          <div className="aspect-video rounded-md animate-pulse dark:bg-zinc-800" />
           <div className="w-full h-4 rounded-full animate-pulse dark:bg-zinc-800" />
         </div>
       </div>

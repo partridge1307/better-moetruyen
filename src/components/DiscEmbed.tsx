@@ -42,7 +42,7 @@ const DiscEmbed: FC<DiscEmbedProps> = async ({ manga }) => {
 
   return (
     !!discord.code && (
-      <div className="space-y-2 p-1">
+      <div className="space-y-2">
         <h1>Discord{!!discord.name && <span>: {discord.name}</span>}</h1>
         <iframe
           height={300}

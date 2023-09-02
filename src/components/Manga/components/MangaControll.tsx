@@ -114,7 +114,8 @@ const MangaControll: FC<MangaControllProps> = async ({ manga }) => {
           Đọc từ đầu
         </Link>
       )}
-      <MangaFollow follow={follow} mangaId={manga.id} />
+
+      {!!session && <MangaFollow follow={follow} mangaId={manga.id} />}
 
       {manga.creatorId === session?.user.id && (
         <>

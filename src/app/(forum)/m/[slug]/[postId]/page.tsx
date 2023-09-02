@@ -1,27 +1,26 @@
 import CommentSkeleton from '@/components/Comment/components/CommentSkeleton';
-import PostVoteServer from '@/components/Forum/components/PostVoteServer';
+import PostVoteSkeleton from '@/components/Forum/components/PostVoteSkeleton';
 import Username from '@/components/User/Username';
 import { buttonVariants } from '@/components/ui/Button';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { cn, formatTimeToNow } from '@/lib/utils';
-import { ArrowBigDown, ArrowBigUp, Loader2, Pencil } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { FC, Suspense } from 'react';
+import { FC } from 'react';
 
 const MTEditorOutput = dynamic(
   () => import('@/components/Editor/MoetruyenEditorOutput'),
   {
     ssr: false,
-    loading: () => (
-      <div className="p-4 rounded-md animate-pulse dark:bg-zinc-900">
-        <div className="w-full h-96" />
-      </div>
-    ),
   }
+);
+const PostVoteServer = dynamic(
+  () => import('@/components/Forum/components/PostVoteServer'),
+  { loading: () => <PostVoteSkeleton /> }
 );
 const PostShareButton = dynamic(
   () => import('@/components/Forum/components/PostShareButton'),
@@ -157,22 +156,20 @@ const page: FC<pageProps> = async ({ params }) => {
         </div>
 
         <div className="flex flex-wrap justify-between gap-6">
-          <Suspense fallback={<PostVoteSkeleton />}>
-            <PostVoteServer
-              session={session}
-              getData={() =>
-                db.post.findUnique({
-                  where: {
-                    id: +params.postId,
-                  },
-                  select: {
-                    id: true,
-                    votes: true,
-                  },
-                })
-              }
-            />
-          </Suspense>
+          <PostVoteServer
+            session={session}
+            getData={() =>
+              db.post.findUnique({
+                where: {
+                  id: +params.postId,
+                },
+                select: {
+                  id: true,
+                  votes: true,
+                },
+              })
+            }
+          />
 
           <div className="flex items-center gap-4">
             {!!(post.authorId === session?.user.id) && (
@@ -205,23 +202,3 @@ const page: FC<pageProps> = async ({ params }) => {
 };
 
 export default page;
-
-const PostVoteSkeleton = (): JSX.Element => (
-  <div className="flex items-center gap-1 rounded-xl dark:bg-zinc-800">
-    <div
-      aria-label="up vote"
-      className={buttonVariants({ variant: 'ghost', size: 'sm' })}
-    >
-      <ArrowBigUp className="w-6 h-6" />
-    </div>
-    <p>
-      <Loader2 className="w-4 h-4 animate-spin" />
-    </p>
-    <div
-      aria-label="down vote"
-      className={buttonVariants({ variant: 'ghost', size: 'sm' })}
-    >
-      <ArrowBigDown className="w-6 h-6" />
-    </div>
-  </div>
-);

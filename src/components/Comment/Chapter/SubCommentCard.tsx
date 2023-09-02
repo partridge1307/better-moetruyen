@@ -11,12 +11,13 @@ import type {
 } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { FC } from 'react';
 import CommentContent from '../components/CommentContent';
 import CommentOEmbed from '../components/CommentOEmbed';
-import CommentVote from '../components/CommentVote';
 
 const DeleteComment = dynamic(() => import('../components/DeleteComment'), {
+  ssr: false,
+});
+const CommentVote = dynamic(() => import('../components/CommentVote'), {
   ssr: false,
 });
 
@@ -34,11 +35,11 @@ interface SubCommentCardProps {
   callbackURL: string;
 }
 
-const SubCommentCard: FC<SubCommentCardProps> = ({
+const SubCommentCard = ({
   commentId,
   userId,
   callbackURL,
-}) => {
+}: SubCommentCardProps) => {
   const { data: subComment, isLoading: isFetchingSubComment } =
     useSubComments<ExtendedSubComment>(commentId, callbackURL);
 

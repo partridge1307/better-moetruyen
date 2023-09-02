@@ -4,6 +4,7 @@ import type { SubForum } from '@prisma/client';
 import { DialogClose } from '@radix-ui/react-dialog';
 import Image from 'next/image';
 import { FC } from 'react';
+import { AspectRatio } from '../ui/AspectRatio';
 
 interface ForumSearchProps {
   forums?: Pick<SubForum, 'title' | 'slug' | 'banner'>[];
@@ -11,27 +12,30 @@ interface ForumSearchProps {
 
 const ForumSearch: FC<ForumSearchProps> = ({ forums }) => {
   return !!forums?.length ? (
-    <div className="space-y-7">
+    <div className="space-y-4">
       {forums.map((forum, idx) => (
         <a
           key={idx}
           target="_blank"
           href={`/m/${forum.title.split(' ').join('-')}`}
         >
-          <DialogClose className="grid grid-cols-[.1fr_1fr] w-full gap-4 p-2 rounded-md text-start transition-colors duration-100 hover:dark:bg-zinc-800">
-            <div className="relative w-32 pt-[56.25%] rounded-md">
+          <DialogClose className="w-full text-start grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800">
+            <div>
               {!!forum.banner && (
-                <Image
-                  fill
-                  sizes="(max-width: 640px) 20vw, 25vw"
-                  quality={40}
-                  src={forum.banner}
-                  alt={`${forum.title} Thumbnail`}
-                  className="object-cover object-top rounded-md"
-                />
+                <AspectRatio ratio={16 / 9}>
+                  <Image
+                    fill
+                    sizes="(max-width: 640px) 20vw, 25vw"
+                    quality={40}
+                    src={forum.banner}
+                    alt={`${forum.title} Thumbnail`}
+                    className="object-cover object-top rounded-md"
+                  />
+                </AspectRatio>
               )}
             </div>
-            <p>{forum.title}</p>
+
+            <p className="text-lg lg:text-xl font-semibold">{forum.title}</p>
           </DialogClose>
         </a>
       ))}

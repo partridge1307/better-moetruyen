@@ -34,12 +34,12 @@ const MangaFollow: FC<MangaFollowProps> = ({ follow, mangaId }) => {
       await axios.post(`/api/user/follow`, payload);
     },
     onError: (err) => {
+      setCurrentFollow(prevFollow);
+
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) return loginToast();
         if (err.response?.status === 404) return notFoundToast();
       }
-
-      setCurrentFollow(prevFollow);
 
       return serverErrorToast();
     },

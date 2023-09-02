@@ -37,7 +37,6 @@ const LastActivityList: FC<LastActivityListProps> = ({ posts }) => {
   return (
     <ScrollArea
       mah={'18rem'}
-      offsetScrollbars
       scrollHideDelay={1000}
       type="scroll"
       className="rounded-md dark:bg-zinc-900/60"

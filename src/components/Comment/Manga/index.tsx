@@ -5,10 +5,14 @@ import { useIntersection } from '@mantine/hooks';
 import type { Chapter, Comment, CommentVote, User } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { FC, useEffect, useRef } from 'react';
-import CommentInput from '../components/CommentInput';
+import dynamic from 'next/dynamic';
+import { useEffect, useRef } from 'react';
 import RefetchButton from '../components/RefetchButton';
 import CommentCard from './CommentCard';
+
+const CommentInput = dynamic(() => import('../components/CommentInput'), {
+  ssr: false,
+});
 
 const CALLBACK_URL = '/api/comment/manga';
 
@@ -26,7 +30,7 @@ interface CommentProps {
   id: number;
 }
 
-const Comments: FC<CommentProps> = ({ id }) => {
+const Comments = ({ id }: CommentProps) => {
   const { data: session } = useSession();
 
   const lastCmtRef = useRef<HTMLElement>(null);
@@ -38,18 +42,19 @@ const Comments: FC<CommentProps> = ({ id }) => {
   const {
     data: CommentData,
     fetchNextPage,
+    hasNextPage,
     isFetchingNextPage,
     refetch,
     isRefetching,
   } = useComments<ExtendedComment>(id, CALLBACK_URL);
 
   useEffect(() => {
-    if (entry?.isIntersecting) {
+    if (entry?.isIntersecting && hasNextPage) {
       fetchNextPage();
     }
-  }, [entry?.isIntersecting, fetchNextPage]);
+  }, [entry?.isIntersecting, fetchNextPage, hasNextPage]);
 
-  const comments = CommentData?.pages.flatMap((page) => page);
+  const comments = CommentData?.pages.flatMap((page) => page.comments);
 
   return (
     <>
@@ -64,11 +69,11 @@ const Comments: FC<CommentProps> = ({ id }) => {
       <RefetchButton refetch={refetch} isRefetching={isRefetching} />
 
       <ul className="space-y-10">
-        {!!comments?.length ? (
+        {comments?.length ? (
           comments.map((comment, idx) => {
-            if (idx === comments.length - 1) {
+            if (idx === comments.length - 1)
               return (
-                <li key={comment.id} ref={ref} className="flex gap-3 md:gap-6">
+                <li key={comment.id} ref={ref} className="flex gap-3 lg:gap-6">
                   <CommentCard
                     comment={comment}
                     userId={session?.user.id}
@@ -76,7 +81,7 @@ const Comments: FC<CommentProps> = ({ id }) => {
                   />
                 </li>
               );
-            } else {
+            else
               return (
                 <li key={comment.id} className="flex gap-3 md:gap-6">
                   <CommentCard
@@ -86,7 +91,6 @@ const Comments: FC<CommentProps> = ({ id }) => {
                   />
                 </li>
               );
-            }
           })
         ) : (
           <li className="text-center">
@@ -94,7 +98,6 @@ const Comments: FC<CommentProps> = ({ id }) => {
             nào
           </li>
         )}
-
         {isFetchingNextPage && (
           <li className="flex justify-center">
             <Loader2 className="w-6 h-6 animate-spin" />

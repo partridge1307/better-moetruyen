@@ -11,7 +11,6 @@ import type {
 } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import { FC } from 'react';
 import CommentContent from '../components/CommentContent';
 import CommentOEmbed from '../components/CommentOEmbed';
 
@@ -36,11 +35,11 @@ interface SubCommentCardProps {
   callbackURL: string;
 }
 
-const SubCommentCard: FC<SubCommentCardProps> = ({
+const SubCommentCard = ({
   commentId,
   userId,
   callbackURL,
-}) => {
+}: SubCommentCardProps) => {
   const { data: subComment, isLoading: isFetchingSubComment } =
     useSubComments<ExtendedSubComment>(commentId, callbackURL);
 

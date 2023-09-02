@@ -33,16 +33,16 @@ export type SearchData = {
   forums: Pick<SubForum, 'title' | 'slug' | 'banner'>[];
 };
 
+const searchResultsCache = new Map<string, SearchData | null>();
+
 const Index = () => {
-  const [query, setQuery] = useState('');
-  const [debouncedValue] = useDebouncedValue(query, 300);
   const { serverErrorToast } = useCustomToast();
 
-  const {
-    data: searchData,
-    mutate: Search,
-    isLoading: isSearching,
-  } = useMutation({
+  const [searchResults, setSearchResults] = useState<SearchData>();
+  const [query, setQuery] = useState('');
+  const [debouncedValue] = useDebouncedValue(query, 300);
+
+  const { mutate: Search, isLoading: isSearching } = useMutation({
     mutationFn: async () => {
       const { data } = await axios.get(`/api/search?q=${debouncedValue}`);
 
@@ -51,10 +51,26 @@ const Index = () => {
     onError: () => {
       return serverErrorToast();
     },
+    onSuccess: (searchData) => {
+      searchResultsCache.set(debouncedValue, searchData);
+      setSearchResults(searchData);
+    },
   });
 
   useEffect(() => {
     if (debouncedValue.length) {
+      const cachedResults = searchResultsCache.get(debouncedValue);
+
+      if (cachedResults === null) {
+        return;
+      }
+
+      if (cachedResults !== undefined) {
+        setSearchResults(cachedResults);
+        return;
+      }
+
+      searchResultsCache.set(debouncedValue, null);
       Search();
     }
   }, [Search, debouncedValue]);
@@ -92,15 +108,15 @@ const Index = () => {
             </TabsList>
 
             <TabsContent value="manga">
-              <MangaSearch mangas={searchData?.mangas} />
+              <MangaSearch mangas={searchResults?.mangas} />
             </TabsContent>
 
             <TabsContent value="user">
-              <UserSearch users={searchData?.users} />
+              <UserSearch users={searchResults?.users} />
             </TabsContent>
 
             <TabsContent value="forum">
-              <ForumSearch forums={searchData?.forums} />
+              <ForumSearch forums={searchResults?.forums} />
             </TabsContent>
           </Tabs>
         )}

@@ -94,7 +94,13 @@ const page: FC<pageProps> = async ({ params }) => {
         <h1 className="text-xl font-semibold">Bài viết</h1>
         <PostFeed
           subForumId={subForum.id}
-          initialPosts={posts}
+          initialPosts={{
+            posts,
+            lastCursor:
+              posts.length === INFINITE_SCROLL_PAGINATION_RESULTS
+                ? posts[posts.length - 1].id
+                : undefined,
+          }}
           session={session}
         />
       </div>

@@ -1,3 +1,5 @@
+'use client';
+
 import { CornerDownRight } from 'lucide-react';
 import { FC, useState } from 'react';
 

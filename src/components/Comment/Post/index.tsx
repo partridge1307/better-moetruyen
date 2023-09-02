@@ -5,10 +5,12 @@ import { useIntersection } from '@mantine/hooks';
 import type { PostComment, PostVote, User } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { FC, useEffect, useRef } from 'react';
-import CommentInput from '../components/CommentInput';
+import dynamic from 'next/dynamic';
+import { useEffect, useRef } from 'react';
 import RefetchButton from '../components/RefetchButton';
 import CommentCard from './CommentCard';
+
+const CommentInput = dynamic(() => import('../components/CommentInput'));
 
 const CALLBACK_URL = '/api/comment/forum';
 
@@ -27,7 +29,7 @@ interface ComemntProps {
   postId: number;
 }
 
-const Comemnts: FC<ComemntProps> = ({ postId }) => {
+const Comemnts = ({ postId }: ComemntProps) => {
   const { data: session } = useSession();
 
   const lastCmtRef = useRef<HTMLElement>(null);
@@ -39,18 +41,19 @@ const Comemnts: FC<ComemntProps> = ({ postId }) => {
   const {
     data: CommentData,
     fetchNextPage,
+    hasNextPage,
     isFetchingNextPage,
     refetch,
     isRefetching,
   } = useComments<ExtendedComment>(postId, CALLBACK_URL);
 
   useEffect(() => {
-    if (entry?.isIntersecting) {
+    if (entry?.isIntersecting && hasNextPage) {
       fetchNextPage();
     }
-  }, [entry?.isIntersecting, fetchNextPage]);
+  }, [entry?.isIntersecting, fetchNextPage, hasNextPage]);
 
-  const comments = CommentData?.pages.flatMap((page) => page);
+  const comments = CommentData?.pages.flatMap((page) => page.comments);
 
   return (
     <>

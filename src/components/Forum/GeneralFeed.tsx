@@ -37,7 +37,18 @@ const GeneralFeed = async () => {
     take: INFINITE_SCROLL_PAGINATION_RESULTS,
   });
 
-  return <PostFeed initialPosts={posts} session={null} />;
+  return (
+    <PostFeed
+      initialPosts={{
+        posts,
+        lastCursor:
+          posts.length === INFINITE_SCROLL_PAGINATION_RESULTS
+            ? posts[posts.length - 1].id
+            : undefined,
+      }}
+      session={null}
+    />
+  );
 };
 
 export default GeneralFeed;

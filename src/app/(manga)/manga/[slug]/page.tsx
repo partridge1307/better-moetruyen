@@ -1,10 +1,3 @@
-import ListChapter from '@/components/Chapter/ListChapter';
-import CommentSkeleton from '@/components/Comment/components/CommentSkeleton';
-import MangaDesc from '@/components/Manga/components/MangaDesc';
-import UserAvatar from '@/components/User/UserAvatar';
-import UserBanner from '@/components/User/UserBanner';
-import Username from '@/components/User/Username';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';
 import type { Manga } from '@prisma/client';
@@ -23,14 +16,13 @@ const MangaImage = dynamic(
 const MangaControll = dynamic(
   () => import('@/components/Manga/components/MangaControll')
 );
-const DiscEmbed = dynamic(() => import('@/components/DiscEmbed'));
-const FBEmbed = dynamic(() => import('@/components/FBEmbed'), {
-  ssr: false,
-});
-const Comments = dynamic(() => import('@/components/Comment/Manga'), {
-  ssr: false,
-  loading: () => <CommentSkeleton />,
-});
+const MangaDesc = dynamic(
+  () => import('@/components/Manga/components/MangaDesc'),
+  { ssr: false }
+);
+const MangaTabs = dynamic(
+  () => import('@/components/Manga/components/MangaTabs')
+);
 
 interface pageProps {
   params: {
@@ -124,8 +116,6 @@ const page: FC<pageProps> = async ({ params }) => {
       name: true,
       image: true,
       description: true,
-      facebookLink: true,
-      discordLink: true,
       creatorId: true,
       tags: {
         select: {
@@ -149,31 +139,11 @@ const page: FC<pageProps> = async ({ params }) => {
           totalView: true,
         },
       },
-      creator: {
-        select: {
-          name: true,
-          image: true,
-          banner: true,
-          color: true,
-          memberOnTeam: {
-            select: {
-              team: {
-                select: {
-                  id: true,
-                  name: true,
-                  image: true,
-                },
-              },
-            },
-          },
-        },
-      },
     },
   });
   if (!manga) return notFound();
 
   const jsonLd = generateJsonLd(manga, params.slug);
-  const creatorTeam = manga.creator.memberOnTeam;
 
   return (
     <>
@@ -227,72 +197,7 @@ const page: FC<pageProps> = async ({ params }) => {
             <MangaDesc manga={manga} />
           </div>
 
-          <Tabs defaultValue="chapter">
-            <TabsList>
-              <TabsTrigger value="chapter">Chapter</TabsTrigger>
-              <TabsTrigger value="comment">Bình luận</TabsTrigger>
-            </TabsList>
-
-            <TabsContent
-              value="chapter"
-              className="grid grid-cols-1 lg:grid-cols-[.35fr_1fr] gap-6"
-            >
-              <div className="space-y-6">
-                <div className="p-2 rounded-md dark:bg-zinc-900/60">
-                  <a
-                    target="_blank"
-                    href={`/user/${manga.creator.name?.split(' ').join('-')}`}
-                  >
-                    <div className="relative">
-                      <UserBanner
-                        user={manga.creator}
-                        className="object-cover rounded-md"
-                      />
-                      <UserAvatar
-                        user={manga.creator}
-                        className="absolute bottom-0 translate-y-1/2 left-4 border-4 w-20 h-20 lg:w-[5.5rem] lg:h-[5.5rem]"
-                      />
-                    </div>
-                    <Username
-                      user={manga.creator}
-                      className="text-start mt-14 lg:mt-16 pl-4 text-lg lg:text-xl font-semibold"
-                    />
-                  </a>
-                  {!!creatorTeam && (
-                    <a
-                      target="_blank"
-                      href={`/team/${creatorTeam.team.id}`}
-                      className="flex items-center gap-3 p-2 mt-10 rounded-md transition-colors dark:bg-zinc-800 hover:dark:bg-zinc-800/70"
-                    >
-                      <div className="relative aspect-square w-12 h-12">
-                        <Image
-                          fill
-                          sizes="(max-width: 640px) 15vw, 20vw"
-                          quality={40}
-                          src={creatorTeam.team.image}
-                          alt={`${creatorTeam.team.name} Thumbnail`}
-                          className="rounded-full"
-                        />
-                      </div>
-                      <p>{creatorTeam.team.name}</p>
-                    </a>
-                  )}
-                </div>
-
-                {!!manga.facebookLink && (
-                  <FBEmbed facebookLink={manga.facebookLink} />
-                )}
-
-                <DiscEmbed manga={manga} />
-              </div>
-
-              <ListChapter mangaId={manga.id} />
-            </TabsContent>
-
-            <TabsContent value="comment">
-              <Comments id={manga.id} />
-            </TabsContent>
-          </Tabs>
+          <MangaTabs Manga={manga} />
         </section>
       </main>
     </>

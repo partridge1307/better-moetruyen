@@ -3,53 +3,100 @@ import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
+const CommentValidator = z.object({
+  limit: z.string(),
+  cursor: z.string().nullish().optional(),
+});
+
 export async function GET(req: Request, context: { params: { id: string } }) {
   try {
     const url = new URL(req.url);
 
-    const { page, limit } = z
-      .object({
-        page: z.string(),
-        limit: z.string(),
-      })
-      .parse({
-        page: url.searchParams.get('page'),
-        limit: url.searchParams.get('limit'),
-      });
-
-    const comments = await db.postComment.findMany({
-      where: {
-        postId: +context.params.id,
-        replyToId: null,
-      },
-      select: {
-        id: true,
-        content: true,
-        oEmbed: true,
-        createdAt: true,
-        votes: true,
-        creatorId: true,
-        creator: {
-          select: {
-            name: true,
-            color: true,
-            image: true,
-          },
-        },
-        _count: {
-          select: {
-            replies: true,
-          },
-        },
-      },
-      take: parseInt(limit),
-      skip: (parseInt(page) - 1) * parseInt(limit),
-      orderBy: {
-        createdAt: 'desc',
-      },
+    const { limit, cursor: userCursor } = CommentValidator.parse({
+      limit: url.searchParams.get('limit'),
+      cursor: url.searchParams.get('cursor'),
     });
 
-    return new Response(JSON.stringify(comments));
+    const cursor = userCursor ? parseInt(userCursor) : undefined;
+
+    let comments;
+    if (cursor) {
+      comments = await db.postComment.findMany({
+        where: {
+          postId: +context.params.id,
+          replyToId: null,
+        },
+        select: {
+          id: true,
+          content: true,
+          oEmbed: true,
+          createdAt: true,
+          votes: true,
+          creatorId: true,
+          creator: {
+            select: {
+              name: true,
+              color: true,
+              image: true,
+            },
+          },
+          _count: {
+            select: {
+              replies: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: parseInt(limit),
+        skip: 1,
+        cursor: {
+          id: cursor,
+        },
+      });
+    } else {
+      comments = await db.postComment.findMany({
+        where: {
+          postId: +context.params.id,
+          replyToId: null,
+        },
+        select: {
+          id: true,
+          content: true,
+          oEmbed: true,
+          createdAt: true,
+          votes: true,
+          creatorId: true,
+          creator: {
+            select: {
+              name: true,
+              color: true,
+              image: true,
+            },
+          },
+          _count: {
+            select: {
+              replies: true,
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        take: parseInt(limit),
+      });
+    }
+
+    return new Response(
+      JSON.stringify({
+        comments,
+        lastCursor:
+          comments.length === parseInt(limit)
+            ? comments[comments.length - 1].id
+            : undefined,
+      })
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return new Response('Invalid', { status: 422 });

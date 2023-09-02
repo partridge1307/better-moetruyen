@@ -42,7 +42,7 @@ function YouTubeComponent({
       <iframe
         src={`https://www.youtube-nocookie.com/embed/${videoID}?mute=1&hl=vi`}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen={true}
+        allowFullScreen
         loading="lazy"
         title="YouTube Video"
         className="absolute inset-0 w-full h-full rounded-md"

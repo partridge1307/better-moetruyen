@@ -3,10 +3,11 @@
 import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
 import { formatTimeToNow } from '@/lib/utils';
+import { useElementSize } from '@mantine/hooks';
 import type { VoteType } from '@prisma/client';
 import { MessageSquare } from 'lucide-react';
 import dynamic from 'next/dist/shared/lib/dynamic';
-import { FC, memo, useEffect, useRef, useState } from 'react';
+import { FC, memo } from 'react';
 import type { ExtendedPost } from '../PostFeed';
 import PostVoteClient from './PostVoteClient';
 
@@ -34,37 +35,32 @@ const PostCard: FC<PostCardProps> = ({
   voteAmt,
   currentVote,
 }) => {
-  const [postHeight, setPostHeight] = useState(0);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setTimeout(() => {
-        !!contentRef.current && setPostHeight(contentRef.current.clientHeight);
-      }, 100);
-    }
-  }, [contentRef]);
+  const { ref, height } = useElementSize();
 
   return (
     <div className="p-2 rounded-md transition-colors hover:dark:bg-zinc-900">
       <a
         target="_blank"
-        href={`/m/${subForumSlug}/${post.id}?title=${post.title
-          .split(' ')
-          .join('-')}`}
+        href={`/m/${subForumSlug}/${post.id}`}
+        className="block space-y-2"
       >
-        <div className="flex items-center gap-2">
-          <UserAvatar user={post.author} className="w-6 h-6" />
-          <Username user={post.author} />
-          <span className="text-sm">
-            {formatTimeToNow(new Date(post.createdAt))}
-          </span>
+        <div className="text-sm">
+          <p className="pl-1">m/{post.title}</p>
+          <div className="flex items-center gap-2">
+            <UserAvatar user={post.author} className="w-5 h-5" />
+            <Username user={post.author} />
+            <span>{formatTimeToNow(new Date(post.createdAt))}</span>
+          </div>
         </div>
 
         <h1 className="text-xl font-semibold">{post.title}</h1>
-        <div ref={contentRef} className="relative max-h-72 overflow-hidden">
+        <div
+          ref={ref}
+          className="relative overflow-hidden"
+          style={{ maxHeight: '18rem' }}
+        >
           <MoetruyenEditorOutput id={post.id} content={post.content} />
-          {!!(postHeight === 288) && (
+          {height === 288 && (
             <div className="absolute bottom-0 inset-0 bg-gradient-to-t dark:from-zinc-900" />
           )}
         </div>
@@ -78,9 +74,7 @@ const PostCard: FC<PostCardProps> = ({
         />
         <a
           target="_blank"
-          href={`/m/${subForumSlug}/${post.id}?title=${post.title
-            .split(' ')
-            .join('-')}`}
+          href={`/m/${subForumSlug}/${post.id}`}
           className="flex items-end gap-2"
         >
           <MessageSquare className="w-5 h-5" /> {post._count.comments}

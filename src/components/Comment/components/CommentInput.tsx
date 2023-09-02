@@ -9,10 +9,17 @@ import { cn } from '@/lib/utils';
 import type { CreateCommentEnum } from '@/lib/validators/comment';
 import { AutoLinkNode } from '@lexical/link';
 import type { EditorState, LexicalEditor } from 'lexical';
-import { FC, Suspense, lazy, useCallback, useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { FC, useCallback, useEffect, useState } from 'react';
 
-const MoetruyenEditor = lazy(
-  () => import('@/components/Editor/MoetruyenEditor')
+const MoetruyenEditor = dynamic(
+  () => import('@/components/Editor/MoetruyenEditor'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-44 rounded-md animate-pulse dark:bg-zinc-900" />
+    ),
+  }
 );
 
 interface CommentInputProps {
@@ -111,25 +118,19 @@ const CommentInput: FC<CommentInputProps> = ({
   }, [editor, editorState?._nodeMap, type, id, callbackURL, Embed, Upload]);
 
   return isLoggedIn ? (
-    <Suspense
-      fallback={
-        <div className="w-full h-44 rounded-md animate-pulse dark:bg-zinc-900" />
-      }
-    >
-      <div className="container px-0 md:px-16 lg:px-20 space-y-4">
-        <MoetruyenEditor editor={setEditor} onChange={setEditorState} />
-        <Button
-          disabled={!hasText}
-          isLoading={isUpload}
-          className={cn('w-full transition-opacity', {
-            'opacity-50': !hasText,
-          })}
-          onClick={() => onClick()}
-        >
-          Đăng
-        </Button>
-      </div>
-    </Suspense>
+    <div className="container px-0 md:px-16 lg:px-20 space-y-4">
+      <MoetruyenEditor editor={setEditor} onChange={setEditorState} />
+      <Button
+        disabled={!hasText}
+        isLoading={isUpload}
+        className={cn('w-full transition-opacity', {
+          'opacity-50': !hasText,
+        })}
+        onClick={() => onClick()}
+      >
+        Đăng
+      </Button>
+    </div>
   ) : (
     <div>
       Vui lòng <span className="font-semibold">đăng nhập</span> hoặc{' '}

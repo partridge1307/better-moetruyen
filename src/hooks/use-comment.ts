@@ -9,11 +9,11 @@ export const useComments = <TData>(id: number, APIQuery: string) =>
       const query = `${APIQuery}/${id}?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&page=${pageParam}`;
 
       const { data } = await axios.get(query);
-      return data as TData[];
+      return data as { comments: TData[]; lastCursor: number };
     },
     {
-      getNextPageParam: (_, pages) => {
-        return pages.length + 1;
+      getNextPageParam: (lastPage) => {
+        return lastPage.lastCursor ?? false;
       },
     }
   );

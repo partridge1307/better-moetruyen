@@ -30,7 +30,7 @@ export type SearchData = {
     author: Pick<MangaAuthor, 'name'>[];
   })[];
   users: Pick<User, 'name' | 'color' | 'image'>[];
-  forums: Pick<SubForum, 'title' | 'banner'>[];
+  forums: Pick<SubForum, 'title' | 'slug' | 'banner'>[];
 };
 
 const Index = () => {

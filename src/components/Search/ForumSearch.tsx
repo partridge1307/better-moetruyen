@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { FC } from 'react';
 
 interface ForumSearchProps {
-  forums?: Pick<SubForum, 'title' | 'banner'>[];
+  forums?: Pick<SubForum, 'title' | 'slug' | 'banner'>[];
 }
 
 const ForumSearch: FC<ForumSearchProps> = ({ forums }) => {

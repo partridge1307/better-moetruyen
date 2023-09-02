@@ -19,6 +19,7 @@ export async function GET(req: Request) {
         },
         select: {
           id: true,
+          slug: true,
           name: true,
           image: true,
           review: true,
@@ -50,6 +51,7 @@ export async function GET(req: Request) {
           })),
         },
         select: {
+          slug: true,
           banner: true,
           title: true,
         },

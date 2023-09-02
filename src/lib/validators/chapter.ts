@@ -30,11 +30,11 @@ export const ChapterFormEditValidator = zfd.formData({
         )
     )
     .refine((files) => files.length >= 1, 'Tối thiểu 1 ảnh'),
+  volume: zfd.numeric(z.number().min(1, 'Volume phải lớn hơn 0')),
   chapterName: zfd
-    .text(z.string().min(3, 'Tối thiểu 3 kí tự').max(256, 'Tối đa 256 kí tự'))
+    .text(z.string().min(3, 'Tối thiểu 3 kí tự').max(125, 'Tối đa 125 kí tự'))
     .optional(),
   chapterIndex: zfd.numeric(z.number().min(0, 'Số thứ tự phải lớn hơn 0')),
-  volume: zfd.numeric(z.number().min(1, 'Volume phải lớn hơn 0')),
 });
 
 export const ChapterFormUploadValidator = zfd.formData({
@@ -53,7 +53,7 @@ export const ChapterFormUploadValidator = zfd.formData({
   volume: zfd.numeric(z.number().min(1, 'Số volume phải lớn hơn 0')),
   chapterIndex: zfd.numeric(z.number().min(0, 'Số thứ tự phải lớn hơn 0')),
   chapterName: zfd
-    .text(z.string().min(3, 'Tối thiểu 3 kí tự').max(256, 'Tối đa 256 kí tự'))
+    .text(z.string().min(3, 'Tối thiểu 3 kí tự').max(125, 'Tối đa 125 kí tự'))
     .optional(),
 });
 

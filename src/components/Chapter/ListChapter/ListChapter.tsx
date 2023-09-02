@@ -41,7 +41,7 @@ const ListChapter: FC<ListChapterProps> = async ({ mangaId }) => {
             key={chapter.id}
             className={
               !!chapter.teamId && !!chapter.team
-                ? 'flex flex-wrap items-center gap-3 py-4'
+                ? 'flex flex-wrap gap-3 py-4'
                 : 'py-4'
             }
           >

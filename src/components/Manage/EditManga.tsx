@@ -62,7 +62,8 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
     defaultValues: {
       image: manga.image,
       name: manga.name,
-      description: undefined,
+      // @ts-ignore
+      description: manga.description,
       review: manga.review ?? '',
       altName: manga.altName ?? '',
       author: manga.author,

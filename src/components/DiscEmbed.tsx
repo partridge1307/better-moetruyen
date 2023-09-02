@@ -17,7 +17,9 @@ async function fetchDisc(link: string | null) {
   if (link) {
     try {
       const data = await fetch(
-        `https://discord.com/api/v10/invites/${link.split('/').pop()}`,
+        `https://discord.com/api/v10/invites/${new URL(link).pathname.slice(
+          1
+        )}`,
         {
           cache: 'force-cache',
         }

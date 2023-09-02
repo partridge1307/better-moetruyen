@@ -5,6 +5,7 @@ import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { notFound, redirect } from 'next/navigation';
 import { FC } from 'react';
+
 const EditManga = dynamic(() => import('@/components/Manage/EditManga'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,

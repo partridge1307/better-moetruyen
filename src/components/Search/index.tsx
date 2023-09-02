@@ -26,7 +26,7 @@ const SearchSkeleton = dynamic(
 );
 
 export type SearchData = {
-  mangas: (Pick<Manga, 'id' | 'image' | 'name' | 'review'> & {
+  mangas: (Pick<Manga, 'id' | 'slug' | 'image' | 'name' | 'review'> & {
     author: Pick<MangaAuthor, 'name'>[];
   })[];
   users: Pick<User, 'name' | 'color' | 'image'>[];

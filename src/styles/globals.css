@@ -71,6 +71,9 @@
   input[type='number'] {
     -moz-appearance: textfield;
   }
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 @layer utilities {
@@ -115,8 +118,4 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-}
-
-button {
-  -webkit-tap-highlight-color: transparent;
 }

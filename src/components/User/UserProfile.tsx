@@ -258,6 +258,8 @@ const UserProfile: FC<UserProfileProps> = ({ user }) => {
             <Input
               id="username-input"
               autoComplete="off"
+              minLength={5}
+              maxLength={32}
               disabled={isUpdating}
               value={username}
               onChange={(e) => setUsername(e.target.value)}

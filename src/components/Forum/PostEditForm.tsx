@@ -66,7 +66,12 @@ const PostEditForm: FC<PostEditFormProps> = ({ post }) => {
   });
 
   function onSubmitHandler(values: CreatePostPayload) {
-    Update(values);
+    const payload: CreatePostPayload = {
+      title: values.title,
+      content: values.content ?? post.content,
+    };
+
+    Update(payload);
   }
 
   return (

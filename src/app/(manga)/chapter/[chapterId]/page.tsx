@@ -1,19 +1,9 @@
+import ViewChapter from '@/components/Chapter/ViewChapter';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
-
-const ViewChapter = dynamic(() => import('@/components/Chapter/ViewChapter'), {
-  ssr: false,
-  loading: () => (
-    <div className="container px-3 h-full mt-8 space-y-16">
-      <div className="w-full h-24 rounded-md animate-pulse dark:bg-zinc-900" />
-      <div className="w-full h-full rounded-md animate-pulse dark:bg-zinc-900" />
-    </div>
-  ),
-});
 
 export async function generateMetadata({
   params,
@@ -50,8 +40,8 @@ export async function generateMetadata({
 
   return {
     title: {
-      default: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
-      absolute: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
+      default: `Chapter ${chapter.chapterIndex} - ${chapter.manga.name}`,
+      absolute: `Chapter ${chapter.chapterIndex} - ${chapter.manga.name}`,
     },
     description: `Đọc ${chapter.manga.name} | Moetruyen`,
     keywords: [
@@ -66,7 +56,7 @@ export async function generateMetadata({
     openGraph: {
       url: `${process.env.NEXTAUTH_URL}/chapter/${params.chapterId}`,
       siteName: 'Moetruyen',
-      title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
+      title: `Chapter ${chapter.chapterIndex} - ${chapter.manga.name}`,
       description: `Đọc ${chapter.manga.name} | Moetruyen`,
       images: [
         { url: `${chapter.manga.image}`, alt: `Ảnh bìa ${chapter.manga.name}` },
@@ -74,7 +64,7 @@ export async function generateMetadata({
     },
     twitter: {
       site: 'Moetruyen',
-      title: `Chap. ${chapter.chapterIndex} - ${chapter.manga.name}`,
+      title: `Chapter ${chapter.chapterIndex} - ${chapter.manga.name}`,
       description: `Đọc ${chapter.manga.name} | Moetruyen`,
       card: 'summary_large_image',
       images: [
@@ -105,11 +95,11 @@ const page: FC<pageProps> = async ({ params }) => {
             name: true,
           },
         },
-        images: true,
         id: true,
-        name: true,
-        chapterIndex: true,
         volume: true,
+        chapterIndex: true,
+        name: true,
+        images: true,
       },
     }),
     getAuthSession(),
@@ -119,22 +109,21 @@ const page: FC<pageProps> = async ({ params }) => {
   let chapterList;
   if (session) {
     [chapterList] = await db.$transaction([
-      db.manga
-        .findUnique({
-          where: {
-            id: chapter.manga.id,
-            isPublished: true,
-          },
-        })
-        .chapter({
-          select: {
-            id: true,
-            chapterIndex: true,
-            name: true,
-            volume: true,
-            isPublished: true,
-          },
-        }),
+      db.chapter.findMany({
+        where: {
+          mangaId: chapter.manga.id,
+          isPublished: true,
+        },
+        select: {
+          id: true,
+          volume: true,
+          chapterIndex: true,
+          name: true,
+        },
+        orderBy: {
+          chapterIndex: 'asc',
+        },
+      }),
       db.history.update({
         where: {
           userId_mangaId: {
@@ -148,26 +137,25 @@ const page: FC<pageProps> = async ({ params }) => {
       }),
     ]);
   } else {
-    chapterList = await db.manga
-      .findUnique({
-        where: {
-          id: chapter.manga.id,
-          isPublished: true,
-        },
-      })
-      .chapter({
-        select: {
-          id: true,
-          chapterIndex: true,
-          name: true,
-          volume: true,
-          isPublished: true,
-        },
-      });
+    chapterList = await db.chapter.findMany({
+      where: {
+        mangaId: chapter.manga.id,
+        isPublished: true,
+      },
+      select: {
+        id: true,
+        volume: true,
+        chapterIndex: true,
+        name: true,
+      },
+      orderBy: {
+        chapterIndex: 'asc',
+      },
+    });
   }
 
   return (
-    <div className="mt-8 h-full">
+    <div className="container px-1 mt-10 space-y-10">
       <ViewChapter chapter={chapter} chapterList={chapterList} />
     </div>
   );

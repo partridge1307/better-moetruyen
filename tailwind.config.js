@@ -72,12 +72,12 @@ module.exports = {
           to: { height: 0 },
         },
         'up-down': {
-          '0%, 100%': { transform: 'translateY(6px)' },
-          '50%': { transform: 'translateY(-4px)' },
+          '0%, 100%': { transform: 'translateY(1rem)' },
+          '50%': { transform: 'translateY(-1rem)' },
         },
         'left-right': {
-          '0%, 100%': { transform: 'translateX(6px)' },
-          '50%': { transform: 'translateX(-4px)' },
+          '0%, 100%': { transform: 'translateX(2rem)' },
+          '50%': { transform: 'translateX(-2.5rem)' },
         },
         rainbow: {
           '0%, 100%': {

@@ -1,10 +1,10 @@
 'use client';
 
 import type { SubForum } from '@prisma/client';
-import { DialogClose } from '@radix-ui/react-dialog';
 import Image from 'next/image';
 import { FC } from 'react';
 import { AspectRatio } from '../ui/AspectRatio';
+import { SheetClose } from '../ui/Sheet';
 
 interface ForumSearchProps {
   forums?: Pick<SubForum, 'title' | 'slug' | 'banner'>[];
@@ -15,7 +15,7 @@ const ForumSearch: FC<ForumSearchProps> = ({ forums }) => {
     <div className="space-y-4">
       {forums.map((forum, idx) => (
         <a key={idx} target="_blank" href={`/m/${forum.slug}`}>
-          <DialogClose className="w-full text-start grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800">
+          <SheetClose className="w-full text-start grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800">
             <div>
               {!!forum.banner && (
                 <AspectRatio ratio={16 / 9}>
@@ -32,7 +32,7 @@ const ForumSearch: FC<ForumSearchProps> = ({ forums }) => {
             </div>
 
             <p className="text-lg lg:text-xl font-semibold">{forum.title}</p>
-          </DialogClose>
+          </SheetClose>
         </a>
       ))}
     </div>

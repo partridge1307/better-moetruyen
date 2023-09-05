@@ -2,12 +2,11 @@
 
 import { cn } from '@/lib/utils';
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
-import { DialogClose } from '@radix-ui/react-dialog';
 import { Book, Home, Menu, Pin, SunMoon, Users2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { Sheet, SheetContent, SheetTrigger } from '../ui/Sheet';
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from '../ui/Sheet';
 import { SwitchWithIcon } from '../ui/Switch';
 
 interface NavContentProps {
@@ -116,7 +115,7 @@ const NavSidebar = () => {
           </h1>
           <ul className="mt-2 flex flex-col gap-y-8 px-4">
             <Link href="/">
-              <DialogClose
+              <SheetClose
                 className={cn(
                   'flex justify-center items-center w-full gap-2 py-2 rounded-lg text-center text-xl font-medium',
                   {
@@ -127,7 +126,7 @@ const NavSidebar = () => {
                 )}
               >
                 <Home className="h-6 w-6" /> Trang chủ
-              </DialogClose>
+              </SheetClose>
             </Link>
 
             {NavContent.map((nc) => (
@@ -139,7 +138,7 @@ const NavSidebar = () => {
                 <div className="flex flex-col gap-2">
                   {nc.subMenu.map((nsm) => (
                     <Link key={nsm.title} href={nsm.link}>
-                      <DialogClose
+                      <SheetClose
                         className={cn(
                           'w-full py-2 pl-8 text-start rounded-lg transition-colors duration-100',
                           {
@@ -151,7 +150,7 @@ const NavSidebar = () => {
                         )}
                       >
                         {nsm.title}
-                      </DialogClose>
+                      </SheetClose>
                     </Link>
                   ))}
                 </div>

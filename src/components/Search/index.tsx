@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import { Search as SearchIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Input } from '../ui/Input';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/Sheet';
@@ -36,6 +37,7 @@ export type SearchData = {
 const searchResultsCache = new Map<string, SearchData | null>();
 
 const Index = () => {
+  const router = useRouter();
   const { serverErrorToast } = useCustomToast();
 
   const [searchResults, setSearchResults] = useState<SearchData>();
@@ -82,7 +84,16 @@ const Index = () => {
       </SheetTrigger>
 
       <SheetContent side={'top'} className="p-2">
-        <form action={`/search/`} method="GET">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            router.push(`/search?q=${query}`);
+
+            const target = document.getElementById('sheet-close-button');
+            target?.click();
+          }}
+        >
           <Input
             name="q"
             autoComplete="off"

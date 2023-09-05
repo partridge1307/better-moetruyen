@@ -1,9 +1,9 @@
 import type { Manga, MangaAuthor } from '@prisma/client';
-import { DialogClose } from '@radix-ui/react-dialog';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 import { AspectRatio } from '../ui/AspectRatio';
+import { SheetClose } from '../ui/Sheet';
 
 interface MangaSearchProps {
   mangas?: (Pick<Manga, 'id' | 'slug' | 'image' | 'name' | 'review'> & {
@@ -16,7 +16,7 @@ const MangaSearch: FC<MangaSearchProps> = ({ mangas }) => {
     <div className="space-y-4">
       {mangas.map((manga) => (
         <Link key={manga.id} href={`/manga/${manga.slug}}`}>
-          <DialogClose className="w-full text-start grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800">
+          <SheetClose className="w-full text-start grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800">
             <div>
               <AspectRatio ratio={4 / 3}>
                 <Image
@@ -37,7 +37,7 @@ const MangaSearch: FC<MangaSearchProps> = ({ mangas }) => {
               </p>
               <p className="line-clamp-2">{manga.review}</p>
             </div>
-          </DialogClose>
+          </SheetClose>
         </Link>
       ))}
     </div>

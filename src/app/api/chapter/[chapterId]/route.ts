@@ -117,7 +117,7 @@ export async function POST(
       )?.chapterIndex;
 
       if (!index) index = 1;
-      else index = Math.floor(index++);
+      else index = Math.floor(++index);
     } else {
       index = chapterIndex;
 

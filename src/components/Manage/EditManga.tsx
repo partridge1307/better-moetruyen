@@ -62,8 +62,7 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
     defaultValues: {
       image: manga.image,
       name: manga.name,
-      // @ts-ignore
-      description: manga.description,
+      description: undefined,
       review: manga.review ?? '',
       altName: manga.altName ?? '',
       author: manga.author,
@@ -132,7 +131,12 @@ const EditManga: FC<EditMangaProps> = ({ manga, tags }) => {
   });
 
   function onSubmitHandler(values: MangaUploadPayload) {
-    Update(values);
+    const payload: MangaUploadPayload = {
+      ...values,
+      description: values.description ?? manga.description,
+    };
+
+    Update(payload);
   }
 
   return (

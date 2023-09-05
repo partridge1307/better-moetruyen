@@ -1,9 +1,16 @@
-import ViewChapter from '@/components/Chapter/ViewChapter';
+import ViewChapterSkeleton from '@/components/Skeleton/ViewChapterSkeleton';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { getImagesBase64 } from '@/lib/plaiceholder';
 import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
+
+const ViewChapter = dynamic(() => import('@/components/Chapter/ViewChapter'), {
+  ssr: false,
+  loading: () => <ViewChapterSkeleton />,
+});
 
 export async function generateMetadata({
   params,
@@ -106,9 +113,10 @@ const page: FC<pageProps> = async ({ params }) => {
   ]);
   if (!chapter) return notFound();
 
-  let chapterList;
+  let chapterList, imagesWithBlur;
   if (session) {
-    [chapterList] = await db.$transaction([
+    [imagesWithBlur, chapterList] = await Promise.all([
+      getImagesBase64(chapter.images),
       db.chapter.findMany({
         where: {
           mangaId: chapter.manga.id,
@@ -137,27 +145,34 @@ const page: FC<pageProps> = async ({ params }) => {
       }),
     ]);
   } else {
-    chapterList = await db.chapter.findMany({
-      where: {
-        mangaId: chapter.manga.id,
-        isPublished: true,
-      },
-      select: {
-        id: true,
-        volume: true,
-        chapterIndex: true,
-        name: true,
-      },
-      orderBy: {
-        chapterIndex: 'asc',
-      },
-    });
+    [imagesWithBlur, chapterList] = await Promise.all([
+      getImagesBase64(chapter.images),
+      db.chapter.findMany({
+        where: {
+          mangaId: chapter.manga.id,
+          isPublished: true,
+        },
+        select: {
+          id: true,
+          volume: true,
+          chapterIndex: true,
+          name: true,
+        },
+        orderBy: {
+          chapterIndex: 'asc',
+        },
+      }),
+    ]);
   }
 
   return (
-    <div className="container px-1 mt-10 space-y-10">
-      <ViewChapter chapter={chapter} chapterList={chapterList} />
-    </div>
+    <main className="container px-1 mt-10 space-y-10">
+      <ViewChapter
+        chapter={chapter}
+        imagesWithBlur={imagesWithBlur}
+        chapterList={chapterList}
+      />
+    </main>
   );
 };
 

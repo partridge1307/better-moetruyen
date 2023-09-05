@@ -1,6 +1,7 @@
 'use client';
 
 import type { Chapter, Manga } from '@prisma/client';
+import dynamic from 'next/dynamic';
 import {
   Dispatch,
   FC,
@@ -9,10 +10,26 @@ import {
   useEffect,
   useState,
 } from 'react';
-import Controll from './Controll';
-import HorizontalViewChapter from './Horizontal';
-import Progress from './Progress';
-import VeritcalViewChapter from './Vertical';
+import ViewChapterControllSkeleton from '@/components/Skeleton/ViewChapterControllSkeleton';
+import VerticalViewChapterSkeleton from '@/components/Skeleton/VerticalViewChapterSkeleton';
+import ProgressBarViewChapterSkeleton from '@/components/Skeleton/ProgressBarViewChapterSkeleton';
+
+const Controll = dynamic(() => import('./Controll'), {
+  ssr: false,
+  loading: () => <ViewChapterControllSkeleton />,
+});
+const VeritcalViewChapter = dynamic(() => import('./Vertical'), {
+  ssr: false,
+  loading: () => <VerticalViewChapterSkeleton />,
+});
+const HorizontalViewChapter = dynamic(() => import('./Horizontal'), {
+  ssr: false,
+  loading: () => <VerticalViewChapterSkeleton />,
+});
+const Progress = dynamic(() => import('./Progress'), {
+  ssr: false,
+  loading: () => <ProgressBarViewChapterSkeleton />,
+});
 
 interface indexProps {
   chapter: Pick<
@@ -21,6 +38,7 @@ interface indexProps {
   > & {
     manga: Pick<Manga, 'slug' | 'name'>;
   };
+  imagesWithBlur: { src: string; blur: string }[];
   chapterList: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'>[];
 }
 
@@ -36,7 +54,7 @@ export const ReadingModeContext = createContext<{
 export const ProgressBarContext = createContext<{
   progressBar: ProgressBarType;
   onProgressBarChange: Dispatch<SetStateAction<ProgressBarType>>;
-}>({ progressBar: 'HIDE', onProgressBarChange: () => {} });
+}>({ progressBar: 'SHOW', onProgressBarChange: () => {} });
 
 export const SizeContext = createContext<{
   size: SizeType;
@@ -53,9 +71,13 @@ export const ImageContext = createContext<{
   setImages: Dispatch<SetStateAction<HTMLImageElement[]>>;
 }>({ images: [], setImages: () => {} });
 
-const ViewChapter: FC<indexProps> = ({ chapter, chapterList }) => {
+const ViewChapter: FC<indexProps> = ({
+  chapter,
+  imagesWithBlur,
+  chapterList,
+}) => {
   const [readingMode, onReadingModeChange] = useState<ReadingType>('VERTICAL');
-  const [progressBar, onProgressBarChange] = useState<ProgressBarType>('HIDE');
+  const [progressBar, onProgressBarChange] = useState<ProgressBarType>('SHOW');
   const [size, onSizeChange] = useState<SizeType>('ORIGINAL');
   const [currentPage, onPageChange] = useState(0);
   const [images, setImages] = useState<HTMLImageElement[]>([]);
@@ -70,7 +92,7 @@ const ViewChapter: FC<indexProps> = ({ chapter, chapterList }) => {
 
     const progressBarType = localStorage.progressBar as ProgressBarType;
     if (progressBarType === 'LIGHTBAR') onProgressBarChange('LIGHTBAR');
-    else if (progressBarType === 'SHOW') onProgressBarChange('SHOW');
+    else if (progressBarType === 'HIDE') onProgressBarChange('HIDE');
 
     sessionStorage.setItem('startPage', `${Date.now()}`);
   }, []);
@@ -94,11 +116,13 @@ const ViewChapter: FC<indexProps> = ({ chapter, chapterList }) => {
               {readingMode === 'VERTICAL' ? (
                 <VeritcalViewChapter
                   chapter={chapter}
+                  imagesWithBlur={imagesWithBlur}
                   chapterList={chapterList}
                 />
               ) : (
                 <HorizontalViewChapter
                   chapter={chapter}
+                  imagesWithBlur={imagesWithBlur}
                   chapterList={chapterList}
                 />
               )}

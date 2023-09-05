@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import type { Chapter } from '@prisma/client';
 import { ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { FC, useContext } from 'react';
+import { FC, memo, useContext } from 'react';
 import { ImageContext } from '..';
 
 interface NavigationProps {
@@ -70,4 +70,4 @@ const Navigation: FC<NavigationProps> = ({
   );
 };
 
-export default Navigation;
+export default memo(Navigation);

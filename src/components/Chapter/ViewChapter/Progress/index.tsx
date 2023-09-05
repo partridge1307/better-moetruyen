@@ -1,8 +1,8 @@
 import { FC, useContext } from 'react';
 import { ProgressBarContext } from '..';
-import ProgressShow from './Show';
 import ProgressHide from './Hide';
 import ProgressLightbar from './LightBar';
+import ProgressShow from './Show';
 
 interface ProgressProps {}
 

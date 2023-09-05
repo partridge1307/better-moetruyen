@@ -3,7 +3,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/Popover';
-import { FC, useCallback, useContext, useState, type FormEvent } from 'react';
+import {
+  FC,
+  useCallback,
+  useContext,
+  useState,
+  type FormEvent,
+  memo,
+} from 'react';
 import { CurrentPageContext, ImageContext } from '..';
 
 interface ChapterPageProps {}
@@ -56,4 +63,4 @@ const ChapterPage: FC<ChapterPageProps> = ({}) => {
   );
 };
 
-export default ChapterPage;
+export default memo(ChapterPage);

@@ -1,24 +1,26 @@
 import { cn } from '@/lib/utils';
+import { useIntersection } from '@mantine/hooks';
+import type { Chapter } from '@prisma/client';
+import { MessagesSquare } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { FC, useCallback, useContext, useEffect, useRef } from 'react';
 import { CurrentPageContext, ImageContext, SizeContext } from '..';
-import type { Chapter } from '@prisma/client';
 import Navigation from '../Navigation';
-import dynamic from 'next/dynamic';
-import { MessagesSquare } from 'lucide-react';
-import { useIntersection } from '@mantine/hooks';
 
 const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
 });
 
 interface VeritcalViewChapterProps {
-  chapter: Pick<Chapter, 'id' | 'chapterIndex' | 'images'>;
+  chapter: Pick<Chapter, 'id' | 'chapterIndex'>;
+  imagesWithBlur: { src: string; blur: string }[];
   chapterList: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'>[];
 }
 
 const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
   chapter,
+  imagesWithBlur,
   chapterList,
 }) => {
   const { size } = useContext(SizeContext);
@@ -107,8 +109,8 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
 
   return (
     <div className="space-y-6">
-      {chapter.images.map((image, idx) => {
-        if (idx === Math.floor(chapter.images.length * 0.7))
+      {imagesWithBlur.map((image, idx) => {
+        if (idx === Math.floor(imagesWithBlur.length * 0.7))
           return (
             <Image
               ref={(e) => {
@@ -119,9 +121,10 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               width={0}
               height={0}
               sizes="100vw"
-              priority
-              src={image}
+              src={image.src}
               alt={`Trang ${idx + 1}`}
+              placeholder="blur"
+              blurDataURL={image.blur}
               className={cn('block w-fit h-auto mx-auto', {
                 'w-full': size === 'FITWIDTH',
                 'w-full h-fit lg:h-screen object-scale-down':
@@ -137,8 +140,9 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               width={0}
               height={0}
               sizes="100vw"
-              priority
-              src={image}
+              src={image.src}
+              placeholder="blur"
+              blurDataURL={image.blur}
               alt={`Trang ${idx + 1}`}
               className={cn('block w-fit h-auto mx-auto', {
                 'w-full': size === 'FITWIDTH',

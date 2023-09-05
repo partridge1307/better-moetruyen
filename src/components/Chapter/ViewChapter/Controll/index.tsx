@@ -1,11 +1,9 @@
 import type { Chapter, Manga } from '@prisma/client';
 import Link from 'next/link';
-import { FC } from 'react';
-import dynamic from 'next/dynamic';
+import { FC, memo } from 'react';
+import ChapterList from './ChapterList';
 import ChapterPage from './ChapterPage';
-
-const ChapterList = dynamic(() => import('./ChapterList'), { ssr: false });
-const ChapterMenu = dynamic(() => import('./ChapterMenu'), { ssr: false });
+import ChapterMenu from './ChapterMenu';
 
 interface ControllProps {
   chapter: Pick<Chapter, 'volume' | 'chapterIndex' | 'name'> & {
@@ -40,4 +38,4 @@ const Controll: FC<ControllProps> = ({ chapter, chapterList }) => {
   );
 };
 
-export default Controll;
+export default memo(Controll);

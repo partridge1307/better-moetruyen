@@ -14,7 +14,7 @@ import {
 import { groupBy } from '@/lib/utils';
 import type { Chapter } from '@prisma/client';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, memo } from 'react';
 
 interface ChapterListProps {
   currentChapter: Pick<Chapter, 'volume' | 'chapterIndex'>;
@@ -79,4 +79,4 @@ const ChapterList: FC<ChapterListProps> = ({ currentChapter, chapterList }) => {
   );
 };
 
-export default ChapterList;
+export default memo(ChapterList);

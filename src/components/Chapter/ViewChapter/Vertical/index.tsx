@@ -13,14 +13,12 @@ const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
 });
 
 interface VeritcalViewChapterProps {
-  chapter: Pick<Chapter, 'id' | 'chapterIndex'>;
-  imagesWithBlur: { src: string; blur: string }[];
+  chapter: Pick<Chapter, 'id' | 'chapterIndex' | 'images' | 'blurImages'>;
   chapterList: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'>[];
 }
 
 const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
   chapter,
-  imagesWithBlur,
   chapterList,
 }) => {
   const { size } = useContext(SizeContext);
@@ -109,8 +107,8 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
 
   return (
     <div className="space-y-6">
-      {imagesWithBlur.map((image, idx) => {
-        if (idx === Math.floor(imagesWithBlur.length * 0.7))
+      {chapter.images.map((image, idx) => {
+        if (idx === Math.floor(chapter.images.length * 0.7))
           return (
             <Image
               ref={(e) => {
@@ -121,10 +119,10 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               width={0}
               height={0}
               sizes="100vw"
-              src={image.src}
+              src={image}
               alt={`Trang ${idx + 1}`}
               placeholder="blur"
-              blurDataURL={image.blur}
+              blurDataURL={chapter.blurImages[idx]}
               className={cn('block w-fit h-auto mx-auto', {
                 'w-full': size === 'FITWIDTH',
                 'w-full h-fit lg:h-screen object-scale-down':
@@ -140,9 +138,9 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               width={0}
               height={0}
               sizes="100vw"
-              src={image.src}
+              src={image}
               placeholder="blur"
-              blurDataURL={image.blur}
+              blurDataURL={chapter.blurImages[idx]}
               alt={`Trang ${idx + 1}`}
               className={cn('block w-fit h-auto mx-auto', {
                 'w-full': size === 'FITWIDTH',

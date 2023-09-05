@@ -1,7 +1,6 @@
 import ViewChapterSkeleton from '@/components/Skeleton/ViewChapterSkeleton';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { getImagesBase64 } from '@/lib/plaiceholder';
 import type { Metadata } from 'next';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
@@ -107,16 +106,16 @@ const page: FC<pageProps> = async ({ params }) => {
         chapterIndex: true,
         name: true,
         images: true,
+        blurImages: true,
       },
     }),
     getAuthSession(),
   ]);
   if (!chapter) return notFound();
 
-  let chapterList, imagesWithBlur;
+  let chapterList;
   if (session) {
-    [imagesWithBlur, chapterList] = await Promise.all([
-      getImagesBase64(chapter.images),
+    [chapterList] = await db.$transaction([
       db.chapter.findMany({
         where: {
           mangaId: chapter.manga.id,
@@ -145,33 +144,26 @@ const page: FC<pageProps> = async ({ params }) => {
       }),
     ]);
   } else {
-    [imagesWithBlur, chapterList] = await Promise.all([
-      getImagesBase64(chapter.images),
-      db.chapter.findMany({
-        where: {
-          mangaId: chapter.manga.id,
-          isPublished: true,
-        },
-        select: {
-          id: true,
-          volume: true,
-          chapterIndex: true,
-          name: true,
-        },
-        orderBy: {
-          chapterIndex: 'asc',
-        },
-      }),
-    ]);
+    chapterList = await db.chapter.findMany({
+      where: {
+        mangaId: chapter.manga.id,
+        isPublished: true,
+      },
+      select: {
+        id: true,
+        volume: true,
+        chapterIndex: true,
+        name: true,
+      },
+      orderBy: {
+        chapterIndex: 'asc',
+      },
+    });
   }
 
   return (
     <main className="container px-1 mt-10 space-y-10">
-      <ViewChapter
-        chapter={chapter}
-        imagesWithBlur={imagesWithBlur}
-        chapterList={chapterList}
-      />
+      <ViewChapter chapter={chapter} chapterList={chapterList} />
     </main>
   );
 };

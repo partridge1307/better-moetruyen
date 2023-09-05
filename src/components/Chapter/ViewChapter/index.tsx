@@ -1,5 +1,8 @@
 'use client';
 
+import ProgressBarViewChapterSkeleton from '@/components/Skeleton/ProgressBarViewChapterSkeleton';
+import VerticalViewChapterSkeleton from '@/components/Skeleton/VerticalViewChapterSkeleton';
+import ViewChapterControllSkeleton from '@/components/Skeleton/ViewChapterControllSkeleton';
 import type { Chapter, Manga } from '@prisma/client';
 import dynamic from 'next/dynamic';
 import {
@@ -10,9 +13,6 @@ import {
   useEffect,
   useState,
 } from 'react';
-import ViewChapterControllSkeleton from '@/components/Skeleton/ViewChapterControllSkeleton';
-import VerticalViewChapterSkeleton from '@/components/Skeleton/VerticalViewChapterSkeleton';
-import ProgressBarViewChapterSkeleton from '@/components/Skeleton/ProgressBarViewChapterSkeleton';
 
 const Controll = dynamic(() => import('./Controll'), {
   ssr: false,
@@ -34,11 +34,10 @@ const Progress = dynamic(() => import('./Progress'), {
 interface indexProps {
   chapter: Pick<
     Chapter,
-    'id' | 'volume' | 'chapterIndex' | 'name' | 'images'
+    'id' | 'volume' | 'chapterIndex' | 'name' | 'images' | 'blurImages'
   > & {
     manga: Pick<Manga, 'slug' | 'name'>;
   };
-  imagesWithBlur: { src: string; blur: string }[];
   chapterList: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'>[];
 }
 
@@ -71,11 +70,7 @@ export const ImageContext = createContext<{
   setImages: Dispatch<SetStateAction<HTMLImageElement[]>>;
 }>({ images: [], setImages: () => {} });
 
-const ViewChapter: FC<indexProps> = ({
-  chapter,
-  imagesWithBlur,
-  chapterList,
-}) => {
+const ViewChapter: FC<indexProps> = ({ chapter, chapterList }) => {
   const [readingMode, onReadingModeChange] = useState<ReadingType>('VERTICAL');
   const [progressBar, onProgressBarChange] = useState<ProgressBarType>('SHOW');
   const [size, onSizeChange] = useState<SizeType>('ORIGINAL');
@@ -116,13 +111,11 @@ const ViewChapter: FC<indexProps> = ({
               {readingMode === 'VERTICAL' ? (
                 <VeritcalViewChapter
                   chapter={chapter}
-                  imagesWithBlur={imagesWithBlur}
                   chapterList={chapterList}
                 />
               ) : (
                 <HorizontalViewChapter
                   chapter={chapter}
-                  imagesWithBlur={imagesWithBlur}
                   chapterList={chapterList}
                 />
               )}

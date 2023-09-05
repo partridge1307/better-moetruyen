@@ -1,6 +1,7 @@
 import { getAuthSession } from '@/lib/auth';
 import { EditChapterImage, UploadChapterImage } from '@/lib/contabo';
 import { db } from '@/lib/db';
+import { getImagesBase64 } from '@/lib/plaiceholder';
 import {
   ChapterFormEditValidator,
   ChapterFormUploadValidator,
@@ -32,12 +33,17 @@ export async function PATCH(
       },
     });
 
-    const edittedImages = await EditChapterImage(
-      images,
-      chapter.images,
-      chapter.mangaId,
-      chapterIndex
-    );
+    const edittedImages = (
+      await EditChapterImage(
+        images,
+        chapter.images,
+        chapter.mangaId,
+        chapterIndex
+      )
+    )
+      .sort((a, b) => a.index - b.index)
+      .map((img) => img.image);
+    const blurImages = await getImagesBase64(edittedImages);
 
     await db.chapter.update({
       where: {
@@ -47,9 +53,8 @@ export async function PATCH(
         chapterIndex,
         name: chapterName,
         volume,
-        images: edittedImages
-          .sort((a, b) => a.index - b.index)
-          .map((img) => img.image),
+        images: edittedImages,
+        blurImages,
       },
     });
 
@@ -136,6 +141,7 @@ export async function POST(
     }
 
     const uploadedImages = await UploadChapterImage(images, manga.id, index);
+    const blurImages = await getImagesBase64(uploadedImages);
 
     if (user.memberOnTeam) {
       await db.chapter.create({
@@ -144,6 +150,7 @@ export async function POST(
           name: chapterName,
           volume,
           images: uploadedImages,
+          blurImages,
           manga: {
             connect: { id: manga.id },
           },
@@ -159,6 +166,7 @@ export async function POST(
           name: chapterName,
           volume,
           images: uploadedImages,
+          blurImages,
           manga: {
             connect: { id: manga.id },
           },

@@ -22,8 +22,7 @@ const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
 });
 
 interface HorizontalViewChapterProps {
-  chapter: Pick<Chapter, 'id' | 'chapterIndex' | 'images'>;
-  imagesWithBlur: { src: string; blur: string }[];
+  chapter: Pick<Chapter, 'id' | 'chapterIndex' | 'images' | 'blurImages'>;
   chapterList: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'>[];
 }
 
@@ -31,7 +30,6 @@ const minSwipeDistance = 50;
 
 const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
   chapter,
-  imagesWithBlur,
   chapterList,
 }) => {
   const { currentPage, onPageChange } = useContext(CurrentPageContext);
@@ -184,8 +182,8 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
         })}
       >
         {size === 'FITWIDTH'
-          ? imagesWithBlur.map((image, idx) => {
-              if (idx === Math.floor(imagesWithBlur.length * 0.7))
+          ? chapter.images.map((image, idx) => {
+              if (idx === Math.floor(chapter.images.length * 0.7))
                 return (
                   <div key={idx} className="relative w-full h-full shrink-0">
                     <Image
@@ -195,9 +193,9 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       }}
                       fill
                       sizes="100vw"
-                      src={image.src}
+                      src={image}
                       placeholder="blur"
-                      blurDataURL={image.blur}
+                      blurDataURL={chapter.blurImages[idx]}
                       alt={`Trang ${idx + 1}`}
                       className="object-scale-down"
                     />
@@ -210,9 +208,9 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       ref={(e) => setImage(e, idx)}
                       fill
                       sizes="100vw"
-                      src={image.src}
+                      src={image}
                       placeholder="blur"
-                      blurDataURL={image.blur}
+                      blurDataURL={chapter.blurImages[idx]}
                       alt={`Trang ${idx + 1}`}
                       className="object-scale-down"
                     />
@@ -220,8 +218,8 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                 );
             })
           : size === 'FITHEIGHT'
-          ? imagesWithBlur.map((image, idx) => {
-              if (idx === Math.floor(imagesWithBlur.length * 0.7))
+          ? chapter.images.map((image, idx) => {
+              if (idx === Math.floor(chapter.images.length * 0.7))
                 return (
                   <div key={idx} className="relative w-full h-full shrink-0">
                     <Image
@@ -231,9 +229,9 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       }}
                       fill
                       sizes="100vw"
-                      src={image.src}
+                      src={image}
                       placeholder="blur"
-                      blurDataURL={image.blur}
+                      blurDataURL={chapter.blurImages[idx]}
                       alt={`Trang ${idx + 1}`}
                       className="object-contain"
                     />
@@ -246,9 +244,9 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       ref={(e) => setImage(e, idx)}
                       fill
                       sizes="100vw"
-                      src={image.src}
+                      src={image}
                       placeholder="blur"
-                      blurDataURL={image.blur}
+                      blurDataURL={chapter.blurImages[idx]}
                       alt={`Trang ${idx + 1}`}
                       className="object-contain"
                     />
@@ -256,8 +254,8 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                 );
             })
           : size === 'ORIGINAL'
-          ? imagesWithBlur.map((image, idx) => {
-              if (idx === Math.floor(imagesWithBlur.length * 0.7))
+          ? chapter.images.map((image, idx) => {
+              if (idx === Math.floor(chapter.images.length * 0.7))
                 return (
                   <Image
                     key={idx}
@@ -268,9 +266,9 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                     sizes="100vw"
                     width={0}
                     height={0}
-                    src={image.src}
+                    src={image}
                     placeholder="blur"
-                    blurDataURL={image.blur}
+                    blurDataURL={chapter.blurImages[idx]}
                     alt={`Trang ${idx + 1}`}
                     className="shrink-0 w-full h-fit object-contain"
                   />
@@ -283,9 +281,9 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                     sizes="100vw"
                     width={0}
                     height={0}
-                    src={image.src}
+                    src={image}
                     placeholder="blur"
-                    blurDataURL={image.blur}
+                    blurDataURL={chapter.blurImages[idx]}
                     alt={`Trang ${idx + 1}`}
                     className="shrink-0 w-full h-fit object-contain"
                   />

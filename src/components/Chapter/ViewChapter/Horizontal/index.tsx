@@ -193,6 +193,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       }}
                       fill
                       sizes="100vw"
+                      priority
                       src={image}
                       placeholder="blur"
                       blurDataURL={chapter.blurImages[idx]}
@@ -208,6 +209,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       ref={(e) => setImage(e, idx)}
                       fill
                       sizes="100vw"
+                      priority
                       src={image}
                       placeholder="blur"
                       blurDataURL={chapter.blurImages[idx]}
@@ -229,6 +231,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       }}
                       fill
                       sizes="100vw"
+                      priority
                       src={image}
                       placeholder="blur"
                       blurDataURL={chapter.blurImages[idx]}
@@ -244,6 +247,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       ref={(e) => setImage(e, idx)}
                       fill
                       sizes="100vw"
+                      priority
                       src={image}
                       placeholder="blur"
                       blurDataURL={chapter.blurImages[idx]}
@@ -266,6 +270,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                     sizes="100vw"
                     width={0}
                     height={0}
+                    priority
                     src={image}
                     placeholder="blur"
                     blurDataURL={chapter.blurImages[idx]}
@@ -281,6 +286,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                     sizes="100vw"
                     width={0}
                     height={0}
+                    priority
                     src={image}
                     placeholder="blur"
                     blurDataURL={chapter.blurImages[idx]}

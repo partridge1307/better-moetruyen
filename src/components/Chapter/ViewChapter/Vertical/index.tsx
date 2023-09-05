@@ -119,6 +119,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               width={0}
               height={0}
               sizes="100vw"
+              priority
               src={image}
               alt={`Trang ${idx + 1}`}
               placeholder="blur"
@@ -138,6 +139,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               width={0}
               height={0}
               sizes="100vw"
+              priority
               src={image}
               placeholder="blur"
               blurDataURL={chapter.blurImages[idx]}

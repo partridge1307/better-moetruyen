@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { useWindowEvent } from '@mantine/hooks';
+import { useIntersection, useWindowEvent } from '@mantine/hooks';
 import Image from 'next/image';
 import {
   FC,
@@ -7,6 +7,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { CurrentPageContext, ImageContext, SizeContext } from '..';
@@ -36,6 +37,11 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
   const { images, setImages } = useContext(ImageContext);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const anchorRef = useRef<HTMLImageElement>(null);
+  const { ref, entry } = useIntersection({
+    root: anchorRef.current,
+    threshold: size === 'ORIGINAL' ? 0.1 : 1,
+  });
 
   // Set images
   const setImage = (e: HTMLImageElement | null, idx: number) => {
@@ -71,6 +77,20 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
     },
     [images, onPageChange]
   );
+
+  useEffect(() => {
+    if (
+      entry?.isIntersecting &&
+      'startPage' in sessionStorage &&
+      Date.now() - parseInt(sessionStorage.getItem('startPage')!) > 5 * 1000
+    ) {
+      sessionStorage.removeItem('startPage');
+      fetch(`/api/chapter`, {
+        method: 'POST',
+        body: JSON.stringify({ id: chapter.id }),
+      });
+    }
+  }, [chapter.id, entry?.isIntersecting]);
 
   // Scroll to first image
   useEffect(() => {
@@ -162,47 +182,107 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
         })}
       >
         {size === 'FITWIDTH'
-          ? chapter.images.map((image, idx) => (
-              <div key={idx} className="relative w-full h-full shrink-0">
-                <Image
-                  ref={(e) => setImage(e, idx)}
-                  fill
-                  sizes="100vw"
-                  priority
-                  src={image}
-                  alt={`Trang ${idx + 1}`}
-                  className="object-scale-down"
-                />
-              </div>
-            ))
+          ? chapter.images.map((image, idx) => {
+              if (idx === Math.floor(chapter.images.length * 0.7))
+                return (
+                  <div key={idx} className="relative w-full h-full shrink-0">
+                    <Image
+                      ref={(e) => {
+                        ref(e);
+                        setImage(e, idx);
+                      }}
+                      fill
+                      sizes="100vw"
+                      priority
+                      src={image}
+                      alt={`Trang ${idx + 1}`}
+                      className="object-scale-down"
+                    />
+                  </div>
+                );
+              else
+                return (
+                  <div key={idx} className="relative w-full h-full shrink-0">
+                    <Image
+                      ref={(e) => setImage(e, idx)}
+                      fill
+                      sizes="100vw"
+                      priority
+                      src={image}
+                      alt={`Trang ${idx + 1}`}
+                      className="object-scale-down"
+                    />
+                  </div>
+                );
+            })
           : size === 'FITHEIGHT'
-          ? chapter.images.map((image, idx) => (
-              <div key={idx} className="relative w-full h-full shrink-0">
-                <Image
-                  ref={(e) => setImage(e, idx)}
-                  fill
-                  sizes="100vw"
-                  priority
-                  src={image}
-                  alt={`Trang ${idx + 1}`}
-                  className="object-contain"
-                />
-              </div>
-            ))
+          ? chapter.images.map((image, idx) => {
+              if (idx === Math.floor(chapter.images.length * 0.7))
+                return (
+                  <div key={idx} className="relative w-full h-full shrink-0">
+                    <Image
+                      ref={(e) => {
+                        ref(e);
+                        setImage(e, idx);
+                      }}
+                      fill
+                      sizes="100vw"
+                      priority
+                      src={image}
+                      alt={`Trang ${idx + 1}`}
+                      className="object-contain"
+                    />
+                  </div>
+                );
+              else
+                return (
+                  <div key={idx} className="relative w-full h-full shrink-0">
+                    <Image
+                      ref={(e) => setImage(e, idx)}
+                      fill
+                      sizes="100vw"
+                      priority
+                      src={image}
+                      alt={`Trang ${idx + 1}`}
+                      className="object-contain"
+                    />
+                  </div>
+                );
+            })
           : size === 'ORIGINAL'
-          ? chapter.images.map((image, idx) => (
-              <Image
-                key={idx}
-                ref={(e) => setImage(e, idx)}
-                sizes="100vw"
-                width={0}
-                height={0}
-                priority
-                src={image}
-                alt={`Trang ${idx + 1}`}
-                className="shrink-0 w-full h-fit object-contain"
-              />
-            ))
+          ? chapter.images.map((image, idx) => {
+              if (idx === Math.floor(chapter.images.length * 0.7))
+                return (
+                  <Image
+                    key={idx}
+                    ref={(e) => {
+                      ref(e);
+                      setImage(e, idx);
+                    }}
+                    sizes="100vw"
+                    width={0}
+                    height={0}
+                    priority
+                    src={image}
+                    alt={`Trang ${idx + 1}`}
+                    className="shrink-0 w-full h-fit object-contain"
+                  />
+                );
+              else
+                return (
+                  <Image
+                    key={idx}
+                    ref={(e) => setImage(e, idx)}
+                    sizes="100vw"
+                    width={0}
+                    height={0}
+                    priority
+                    src={image}
+                    alt={`Trang ${idx + 1}`}
+                    className="shrink-0 w-full h-fit object-contain"
+                  />
+                );
+            })
           : null}
 
         <div

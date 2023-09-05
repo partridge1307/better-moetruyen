@@ -71,6 +71,8 @@ const ViewChapter: FC<indexProps> = ({ chapter, chapterList }) => {
     const progressBarType = localStorage.progressBar as ProgressBarType;
     if (progressBarType === 'LIGHTBAR') onProgressBarChange('LIGHTBAR');
     else if (progressBarType === 'SHOW') onProgressBarChange('SHOW');
+
+    sessionStorage.setItem('startPage', `${Date.now()}`);
   }, []);
 
   useEffect(() => {

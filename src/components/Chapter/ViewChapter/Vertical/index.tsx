@@ -1,11 +1,12 @@
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { FC, useCallback, useContext, useEffect } from 'react';
+import { FC, useCallback, useContext, useEffect, useRef } from 'react';
 import { CurrentPageContext, ImageContext, SizeContext } from '..';
 import type { Chapter } from '@prisma/client';
 import Navigation from '../Navigation';
 import dynamic from 'next/dynamic';
 import { MessagesSquare } from 'lucide-react';
+import { useIntersection } from '@mantine/hooks';
 
 const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
@@ -23,6 +24,11 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
   const { size } = useContext(SizeContext);
   const { onPageChange } = useContext(CurrentPageContext);
   const { images, setImages } = useContext(ImageContext);
+  const anchorRef = useRef<HTMLImageElement>(null);
+  const { ref, entry } = useIntersection({
+    root: anchorRef.current,
+    threshold: size === 'FITHEIGHT' || size === 'FITWIDTH' ? 0.2 : 1,
+  });
 
   const setImage = useCallback(
     (e: HTMLImageElement | null, idx: number) => {
@@ -61,6 +67,20 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
   );
 
   useEffect(() => {
+    if (
+      entry?.isIntersecting &&
+      'startPage' in sessionStorage &&
+      Date.now() - parseInt(sessionStorage.getItem('startPage')!) > 30 * 1000
+    ) {
+      sessionStorage.removeItem('startPage');
+      fetch(`/api/chapter`, {
+        method: 'POST',
+        body: JSON.stringify({ id: chapter.id }),
+      });
+    }
+  }, [chapter.id, entry?.isIntersecting]);
+
+  useEffect(() => {
     images.find(Boolean)?.scrollIntoView({ behavior: 'smooth' });
   }, [images]);
 
@@ -87,22 +107,47 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
 
   return (
     <div className="space-y-6">
-      {chapter.images.map((image, idx) => (
-        <Image
-          ref={(e) => setImage(e, idx)}
-          key={idx}
-          width={0}
-          height={0}
-          sizes="100vw"
-          priority
-          src={image}
-          alt={`Trang ${idx + 1}`}
-          className={cn('block w-fit h-auto mx-auto', {
-            'w-full': size === 'FITWIDTH',
-            'w-full h-fit lg:h-screen object-scale-down': size === 'FITHEIGHT',
-          })}
-        />
-      ))}
+      {chapter.images.map((image, idx) => {
+        if (idx === Math.floor(chapter.images.length * 0.7))
+          return (
+            <Image
+              ref={(e) => {
+                ref(e);
+                setImage(e, idx);
+              }}
+              key={idx}
+              width={0}
+              height={0}
+              sizes="100vw"
+              priority
+              src={image}
+              alt={`Trang ${idx + 1}`}
+              className={cn('block w-fit h-auto mx-auto', {
+                'w-full': size === 'FITWIDTH',
+                'w-full h-fit lg:h-screen object-scale-down':
+                  size === 'FITHEIGHT',
+              })}
+            />
+          );
+        else
+          return (
+            <Image
+              ref={(e) => setImage(e, idx)}
+              key={idx}
+              width={0}
+              height={0}
+              sizes="100vw"
+              priority
+              src={image}
+              alt={`Trang ${idx + 1}`}
+              className={cn('block w-fit h-auto mx-auto', {
+                'w-full': size === 'FITWIDTH',
+                'w-full h-fit lg:h-screen object-scale-down':
+                  size === 'FITHEIGHT',
+              })}
+            />
+          );
+      })}
 
       <div
         id="navigation-section"

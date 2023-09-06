@@ -153,16 +153,20 @@ export const authOptionsWrapper = (
                 },
               });
 
-              cookies().set('next-auth.session-token', sessionToken, {
-                expires: sessionExpiry,
-                httpOnly: true,
-                secure: useSecureCookies ? true : false,
-                sameSite: 'lax',
-                domain:
-                  HOST_URL.hostname === 'localhost'
-                    ? HOST_URL.hostname
-                    : `.moetruyen.net`,
-              });
+              cookies().set(
+                `${useSecureCookies ? '__Secure-' : ''}next-auth.session-token`,
+                sessionToken,
+                {
+                  expires: sessionExpiry,
+                  httpOnly: true,
+                  secure: useSecureCookies ? true : false,
+                  sameSite: 'lax',
+                  domain:
+                    HOST_URL.hostname === 'localhost'
+                      ? HOST_URL.hostname
+                      : `.moetruyen.net`,
+                }
+              );
 
               return true;
             } else {

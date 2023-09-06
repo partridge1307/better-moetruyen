@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/AlertDialog';
-import { Button, buttonVariants } from '@/components/ui/Button';
+import { buttonVariants } from '@/components/ui/Button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import type { Manga } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import type { Row } from '@tanstack/react-table';
@@ -67,23 +68,41 @@ function DataTableRowAction({ row }: DataTableRowActionProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-6 w-6 p-0">
-          <MoreHorizontal className="h-4 w-4" />
-        </Button>
+        <button
+          aria-label="row action button"
+          type="button"
+          className={cn(
+            buttonVariants({
+              variant: 'ghost',
+            }),
+            'w-6 h-6 p-0 focus-visible:ring-transparent ring-offset-transparent'
+          )}
+        >
+          <MoreHorizontal className="h-5 w-5" />
+        </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="max-w-[200px] space-y-2 p-2">
-        <DropdownMenuItem>
-          <Link href={`/me/manga/${manga.id}/edit`} className="w-full">
+      <DropdownMenuContent className="max-w-[200px] space-y-2 p-1">
+        <DropdownMenuItem asChild>
+          <Link
+            href={`/me/manga/${manga.id}/edit`}
+            className="w-full h-full transition-colors hover:cursor-pointer hover:dark:bg-zinc-800"
+          >
             Chỉnh sửa
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link href={`/me/manga/${manga.id}/chapter`} className="w-full">
+        <DropdownMenuItem asChild>
+          <Link
+            href={`/me/manga/${manga.id}/chapter`}
+            className="w-full h-full transition-colors hover:cursor-pointer hover:dark:bg-zinc-800"
+          >
             Xem chapter
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link href={`/me/manga/${manga.id}`} className="w-full">
+        <DropdownMenuItem asChild>
+          <Link
+            href={`/me/manga/${manga.id}`}
+            className="w-full h-full transition-colors hover:cursor-pointer hover:dark:bg-zinc-800"
+          >
             Thông tin truyện
           </Link>
         </DropdownMenuItem>

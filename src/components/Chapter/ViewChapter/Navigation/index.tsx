@@ -37,11 +37,11 @@ const Navigation: FC<NavigationProps> = ({
 
   const keyDownHandler = (e: KeyboardEvent) => {
     if ((e.key === '[' || e.code === 'BracketLeft') && hasPrev) {
-      router.push(`/chapter/${chapterList[idx - 1].id}`);
+      router.push(`/chapter/${chapterList[idx - 1].id}`, { scroll: false });
       return;
     }
     if ((e.key === ']' || e.code === 'BracketRight') && hasNext) {
-      router.push(`/chapter/${chapterList[idx + 1].id}`);
+      router.push(`/chapter/${chapterList[idx + 1].id}`, { scroll: false });
       return;
     }
   };
@@ -53,7 +53,9 @@ const Navigation: FC<NavigationProps> = ({
         aria-label="navigate to previous chapter"
         disabled={!hasPrev}
         className={cn(buttonVariants(), 'space-x-2')}
-        onClick={() => router.push(`/chapter/${chapterList[idx - 1].id}`)}
+        onClick={() =>
+          router.push(`/chapter/${chapterList[idx - 1].id}`, { scroll: false })
+        }
       >
         <ArrowLeft className="w-5 h-5" />
         <span>Chapter trước</span>
@@ -74,7 +76,9 @@ const Navigation: FC<NavigationProps> = ({
         aria-label="navigate to next chapter"
         disabled={!hasNext}
         className={cn(buttonVariants(), 'space-x-2')}
-        onClick={() => router.push(`/chapter/${chapterList[idx + 1].id}`)}
+        onClick={() =>
+          router.push(`/chapter/${chapterList[idx + 1].id}`, { scroll: false })
+        }
       >
         <span>Chapter sau</span>
         <ArrowRight className="w-5 h-5" />

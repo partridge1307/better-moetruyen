@@ -118,7 +118,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               key={idx}
               width={0}
               height={0}
-              sizes="100vw"
+              sizes="50vw"
               unoptimized
               src={image}
               alt={`Trang ${idx + 1}`}
@@ -138,7 +138,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               key={idx}
               width={0}
               height={0}
-              sizes="100vw"
+              sizes="50vw"
               unoptimized
               src={image}
               placeholder="blur"

@@ -1,7 +1,13 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { MessageCircle, User2 } from 'lucide-react';
+import {
+  Bell,
+  Menu,
+  MessageCircle,
+  Search as SearchIcon,
+  User2,
+} from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -22,21 +28,15 @@ import {
 
 const NavSidebar = dynamic(() => import('./NavSidebar'), {
   ssr: false,
-  loading: () => (
-    <div className="w-8 h-8 rounded-md animate-pulse dark:bg-zinc-900" />
-  ),
+  loading: () => <Menu aria-label="sidebar button" className="h-8 w-8" />,
 });
 const Search = dynamic(() => import('@/components/Search'), {
   ssr: false,
-  loading: () => (
-    <div className="w-8 h-8 rounded-md animate-pulse dark:bg-zinc-900" />
-  ),
+  loading: () => <SearchIcon className="w-7 h-7" aria-label="Search button" />,
 });
 const Notifications = dynamic(() => import('@/components/Notify'), {
   ssr: false,
-  loading: () => (
-    <div className="w-8 h-8 rounded-md animate-pulse dark:bg-zinc-900" />
-  ),
+  loading: () => <Bell aria-label="Notify button" className="w-7 h-7" />,
 });
 const SignOutButton = dynamic(() => import('@/components/Auth/SignOutButton'), {
   ssr: false,

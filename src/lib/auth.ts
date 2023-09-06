@@ -17,6 +17,9 @@ export interface AuthContext {
   params: { nextauth: string[] };
 }
 
+const HOST_URL = new URL(process.env.NEXTAUTH_URL!);
+const useSecureCookies = HOST_URL.protocol.startsWith('https');
+
 export const authOptionsWrapper = (
   request: NextRequest,
   context: AuthContext
@@ -121,6 +124,18 @@ export const authOptionsWrapper = (
           authorization: { params: { scope: 'identify' } },
         }),
       ],
+      cookies: {
+        sessionToken: {
+          name: `${useSecureCookies ? `__Secure-` : ''}next-auth.session-token`,
+          options: {
+            httpOnly: true,
+            sameSite: 'lax',
+            path: '/',
+            domain: `.moetruyen.net`,
+            secure: useSecureCookies,
+          },
+        },
+      },
       callbacks: {
         async signIn({ user, account }) {
           if (user) {
@@ -141,9 +156,12 @@ export const authOptionsWrapper = (
               cookies().set('next-auth.session-token', sessionToken, {
                 expires: sessionExpiry,
                 httpOnly: true,
-                secure: true,
-                sameSite: 'none',
-                domain: `moetruyen.net`,
+                secure: useSecureCookies ? true : false,
+                sameSite: 'lax',
+                domain:
+                  HOST_URL.hostname === 'localhost'
+                    ? HOST_URL.hostname
+                    : `.moetruyen.net`,
               });
 
               return true;
@@ -235,7 +253,9 @@ export const authOptionsWrapper = (
         maxAge: 15 * 24 * 60 * 60,
         encode: async (arg) => {
           if (isCredentialsCallback) {
-            const cookie = cookies().get('next-auth.session-token');
+            const cookie = cookies().get(
+              `${useSecureCookies ? '__Secure-' : ''}next-auth.session-token`
+            );
 
             if (cookie) return cookie.value;
             return '';

@@ -1,3 +1,5 @@
+import CommentSkeleton from '@/components/Skeleton/CommentSkeleton';
+import NavigationSkeleton from '@/components/Skeleton/NavigationSkeleton';
 import { buttonVariants } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { useIntersection, useWindowEvent } from '@mantine/hooks';
@@ -15,10 +17,14 @@ import {
   useState,
 } from 'react';
 import { CurrentPageContext, ImageContext, SizeContext } from '..';
-import Navigation from '../Navigation';
 
 const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
+  loading: () => <CommentSkeleton />,
+});
+const Navigation = dynamic(() => import('../Navigation'), {
+  ssr: false,
+  loading: () => <NavigationSkeleton />,
 });
 
 interface HorizontalViewChapterProps {

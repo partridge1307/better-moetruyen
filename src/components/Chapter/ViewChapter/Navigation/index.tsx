@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FC, memo, useContext } from 'react';
 import { ImageContext } from '..';
+import { useWindowEvent } from '@mantine/hooks';
 
 interface NavigationProps {
   currentChapterIdx: number;
@@ -33,6 +34,18 @@ const Navigation: FC<NavigationProps> = ({
   if (idx >= chapterList.length - 1) {
     hasNext = false;
   }
+
+  const keyDownHandler = (e: KeyboardEvent) => {
+    if ((e.key === '[' || e.code === 'BracketLeft') && hasPrev) {
+      router.push(`/chapter/${chapterList[idx - 1].id}`);
+      return;
+    }
+    if ((e.key === ']' || e.code === 'BracketRight') && hasNext) {
+      router.push(`/chapter/${chapterList[idx + 1].id}`);
+      return;
+    }
+  };
+  useWindowEvent('keydown', keyDownHandler);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import CommentSkeleton from '@/components/Comment/components/CommentSkeleton';
+import CommentSkeleton from '@/components/Skeleton/CommentSkeleton';
 import PostVoteSkeleton from '@/components/Forum/components/PostVoteSkeleton';
 import Username from '@/components/User/Username';
 import { buttonVariants } from '@/components/ui/Button';

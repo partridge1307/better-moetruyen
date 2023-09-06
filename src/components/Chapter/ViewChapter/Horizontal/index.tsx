@@ -186,7 +186,6 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       }}
                       fill
                       sizes="100vw"
-                      priority
                       unoptimized
                       src={image}
                       placeholder="blur"
@@ -203,7 +202,6 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       ref={(e) => setImage(e, idx)}
                       fill
                       sizes="100vw"
-                      priority
                       unoptimized
                       src={image}
                       placeholder="blur"
@@ -226,7 +224,6 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       }}
                       fill
                       sizes="100vw"
-                      priority
                       unoptimized
                       src={image}
                       placeholder="blur"
@@ -243,7 +240,6 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       ref={(e) => setImage(e, idx)}
                       fill
                       sizes="100vw"
-                      priority
                       unoptimized
                       src={image}
                       placeholder="blur"
@@ -267,7 +263,6 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                     sizes="100vw"
                     width={0}
                     height={0}
-                    priority
                     unoptimized
                     src={image}
                     placeholder="blur"
@@ -284,7 +279,6 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                     sizes="100vw"
                     width={0}
                     height={0}
-                    priority
                     unoptimized
                     src={image}
                     placeholder="blur"

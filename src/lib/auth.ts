@@ -142,7 +142,7 @@ export const authOptionsWrapper = (
                 expires: sessionExpiry,
                 httpOnly: true,
                 secure: true,
-                domain: `.${new URL(process.env.NEXTAUTH_URL!).host}`,
+                domain: `.moetruyen.net`,
               });
 
               return true;

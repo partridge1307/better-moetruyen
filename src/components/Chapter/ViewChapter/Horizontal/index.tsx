@@ -191,7 +191,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                         setImage(e, idx);
                       }}
                       fill
-                      sizes="50vw"
+                      sizes="75vw"
                       unoptimized
                       src={image}
                       placeholder="blur"
@@ -207,7 +207,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                     <Image
                       ref={(e) => setImage(e, idx)}
                       fill
-                      sizes="50vw"
+                      sizes="75vw"
                       unoptimized
                       src={image}
                       placeholder="blur"
@@ -229,7 +229,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                         setImage(e, idx);
                       }}
                       fill
-                      sizes="50vw"
+                      sizes="75vw"
                       unoptimized
                       src={image}
                       placeholder="blur"
@@ -245,7 +245,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                     <Image
                       ref={(e) => setImage(e, idx)}
                       fill
-                      sizes="50vw"
+                      sizes="75vw"
                       unoptimized
                       src={image}
                       placeholder="blur"
@@ -266,7 +266,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       ref(e);
                       setImage(e, idx);
                     }}
-                    sizes="50vw"
+                    sizes="75vw"
                     width={0}
                     height={0}
                     unoptimized
@@ -282,7 +282,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                   <Image
                     key={idx}
                     ref={(e) => setImage(e, idx)}
-                    sizes="50vw"
+                    sizes="75vw"
                     width={0}
                     height={0}
                     unoptimized

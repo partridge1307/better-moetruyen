@@ -124,7 +124,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               key={idx}
               width={0}
               height={0}
-              sizes="50vw"
+              sizes="75vw"
               unoptimized
               src={image}
               alt={`Trang ${idx + 1}`}
@@ -132,8 +132,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               blurDataURL={chapter.blurImages[idx]}
               className={cn('block w-fit h-auto mx-auto', {
                 'w-full': size === 'FITWIDTH',
-                'w-full h-fit lg:h-screen object-scale-down':
-                  size === 'FITHEIGHT',
+                'w-full h-fit object-scale-down': size === 'FITHEIGHT',
               })}
             />
           );
@@ -144,7 +143,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               key={idx}
               width={0}
               height={0}
-              sizes="50vw"
+              sizes="75vw"
               unoptimized
               src={image}
               placeholder="blur"

@@ -11,6 +11,7 @@ import UserBanner from '../User/UserBanner';
 import Username from '../User/Username';
 import { buttonVariants } from '../ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/Tabs';
+
 const TeamChapterList = dynamic(
   () => import('@/components/Team/TeamChapterList'),
   { loading: () => <Loader2 className="w-6 h-6 animate-spin" /> }

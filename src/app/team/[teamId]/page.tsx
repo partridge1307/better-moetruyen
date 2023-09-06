@@ -1,27 +1,23 @@
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { notFound, redirect } from 'next/navigation';
-import { FC } from 'react';
 import dynamic from 'next/dynamic';
+import { notFound } from 'next/navigation';
+import { FC } from 'react';
+
 const TabInfo = dynamic(() => import('@/components/Team/TabInfo'));
 
 interface pageProps {
   params: {
-    teamId: string | string[];
+    teamId: string;
   };
 }
 
 const page: FC<pageProps> = async ({ params }) => {
-  let teamId;
-
-  if (typeof params.teamId === 'string') teamId = params.teamId;
-  else teamId = params.teamId[0];
-
   const [session, team] = await Promise.all([
     getAuthSession(),
     db.team.findFirst({
       where: {
-        id: +teamId,
+        id: +params.teamId,
       },
       select: {
         id: true,
@@ -70,7 +66,6 @@ const page: FC<pageProps> = async ({ params }) => {
     }),
   ]);
 
-  if (!session) return redirect('/sign-in');
   if (!team) return notFound();
 
   return (

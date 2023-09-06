@@ -1,3 +1,6 @@
+import MangaControllSkeleton from '@/components/Skeleton/MangaControllSkeleton';
+import MangaDescSkeleton from '@/components/Skeleton/MangaDescSkeleton';
+import MangaTabsSkeleton from '@/components/Skeleton/MangaTabsSkeleton';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';
 import type { Manga } from '@prisma/client';
@@ -11,17 +14,29 @@ const MangaImage = dynamic(
   () => import('@/components/Manga/components/MangaImage'),
   {
     ssr: false,
+    loading: () => (
+      <div
+        className="rounded-md animate-pulse dark:bg-zinc-900"
+        style={{ aspectRatio: 4 / 3 }}
+      />
+    ),
   }
 );
 const MangaControll = dynamic(
-  () => import('@/components/Manga/components/MangaControll')
+  () => import('@/components/Manga/components/MangaControll'),
+  {
+    loading: () => <MangaControllSkeleton />,
+  }
 );
 const MangaDesc = dynamic(
   () => import('@/components/Manga/components/MangaDesc'),
-  { ssr: false }
+  { ssr: false, loading: () => <MangaDescSkeleton /> }
 );
 const MangaTabs = dynamic(
-  () => import('@/components/Manga/components/MangaTabs')
+  () => import('@/components/Manga/components/MangaTabs'),
+  {
+    loading: () => <MangaTabsSkeleton />,
+  }
 );
 
 interface pageProps {

@@ -1,13 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import {
-  Bell,
-  Menu,
-  MessageCircle,
-  Search as SearchIcon,
-  User2,
-} from 'lucide-react';
+import { Bell, Menu, Search as SearchIcon, User2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -15,8 +9,6 @@ import { usePathname } from 'next/navigation';
 import { useMemo, useRef } from 'react';
 import { Icons } from '../Icons';
 import UserAvatar from '../User/UserAvatar';
-import UserBanner from '../User/UserBanner';
-import Username from '../User/Username';
 import { buttonVariants } from '../ui/Button';
 import {
   DropdownMenu,
@@ -38,12 +30,9 @@ const Notifications = dynamic(() => import('@/components/Notify'), {
   ssr: false,
   loading: () => <Bell aria-label="Notify button" className="w-7 h-7" />,
 });
-const SignOutButton = dynamic(() => import('@/components/Auth/SignOutButton'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-10 p-2 px-4 rounded-md dark:bg-zinc-900" />
-  ),
-});
+const UserDropdownMenu = dynamic(
+  () => import('@/components/Auth/UserDropdownMenu')
+);
 
 const viewChapterRegex = /^\/chapter\/\d+(?:\/[\w-]+)?/;
 
@@ -99,68 +88,7 @@ const NavbarClient = () => {
             </DropdownMenuTrigger>
 
             {session?.user ? (
-              <DropdownMenuContent
-                align="end"
-                className="w-[250px] md:w-[300px] p-2"
-              >
-                <div>
-                  <div className="relative">
-                    <UserBanner user={session.user} className="rounded-md" />
-                    <UserAvatar
-                      user={session.user}
-                      className="w-20 h-20 lg:w-24 lg:h-24 border-4 absolute left-2 bottom-0 translate-y-1/2"
-                    />
-                  </div>
-
-                  <Username
-                    user={session.user}
-                    className="text-lg font-semibold text-start pl-2 mt-14 lg:pl-4 lg:mt-16"
-                  />
-                </div>
-                <DropdownMenuSeparator />
-                <div className="space-y-2">
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/me/followed-manga"
-                      className="py-2 cursor-pointer"
-                    >
-                      Truyện đang theo dõi
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/me/followed-team"
-                      className="py-2 cursor-pointer"
-                    >
-                      Team đang theo dõi
-                    </Link>
-                  </DropdownMenuItem>
-                </div>
-                <DropdownMenuSeparator className="mt-2" />
-
-                <Link
-                  href="/chat"
-                  className={cn(buttonVariants(), 'w-full cursor-pointer')}
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  Trò chuyện
-                </Link>
-
-                <DropdownMenuSeparator className="mt-2" />
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/me"
-                    className={cn(
-                      buttonVariants({ variant: 'outline' }),
-                      'w-full cursor-pointer'
-                    )}
-                  >
-                    Quản lý
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="mt-4" />
-                <SignOutButton />
-              </DropdownMenuContent>
+              <UserDropdownMenu session={session} />
             ) : (
               <DropdownMenuContent align="end" className="min-w-[200px] p-2">
                 <DropdownMenuItem asChild>

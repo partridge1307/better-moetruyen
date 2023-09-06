@@ -131,7 +131,10 @@ export const authOptionsWrapper = (
             httpOnly: true,
             sameSite: 'lax',
             path: '/',
-            domain: `.moetruyen.net`,
+            domain:
+              HOST_URL.hostname === 'localhost'
+                ? HOST_URL.hostname
+                : `.moetruyen.net`,
             secure: useSecureCookies,
           },
         },
@@ -159,12 +162,12 @@ export const authOptionsWrapper = (
                 {
                   expires: sessionExpiry,
                   httpOnly: true,
-                  secure: useSecureCookies ? true : false,
                   sameSite: 'lax',
                   domain:
                     HOST_URL.hostname === 'localhost'
                       ? HOST_URL.hostname
                       : `.moetruyen.net`,
+                  secure: useSecureCookies,
                 }
               );
 

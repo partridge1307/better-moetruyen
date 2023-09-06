@@ -5,10 +5,22 @@ import { cn } from '@/lib/utils';
 import type { Manga } from '@prisma/client';
 import type { Session } from 'next-auth';
 import { FC } from 'react';
-import MangaFollow from './MangaFollow';
 import { Settings, Upload } from 'lucide-react';
 import Link from 'next/link';
-import ShareButton from '@/components/ShareButton';
+import dynamic from 'next/dynamic';
+
+const MangaFollow = dynamic(() => import('./MangaFollow'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-12 h-10 rounded-md animate-pulse dark:bg-zinc-900" />
+  ),
+});
+const ShareButton = dynamic(() => import('@/components/ShareButton'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-28 h-10 rounded-md animate-pulse dark:bg-zinc-900" />
+  ),
+});
 
 interface MangaControllProps {
   manga: Pick<Manga, 'id' | 'slug' | 'name' | 'creatorId'>;

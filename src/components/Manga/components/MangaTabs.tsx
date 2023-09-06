@@ -1,3 +1,8 @@
+import ListChapter from '@/components/Chapter/ListChapter/ListChapter';
+import ListTreeChapter from '@/components/Chapter/ListChapter/ListTreeChapter';
+import DiscEmbed from '@/components/DiscEmbed';
+import CommentSkeleton from '@/components/Skeleton/CommentSkeleton';
+import FBEmbedSkeleton from '@/components/Skeleton/FBEmbedSkeleton';
 import UserAvatar from '@/components/User/UserAvatar';
 import UserBanner from '@/components/User/UserBanner';
 import Username from '@/components/User/Username';
@@ -10,16 +15,13 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
-const FBEmbed = dynamic(() => import('@/components/FBEmbed'), { ssr: false });
-const DiscEmbed = dynamic(() => import('@/components/DiscEmbed'));
-const ListChapter = dynamic(
-  () => import('@/components/Chapter/ListChapter/ListChapter')
-);
-const ListTreeChapter = dynamic(
-  () => import('@/components/Chapter/ListChapter/ListTreeChapter')
-);
+const FBEmbed = dynamic(() => import('@/components/FBEmbed'), {
+  ssr: false,
+  loading: () => <FBEmbedSkeleton />,
+});
 const Comments = dynamic(() => import('@/components/Comment/Manga'), {
   ssr: false,
+  loading: () => <CommentSkeleton />,
 });
 
 interface MangaTabsProps {
@@ -137,12 +139,12 @@ const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
             </TabsList>
           </div>
 
-          <TabsContent value="group">
-            <ListTreeChapter mangaId={Manga.id} />
-          </TabsContent>
-
           <TabsContent value="list">
             <ListChapter mangaId={Manga.id} />
+          </TabsContent>
+
+          <TabsContent value="group">
+            <ListTreeChapter mangaId={Manga.id} />
           </TabsContent>
         </Tabs>
       </TabsContent>

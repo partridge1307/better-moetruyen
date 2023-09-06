@@ -151,8 +151,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               alt={`Trang ${idx + 1}`}
               className={cn('block w-fit h-auto mx-auto', {
                 'w-full': size === 'FITWIDTH',
-                'w-full h-fit lg:h-screen object-scale-down':
-                  size === 'FITHEIGHT',
+                'w-full h-fit object-scale-down': size === 'FITHEIGHT',
               })}
             />
           );

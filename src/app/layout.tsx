@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   description:
     'Web đọc truyện tranh online tiện ích nhất được cập nhật liên tục mỗi ngày - Cùng tham gia đọc truyện và thảo luận tại Moetruyen',
   colorScheme: 'dark light',
+  themeColor: 'dark light',
   referrer: 'origin-when-cross-origin',
   generator: 'Moetruyen',
   authors: [{ name: 'Moetruyen' }],

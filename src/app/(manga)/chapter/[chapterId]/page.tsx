@@ -1,15 +1,9 @@
-import ViewChapterSkeleton from '@/components/Skeleton/ViewChapterSkeleton';
+import ViewChapter from '@/components/Chapter/ViewChapter';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
-
-const ViewChapter = dynamic(() => import('@/components/Chapter/ViewChapter'), {
-  ssr: false,
-  loading: () => <ViewChapterSkeleton />,
-});
 
 export async function generateMetadata({
   params,
@@ -88,7 +82,7 @@ interface pageProps {
 
 const page: FC<pageProps> = async ({ params }) => {
   const [chapter, session] = await Promise.all([
-    db.chapter.findFirst({
+    db.chapter.findUnique({
       where: {
         id: +params.chapterId,
         isPublished: true,

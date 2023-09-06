@@ -10,6 +10,7 @@ import {
   useState,
   type FormEvent,
   memo,
+  useEffect,
 } from 'react';
 import { CurrentPageContext, ImageContext } from '..';
 
@@ -17,8 +18,10 @@ interface ChapterPageProps {}
 
 const ChapterPage: FC<ChapterPageProps> = ({}) => {
   const { currentPage } = useContext(CurrentPageContext);
-  const [idx, setIdx] = useState(1);
   const { images } = useContext(ImageContext);
+  const [idx, setIdx] = useState(1);
+  const [imagesMounted, setImagesMounted] = useState<HTMLImageElement[]>([]);
+  const [currentPageMounted, setCurrentPageMounted] = useState(0);
 
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
@@ -31,13 +34,21 @@ const ChapterPage: FC<ChapterPageProps> = ({}) => {
     [idx, images]
   );
 
+  useEffect(() => {
+    setImagesMounted(images);
+  }, [images]);
+
+  useEffect(() => {
+    setCurrentPageMounted(currentPage);
+  }, [currentPage]);
+
   return (
     <Popover>
       <PopoverTrigger
         aria-label="chapter page button"
         className="rounded-md p-1 dark:bg-zinc-900/60"
       >
-        {currentPage + 1} / {images.length}
+        {currentPageMounted + 1} / {imagesMounted.length}
       </PopoverTrigger>
 
       <PopoverContent className="w-fit p-2 dark:bg-zinc-900">
@@ -46,7 +57,7 @@ const ChapterPage: FC<ChapterPageProps> = ({}) => {
             aria-label="scroll specific page input"
             type="number"
             min={1}
-            max={images.length}
+            max={imagesMounted.length}
             value={idx}
             onChange={(e) => {
               const value = e.target.valueAsNumber;
@@ -57,7 +68,7 @@ const ChapterPage: FC<ChapterPageProps> = ({}) => {
           />
           <button type="submit" className="hidden" />
         </form>{' '}
-        / <span className="px-2">{images.length}</span>
+        / <span className="px-2">{imagesMounted.length}</span>
       </PopoverContent>
     </Popover>
   );

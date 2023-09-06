@@ -22,15 +22,22 @@ const ProgressLightbar = () => {
   }, [currentPage]);
 
   return (
-    currentPageMounted >= 0 && (
-      <div className="fixed bottom-0 inset-x-0 h-12 flex items-end gap-4 px-6 group hover:items-center hover:dark:bg-zinc-900">
-        <p className="hidden group-hover:block">1</p>
+    <div
+      className={cn(
+        'fixed bottom-0 inset-x-0 h-12 flex items-end gap-4 px-6 group hover:items-center hover:dark:bg-zinc-900',
+        {
+          hidden: currentPageMounted < 0,
+        }
+      )}
+    >
+      <p className="hidden group-hover:block">1</p>
 
-        <div className="relative w-full h-full flex items-end group-hover:items-center gap-2">
-          {imagesMounted.map((el, idx) => (
-            <HoverCard key={idx} openDelay={100} closeDelay={100}>
-              <HoverCardTrigger
-                aria-label={`scroll to ${idx + 1} button`}
+      <div className="relative w-full h-full flex items-end group-hover:items-center gap-2">
+        {imagesMounted.map((el, idx) => (
+          <HoverCard key={idx} openDelay={100} closeDelay={100}>
+            <HoverCardTrigger asChild>
+              <button
+                aria-label="scroll to page button"
                 className={cn(
                   'w-full h-[10%] group-hover:h-1/3 transition-all rounded-md hover:cursor-pointer',
                   {
@@ -42,16 +49,16 @@ const ProgressLightbar = () => {
                   el.scrollIntoView({ behavior: 'smooth' });
                 }}
               />
-              <HoverCardContent className="w-fit p-2 rounded-full dark:bg-zinc-800">
-                <p>{idx + 1}</p>
-              </HoverCardContent>
-            </HoverCard>
-          ))}
-        </div>
-
-        <p className="hidden group-hover:block">{imagesMounted.length}</p>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-fit p-2 rounded-full dark:bg-zinc-800">
+              <p>{idx + 1}</p>
+            </HoverCardContent>
+          </HoverCard>
+        ))}
       </div>
-    )
+
+      <p className="hidden group-hover:block">{imagesMounted.length}</p>
+    </div>
   );
 };
 

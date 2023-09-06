@@ -1,5 +1,9 @@
+import { buttonVariants } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { useIntersection, useWindowEvent } from '@mantine/hooks';
+import type { Chapter } from '@prisma/client';
+import { ChevronLeft, ChevronRight, MessagesSquare } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import {
   FC,
@@ -12,10 +16,6 @@ import {
 } from 'react';
 import { CurrentPageContext, ImageContext, SizeContext } from '..';
 import Navigation from '../Navigation';
-import type { Chapter } from '@prisma/client';
-import { ChevronLeft, ChevronRight, MessagesSquare } from 'lucide-react';
-import { buttonVariants } from '@/components/ui/Button';
-import dynamic from 'next/dynamic';
 
 const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
@@ -37,10 +37,11 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
   const { images, setImages } = useContext(ImageContext);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const navigationRef = useRef<HTMLDivElement>(null);
   const anchorRef = useRef<HTMLImageElement>(null);
   const { ref, entry } = useIntersection({
     root: anchorRef.current,
-    threshold: size === 'ORIGINAL' ? 0.1 : 1,
+    threshold: 0.1,
   });
 
   // Set images
@@ -100,19 +101,15 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
   // Observe images
   useEffect(() => {
     const observer = new IntersectionObserver(callback, {
-      threshold: size === 'ORIGINAL' ? 0.1 : 1,
+      threshold: 0.1,
     });
 
     if (images.length) {
       images.forEach((e) => {
         observer.observe(e);
       });
-
-      const target = document.getElementById(
-        'navigation-section'
-      ) as HTMLDivElement;
-      observer.observe(target);
     }
+    navigationRef.current && observer.observe(navigationRef.current);
 
     return () => {
       observer.disconnect();
@@ -130,12 +127,9 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
   const scrollNext = useCallback(() => {
     const el = images[currentPage + 1];
 
-    if (!!el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      const target = document.getElementById('navigation-section');
-      target?.scrollIntoView({ behavior: 'smooth' });
-    }
+    !!el
+      ? el.scrollIntoView({ behavior: 'smooth' })
+      : navigationRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentPage, images]);
 
   // KeyDown
@@ -148,12 +142,12 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
   // Swipe, get touch start posiiion
   const onTouchStart = useCallback((e: TouchEvent<HTMLDivElement>) => {
     setTouchEnd(null);
-    setTouchStart(e.targetTouches.item(0).clientX);
+    setTouchStart(e.targetTouches[0].clientX);
   }, []);
 
   // Swipe, get touch end position
   const onTouchMove = useCallback((e: TouchEvent<HTMLDivElement>) => {
-    setTouchEnd(e.targetTouches.item(0).clientX);
+    setTouchEnd(e.targetTouches[0].clientX);
   }, []);
 
   // Swipe, logic check when touch end
@@ -163,10 +157,9 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
     const distance = touchStart - touchEnd;
 
     const isLeftSwipe = !!(distance < -minSwipeDistance);
-    const isRightSwipe = !!(distance > minSwipeDistance);
 
     if (isLeftSwipe) scrollPrev();
-    else if (isRightSwipe) scrollNext();
+    else scrollNext();
   }, [scrollNext, scrollPrev, touchEnd, touchStart]);
 
   return (
@@ -177,7 +170,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
       onTouchEnd={onTouchEnd}
     >
       <div
-        className={cn('flex w-full overflow-hidden', {
+        className={cn('flex w-full gap-3 lg:gap-6 overflow-hidden', {
           'h-screen': size === 'FITHEIGHT' || size === 'FITWIDTH',
         })}
       >
@@ -298,8 +291,14 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
           : null}
 
         <div
+          ref={navigationRef}
           id="navigation-section"
-          className="relative w-full h-full shrink-0 container max-sm:px-2 inline-flex justify-center items-center"
+          className={cn(
+            'relative w-full h-full shrink-0 container max-sm:px-2 inline-flex justify-center items-center',
+            {
+              'h-screen': size === 'ORIGINAL',
+            }
+          )}
         >
           <div className="w-full lg:w-2/3 h-2/3 p-4 rounded-md inline-flex flex-col items-center justify-between dark:bg-zinc-900/60">
             <button
@@ -345,9 +344,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
             aria-label="scroll back to navigation section"
             className={cn(buttonVariants(), 'space-x-2 self-start')}
             onClick={() => {
-              const target = document.getElementById('navigation-section');
-
-              target?.scrollIntoView({ behavior: 'smooth' });
+              navigationRef.current?.scrollIntoView({ behavior: 'smooth' });
             }}
           >
             <ChevronLeft className="w-5 h-5" />
@@ -370,10 +367,10 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
           'absolute inset-y-0 w-1/3 left-0 top-0 focus:outline-none',
           {
             hidden: currentPage === -2,
+            'hover:cursor-default': currentPage === 0 || currentPage === -2,
           }
         )}
-        disabled={currentPage === 0 || currentPage === -2}
-        onClick={() => scrollPrev()}
+        onClick={scrollPrev}
       />
       <button
         aria-label="scroll next page"
@@ -381,10 +378,11 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
           'absolute inset-y-0 w-1/3 right-0 top-0 focus:outline-none',
           {
             hidden: currentPage === -2,
+            'hover:cursor-default':
+              currentPage > images.length - 1 || currentPage === -2,
           }
         )}
-        disabled={currentPage > images.length - 1 || currentPage === -2}
-        onClick={() => scrollNext()}
+        onClick={scrollNext}
       />
     </div>
   );

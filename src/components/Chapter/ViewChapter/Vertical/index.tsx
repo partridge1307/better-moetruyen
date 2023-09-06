@@ -27,7 +27,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
   const anchorRef = useRef<HTMLImageElement>(null);
   const { ref, entry } = useIntersection({
     root: anchorRef.current,
-    threshold: size === 'FITHEIGHT' || size === 'FITWIDTH' ? 0.2 : 1,
+    threshold: 0.2,
   });
 
   const setImage = useCallback(
@@ -86,7 +86,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
 
   useEffect(() => {
     const observer = new IntersectionObserver(callback, {
-      threshold: size === 'FITWIDTH' || size === 'FITHEIGHT' ? 0.2 : 1,
+      threshold: 0.2,
     });
 
     if (images.length) {

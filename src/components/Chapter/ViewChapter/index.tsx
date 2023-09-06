@@ -6,9 +6,9 @@ import ViewChapterControllSkeleton from '@/components/Skeleton/ViewChapterContro
 import type { Chapter, Manga } from '@prisma/client';
 import dynamic from 'next/dynamic';
 import {
-  Dispatch,
+  type Dispatch,
   FC,
-  SetStateAction,
+  type SetStateAction,
   createContext,
   useEffect,
   useState,

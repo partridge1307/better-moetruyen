@@ -177,7 +177,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
     >
       <div
         className={cn('flex w-full gap-3 lg:gap-6 overflow-hidden', {
-          'h-screen': size === 'FITHEIGHT' || size === 'FITWIDTH',
+          'h-screen': size === 'ORIGINAL' || size === 'FITWIDTH',
         })}
       >
         {size === 'FITWIDTH'
@@ -218,7 +218,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                   </div>
                 );
             })
-          : size === 'FITHEIGHT'
+          : size === 'ORIGINAL'
           ? chapter.images.map((image, idx) => {
               if (idx === Math.floor(chapter.images.length * 0.7))
                 return (
@@ -256,7 +256,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                   </div>
                 );
             })
-          : size === 'ORIGINAL'
+          : size === 'FITHEIGHT'
           ? chapter.images.map((image, idx) => {
               if (idx === Math.floor(chapter.images.length * 0.7))
                 return (
@@ -302,7 +302,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
           className={cn(
             'relative w-full h-full shrink-0 container max-sm:px-2 inline-flex justify-center items-center',
             {
-              'h-screen': size === 'ORIGINAL',
+              'h-screen': size === 'FITHEIGHT',
             }
           )}
         >

@@ -113,6 +113,7 @@ const page: FC<pageProps> = async ({ params }) => {
     },
     select: {
       id: true,
+      slug: true,
       name: true,
       image: true,
       description: true,

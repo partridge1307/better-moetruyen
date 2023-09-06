@@ -11,7 +11,7 @@ import Link from 'next/link';
 import ShareButton from '@/components/ShareButton';
 
 interface MangaControllProps {
-  manga: Pick<Manga, 'id' | 'name' | 'creatorId'>;
+  manga: Pick<Manga, 'id' | 'slug' | 'name' | 'creatorId'>;
 }
 
 async function history(session: Session | null, mangaId: number) {
@@ -118,7 +118,7 @@ const MangaControll: FC<MangaControllProps> = async ({ manga }) => {
 
       {!!session && <MangaFollow follow={follow} mangaId={manga.id} />}
 
-      <ShareButton url={`/manga/${manga.id}`} title={manga.name} />
+      <ShareButton url={`/manga/${manga.slug}`} title={manga.name} />
 
       {manga.creatorId === session?.user.id && (
         <>

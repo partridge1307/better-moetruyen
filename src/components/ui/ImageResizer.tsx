@@ -20,6 +20,7 @@ export default function ImageResizer({
 }: {
   editor: LexicalEditor;
   imageRef: { current: null | HTMLElement };
+  // eslint-disable-next-line no-unused-vars
   onResizeEnd: (width: 'inherit' | number, height: 'inherit' | number) => void;
   onResizeStart: () => void;
 }): JSX.Element {

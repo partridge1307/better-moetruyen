@@ -13,14 +13,12 @@ import { cn } from '@/lib/utils';
 import { useClipboard } from '@mantine/hooks';
 import { Check, Copy, Facebook, Share2 } from 'lucide-react';
 import {
-  FacebookMessengerIcon,
-  FacebookMessengerShareButton,
   FacebookShareButton,
+  RedditIcon,
+  RedditShareButton,
   TelegramIcon,
   TelegramShareButton,
   TwitterShareButton,
-  RedditShareButton,
-  RedditIcon,
 } from 'next-share';
 import { FC } from 'react';
 
@@ -52,14 +50,6 @@ const ShareButton: FC<PostShareButtonProps> = ({ url, title }) => {
             >
               <Facebook className="w-8 h-8" />
             </FacebookShareButton>
-            {/* Messenger */}
-            <FacebookMessengerShareButton
-              url={`${serverDomain}${url}`}
-              appId={'1042446022855517'}
-              blankTarget
-            >
-              <FacebookMessengerIcon size={'2rem'} round />
-            </FacebookMessengerShareButton>
             {/* Twitter */}
             <TwitterShareButton
               url={`${serverDomain}${url}`}

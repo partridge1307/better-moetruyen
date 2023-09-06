@@ -6,11 +6,8 @@ import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
-import { FC } from 'react';
 
-interface pageProps {}
-
-const page: FC<pageProps> = async ({}) => {
+const page = async ({}) => {
   const [subForums, session] = await Promise.all([
     db.subForum.findMany({
       orderBy: {
@@ -34,7 +31,7 @@ const page: FC<pageProps> = async ({}) => {
   ]);
 
   return (
-    <section className="container max-sm:px-2 pt-20">
+    <main className="container max-sm:px-2 pt-20">
       <section className="grid grid-cols-1 lg:grid-cols-[1fr_.45fr] gap-6">
         <div className="space-y-2">
           <h1 className="text-xl font-semibold">Bài viết</h1>
@@ -73,7 +70,7 @@ const page: FC<pageProps> = async ({}) => {
           </div>
         </div>
       </section>
-    </section>
+    </main>
   );
 };
 

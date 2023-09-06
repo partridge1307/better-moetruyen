@@ -22,10 +22,9 @@ const PostVoteServer = dynamic(
   () => import('@/components/Forum/components/PostVoteServer'),
   { loading: () => <PostVoteSkeleton /> }
 );
-const PostShareButton = dynamic(
-  () => import('@/components/Forum/components/PostShareButton'),
-  { ssr: false }
-);
+const PostShareButton = dynamic(() => import('@/components/ShareButton'), {
+  ssr: false,
+});
 const Comments = dynamic(() => import('@/components/Comment/Post'), {
   ssr: false,
   loading: () => <CommentSkeleton />,
@@ -172,22 +171,19 @@ const page: FC<pageProps> = async ({ params }) => {
           />
 
           <div className="flex items-center gap-4">
-            {!!(post.authorId === session?.user.id) && (
-              <Link
-                href={`/m/${params.slug}/edit/${post.id}`}
-                className={cn(
-                  buttonVariants({ size: 'sm' }),
-                  'flex items-center gap-2'
-                )}
-              >
-                <Pencil className="w-5 h-5" /> Chỉnh sửa
-              </Link>
-            )}
-
             <PostShareButton
               url={`/m/${params.slug}/${post.id}`}
               title={post.title}
             />
+
+            {!!(post.authorId === session?.user.id) && (
+              <Link
+                href={`/m/${params.slug}/edit/${post.id}`}
+                className={cn(buttonVariants({ size: 'sm' }), 'gap-2')}
+              >
+                <Pencil className="w-5 h-5" /> Chỉnh sửa
+              </Link>
+            )}
           </div>
         </div>
       </div>

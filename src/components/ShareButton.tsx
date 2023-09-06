@@ -12,7 +12,6 @@ import { serverDomain } from '@/config';
 import { cn } from '@/lib/utils';
 import { useClipboard } from '@mantine/hooks';
 import { Check, Copy, Facebook, Share2 } from 'lucide-react';
-import { FC } from 'react';
 import {
   FacebookMessengerIcon,
   FacebookMessengerShareButton,
@@ -20,54 +19,71 @@ import {
   TelegramIcon,
   TelegramShareButton,
   TwitterShareButton,
-} from 'react-share';
+  RedditShareButton,
+  RedditIcon,
+} from 'next-share';
+import { FC } from 'react';
 
 interface PostShareButtonProps {
   url: string;
   title: string;
 }
 
-const PostShareButton: FC<PostShareButtonProps> = ({ url, title }) => {
+const ShareButton: FC<PostShareButtonProps> = ({ url, title }) => {
   const clipboard = useClipboard({ timeout: 500 });
 
   return (
     <Dialog>
       <DialogTrigger
-        className={cn(
-          buttonVariants({ variant: 'ghost' }),
-          'flex items-center gap-2 rounded-xl'
-        )}
+        className={cn(buttonVariants({ variant: 'ghost' }), 'gap-2 rounded-md')}
       >
         <Share2 className="w-5 h-5" /> Chỉa sẻ
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Chia sẻ</DialogTitle>
         <div className="space-y-6">
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap justify-between lg:justify-start items-center gap-2">
+            {/* Facebook */}
             <FacebookShareButton
               url={`${serverDomain}${url}`}
-              title={title}
+              quote={title}
               hashtag="#Moetruyen"
+              blankTarget
             >
               <Facebook className="w-8 h-8" />
             </FacebookShareButton>
+            {/* Messenger */}
             <FacebookMessengerShareButton
               url={`${serverDomain}${url}`}
-              title={title}
-              appId="1042446022855517"
+              appId={'1042446022855517'}
+              blankTarget
             >
               <FacebookMessengerIcon size={'2rem'} round />
             </FacebookMessengerShareButton>
+            {/* Twitter */}
             <TwitterShareButton
               url={`${serverDomain}${url}`}
               title={title}
               hashtags={['Moetruyen', `${title.split(' ').join('')}`]}
+              blankTarget
             >
               <Icons.twitterX className="w-8 h-8 dark:fill-white" />
             </TwitterShareButton>
-            <TelegramShareButton url={`${serverDomain}${url}`} title={title}>
+            {/* Telegram */}
+            <TelegramShareButton
+              url={`${serverDomain}${url}`}
+              title={title}
+              blankTarget
+            >
               <TelegramIcon size={'2rem'} round />
             </TelegramShareButton>
+            <RedditShareButton
+              url={`${serverDomain}${url}`}
+              title={title}
+              blankTarget
+            >
+              <RedditIcon size={'2rem'} round />
+            </RedditShareButton>
           </div>
 
           <div className="grid grid-cols-[1fr_.1fr] items-center gap-2">
@@ -89,4 +105,4 @@ const PostShareButton: FC<PostShareButtonProps> = ({ url, title }) => {
   );
 };
 
-export default PostShareButton;
+export default ShareButton;

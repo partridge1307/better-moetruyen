@@ -17,10 +17,9 @@ const MoetruyenEditorOutput = dynamic(
     ssr: false,
   }
 );
-const PostShareButton = dynamic(
-  () => import('@/components/Forum/components/PostShareButton'),
-  { ssr: false }
-);
+const PostShareButton = dynamic(() => import('@/components/ShareButton'), {
+  ssr: false,
+});
 
 interface PostCardProps {
   subForumSlug: string;

@@ -125,24 +125,21 @@ const page: FC<pageProps> = async ({ params }) => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <Link
               href={`/me/manga/${manga.id}/edit`}
-              className={cn(
-                buttonVariants(),
-                'w-full flex gap-2 max-sm:col-span-2'
-              )}
+              className={cn(buttonVariants(), 'w-full gap-2 max-sm:col-span-2')}
             >
               Chỉnh sửa
               <Edit className="w-4 h-4" />
             </Link>
             <Link
               href={`/me/manga/${manga.id}/chapter`}
-              className={cn(buttonVariants(), 'w-full flex gap-2')}
+              className={cn(buttonVariants(), 'w-full gap-2')}
             >
               Chapter
               <Newspaper className="w-4 h-4" />
             </Link>
             <Link
               href={`/manga/${manga.slug}`}
-              className={cn(buttonVariants(), 'w-full flex items-center gap-1')}
+              className={cn(buttonVariants(), 'w-full gap-2')}
             >
               Đến xem truyện
               <ArrowUpRightFromCircle className="h-4 w-4" />

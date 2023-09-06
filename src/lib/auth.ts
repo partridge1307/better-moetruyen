@@ -142,7 +142,8 @@ export const authOptionsWrapper = (
                 expires: sessionExpiry,
                 httpOnly: true,
                 secure: true,
-                domain: `.moetruyen.net`,
+                sameSite: 'none',
+                domain: `moetruyen.net`,
               });
 
               return true;

@@ -4,7 +4,7 @@ import { FC } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '../ui/Button';
+import { buttonVariants } from '@/components/ui/Button';
 
 interface MangaPaginationControll {
   count: number;

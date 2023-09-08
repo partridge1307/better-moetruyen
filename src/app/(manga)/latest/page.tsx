@@ -1,5 +1,5 @@
 import LatestMangaCard from '@/components/Manga/components/LastestMangaCard';
-import MangaPaginationControll from '@/components/Manga/MangaPaginationControll';
+import MangaPaginationControll from '@/components/Manga/components/MangaPaginationControll';
 import { db } from '@/lib/db';
 import type { Metadata } from 'next';
 import { FC } from 'react';

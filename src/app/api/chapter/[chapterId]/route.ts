@@ -183,6 +183,6 @@ export async function POST(
         return new Response('Not found', { status: 404 });
       }
     }
-    return new Response('Không thể upload chapter', { status: 500 });
+    return new Response('Something went wrong', { status: 500 });
   }
 }

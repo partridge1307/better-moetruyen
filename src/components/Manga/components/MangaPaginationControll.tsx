@@ -1,56 +1,68 @@
 'use client';
 
-import { FC } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Button, buttonVariants } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/ui/Button';
+import { usePagination } from '@mantine/hooks';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { FC } from 'react';
 
 interface MangaPaginationControll {
-  count: number;
-  hasPrevPage: boolean;
-  hasNextPage: boolean;
+  total: number;
   route: string;
 }
 
 const MangaPaginationControll: FC<MangaPaginationControll> = ({
-  count,
-  hasPrevPage,
-  hasNextPage,
+  total,
   route,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const page = parseInt(searchParams.get('page') ?? '1');
+  const limit = parseInt(searchParams.get('limit') ?? '10');
 
-  const page = searchParams.get('page') ?? '1';
-  const perPage = searchParams.get('per-page') ?? '10';
+  const pagigation = usePagination({
+    total,
+    page: page,
+  });
 
   return (
-    <div className="flex justify-center items-center gap-6">
-      <button
-        disabled={!hasPrevPage}
-        className={cn(buttonVariants())}
-        onClick={() =>
-          router.push(`${route}?page=${Number(page) - 1}&per-page=${perPage}`)
-        }
+    <section className="flex flex-wrap justify-center items-center gap-4">
+      <Button
+        size={'sm'}
+        className="px-2"
+        disabled={!(page - 1 > 0)}
+        onClick={() => router.push(`${route}&limit=${limit}&page=${page - 1}`)}
       >
-        <ChevronLeft />
-      </button>
+        <ChevronLeft className="w-5 h-5" />
+      </Button>
 
-      <div>
-        {page} / {Math.ceil(count / Number(perPage))}
-      </div>
+      {pagigation.range.map((range, idx) => {
+        if (range == 'dots') return <span key={idx}>...</span>;
+        else
+          return (
+            <Link
+              key={idx}
+              href={`${route}&limit=${limit}&page=${range}`}
+              className={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), {
+                'bg-orange-500': range === pagigation.active,
+              })}
+            >
+              {range}
+            </Link>
+          );
+      })}
 
-      <button
-        disabled={!hasNextPage}
-        className={cn(buttonVariants())}
-        onClick={() =>
-          router.push(`${route}?page=${Number(page) + 1}&per-page=${perPage}`)
-        }
+      <Button
+        size={'sm'}
+        className="px-2"
+        disabled={!((page - 1) * limit + limit < total)}
+        onClick={() => router.push(`${route}&limit=${limit}&page=${page + 1}`)}
       >
-        <ChevronRight />
-      </button>
-    </div>
+        <ChevronRight className="w-5 h-5" />
+      </Button>
+    </section>
   );
 };
 

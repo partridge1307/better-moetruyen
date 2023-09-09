@@ -4,13 +4,24 @@ import { Tags } from '@/lib/query';
 import type { Manga, MangaAuthor } from '@prisma/client';
 import dynamic from 'next/dynamic';
 import { FC, useCallback, useState } from 'react';
-import AdvancedMangaCard from './components/AdvancedMangaCard';
-import { Button } from '../ui/Button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const AdvancedSearchControll = dynamic(
   () => import('@/components/Manga/components/AdvancedSearchControll'),
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-44 lg:h-28 rounded-md animate-pulse dark:bg-zinc-900" />
+    ),
+  }
+);
+const MangaPaginationControll = dynamic(
+  () => import('@/components/Manga/components/MangaPaginationControll'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-1/2 h-9 mx-auto rounded-md animate-pulse dark:bg-zinc-900" />
+    ),
+  }
 );
 
 export type AdvancedMangas = Pick<
@@ -24,41 +35,26 @@ export type AdvancedMangas = Pick<
 };
 
 interface AdvancedSearchProps {
-  intialData: { mangas: AdvancedMangas[]; lastCursor: number | undefined };
   tags: Tags[];
+  total: number;
+  children: React.ReactNode;
 }
 
-const AdvancedSearch: FC<AdvancedSearchProps> = ({ intialData, tags }) => {
-  const [results, setResults] = useState(intialData.mangas);
+const AdvancedSearch: FC<AdvancedSearchProps> = ({ tags, total, children }) => {
+  const [query, setQuery] = useState('/advanced-search');
 
-  const onQueryStrChange = useCallback((query: string) => {
-    console.log(query);
+  const onQueryStrChange = useCallback((queryStr: string) => {
+    setQuery(queryStr);
   }, []);
 
   return (
-    <main className="container max-sm:px-2 pt-20 space-y-10">
+    <>
       <AdvancedSearchControll tags={tags} onQueryStrChange={onQueryStrChange} />
 
-      {!!results.length ? (
-        <section className="grid grid-cols-2 gap-4">
-          {results.map((manga) => (
-            <AdvancedMangaCard key={manga.id} manga={manga} />
-          ))}
-        </section>
-      ) : (
-        <p>Không có kết quả</p>
-      )}
+      {children}
 
-      <section>
-        <Button>
-          <ChevronLeft className="w-5 h-5" />
-        </Button>
-
-        <Button>
-          <ChevronRight className="w-5 h-5" />
-        </Button>
-      </section>
-    </main>
+      <MangaPaginationControll total={total} route={query} />
+    </>
   );
 };
 

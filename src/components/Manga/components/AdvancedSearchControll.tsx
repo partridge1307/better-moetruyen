@@ -10,14 +10,17 @@ import {
   SelectValue,
 } from '@/components/ui/Select';
 import { Switch } from '@/components/ui/Switch';
-import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
 import { Tags } from '@/lib/query';
 import { cn } from '@/lib/utils';
 import { useDebouncedValue } from '@mantine/hooks';
 import { DialogClose } from '@radix-ui/react-dialog';
 import { Filter, FilterX } from 'lucide-react';
-import { ReadonlyURLSearchParams, useSearchParams } from 'next/navigation';
-import { FC, useEffect, useState } from 'react';
+import {
+  ReadonlyURLSearchParams,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+import { FC, useCallback, useEffect, useState } from 'react';
 
 interface AdvancedSearchControllProps {
   tags: Tags[];
@@ -61,6 +64,7 @@ function getSearchParams(searchParams: ReadonlyURLSearchParams) {
   const excludeModeParams = searchParams.get('excludeMode') ?? 'or';
   const nameParams = searchParams.get('name') ?? '';
   const authorParams = searchParams.get('author') ?? '';
+  const limitParams = searchParams.get('limit') ?? '10';
 
   return {
     sortByParams,
@@ -71,6 +75,7 @@ function getSearchParams(searchParams: ReadonlyURLSearchParams) {
     excludeModeParams,
     nameParams,
     authorParams,
+    limitParams,
   };
 }
 
@@ -78,6 +83,7 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
   tags,
   onQueryStrChange,
 }) => {
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const {
@@ -89,6 +95,7 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
     excludeModeParams,
     nameParams,
     authorParams,
+    limitParams,
   } = getSearchParams(searchParams);
 
   const [include, onIncludeChange] = useState(
@@ -102,12 +109,12 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
   const [sortBy, onSortChange] = useState(sortByParams);
   const [order, onOrderChange] = useState(orderParams);
   const [name, setName] = useState(nameParams);
-  const [debouncedName] = useDebouncedValue(name, 300);
+  const [debouncedName] = useDebouncedValue(name, 500);
   const [author, setAuthor] = useState(authorParams);
-  const [debouncedAuthor] = useDebouncedValue(author, 300);
+  const [debouncedAuthor] = useDebouncedValue(author, 500);
 
   useEffect(() => {
-    let query = `/advanced-search?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}&includeMode=${includeMode}&excludeMode=${excludeMode}&sortBy=${sortBy}&order=${order}`;
+    let query = `/advanced-search?includeMode=${includeMode}&excludeMode=${excludeMode}&sortBy=${sortBy}&order=${order}`;
 
     if (include.length) {
       query = `${query}&include=${include.join(',')}`;
@@ -124,7 +131,9 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
     if (debouncedAuthor.length) {
       query = `${query}&author=${debouncedAuthor}`;
     }
+
     onQueryStrChange(query);
+    return router.push(`${query}&limit=${limitParams}`);
   }, [
     include,
     includeMode,
@@ -135,6 +144,8 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
     debouncedName,
     debouncedAuthor,
     onQueryStrChange,
+    router,
+    limitParams,
   ]);
 
   function onTagFilter(id: number) {
@@ -156,8 +167,41 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
     onExcludeChange([]);
   }
 
+  const onTagDone = useCallback(() => {
+    let query = `/advanced-search?includeMode=${includeMode}&excludeMode=${excludeMode}&sortBy=${sortBy}&order=${order}`;
+
+    if (include.length) {
+      query = `${query}&include=${include.join(',')}`;
+    }
+
+    if (exclude.length) {
+      query = `${query}&exclude=${exclude.join(',')}`;
+    }
+
+    if (debouncedName.length) {
+      query = `${query}&name=${debouncedName}`;
+    }
+
+    if (debouncedAuthor.length) {
+      query = `${query}&author=${debouncedAuthor}`;
+    }
+
+    return router.push(`${query}&limit=${limitParams}`);
+  }, [
+    debouncedAuthor,
+    debouncedName,
+    exclude,
+    excludeMode,
+    include,
+    includeMode,
+    limitParams,
+    order,
+    router,
+    sortBy,
+  ]);
+
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 p-2 rounded-md dark:bg-zinc-900/60">
       <div className="flex flex-col lg:flex-row items-center gap-6">
         <Input
           placeholder="Tên truyện"
@@ -171,7 +215,7 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
         />
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center px-2">
         <Dialog>
           <DialogTrigger className="flex items-center space-x-2">
             <Filter className="w-5 h-5" />
@@ -180,7 +224,10 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
 
           <DialogContent className="dark:bg-zinc-900">
             <div className="flex flex-wrap items-center gap-4">
-              <DialogClose className="p-2 rounded-md transition-colors bg-orange-600 hover:bg-orange-600/90">
+              <DialogClose
+                className="p-2 rounded-md transition-colors bg-orange-600 hover:bg-orange-600/90"
+                onClick={onTagDone}
+              >
                 Xong
               </DialogClose>
               <button
@@ -273,7 +320,7 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
             onOrderChange(splittedValue[1]);
           }}
         >
-          <SelectTrigger className="w-fit focus:ring-transparent ring-offset-transparent">
+          <SelectTrigger className="w-fit border-none focus:ring-transparent ring-offset-transparent">
             <SelectValue />
           </SelectTrigger>
 

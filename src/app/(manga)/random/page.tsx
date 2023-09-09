@@ -1,15 +1,15 @@
 import { db } from '@/lib/db';
-import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
+import { redirect } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   title: 'Ngẫu nghiên',
   description: 'Manga ngẫu nhiên Moetruyen',
   keywords: ['Ngẫu nhiên', 'Manga', 'Moetruyen'],
 };
-
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 const RandomManga = async () => {
   const randomManga =

@@ -16,13 +16,31 @@ interface pageProps {
   };
 }
 
-const page: FC<pageProps> = async ({ searchParams }) => {
-  const page = searchParams['page'] ?? '1';
-  const perPage = searchParams['per-page'] ?? '10';
-  const start = (Number(page) - 1) * Number(perPage);
-  const end = start + Number(perPage);
+const getSearchParams = ({ searchParams }: pageProps) => {
+  const pageParams = searchParams['page'] ?? '1';
+  const limitParams = searchParams['limit'] ?? '10';
 
-  const [latestManga, mangaCount] = await db.$transaction([
+  const page = pageParams
+    ? typeof pageParams === 'string'
+      ? pageParams
+      : pageParams[0]
+    : '1';
+  const limit = limitParams
+    ? typeof limitParams === 'string'
+      ? limitParams
+      : limitParams[0]
+    : '10';
+
+  return {
+    page: parseInt(page),
+    limit: parseInt(limit),
+  };
+};
+
+const page: FC<pageProps> = async ({ searchParams }) => {
+  const { page, limit } = getSearchParams({ searchParams });
+
+  const [latestManga, totalMangas] = await db.$transaction([
     db.chapter.findMany({
       distinct: ['mangaId'],
       where: {
@@ -31,8 +49,8 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       orderBy: {
         createdAt: 'desc',
       },
-      skip: start,
-      take: Number(perPage),
+      skip: (page - 1) * limit,
+      take: limit,
       select: {
         manga: {
           select: {
@@ -54,33 +72,26 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       },
     }),
     db.manga.count({
-      where: { isPublished: true },
+      where: { isPublished: true, chapter: { some: { isPublished: true } } },
     }),
   ]);
 
   return (
-    <section className="container mx-auto max-sm:px-2 h-screen pt-20">
-      <div className="space-y-10">
-        <ul className="space-y-3 rounded-md dark:bg-zinc-900/60">
-          {latestManga.length ? (
-            latestManga.map((data, idx) => (
-              <li key={idx}>
-                <LatestMangaCard chapter={data} />
-              </li>
-            ))
-          ) : (
-            <li>Không có Manga</li>
-          )}
-        </ul>
+    <main className="container mx-auto max-sm:px-2 h-screen pt-20 space-y-10">
+      <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-2 rounded-md">
+        {latestManga.length ? (
+          latestManga.map((data, idx) => (
+            <li key={idx}>
+              <LatestMangaCard chapter={data} />
+            </li>
+          ))
+        ) : (
+          <li>Không có Manga</li>
+        )}
+      </ul>
 
-        <MangaPaginationControll
-          count={mangaCount}
-          hasPrevPage={start > 0}
-          hasNextPage={end < mangaCount}
-          route="/latest"
-        />
-      </div>
-    </section>
+      <MangaPaginationControll total={totalMangas} route="/latest?" />
+    </main>
   );
 };
 

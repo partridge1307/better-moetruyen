@@ -3,7 +3,9 @@ import LastestMangaSkeleton from '@/components/Skeleton/LastestMangaSkeleton';
 import LeaderboardSkeletion from '@/components/Skeleton/LeaderboardSkeletion';
 import NotableMangaSkeleton from '@/components/Skeleton/NotableMangaSkeleton';
 import { db } from '@/lib/db';
+import { ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 
 const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
   ssr: false,
@@ -65,7 +67,7 @@ const Home = async () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <section className="container mx-auto max-sm:px-3 h-screen pt-20">
+      <main className="container mx-auto max-sm:px-3 h-screen pt-20">
         <NotableManga mangas={manga} />
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_.5fr] gap-10 mt-20 pb-10">
           <section className="space-y-10">
@@ -80,7 +82,16 @@ const Home = async () => {
             </div>
 
             <div className="space-y-2">
-              <h1 className="text-xl font-semibold">Mới cập nhật</h1>
+              <div className="flex justify-between">
+                <h1 className="text-xl font-semibold">Mới cập nhật</h1>
+                <Link
+                  scroll={false}
+                  href="/latest"
+                  className="hover:underline underline-offset-2 inline-flex items-center gap-2"
+                >
+                  Xem thêm <ArrowRight className="w-5 h-5" />
+                </Link>
+              </div>
               <LatestManga />
             </div>
           </section>
@@ -92,7 +103,7 @@ const Home = async () => {
             </div>
           </section>
         </div>
-      </section>
+      </main>
     </>
   );
 };

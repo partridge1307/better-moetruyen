@@ -23,7 +23,7 @@ const MangaPaginationControll: FC<MangaPaginationControll> = ({
   const limit = parseInt(searchParams.get('limit') ?? '10');
 
   const pagigation = usePagination({
-    total,
+    total: Math.ceil(total / limit),
     page: page,
   });
 
@@ -45,9 +45,13 @@ const MangaPaginationControll: FC<MangaPaginationControll> = ({
             <Link
               key={idx}
               href={`${route}&limit=${limit}&page=${range}`}
-              className={cn(buttonVariants({ size: 'sm', variant: 'ghost' }), {
-                'bg-orange-500': range === pagigation.active,
-              })}
+              className={cn(
+                buttonVariants({ size: 'sm', variant: 'ghost' }),
+                'hover:bg-orange-500/90',
+                {
+                  'bg-orange-500': range === pagigation.active,
+                }
+              )}
             >
               {range}
             </Link>

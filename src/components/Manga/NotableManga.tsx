@@ -29,6 +29,9 @@ const useStyles = createStyles(() => ({
       opacity: 0,
       gap: rem(20),
     },
+    '@media not all and (min-width: 640px)': {
+      display: 'none',
+    },
   },
   control: {
     ref: getStylesRef('control'),
@@ -38,7 +41,7 @@ const useStyles = createStyles(() => ({
   indicator: {
     ref: getStylesRef('indicator'),
     'html.dark &': {
-      backgroundColor: 'white !important',
+      backgroundColor: 'white',
     },
   },
 
@@ -84,46 +87,46 @@ const NotableManga: FC<NotableMangaProps> = ({ mangas }) => {
             },
           },
         }}
-        nextControlIcon={
-          <ChevronRight className="dark:text-white w-12 h-12 max-sm:hidden" />
-        }
+        nextControlIcon={<ChevronRight className="dark:text-white w-12 h-12" />}
         previousControlIcon={
-          <ChevronLeft className="dark:text-white w-12 h-12 max-sm:hidden" />
+          <ChevronLeft className="dark:text-white w-12 h-12" />
         }
       >
         {mangas.map((manga) => (
           <Carousel.Slide key={manga.id}>
-            <Link scroll={false} href={`/manga/${manga.slug}`}>
-              <div className="grid grid-cols-1 lg:grid-cols-[.3fr_1fr] gap-2 lg:gap-4 rounded-md p-2 max-sm:pb-10 dark:bg-zinc-900">
-                <AspectRatio ratio={4 / 3}>
-                  <Image
-                    fill
-                    sizes="(max-width: 640px) 50vw, 30vw"
-                    quality={40}
-                    priority
-                    src={manga.image}
-                    alt={`${manga.name} Thumbnail`}
-                    className="object-cover rounded-md"
-                  />
-                </AspectRatio>
-                <div className="space-y-1 lg:space-y-2">
-                  <h1 className="font-semibold text-lg lg:text-xl line-clamp-2">
-                    {manga.name}
-                  </h1>
+            <Link
+              scroll={false}
+              href={`/manga/${manga.slug}`}
+              className="h-full grid grid-cols-1 lg:grid-cols-[.3fr_1fr] gap-2 lg:gap-4 rounded-md p-2 max-sm:pb-10 dark:bg-zinc-900"
+            >
+              <AspectRatio ratio={4 / 3}>
+                <Image
+                  fill
+                  sizes="(max-width: 640px) 50vw, 30vw"
+                  quality={40}
+                  priority
+                  src={manga.image}
+                  alt={`${manga.name} Thumbnail`}
+                  className="object-cover rounded-md"
+                />
+              </AspectRatio>
+              <div className="space-y-1 lg:space-y-2">
+                <h1 className="font-semibold text-lg lg:text-xl line-clamp-2">
+                  {manga.name}
+                </h1>
 
-                  <p>{manga.author.map((author) => author.name).join(', ')}</p>
+                <p>{manga.author.map((author) => author.name).join(', ')}</p>
 
-                  <TagWrapper>
-                    {manga.tags.slice(0, 5).map((tag, idx) => (
-                      <TagContent key={idx} title={tag.description}>
-                        {tag.name}
-                      </TagContent>
-                    ))}
-                    {manga.tags.length > 5 && (
-                      <TagContent>+{manga.tags.length - 5}</TagContent>
-                    )}
-                  </TagWrapper>
-                </div>
+                <TagWrapper>
+                  {manga.tags.slice(0, 5).map((tag, idx) => (
+                    <TagContent key={idx} title={tag.description}>
+                      {tag.name}
+                    </TagContent>
+                  ))}
+                  {manga.tags.length > 5 && (
+                    <TagContent>+{manga.tags.length - 5}</TagContent>
+                  )}
+                </TagWrapper>
               </div>
             </Link>
           </Carousel.Slide>

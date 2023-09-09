@@ -22,7 +22,7 @@ const AdvancedMangaCard: FC<AdvancedMangaCardProps> = ({ manga }) => {
     <Link
       scroll={false}
       href={manga.slug}
-      className="grid grid-cols-[.6fr_1fr] lg:grid-cols-[.3fr_1fr] gap-4 p-2 rounded-md ransition-colors hover:dark:bg-zinc-900"
+      className="grid grid-cols-[.6fr_1fr] lg:grid-cols-[.3fr_1fr] gap-4 p-2 rounded-md transition-colors dark:bg-zinc-900 hover:dark:bg-zinc-900/80"
     >
       <div>
         <AspectRatio ratio={4 / 3}>

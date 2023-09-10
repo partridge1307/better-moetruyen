@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { notFound, redirect } from 'next/navigation';
+
 const DataMangaTable = dynamic(
   () => import('@/components/Manage/Table/Manga/DataMangaTable'),
   {

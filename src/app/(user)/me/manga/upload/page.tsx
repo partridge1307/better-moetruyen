@@ -4,6 +4,7 @@ import { Loader2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { redirect } from 'next/navigation';
 import { FC } from 'react';
+
 const MangaUpload = dynamic(() => import('@/components/Manage/MangaUpload'), {
   ssr: false,
   loading: () => <Loader2 className="w-6 h-6 animate-spin" />,

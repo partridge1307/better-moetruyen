@@ -8,6 +8,7 @@ import { FC } from 'react';
 import { Settings, Upload } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { meDomain } from '@/config';
 
 const MangaFollow = dynamic(() => import('./MangaFollow'), {
   ssr: false,
@@ -136,7 +137,7 @@ const MangaControll: FC<MangaControllProps> = async ({ manga }) => {
         <>
           <a
             target="_blank"
-            href={`/me/manga/${manga.id}`}
+            href={`${meDomain}/mangas/${manga.id}`}
             className={buttonVariants({ variant: 'secondary' })}
             aria-label="edit"
           >
@@ -144,7 +145,7 @@ const MangaControll: FC<MangaControllProps> = async ({ manga }) => {
           </a>
           <a
             target="_blank"
-            href={`/me/manga/${manga.id}/chapter/upload`}
+            href={`${meDomain}/chapters/${manga.id}/upload`}
             className={buttonVariants({ variant: 'secondary' })}
             aria-label="add chapter"
           >

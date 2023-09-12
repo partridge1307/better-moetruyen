@@ -4,10 +4,13 @@ import { db } from '@/lib/db';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { FC } from 'react';
-import MangaPaginationControll from '@/components/Manga/MangaPaginationControll';
 
 const AdvancedMangaCard = dynamic(
-  () => import('@/components/Manga/AdvancedMangaCard')
+  () => import('@/components/Manga/components/AdvancedMangaCard')
+);
+const MangaPaginationControll = dynamic(
+  () => import('@/components/Manga/components/MangaPaginationControll'),
+  { ssr: false }
 );
 
 interface pageProps {
@@ -33,7 +36,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
     typeof queryParam === 'string' ? queryParam : queryParam[0]
   ).split(' ');
 
-  const [mangas, mangasCount, users] = await db.$transaction([
+  const [mangas, totalMangas, users] = await db.$transaction([
     db.manga.findMany({
       where: {
         OR: query.map((q) => ({ name: { contains: q, mode: 'insensitive' } })),
@@ -45,6 +48,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         name: true,
         image: true,
         review: true,
+        createdAt: true,
         author: true,
         _count: {
           select: {
@@ -92,12 +96,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
             <p>Không có kết quả</p>
           )}
         </div>
-        <MangaPaginationControll
-          count={mangasCount}
-          hasPrevPage={start > 0}
-          hasNextPage={start + 10 < mangasCount}
-          route="/search"
-        />
+        <MangaPaginationControll total={totalMangas} route="/search" />
       </section>
 
       <section className="space-y-4">

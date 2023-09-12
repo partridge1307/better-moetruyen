@@ -1,9 +1,4 @@
 import { db } from '@/lib/db';
-import dynmaic from 'next/dynamic';
-const DataUserTable = dynmaic(
-  () => import('@/components/Admin/Table/DataUserTable'),
-  { ssr: false }
-);
 
 const Page = async () => {
   const verifyList = await db.verifyList.findMany({
@@ -18,11 +13,7 @@ const Page = async () => {
     },
   });
 
-  return (
-    <div className="p-2 rounded-lg dark:bg-zinc-900/75">
-      <DataUserTable data={verifyList} />
-    </div>
-  );
+  return <div className="p-2 rounded-lg dark:bg-zinc-900/75"></div>;
 };
 
 export default Page;

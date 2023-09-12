@@ -1,6 +1,6 @@
 'use client';
 
-import { DataTableColumnHeader } from '@/components/DataColumnHeader';
+// import { DataTableColumnHeader } from '@/components/DataColumnHeader';
 import { formatTimeToNow } from '@/lib/utils';
 import type { User, VerifyList } from '@prisma/client';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -25,9 +25,9 @@ export const columns: ColumnDef<UserColumn>[] = [
   {
     id: 'createdAt',
     accessorKey: 'createdAt',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="createdAt" />
-    ),
+    // header: ({ column }) => (
+    //   <DataTableColumnHeader column={column} title="createdAt" />
+    // ),
     cell: ({ row }) => {
       const formattedDate = formatTimeToNow(row.getValue('createdAt'));
       return <div>{formattedDate}</div>;

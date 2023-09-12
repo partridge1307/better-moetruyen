@@ -57,7 +57,7 @@ export async function GET(req: Request) {
       sortBy: url.searchParams.get('sortBy'),
     });
 
-    const orderBy: Prisma.PostOrderByWithRelationAndSearchRelevanceInput =
+    const orderBy: Prisma.PostOrderByWithRelationInput =
       sortBy === 'hot' ? { votes: { _count: 'desc' } } : { createdAt: sortBy };
     const whereClause: Prisma.PostWhereInput = session
       ? { subForum: { id: { in: followedSubForumIds } } }

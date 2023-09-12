@@ -1,51 +1,42 @@
 'use client';
 
-import { Table, TableBody, TableCell, TableRow } from '@/components/ui/Table';
-import {
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnFiltersState,
-  type SortingState,
-} from '@tanstack/react-table';
-import dynamic from 'next/dynamic';
-import Link from 'next/link';
-import { FC, useState } from 'react';
-import { UserColumn, columns } from './UserColumn';
-import { Input } from '@/components/ui/Input';
-const TableDataHeader = dynamic(() => import('@/components/TableDataHeader'), {
-  ssr: false,
-});
-const TablePagination = dynamic(() => import('@/components/TablePagination'), {
-  ssr: false,
-});
+import { FC } from 'react';
+import { UserColumn } from './UserColumn';
+// const TableDataHeader = dynamic(() => import('@/components/TableDataHeader'), {
+//   ssr: false,
+// });
+// const TablePagination = dynamic(() => import('@/components/TablePagination'), {
+//   ssr: false,
+// });
 
 interface DataUserTableProps {
   data: UserColumn[];
 }
 
 const DataUserTable: FC<DataUserTableProps> = ({ data }) => {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilter] = useState<ColumnFiltersState>([]);
+  // const [sorting, setSorting] = useState<SortingState>([]);
+  // const [columnFilters, setColumnFilter] = useState<ColumnFiltersState>([]);
 
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      sorting,
-      columnFilters,
-    },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  });
+  // const table = useReactTable({
+  //   data,
+  //   columns,
+  //   state: {
+  //     sorting,
+  //     columnFilters,
+  //   },
+  //   onSortingChange: setSorting,
+  //   onColumnFiltersChange: setColumnFilter,
+  //   getCoreRowModel: getCoreRowModel(),
+  //   getPaginationRowModel: getPaginationRowModel(),
+  //   getSortedRowModel: getSortedRowModel(),
+  // });
 
-  return (
-    <div className="space-y-2">
+  return null;
+};
+
+export default DataUserTable;
+{
+  /* <div className="space-y-2">
       <div className="p-2">
         <Input
           placeholder="Lọc tên user"
@@ -105,8 +96,5 @@ const DataUserTable: FC<DataUserTableProps> = ({ data }) => {
       </Table>
 
       <TablePagination table={table} />
-    </div>
-  );
-};
-
-export default DataUserTable;
+    </div> */
+}

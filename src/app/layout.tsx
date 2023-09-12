@@ -1,7 +1,6 @@
 import NavbarClient from '@/components/Navbar/NavbarClient';
 import Providers from '@/components/Providers';
 import { Toaster } from '@/components/ui/Toaster';
-import { cn } from '@/lib/utils';
 import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Roboto } from 'next/font/google';
@@ -55,13 +54,8 @@ export default function RootLayout({
   authModal: React.ReactNode;
 }) {
   return (
-    <html lang="vi" className="dark">
-      <body
-        className={cn(
-          'h-screen antialiased dark:bg-zinc-800 dark:text-slate-50 md:scrollbar md:scrollbar--dark',
-          `${roboto.variable} font-sans`
-        )}
-      >
+    <html lang="vi" className={`dark ${roboto.variable} font-sans`}>
+      <body className="h-screen antialiased dark:bg-zinc-800 dark:text-slate-50 md:scrollbar md:scrollbar--dark">
         <Providers>
           {authModal}
 

@@ -28,7 +28,7 @@ export async function GET(req: Request, context: { params: { id: string } }) {
       sortBy: url.searchParams.get('sortBy'),
     });
 
-    const orderBy: Prisma.PostOrderByWithRelationAndSearchRelevanceInput =
+    const orderBy: Prisma.PostOrderByWithRelationInput =
       sortBy === 'hot' ? { votes: { _count: 'desc' } } : { createdAt: sortBy };
 
     const cursor = userCursor ? parseInt(userCursor) : undefined;

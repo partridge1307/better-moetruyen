@@ -13,6 +13,7 @@ import { buttonVariants } from '../ui/Button';
 import { MessageCircle } from 'lucide-react';
 import type { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
+import { meDomain } from '@/config';
 
 const SignOutButton = dynamic(() => import('@/components/Auth/SignOutButton'), {
   ssr: false,
@@ -45,7 +46,7 @@ const UserDropdownMenu: FC<UserDropdownMenuProps> = ({ session }) => {
       <DropdownMenuSeparator />
       <div className="space-y-2">
         <DropdownMenuItem asChild>
-          <Link href="/me/followed-manga" className="py-2 cursor-pointer">
+          <Link href="/followed-manga" className="py-2 cursor-pointer">
             Truyện đang theo dõi
           </Link>
         </DropdownMenuItem>
@@ -68,7 +69,7 @@ const UserDropdownMenu: FC<UserDropdownMenuProps> = ({ session }) => {
       <DropdownMenuSeparator className="mt-2" />
       <DropdownMenuItem asChild>
         <Link
-          href="/me"
+          href={`${meDomain}`}
           className={cn(
             buttonVariants({ variant: 'outline' }),
             'w-full cursor-pointer'

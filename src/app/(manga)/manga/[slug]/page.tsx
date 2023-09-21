@@ -167,7 +167,7 @@ const page: FC<pageProps> = async ({ params }) => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <main className="container max-sm:px-2 mx-auto pt-20 space-y-10">
+      <main className="container max-sm:px-2 mx-auto space-y-10 mb-10">
         <section className="relative grid grid-cols-2 lg:grid-cols-[.3fr_1fr] gap-3 lg:gap-4 p-2">
           <MangaImage manga={manga} />
           <div className="space-y-2">

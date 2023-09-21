@@ -1,142 +1,116 @@
 'use client';
 
+import MoetruyenEditor from '@/components/Editor/MoetruyenEditor';
 import { $isImageNode, type ImageNode } from '@/components/Editor/nodes/Image';
-import { $isMentionNode } from '@/components/Editor/nodes/Mention';
 import { Button } from '@/components/ui/Button';
 import { useFetchOEmbed } from '@/hooks/use-fetch-oEmbed';
 import { useUploadComment } from '@/hooks/use-upload-comment';
-import { cn } from '@/lib/utils';
-import type { CreateCommentEnum } from '@/lib/validators/comment';
-import { AutoLinkNode } from '@lexical/link';
-import type { EditorState, LexicalEditor } from 'lexical';
-import dynamic from 'next/dynamic';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { $isAutoLinkNode, type AutoLinkNode } from '@lexical/link';
+import { type LexicalEditor } from 'lexical';
+import type { Session } from 'next-auth';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
 
-const MoetruyenEditor = dynamic(
-  () => import('@/components/Editor/MoetruyenEditor'),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="w-full h-44 rounded-md animate-pulse dark:bg-zinc-900" />
-    ),
-  }
-);
-
-interface CommentInputProps {
-  isLoggedIn: boolean;
+export type CommentInputProps<TData> = {
+  type: 'COMMENT' | 'SUB_COMMENT';
+  session: Session;
   id: number;
-  type: CreateCommentEnum;
-  callbackURL: string;
-  refetch?: () => void;
-}
+  setComments: Dispatch<SetStateAction<TData[]>>;
+  prevComment?: TData[];
+  APIQuery: string;
+};
 
-const CommentInput: FC<CommentInputProps> = ({
-  isLoggedIn,
-  id,
+export default function CommentInput<TData>({
   type,
-  callbackURL,
-  refetch,
-}) => {
-  const [editor, setEditor] = useState<LexicalEditor | null>(null);
-  const [editorState, setEditorState] = useState<EditorState | null>(null);
+  session,
+  id,
+  setComments,
+  prevComment,
+  APIQuery,
+}: CommentInputProps<TData>) {
+  const editorRef = useRef<LexicalEditor>(null);
   const [hasText, setHasText] = useState(false);
-  const [mentionUsers, setMentionUsers] =
-    useState<Set<{ id: string; name: string }>>();
 
-  const { mutate: Upload, isLoading: isUpload } = useUploadComment(
-    editor,
-    refetch
-  );
   const {
-    data: oEmbedData,
-    mutate: Embed,
-    isLoading: isFetchingOEmbed,
+    data: OEmbed,
+    mutate: fetch,
+    isLoading: isFetching,
   } = useFetchOEmbed();
 
-  useEffect(() => {
-    if (editor) {
-      editor.registerTextContentListener((text) => {
-        text.length ? setHasText(true) : setHasText(false);
-      });
-    }
-  }, [editor]);
-
-  useEffect(() => {
-    if (typeof oEmbedData !== 'undefined' && !isFetchingOEmbed && editor) {
-      Upload({
-        payload: {
-          type,
-          id,
-          content: editor.getEditorState().toJSON(),
-          oEmbed: oEmbedData,
-        },
-        callbackURL,
-        mentionUsers: mentionUsers,
-      });
-    }
-  }, [
-    Upload,
-    callbackURL,
-    editor,
-    id,
-    isFetchingOEmbed,
-    mentionUsers,
-    oEmbedData,
+  const { mutate: Upload, isLoading: isUploading } = useUploadComment({
     type,
-  ]);
+    id,
+    session,
+    setComments,
+    prevComment,
+    editorRef,
+    APIQuery,
+  });
 
-  const onClick = useCallback(() => {
-    if (editor) {
-      if (editor.isEditable()) editor.setEditable(false);
+  useEffect(() => {
+    editorRef.current?.registerTextContentListener((text) =>
+      text.length ? setHasText(true) : setHasText(false)
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editorRef.current]);
 
-      const mentionUsers = new Set<{ id: string; name: string }>();
-      let autoLinkNode: AutoLinkNode | undefined,
-        imageNode: ImageNode | undefined;
+  useEffect(() => {
+    if (typeof OEmbed !== 'undefined' && !isFetching && editorRef.current) {
+      Upload({
+        type,
+        id,
+        content: editorRef.current.getEditorState().toJSON(),
+        oEmbed: OEmbed,
+      });
+    }
+  }, [OEmbed, Upload, id, isFetching, type]);
 
+  const onSubmitHandler = useCallback(() => {
+    if (editorRef.current) {
+      editorRef.current.isEditable() && editorRef.current.setEditable(false);
+
+      const editorState = editorRef.current.getEditorState();
+
+      let autoLinkNode: AutoLinkNode | undefined;
+      let imageNode: ImageNode | undefined;
       editorState?._nodeMap.forEach((node) => {
-        if (node instanceof AutoLinkNode) {
+        if ($isAutoLinkNode(node) && !autoLinkNode) {
           autoLinkNode = node;
-        } else if ($isImageNode(node)) {
+        }
+        if ($isImageNode(node) && !imageNode) {
           imageNode = node;
-        } else if ($isMentionNode(node)) {
-          mentionUsers.add(node._user);
         }
       });
 
-      setMentionUsers(mentionUsers);
-
       if (imageNode || !autoLinkNode) {
         Upload({
-          payload: { type, id, content: editor.getEditorState().toJSON() },
-          callbackURL,
-          mentionUsers,
+          type,
+          id,
+          content: editorRef.current.getEditorState().toJSON(),
         });
       } else {
-        Embed(autoLinkNode.__url);
+        fetch(autoLinkNode.__url);
       }
     }
-  }, [editor, editorState?._nodeMap, type, id, callbackURL, Embed, Upload]);
+  }, [Upload, fetch, id, type]);
 
-  return isLoggedIn ? (
-    <div className="container px-0 md:px-16 lg:px-20 space-y-4">
-      <MoetruyenEditor editor={setEditor} onChange={setEditorState} />
+  return (
+    <div className="space-y-2">
+      <MoetruyenEditor editorRef={editorRef} />
       <Button
-        disabled={!hasText}
-        isLoading={isUpload}
-        className={cn('w-full transition-opacity', {
-          'opacity-50': !hasText,
-        })}
-        onClick={() => onClick()}
+        disabled={!hasText || isUploading || isFetching}
+        isLoading={isUploading || isFetching}
+        onClick={onSubmitHandler}
+        className="w-full"
       >
-        Đăng
+        Bình luận
       </Button>
     </div>
-  ) : (
-    <div>
-      Vui lòng <span className="font-semibold">đăng nhập</span> hoặc{' '}
-      <span className="font-semibold">đăng ký</span> để comment
-    </div>
   );
-};
-
-export default CommentInput;
+}

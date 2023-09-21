@@ -52,8 +52,8 @@ const NavbarClient = () => {
   return (
     <nav
       className={cn(
-        'inset-x-0 top-0 p-2 z-30 h-fit border-b bg-slate-100 dark:bg-zinc-800',
-        isFixed.current && 'fixed'
+        'inset-x-0 p-2 z-30 h-fit border-b bg-slate-100 dark:bg-zinc-800',
+        isFixed.current && 'sticky top-0 mb-8'
       )}
     >
       <div className="container mx-auto flex items-center justify-between px-0 max-sm:px-1">

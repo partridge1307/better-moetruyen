@@ -69,7 +69,7 @@ const page: FC<pageProps> = async ({ params }) => {
   if (!team) return notFound();
 
   return (
-    <section className="container max-sm:px-2 pt-20">
+    <section className="container max-sm:px-2">
       <div className="relative p-4 rounded-md dark:bg-zinc-900">
         <TabInfo team={team} session={session} />
       </div>

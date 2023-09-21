@@ -1,20 +1,30 @@
 'use client';
 
 import { useComments } from '@/hooks/use-comment';
-import { useIntersection } from '@mantine/hooks';
+import { useIntersection, usePrevious } from '@mantine/hooks';
 import type { Comment, CommentVote, User } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
-import { useEffect, useRef } from 'react';
-import RefetchButton from '../components/RefetchButton';
+import { useEffect, useRef, useState } from 'react';
+import type { CommentInputProps } from '../components/CommentInput';
+import type { DeleteCommentProps } from '../components/DeleteComment';
 import CommentCard from './CommentCard';
 
-const CommentInput = dynamic(() => import('../components/CommentInput'), {
-  ssr: false,
-});
+const CommentInput = dynamic<CommentInputProps<ExtendedComment>>(
+  () => import('../components/CommentInput'),
+  {
+    ssr: false,
+  }
+);
+const DeleteComment = dynamic<DeleteCommentProps<ExtendedComment>>(
+  () => import('../components/DeleteComment'),
+  {
+    ssr: false,
+  }
+);
 
-const CALLBACK_URL = '/api/comment/chapter';
+const API_QUERY = '/api/comment/chapter';
 
 export type ExtendedComment = Pick<
   Comment,
@@ -37,15 +47,15 @@ const Comments = ({ id }: commentProps) => {
     threshold: 1,
     root: lastCmtRef.current,
   });
+  const [comments, setComments] = useState<ExtendedComment[]>([]);
+  const prevComments = usePrevious(comments);
 
   const {
-    data: CommentData,
-    fetchNextPage,
+    data: commentsData,
     hasNextPage,
     isFetchingNextPage,
-    refetch,
-    isRefetching,
-  } = useComments<ExtendedComment>(id, CALLBACK_URL);
+    fetchNextPage,
+  } = useComments<ExtendedComment>(id, `${API_QUERY}/${id}`);
 
   useEffect(() => {
     if (entry?.isIntersecting && hasNextPage) {
@@ -53,58 +63,66 @@ const Comments = ({ id }: commentProps) => {
     }
   }, [entry?.isIntersecting, fetchNextPage, hasNextPage]);
 
-  const comments = CommentData?.pages.flatMap((page) => page.comments);
+  useEffect(() => {
+    setComments(commentsData?.pages.flatMap((page) => page.comments) ?? []);
+  }, [commentsData?.pages]);
 
   return (
     <>
-      <CommentInput
-        isLoggedIn={!!session}
-        id={id}
-        type="COMMENT"
-        callbackURL={CALLBACK_URL}
-        refetch={refetch}
-      />
-
-      <RefetchButton refetch={refetch} isRefetching={isRefetching} />
+      {!!session ? (
+        <CommentInput
+          type="COMMENT"
+          id={id}
+          session={session}
+          setComments={setComments}
+          prevComment={prevComments}
+          APIQuery={API_QUERY}
+        />
+      ) : (
+        <p>
+          Vui lòng <span className="font-semibold">đăng nhập</span> hoặc{' '}
+          <span className="font-semibold">đăng ký</span> để bình luận
+        </p>
+      )}
 
       <ul className="space-y-10">
-        {comments?.length ? (
-          comments.map((comment, idx) => {
-            if (idx === comments.length - 1) {
-              return (
-                <li key={comment.id} ref={ref} className="flex gap-3 md:gap-6">
-                  <CommentCard
-                    comment={comment}
-                    userId={session?.user.id}
-                    callbackURL={CALLBACK_URL}
-                  />
-                </li>
-              );
-            } else {
-              return (
-                <li key={comment.id} ref={ref} className="flex gap-3 md:gap-6">
-                  <CommentCard
-                    comment={comment}
-                    userId={session?.user.id}
-                    callbackURL={CALLBACK_URL}
-                  />
-                </li>
-              );
-            }
-          })
-        ) : (
-          <li className="text-center">
-            Hãy làm người đầu tiên <span className="font-bold">comment</span>{' '}
-            nào
-          </li>
-        )}
-
-        {isFetchingNextPage && (
-          <li className="flex justify-center">
-            <Loader2 className="w-6 h-6 animate-spin" />
-          </li>
-        )}
+        {comments.map((comment, idx) => {
+          if (idx === comments.length - 1)
+            return (
+              <li key={comment.id} ref={ref} className="flex gap-4">
+                <CommentCard comment={comment} session={session}>
+                  {comment.authorId === session?.user.id && (
+                    <DeleteComment
+                      commentId={comment.id}
+                      APIQuery={`${API_QUERY}/${comment.id}`}
+                      setComments={setComments}
+                    />
+                  )}
+                </CommentCard>
+              </li>
+            );
+          else
+            return (
+              <li key={comment.id} className="flex gap-4">
+                <CommentCard comment={comment} session={session}>
+                  {comment.authorId === session?.user.id && (
+                    <DeleteComment
+                      commentId={comment.id}
+                      APIQuery={`${API_QUERY}/${comment.id}`}
+                      setComments={setComments}
+                    />
+                  )}
+                </CommentCard>
+              </li>
+            );
+        })}
       </ul>
+
+      {isFetchingNextPage && (
+        <p className="flex justify-center">
+          <Loader2 className="w-10 h-10 animate-spin" />
+        </p>
+      )}
     </>
   );
 };

@@ -77,7 +77,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
   ]);
 
   return (
-    <main className="container mx-auto max-sm:px-2 h-screen pt-20 space-y-10">
+    <main className="container mx-auto max-sm:px-2 space-y-10">
       <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-2 rounded-md">
         {latestManga.length ? (
           latestManga.map((data, idx) => (

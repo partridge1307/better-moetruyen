@@ -1,31 +1,41 @@
 import type { CreateCommentPayload } from '@/lib/validators/comment';
+import type { Prisma } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import type { LexicalEditor } from 'lexical';
-import { CLEAR_EDITOR_COMMAND } from 'lexical';
+import { CLEAR_EDITOR_COMMAND, type LexicalEditor } from 'lexical';
+import type { Session } from 'next-auth';
+import { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { useCustomToast } from './use-custom-toast';
-import { socket } from '@/lib/socket';
 
-export const useUploadComment = (
-  editor: LexicalEditor | null,
-  refetch?: () => void
-) => {
-  const { loginToast, notFoundToast, serverErrorToast, successToast } =
-    useCustomToast();
+export const useUploadComment = <TData>({
+  type,
+  id: commentId,
+  session,
+  setComments,
+  prevComment,
+  editorRef,
+  APIQuery,
+}: {
+  type: 'COMMENT' | 'SUB_COMMENT';
+  id: number;
+  session: Session;
+  setComments: Dispatch<SetStateAction<TData[]>>;
+  prevComment?: TData[];
+  editorRef: MutableRefObject<LexicalEditor | null>;
+  APIQuery: string;
+}) => {
+  const { loginToast, notFoundToast, serverErrorToast } = useCustomToast();
 
   return useMutation({
-    mutationKey: ['comment-upload-query'],
-    mutationFn: async ({
-      payload,
-      callbackURL,
-    }: {
-      payload: CreateCommentPayload;
-      callbackURL: string;
-      mentionUsers?: Set<{ id: string; name: string }>;
-    }) => {
-      await axios.post(callbackURL, payload);
+    mutationKey: ['comment-upload', commentId],
+    mutationFn: async (payload: CreateCommentPayload) => {
+      const { data } = await axios.post(APIQuery, payload);
+
+      return data as number;
     },
     onError: (err) => {
+      setComments(prevComment ?? []);
+
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) return loginToast();
         if (err.response?.status === 404) return notFoundToast();
@@ -33,33 +43,51 @@ export const useUploadComment = (
 
       return serverErrorToast();
     },
-    onSuccess: (_, data) => {
-      if (!editor?.isEditable()) editor?.setEditable(true);
-      editor?.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+    onMutate: (payload) => {
+      const optimisticComment = {
+        id: crypto.randomUUID(),
+        content: payload.content,
+        oEmbed: payload.oEmbed as Prisma.JsonValue,
+        createdAt: new Date(Date.now()),
+        votes: [],
+        authorId: session.user.id,
+        author: {
+          name: session.user.name,
+          color: session.user.color,
+          image: session.user.image,
+        },
+        ...(type === 'COMMENT' && {
+          _count: {
+            replies: 0,
+          },
+        }),
+      };
 
-      !!refetch && refetch();
+      type === 'COMMENT'
+        ? // @ts-expect-error
+          setComments((prev) => [optimisticComment, ...prev])
+        : // @ts-expect-error
+          setComments((prev) => [...prev, optimisticComment]);
+    },
+    onSuccess: (id) => {
+      type === 'COMMENT'
+        ? setComments((prev) => {
+            const firstComment = prev[0];
+            // @ts-expect-error
+            firstComment.id = id;
 
-      if (data.mentionUsers) {
-        let users: { id: string; name: string }[] = [];
-        data.mentionUsers.forEach((user) => users.push(user));
+            return [firstComment, ...prev.slice(1)];
+          })
+        : setComments((prev) => {
+            const lastComment = prev[prev.length - 1];
+            // @ts-expect-error
+            lastComment.id = id;
 
-        socket.emit('notify', {
-          type: 'MENTION',
-          id: data.payload.id,
-          users: users,
-          callbackURL: data.callbackURL,
-        });
-      }
+            return [...prev.slice(0, -1), lastComment];
+          });
 
-      if (data.payload.type === 'SUB_COMMENT') {
-        socket.emit('notify', {
-          type: 'COMMENT',
-          id: data.payload.id,
-          callbackURL: data.callbackURL,
-        });
-      }
-
-      return successToast();
+      editorRef.current?.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+      editorRef.current?.setEditable(true);
     },
   });
 };

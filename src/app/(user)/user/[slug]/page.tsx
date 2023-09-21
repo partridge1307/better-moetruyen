@@ -41,7 +41,7 @@ const page: FC<pageProps> = async ({ params }) => {
   if (!user) return notFound();
 
   return (
-    <section className="container max-sm:px-2 pt-20">
+    <section className="container max-sm:px-2">
       <div className="flex flex-col gap-2">
         <div className="relative w-full h-56 lg:h-96">
           {user.banner ? (

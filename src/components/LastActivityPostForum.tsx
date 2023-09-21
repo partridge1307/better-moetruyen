@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
-import LastActivityList from './components/LastActivityList';
+import LastActivityPostList from './LastActivityPostList';
 
-const LastActivityThread = async () => {
+const LastActivityPostForum = async () => {
   const posts = await db.post.findMany({
     take: 10,
     orderBy: {
@@ -19,7 +19,7 @@ const LastActivityThread = async () => {
     },
   });
 
-  return <LastActivityList posts={posts} />;
+  return <LastActivityPostList posts={posts} />;
 };
 
-export default LastActivityThread;
+export default LastActivityPostForum;

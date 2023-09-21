@@ -15,13 +15,13 @@ const MangaPaginationControll = dynamic(
 
 interface pageProps {
   searchParams: {
-    q: string | string[] | undefined;
-    page: string | string[] | undefined;
+    [key: string]: string | string[] | undefined;
   };
 }
 
 const page: FC<pageProps> = async ({ searchParams }) => {
   const page = searchParams['page'] ?? '1';
+  const limit = searchParams['limit'] ?? '10';
   const queryParam = searchParams['q'];
   if (!queryParam)
     return (
@@ -30,7 +30,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       </section>
     );
 
-  const start = (Number(page) - 1) * 10;
+  const start = (Number(page) - 1) * Number(limit);
 
   let query = (
     typeof queryParam === 'string' ? queryParam : queryParam[0]
@@ -56,7 +56,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
           },
         },
       },
-      take: 10,
+      take: Number(limit),
       skip: start,
     }),
     db.manga.count({
@@ -96,7 +96,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
             <p>Không có kết quả</p>
           )}
         </div>
-        <MangaPaginationControll total={totalMangas} route="/search" />
+        <MangaPaginationControll total={totalMangas} route="/search?" />
       </section>
 
       <section className="space-y-4">

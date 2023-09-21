@@ -283,8 +283,9 @@ const Toolbar = () => {
         </div>
         <Select defaultValue={'left-align'}>
           <SelectTrigger
+            aria-label="align button"
             type="button"
-            className="w-fit px-1 border-none focus:ring-transparent ring-offset-transparent"
+            className="w-fit px-1 bg-transparent border-none focus:ring-transparent ring-offset-transparent"
           >
             <SelectValue />
           </SelectTrigger>

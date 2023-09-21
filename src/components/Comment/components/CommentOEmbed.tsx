@@ -1,7 +1,12 @@
-import { FC, memo } from 'react';
+import type { Prisma } from '@prisma/client';
+import { FC } from 'react';
 
 interface CommentOEmbedProps {
-  oEmbed: {
+  oEmbed: Prisma.JsonValue;
+}
+
+const CommentOEmbed: FC<CommentOEmbedProps> = ({ oEmbed }) => {
+  const { link, meta } = oEmbed as {
     link: string;
     meta: {
       title?: string;
@@ -11,23 +16,19 @@ interface CommentOEmbedProps {
       };
     };
   };
-}
-
-const CommentOEmbed: FC<CommentOEmbedProps> = ({ oEmbed }) => {
-  const { link, meta } = oEmbed;
   const url = new URL(link);
 
   return (
     <a
       href={link}
       target="_blank"
-      className="flex items-center w-fit rounded-lg dark:bg-zinc-800"
+      className="flex items-center rounded-lg dark:bg-zinc-900/60"
     >
       {meta.image.url && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          width={100}
-          height={100}
+          width={96}
+          height={96}
           loading="lazy"
           src={meta.image.url}
           alt={`${url.hostname} Image`}
@@ -39,11 +40,11 @@ const CommentOEmbed: FC<CommentOEmbedProps> = ({ oEmbed }) => {
         <p className="moetruyen-editor-link line-clamp-1">{url.host}</p>
 
         <dl>
-          {meta.title && (
-            <dt className="line-clamp-2 font-medium">{meta.title}</dt>
+          {!!meta.title && (
+            <dt className="line-clamp-2 font-semibold">{meta.title}</dt>
           )}
 
-          {oEmbed.meta.description && (
+          {!!meta.description && (
             <dd className="text-xs md:text-sm line-clamp-2">
               {meta.description}
             </dd>
@@ -54,4 +55,4 @@ const CommentOEmbed: FC<CommentOEmbedProps> = ({ oEmbed }) => {
   );
 };
 
-export default memo(CommentOEmbed);
+export default CommentOEmbed;

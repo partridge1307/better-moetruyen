@@ -7,6 +7,7 @@ import UserAvatar from '@/components/User/UserAvatar';
 import UserBanner from '@/components/User/UserBanner';
 import Username from '@/components/User/Username';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import type { Manga } from '@prisma/client';
 import { List, ListTree } from 'lucide-react';
@@ -29,34 +30,37 @@ interface MangaTabsProps {
 }
 
 const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
-  const manga = await db.manga.findUnique({
-    where: {
-      id: Manga.id,
-    },
-    select: {
-      facebookLink: true,
-      discordLink: true,
-      creator: {
-        select: {
-          name: true,
-          image: true,
-          banner: true,
-          color: true,
-          memberOnTeam: {
-            select: {
-              teamId: true,
-              team: {
-                select: {
-                  image: true,
-                  name: true,
+  const [manga, session] = await Promise.all([
+    db.manga.findUnique({
+      where: {
+        id: Manga.id,
+      },
+      select: {
+        facebookLink: true,
+        discordLink: true,
+        creator: {
+          select: {
+            name: true,
+            image: true,
+            banner: true,
+            color: true,
+            memberOnTeam: {
+              select: {
+                teamId: true,
+                team: {
+                  select: {
+                    image: true,
+                    name: true,
+                  },
                 },
               },
             },
           },
         },
       },
-    },
-  });
+    }),
+    getAuthSession(),
+  ]);
   if (!manga) return notFound();
 
   const creatorTeam = manga.creator.memberOnTeam;
@@ -69,8 +73,9 @@ const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
       </TabsList>
 
       <TabsContent
+        forceMount
         value="chapter"
-        className="grid grid-cols-1 lg:grid-cols-[.35fr_1fr] gap-6"
+        className="grid grid-cols-1 lg:grid-cols-[.35fr_1fr] gap-6 data-[state='inactive']:hidden"
       >
         <div className="space-y-6">
           <div className="p-2 rounded-md dark:bg-zinc-900/60">
@@ -139,18 +144,30 @@ const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
             </TabsList>
           </div>
 
-          <TabsContent value="list">
+          <TabsContent
+            forceMount
+            value="list"
+            className="data-[state='inactive']:hidden"
+          >
             <ListChapter mangaId={Manga.id} />
           </TabsContent>
 
-          <TabsContent value="group">
+          <TabsContent
+            forceMount
+            value="group"
+            className="data-[state='inactive']:hidden"
+          >
             <ListTreeChapter mangaId={Manga.id} />
           </TabsContent>
         </Tabs>
       </TabsContent>
 
-      <TabsContent value="comment">
-        <Comments id={Manga.id} />
+      <TabsContent
+        forceMount
+        value="comment"
+        className='data-[state="inactive"]:hidden space-y-12'
+      >
+        <Comments id={Manga.id} session={session} />
       </TabsContent>
     </Tabs>
   );

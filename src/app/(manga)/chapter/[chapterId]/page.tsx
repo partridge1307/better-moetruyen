@@ -156,7 +156,7 @@ const page: FC<pageProps> = async ({ params }) => {
   }
 
   return (
-    <main className="container px-1 mt-10 space-y-10">
+    <main className="container px-3 mt-8 space-y-10">
       <ViewChapter chapter={chapter} chapterList={chapterList} />
     </main>
   );

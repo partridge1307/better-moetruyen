@@ -55,7 +55,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi" className={`dark ${roboto.variable} font-sans`}>
-      <body className="h-screen antialiased dark:bg-zinc-800 dark:text-slate-50 md:scrollbar md:scrollbar--dark">
+      <body className="antialiased dark:bg-zinc-800 md:scrollbar md:scrollbar--dark">
         <Providers>
           {authModal}
 

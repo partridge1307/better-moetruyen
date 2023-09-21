@@ -11,8 +11,8 @@ const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
   ssr: false,
   loading: () => <NotableMangaSkeleton />,
 });
-const LastActivityThread = dynamic(
-  () => import('@/components/Forum/LastActivityThread'),
+const LastActivityPostForum = dynamic(
+  () => import('@/components/LastActivityPostForum'),
   { loading: () => <LastActivityThreadSkeletion /> }
 );
 const Recommendation = dynamic(
@@ -67,13 +67,13 @@ const Home = async () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <main className="container mx-auto max-sm:px-3 h-screen pt-20">
+      <main className="container mx-auto max-sm:px-3">
         <NotableManga mangas={manga} />
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_.5fr] gap-10 mt-20 pb-10">
           <section className="space-y-10">
             <div className="space-y-2">
               <h1 className="text-xl font-semibold">Bài viết gần đây</h1>
-              <LastActivityThread />
+              <LastActivityPostForum />
             </div>
 
             <div className="space-y-2">

@@ -181,7 +181,7 @@ const page: FC<pageProps> = async ({ params }) => {
             priority
             src={manga.image}
             alt={`${manga.name} Thumbnail`}
-            className="-z-10 object-cover object-top rounded-md brightness-[.3] blur-sm"
+            className="-z-10 object-cover rounded-md brightness-[.3] blur-sm"
           />
         </section>
 

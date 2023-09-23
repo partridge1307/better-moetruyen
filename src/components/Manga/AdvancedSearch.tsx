@@ -14,8 +14,8 @@ const AdvancedSearchControll = dynamic(
     ),
   }
 );
-const MangaPaginationControll = dynamic(
-  () => import('@/components/Manga/components/MangaPaginationControll'),
+const PaginationControll = dynamic(
+  () => import('@/components/PaginationControll'),
   {
     ssr: false,
     loading: () => (
@@ -53,7 +53,7 @@ const AdvancedSearch: FC<AdvancedSearchProps> = ({ tags, total, children }) => {
 
       {children}
 
-      <MangaPaginationControll total={total} route={query} />
+      <PaginationControll total={total} route={query} />
     </>
   );
 };

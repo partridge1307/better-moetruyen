@@ -1,12 +1,13 @@
 'use client';
 
+import Follow from '@/components/Notify/Follow';
+import General from '@/components/Notify/General';
+import System from '@/components/Notify/System';
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
-import { socket } from '@/lib/socket';
-import type { Notify, NotifyType } from '@prisma/client';
+import type { Notify } from '@prisma/client';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Bell } from 'lucide-react';
-import type { Session } from 'next-auth';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
 import {
@@ -16,16 +17,13 @@ import {
   DropdownMenuTrigger,
 } from '../ui/DropdownMenu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/Tabs';
-import Follow from '@/components/Notify/Follow';
-import General from '@/components/Notify/General';
-import System from '@/components/Notify/System';
 
 export type ExtendedNotify = Pick<
   Notify,
   'id' | 'type' | 'createdAt' | 'content' | 'endPoint' | 'isRead'
 >;
 
-const Notifications = ({ session }: { session: Session }) => {
+const Notifications = () => {
   const [generalNotify, setGeneralNotify] = useState<ExtendedNotify[]>([]);
   const [followNotify, setFollowNotify] = useState<ExtendedNotify[]>([]);
   const [systemNotify, setSystemNotify] = useState<ExtendedNotify[]>([]);
@@ -56,51 +54,10 @@ const Notifications = ({ session }: { session: Session }) => {
   );
 
   useEffect(() => {
-    socket.connect();
-    socket.emit('userConnect', session.user.id);
-  }, [session.user.id]);
-
-  useEffect(() => {
-    socket.on(
-      'notify',
-      ({
-        type,
-        content,
-        notifyId,
-        endPoint,
-      }: {
-        type: NotifyType;
-        content: string;
-        notifyId: number;
-        endPoint: string;
-      }) => {
-        if (type === 'COMMENT') {
-          const notify: ExtendedNotify = {
-            id: notifyId,
-            type,
-            content,
-            endPoint,
-            createdAt: new Date(Date.now()),
-            isRead: false,
-          };
-
-          setGeneralNotify((prev) => [notify, ...prev]);
-        }
-      }
-    );
-
-    return () => {
-      socket.off('notify');
-    };
-  }, []);
-
-  useEffect(() => {
     const notifies = notifyData?.pages.flatMap((page) => page.notifications);
 
     if (notifies) {
-      const general = notifies.filter(
-        (notify) => notify.type === 'COMMENT' || notify.type === 'MENTION'
-      );
+      const general = notifies.filter((notify) => notify.type === 'COMMENT');
       const follow = notifies.filter((notify) => notify.type === 'FOLLOW');
       const system = notifies.filter((notify) => notify.type === 'SYSTEM');
 

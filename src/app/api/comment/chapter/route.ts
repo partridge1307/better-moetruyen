@@ -31,19 +31,31 @@ export async function POST(req: Request) {
         },
         select: {
           id: true,
+          authorId: true,
+          chapterId: true,
         },
       });
 
-      createdComment = await db.comment.create({
-        data: {
-          chapterId: targetChapter.id,
-          mangaId: targetChapter.mangaId,
-          authorId: session.user.id,
-          replyToId: targetComment.id,
-          content: { ...content },
-          oEmbed,
-        },
-      });
+      [createdComment] = await db.$transaction([
+        db.comment.create({
+          data: {
+            chapterId: targetChapter.id,
+            mangaId: targetChapter.mangaId,
+            authorId: session.user.id,
+            replyToId: targetComment.id,
+            content: { ...content },
+            oEmbed,
+          },
+        }),
+        db.notify.create({
+          data: {
+            type: 'COMMENT',
+            toUserId: targetComment.authorId,
+            content: `${session.user.name} vừa phản hồi bình luận của bạn`,
+            endPoint: `${process.env.NEXTAUTH_URL}/chapter/${targetComment.chapterId}`,
+          },
+        }),
+      ]);
     } else {
       createdComment = await db.comment.create({
         data: {

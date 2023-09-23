@@ -76,7 +76,7 @@ const NavbarClient = () => {
         <div className="flex items-center gap-4 md:gap-6">
           <Search />
 
-          {!!session?.user && <Notifications session={session} />}
+          {!!session?.user && <Notifications />}
 
           <DropdownMenu>
             <DropdownMenuTrigger>

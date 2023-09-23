@@ -1,17 +1,12 @@
+import AdvancedMangaCard from '@/components/Manga/components/AdvancedMangaCard';
 import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
+import { buttonVariants } from '@/components/ui/Button';
 import { db } from '@/lib/db';
-import dynamic from 'next/dynamic';
+import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
-
-const AdvancedMangaCard = dynamic(
-  () => import('@/components/Manga/components/AdvancedMangaCard')
-);
-const MangaPaginationControll = dynamic(
-  () => import('@/components/Manga/components/MangaPaginationControll'),
-  { ssr: false }
-);
 
 interface pageProps {
   searchParams: {
@@ -20,23 +15,19 @@ interface pageProps {
 }
 
 const page: FC<pageProps> = async ({ searchParams }) => {
-  const page = searchParams['page'] ?? '1';
-  const limit = searchParams['limit'] ?? '10';
   const queryParam = searchParams['q'];
   if (!queryParam)
     return (
-      <section className="container max-sm:px-2 pt-20">
+      <main className="container max-sm:px-2 mb-10">
         <p>Đường dẫn không hợp lệ</p>
-      </section>
+      </main>
     );
-
-  const start = (Number(page) - 1) * Number(limit);
 
   let query = (
     typeof queryParam === 'string' ? queryParam : queryParam[0]
   ).split(' ');
 
-  const [mangas, totalMangas, users] = await db.$transaction([
+  const [mangas, users, forums] = await db.$transaction([
     db.manga.findMany({
       where: {
         OR: query.map((q) => ({ name: { contains: q, mode: 'insensitive' } })),
@@ -56,14 +47,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
           },
         },
       },
-      take: Number(limit),
-      skip: start,
-    }),
-    db.manga.count({
-      where: {
-        OR: query.map((q) => ({ name: { contains: q, mode: 'insensitive' } })),
-        isPublished: true,
-      },
+      take: 10,
     }),
     db.user.findMany({
       where: {
@@ -74,17 +58,30 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         image: true,
         color: true,
       },
+      take: 10,
+    }),
+    db.subForum.findMany({
+      where: {
+        OR: query.map((q) => ({ title: { contains: q, mode: 'insensitive' } })),
+      },
+      select: {
+        slug: true,
+        title: true,
+        banner: true,
+      },
+      take: 10,
     }),
   ]);
 
   return (
-    <section className="container max-sm:px-2 pt-20 space-y-10 pb-8">
-      <h1 className="text-lg font-semibold p-1 rounded-md dark:bg-zinc-900/70">
+    <main className="container max-sm:px-2 space-y-10 mb-8">
+      <h1 className="text-lg font-semibold p-1 rounded-md dark:bg-zinc-900/60">
         Từ khóa: <span className="font-normal">{query.join(' ')}</span>
       </h1>
 
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">Manga</h2>
+
         <div className="rounded-md dark:bg-zinc-900/70">
           {!!mangas.length ? (
             mangas.map((manga, idx) => (
@@ -93,14 +90,27 @@ const page: FC<pageProps> = async ({ searchParams }) => {
               </div>
             ))
           ) : (
-            <p>Không có kết quả</p>
+            <p className="p-2">Không có kết quả</p>
           )}
         </div>
-        <MangaPaginationControll total={totalMangas} route="/search?" />
+
+        {!!mangas.length && (
+          <Link
+            href={`/search/manga?q=${queryParam}`}
+            className={buttonVariants({
+              variant: 'ghost',
+              className: 'w-full',
+            })}
+          >
+            <span>Xem thêm</span>
+            <ArrowRight />
+          </Link>
+        )}
       </section>
 
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">User</h2>
+
         <div className="p-2 rounded-md dark:bg-zinc-900/70">
           {!!users.length ? (
             users.map((user, idx) => (
@@ -117,8 +127,67 @@ const page: FC<pageProps> = async ({ searchParams }) => {
             <p>Không có kết quả</p>
           )}
         </div>
+
+        {!!users.length && (
+          <Link
+            href={`/search/user?q=${queryParam}`}
+            className={buttonVariants({
+              variant: 'ghost',
+              className: 'w-full',
+            })}
+          >
+            <span>Xem thêm</span>
+            <ArrowRight />
+          </Link>
+        )}
       </section>
-    </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold">Forum</h2>
+
+        <div className="space-y-4 rounded-md dark:bg-zinc-900/60">
+          {!!forums.length ? (
+            forums.map((forum) => (
+              <Link
+                key={forum.slug}
+                href={`${forum.slug}`}
+                className="grid grid-cols-[.3fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-900"
+              >
+                {!!forum.banner && (
+                  <div className="relative aspect-video">
+                    <Image
+                      fill
+                      sizes="(max-width: 640px) 25vw, 30vw"
+                      quality={40}
+                      src={forum.banner}
+                      alt={`${forum.title} Thumbnail`}
+                      className="object-cover rounded-md"
+                    />
+                  </div>
+                )}
+
+                <p className="text-xl font-semibold">{forum.title}</p>
+              </Link>
+            ))
+          ) : (
+            <p className="p-2">Không có kết quả</p>
+          )}
+        </div>
+
+        {!!forums.length && (
+          <Link
+            href={`/search/forum?q=${queryParam}`}
+            className={buttonVariants({
+              variant: 'ghost',
+              className: 'w-full',
+            })}
+          >
+            <span>Xem thêm</span>
+            <ArrowRight />
+          </Link>
+        )}
+      </section>
+    </main>
   );
 };
 

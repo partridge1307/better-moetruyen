@@ -48,10 +48,7 @@ interface SubCommentProps {
 
 const SubComment: FC<SubCommentProps> = ({ commentId, session }) => {
   const { data: subCommentsData, isFetching } =
-    useSubComments<ExtendedSubComment>(
-      commentId,
-      `/api/comment/manga/${commentId}`
-    );
+    useSubComments<ExtendedSubComment>(commentId);
   const [subComments, setSubComments] = useState<ExtendedSubComment[]>([]);
   const prevComments = usePrevious(subComments);
 
@@ -104,14 +101,14 @@ const SubComment: FC<SubCommentProps> = ({ commentId, session }) => {
                         commentId={subComment.id}
                         votes={subComment.votes}
                         sessionUserId={session.user.id}
-                        APIQuery="/api/comment/manga"
+                        APIQuery="/api/comment"
                       />
                     )}
 
                     {session?.user.id === subComment.authorId && (
                       <DeleteComment
                         commentId={subComment.id}
-                        APIQuery={`/api/comment/manga/${subComment.id}`}
+                        APIQuery={`/api/comment/${subComment.id}`}
                         setComments={setSubComments}
                       />
                     )}

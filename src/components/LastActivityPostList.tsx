@@ -1,5 +1,6 @@
 'use client';
 
+import { forumDomain } from '@/config';
 import { ScrollArea, createStyles, getStylesRef } from '@mantine/core';
 import type { Post, SubForum } from '@prisma/client';
 import { FC } from 'react';
@@ -46,7 +47,7 @@ const LastActivityList: FC<LastActivityListProps> = ({ posts }) => {
         <a
           key={post.id}
           target="_blank"
-          href={`/m/${post.subForum.slug}/${post.id}`}
+          href={`${forumDomain}/${post.subForum.slug}/${post.id}`}
         >
           <dl className="p-4 rounded-lg hover:cursor-pointer hover:dark:bg-zinc-900">
             <dt className="font-medium">{post.title}</dt>

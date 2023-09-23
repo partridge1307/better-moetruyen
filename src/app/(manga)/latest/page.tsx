@@ -1,5 +1,5 @@
 import LatestMangaCard from '@/components/Manga/components/LastestMangaCard';
-import MangaPaginationControll from '@/components/Manga/components/MangaPaginationControll';
+import PaginationControll from '@/components/PaginationControll';
 import { db } from '@/lib/db';
 import type { Metadata } from 'next';
 import { FC } from 'react';
@@ -77,8 +77,8 @@ const page: FC<pageProps> = async ({ searchParams }) => {
   ]);
 
   return (
-    <main className="container mx-auto max-sm:px-2 space-y-10">
-      <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-2 rounded-md">
+    <main className="container mx-auto max-sm:px-2 space-y-10 mb-10">
+      <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-2 rounded-md dark:bg-zinc-900/60">
         {latestManga.length ? (
           latestManga.map((data, idx) => (
             <li key={idx}>
@@ -90,7 +90,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         )}
       </ul>
 
-      <MangaPaginationControll total={totalMangas} route="/latest?" />
+      <PaginationControll total={totalMangas} route="/latest?" />
     </main>
   );
 };

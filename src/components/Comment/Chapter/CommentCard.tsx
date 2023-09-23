@@ -31,7 +31,7 @@ const CommentCard = ({ comment, session, children }: CommentCardProps) => {
     <>
       <UserAvatar user={comment.author} />
 
-      <div className="min-w-0 space-y-1">
+      <div className="min-w-0 space-y-1 flex-1">
         <dl className="flex flex-wrap items-center gap-2">
           <dt>
             <Username user={comment.author} className="text-start" />
@@ -54,7 +54,7 @@ const CommentCard = ({ comment, session, children }: CommentCardProps) => {
                 commentId={comment.id}
                 votes={comment.votes}
                 sessionUserId={session.user.id}
-                APIQuery="/api/comment/manga"
+                APIQuery="/api/comment"
               />
 
               <button

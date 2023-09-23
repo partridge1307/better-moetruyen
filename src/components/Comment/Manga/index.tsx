@@ -94,7 +94,7 @@ const Comments = ({ id, session }: CommentProps) => {
                   {comment.authorId === session?.user.id && (
                     <DeleteComment
                       commentId={comment.id}
-                      APIQuery={`${API_QUERY}/${comment.id}`}
+                      APIQuery={`/api/comment/${comment.id}`}
                       setComments={setComments}
                     />
                   )}
@@ -108,7 +108,7 @@ const Comments = ({ id, session }: CommentProps) => {
                   {comment.authorId === session?.user.id && (
                     <DeleteComment
                       commentId={comment.id}
-                      APIQuery={`${API_QUERY}/${comment.id}`}
+                      APIQuery={`/api/comment/${comment.id}`}
                       setComments={setComments}
                     />
                   )}

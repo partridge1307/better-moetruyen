@@ -47,9 +47,7 @@
 
 .moetruyen-editor-embed {
   position: relative;
-  overflow: hidden;
-  width: 100%;
-  padding-top: 56.25%;
+  aspect-ratio: 16/9;
 }
 
 .ImageNode__contentEditable {

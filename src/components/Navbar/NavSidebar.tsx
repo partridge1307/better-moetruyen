@@ -1,5 +1,6 @@
 'use client';
 
+import { forumDomain } from '@/config';
 import { cn } from '@/lib/utils';
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import { Book, Home, Menu, Pin, SunMoon, Users2 } from 'lucide-react';
@@ -49,8 +50,8 @@ const NavSidebar = () => {
         title: 'Cộng đồng',
         subMenu: [
           {
-            title: 'Feed',
-            link: '/m',
+            title: 'Forum',
+            link: forumDomain,
           },
         ],
       },
@@ -58,6 +59,10 @@ const NavSidebar = () => {
         icon: <Pin />,
         title: 'Thông tin',
         subMenu: [
+          {
+            title: 'Cộng đồng',
+            link: '/social',
+          },
           {
             title: 'Luật của web',
             link: '/rule',
@@ -162,7 +167,7 @@ const NavSidebar = () => {
         <div className="flex h-[10%] items-center justify-between px-6 dark:bg-zinc-900">
           <div>
             <p>©Moetruyen</p>
-            <p>Version: 8w5</p>
+            <p>Version: 1.0.0</p>
           </div>
           <SwitchWithIcon checked={isChecked} onCheckedChange={handleSwitch}>
             <SunMoon />

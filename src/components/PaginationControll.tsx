@@ -8,15 +8,12 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FC } from 'react';
 
-interface MangaPaginationControll {
+interface PaginationControllProps {
   total: number;
   route: string;
 }
 
-const MangaPaginationControll: FC<MangaPaginationControll> = ({
-  total,
-  route,
-}) => {
+const PaginationControll: FC<PaginationControllProps> = ({ total, route }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get('page') ?? '1');
@@ -70,4 +67,4 @@ const MangaPaginationControll: FC<MangaPaginationControll> = ({
   );
 };
 
-export default MangaPaginationControll;
+export default PaginationControll;

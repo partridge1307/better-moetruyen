@@ -125,15 +125,19 @@ const page: FC<pageProps> = async ({ params }) => {
           chapterIndex: 'asc',
         },
       }),
-      db.history.update({
+      db.history.upsert({
         where: {
           userId_mangaId: {
             userId: session.user.id,
             mangaId: chapter.manga.id,
           },
         },
-        data: {
+        update: {
           chapterId: chapter.id,
+        },
+        create: {
+          userId: session.user.id,
+          mangaId: chapter.manga.id,
         },
       }),
     ]);

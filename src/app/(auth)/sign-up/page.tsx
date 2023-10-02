@@ -1,9 +1,9 @@
 import SignUp from '@/components/Auth/SignUp';
-import { Button } from '@/components/ui/Button';
-import { ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
-import type { Metadata } from 'next';
+import { buttonVariants } from '@/components/ui/Button';
 import { getAuthSession } from '@/lib/auth';
+import { ChevronLeft } from 'lucide-react';
+import type { Metadata } from 'next';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
@@ -17,20 +17,20 @@ const Page = async () => {
   if (session) return redirect('/');
 
   return (
-    <div className="container flex h-full items-center max-sm:px-0">
-      <div className="relative flex h-4/5 w-full items-center justify-center rounded-lg p-5 dark:bg-zinc-900/50">
-        <div className="w-full md:w-3/4">
-          <Button
-            variant="link"
-            className="absolute left-0 top-4 flex items-center md:left-4"
-          >
-            <ChevronLeft />
-            <Link href="/">Trang chủ</Link>
-          </Button>
-          <SignUp />
-        </div>
-      </div>
-    </div>
+    <main className="mx-auto lg:w-2/3 p-2 space-y-10 mb-6 rounded-md dark:bg-zinc-900/60">
+      <Link
+        href="/"
+        className={buttonVariants({
+          variant: 'ghost',
+          className: 'max-sm:pl-2 space-x-0.5',
+        })}
+      >
+        <ChevronLeft />
+        <span>Trang chủ</span>
+      </Link>
+
+      <SignUp className="max-sm:px-2" bypassRouteInterception />
+    </main>
   );
 };
 

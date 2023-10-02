@@ -3,7 +3,15 @@
 import { forumDomain } from '@/config';
 import { cn } from '@/lib/utils';
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
-import { Book, Home, Menu, Pin, SunMoon, Users2 } from 'lucide-react';
+import {
+  Album,
+  BookOpen,
+  Home,
+  Menu,
+  Pin,
+  SunMoon,
+  Users2,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -19,7 +27,7 @@ interface NavContentProps {
   }[];
 }
 
-const NavSidebar = () => {
+const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const pathname = usePathname();
   const colorScheme = useColorScheme();
   const [colorTheme, setColorTheme] = useLocalStorage({ key: 'theme' });
@@ -27,8 +35,30 @@ const NavSidebar = () => {
 
   const NavContent: NavContentProps[] = useMemo(
     () => [
+      ...(isLoggedIn
+        ? [
+            {
+              icon: <Album />,
+              title: 'Theo dõi',
+              subMenu: [
+                {
+                  title: 'Team',
+                  link: '/follow/team',
+                },
+                {
+                  title: 'Manga',
+                  link: '/follow/manga',
+                },
+                {
+                  title: 'Người dùng',
+                  link: '/follow/user',
+                },
+              ],
+            },
+          ]
+        : []),
       {
-        icon: <Book />,
+        icon: <BookOpen />,
         title: 'Manga',
         subMenu: [
           {
@@ -78,7 +108,7 @@ const NavSidebar = () => {
         ],
       },
     ],
-    []
+    [isLoggedIn]
   );
 
   useEffect(() => {

@@ -1,17 +1,28 @@
 import UserAvatar from '@/components/User/UserAvatar';
+import UserBanner from '@/components/User/UserBanner';
 import Username from '@/components/User/Username';
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/HoverCard';
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { cn } from '@/lib/utils';
-import dynamic from 'next/dynamic';
-import Image from 'next/image';
+import format from 'date-fns/format';
+import vi from 'date-fns/locale/vi';
+import { Users2, Wifi } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
-const TabInfo = dynamic(() => import('@/components/User/TabInfo'));
+import dynamic from 'next/dynamic';
+
+const UserBadge = dynamic(() => import('@/components/User/UserBadge'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-8 ml-28 lg:ml-32 my-3 mr-1 rounded-md animate-pulse bg-background" />
+  ),
+});
+
+const FollowButton = dynamic(() => import('@/components/User/FollowButton'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-10 rounded-md animate-pulse bg-background" />
+  ),
+});
 
 interface pageProps {
   params: {
@@ -20,90 +31,119 @@ interface pageProps {
 }
 
 const page: FC<pageProps> = async ({ params }) => {
-  const user = await db.user.findFirst({
+  const session = await getAuthSession();
+
+  const user = await db.user.findUnique({
     where: {
       name: params.slug.split('-').join(' '),
     },
     select: {
       id: true,
-      name: true,
       image: true,
       banner: true,
+      name: true,
       color: true,
       badge: true,
+      createdAt: true,
       _count: {
         select: {
-          follows: true,
+          manga: true,
+          subForum: true,
+          following: true,
+          followedBy: true,
+        },
+      },
+      followedBy: {
+        where: {
+          id: session?.user.id,
+        },
+        select: {
+          id: true,
         },
       },
     },
   });
+
   if (!user) return notFound();
 
   return (
-    <section className="container max-sm:px-2">
-      <div className="flex flex-col gap-2">
-        <div className="relative w-full h-56 lg:h-96">
-          {user.banner ? (
-            <Image
-              fill
-              sizes="40vw"
-              priority
-              src={user.banner}
-              alt="User Banner"
-              className="object-cover rounded-lg"
-            />
-          ) : (
-            <div className="absolute inset-0 top-0 left-0 dark:bg-zinc-900" />
-          )}
-
-          <UserAvatar
-            user={user}
-            className="w-28 h-28 lg:w-52 lg:h-52 border-4 lg:border-8 rounded-full absolute left-4 bottom-0 translate-y-1/2"
-          />
-        </div>
-
-        <ul className="flex justify-end items-center">
-          {!!user.badge.length &&
-            user.badge.map((badge, idx) => (
-              <li key={idx}>
-                <HoverCard>
-                  <HoverCardTrigger>
-                    <Image
-                      width={100}
-                      height={100}
-                      sizes="70vw"
-                      src={badge.image}
-                      alt={`${badge.name} Image`}
-                      className="w-10 h-10"
-                    />
-                  </HoverCardTrigger>
-
-                  <HoverCardContent>
-                    <h1>{badge.name}</h1>
-                    <p className="text-sm">{badge.description}</p>
-                  </HoverCardContent>
-                </HoverCard>
-              </li>
-            ))}
-        </ul>
-
-        <div
-          className={cn('p-4 rounded-lg dark:bg-zinc-900 space-y-8', {
-            'mt-24 lg:mt-32': !user.badge.length,
-            'mt-16 lg:mt-28': user.badge.length,
-          })}
-        >
-          <Username user={user} className="text-start text-xl font-semibold" />
-          <div className="flex items-center space-x-2">
-            <h1>Theo dõi:</h1>
-            <span>{user._count.follows}</span>
-          </div>
-
-          <TabInfo userId={user.id} />
-        </div>
+    <>
+      <div className="relative">
+        <UserBanner user={user} className="rounded-md" />
+        <UserAvatar
+          user={user}
+          className="absolute w-20 h-20 lg:w-24 lg:h-24 bottom-0 left-4 translate-y-1/2 border-4 dark:border-zinc-900 dark:bg-zinc-900"
+        />
       </div>
-    </section>
+
+      <div className="flex flex-wrap ml-28 lg:ml-32 my-3 mr-1 justify-end items-center gap-3">
+        {!!user.badge.length &&
+          user.badge.map((badge) => <UserBadge key={badge.id} badge={badge} />)}
+      </div>
+
+      {!!session && session.user.id !== user.id && (
+        <FollowButton
+          user={user}
+          sessionUserId={session.user.id}
+          hasBadge={!!user.badge.length}
+        />
+      )}
+
+      <div
+        className={`${
+          session && session.user.id !== user.id
+            ? 'mt-2 lg:mt-3'
+            : !!user.badge.length
+            ? 'mt-5 lg:mt-7'
+            : 'mt-16 lg:mt-20'
+        } p-4 rounded-md dark:bg-zinc-800`}
+      >
+        <Username user={user} className="text-start text-lg font-semibold" />
+
+        <hr className="h-0.5 rounded-full dark:bg-zinc-50 my-4" />
+
+        <div className="flex flex-wrap justify-between items-center gap-2">
+          <dl className="flex items-center gap-1.5 max-sm:w-full">
+            <dt>Đang theo dõi:</dt>
+            <dd className="flex items-center gap-0.5">
+              {user._count.followedBy} <Wifi className="w-5 h-5 rotate-45" />
+            </dd>
+          </dl>
+
+          <dl className="flex items-center gap-1.5 max-sm:w-full">
+            <dt>Người theo dõi:</dt>
+            <dd className="flex gap-1">
+              {user._count.following} <Users2 className="w-5 h-5" />
+            </dd>
+          </dl>
+        </div>
+
+        <hr className="h-0.5 rounded-full dark:bg-zinc-50 my-4" />
+
+        <div className="flex flex-wrap justify-between items-center gap-2">
+          <dl className="flex items-center gap-1.5">
+            <dt>Manga:</dt>
+            <dd>{user._count.manga}</dd>
+          </dl>
+
+          <dl className="flex items-center gap-1.5">
+            <dt>Forum:</dt>
+            <dd>{user._count.subForum}</dd>
+          </dl>
+        </div>
+
+        <hr className="h-0.5 rounded-full dark:bg-zinc-50 my-4" />
+
+        <dl className="flex items-center gap-1.5">
+          <dt>Gia nhập:</dt>
+          <dd>
+            <time dateTime={user.createdAt.toDateString()}>
+              {format(new Date(user.createdAt), 'd MMM y', { locale: vi })}
+            </time>
+          </dd>
+        </dl>
+      </div>
+    </>
   );
 };
 

@@ -2,39 +2,32 @@
 
 import { buttonVariants } from '@/components/ui/Button';
 import { useCustomToast } from '@/hooks/use-custom-toast';
-import { FollowPayload } from '@/lib/validators/vote';
 import { usePrevious } from '@mantine/hooks';
-import type { MangaFollow } from '@prisma/client';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import { Heart, HeartOff } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
 
 interface MangaFollowProps {
-  follow: MangaFollow | null;
+  hasFollow: boolean;
   mangaId: number;
 }
 
-const MangaFollow: FC<MangaFollowProps> = ({ follow, mangaId }) => {
+const MangaFollow: FC<MangaFollowProps> = ({ hasFollow, mangaId }) => {
   const { loginToast, notFoundToast, serverErrorToast } = useCustomToast();
+  const router = useRouter();
 
-  const [currentFollow, setCurrentFollow] = useState<
-    'FOLLOW' | 'UNFOLLOW' | undefined
-  >(follow ? 'FOLLOW' : 'UNFOLLOW');
-  const prevFollow = usePrevious(currentFollow);
+  const [isFollowed, setFollowed] = useState(hasFollow);
+  const prevFollow = usePrevious(isFollowed);
 
-  const { mutate: Handle, isLoading: isHanling } = useMutation({
+  const { mutate: Toggle, isLoading: isToggling } = useMutation({
     mutationKey: ['follow', mangaId],
-    mutationFn: async () => {
-      const payload: FollowPayload = {
-        id: mangaId,
-        target: 'MANGA',
-      };
-
-      await axios.post(`/api/user/follow`, payload);
+    mutationFn: async (type: 'FOLLOW' | 'UNFOLLOW') => {
+      await axios.post(`/api/user/follow/manga`, { id: mangaId, type });
     },
     onError: (err) => {
-      setCurrentFollow(prevFollow);
+      setFollowed(prevFollow ?? false);
 
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) return loginToast();
@@ -43,27 +36,30 @@ const MangaFollow: FC<MangaFollowProps> = ({ follow, mangaId }) => {
 
       return serverErrorToast();
     },
-    onMutate: (type: 'FOLLOW' | 'UNFOLLOW') => {
-      if (type === 'FOLLOW') return setCurrentFollow('FOLLOW');
-      if (type === 'UNFOLLOW') return setCurrentFollow('UNFOLLOW');
+    onMutate: (type) => {
+      if (type === 'FOLLOW') return setFollowed(true);
+      else return setFollowed(false);
+    },
+    onSuccess: () => {
+      return router.refresh();
     },
   });
 
-  return currentFollow === 'FOLLOW' ? (
+  return isFollowed ? (
     <button
-      className={buttonVariants({ variant: 'ghost' })}
-      disabled={isHanling}
-      onClick={() => Handle('UNFOLLOW')}
+      className={buttonVariants({ variant: 'destructive' })}
+      disabled={isToggling}
+      onClick={() => Toggle('UNFOLLOW')}
     >
-      <HeartOff className="w-5 h-5" />
+      <HeartOff />
     </button>
   ) : (
     <button
-      className={buttonVariants({ variant: 'ghost' })}
-      disabled={isHanling}
-      onClick={() => Handle('FOLLOW')}
+      className={buttonVariants()}
+      disabled={isToggling}
+      onClick={() => Toggle('FOLLOW')}
     >
-      <Heart className="w-5 h-5 dark:text-[#F08484]" />
+      <Heart />
     </button>
   );
 };

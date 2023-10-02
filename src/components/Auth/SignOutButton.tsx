@@ -1,26 +1,24 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import { buttonVariants } from '../ui/Button';
-import { DropdownMenuItem } from '../ui/DropdownMenu';
 import { signOut } from 'next-auth/react';
+import { Button, buttonVariants } from '../ui/Button';
 
 const SignOutButton = () => {
   return (
-    <DropdownMenuItem
-      className={cn(
-        buttonVariants({ variant: 'destructive' }),
-        'w-full cursor-pointer'
-      )}
-      onClick={(e) => {
-        e.preventDefault();
+    <Button
+      type="button"
+      className={buttonVariants({
+        variant: 'destructive',
+        className: 'w-full',
+      })}
+      onClick={() => {
         return signOut({
           callbackUrl: `/`,
         });
       }}
     >
       Đăng xuất
-    </DropdownMenuItem>
+    </Button>
   );
 };
 

@@ -44,15 +44,11 @@ const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
             image: true,
             banner: true,
             color: true,
-            memberOnTeam: {
+            team: {
               select: {
-                teamId: true,
-                team: {
-                  select: {
-                    image: true,
-                    name: true,
-                  },
-                },
+                id: true,
+                image: true,
+                name: true,
               },
             },
           },
@@ -63,7 +59,7 @@ const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
   ]);
   if (!manga) return notFound();
 
-  const creatorTeam = manga.creator.memberOnTeam;
+  const creatorTeam = manga.creator.team;
 
   return (
     <Tabs defaultValue="chapter">
@@ -101,7 +97,7 @@ const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
             {!!creatorTeam && (
               <a
                 target="_blank"
-                href={`/team/${creatorTeam.teamId}`}
+                href={`/team/${creatorTeam.id}`}
                 className="flex items-center gap-3 p-2 mt-10 rounded-md transition-colors dark:bg-zinc-800 hover:dark:bg-zinc-800/70"
               >
                 <div className="relative aspect-square w-12 h-12">
@@ -109,12 +105,12 @@ const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
                     fill
                     sizes="(max-width: 640px) 15vw, 20vw"
                     quality={40}
-                    src={creatorTeam.team.image}
-                    alt={`${creatorTeam.team.name} Thumbnail`}
+                    src={creatorTeam.image}
+                    alt={`${creatorTeam.name} Thumbnail`}
                     className="rounded-full"
                   />
                 </div>
-                <p>{creatorTeam.team.name}</p>
+                <p>{creatorTeam.name}</p>
               </a>
             )}
           </div>

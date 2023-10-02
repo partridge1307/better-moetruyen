@@ -47,14 +47,18 @@ export async function POST(req: Request) {
             oEmbed,
           },
         }),
-        db.notify.create({
-          data: {
-            type: 'COMMENT',
-            toUserId: targetComment.authorId,
-            content: `${session.user.name} vừa phản hồi bình luận của bạn`,
-            endPoint: `${process.env.NEXTAUTH_URL}/chapter/${targetComment.chapterId}`,
-          },
-        }),
+        ...(session.user.id !== targetComment.authorId
+          ? [
+              db.notify.create({
+                data: {
+                  type: 'GENERAL',
+                  toUserId: targetComment.authorId,
+                  content: `${session.user.name} vừa phản hồi bình luận của bạn`,
+                  endPoint: `${process.env.NEXTAUTH_URL}/chapter/${targetComment.chapterId}`,
+                },
+              }),
+            ]
+          : []),
       ]);
     } else {
       createdComment = await db.comment.create({

@@ -23,7 +23,7 @@ const MangaImage = dynamic(
   }
 );
 const MangaControll = dynamic(
-  () => import('@/components/Manga/components/MangaControll'),
+  () => import('@/components/Manga/MangaControll'),
   {
     loading: () => <MangaControllSkeleton />,
   }
@@ -147,7 +147,7 @@ const page: FC<pageProps> = async ({ params }) => {
       },
       _count: {
         select: {
-          mangaFollow: true,
+          followedBy: true,
         },
       },
       view: {
@@ -204,7 +204,7 @@ const page: FC<pageProps> = async ({ params }) => {
               {manga.view?.totalView} <span>lượt xem</span>
             </p>
             <p>
-              {manga._count.mangaFollow} <span>theo dõi</span>
+              {manga._count.followedBy} <span>theo dõi</span>
             </p>
           </div>
 

@@ -148,6 +148,7 @@ const UserSignInForm = ({
     <div className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="magic_link">Email</Label>
+
         <Input
           id="magic_link"
           placeholder="Email"
@@ -155,6 +156,7 @@ const UserSignInForm = ({
           value={emailString}
           disabled={isLoading}
           onChange={(e) => setEmailString(e.target.value)}
+          className="dark:border-slate-200 border-2"
         />
       </div>
       <Button

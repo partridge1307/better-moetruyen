@@ -1,6 +1,5 @@
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { userFollowValidator } from '@/lib/validators/vote';
 import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
@@ -9,35 +8,51 @@ export async function POST(req: Request) {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const { id, target } = userFollowValidator.parse(await req.json());
+    const { id, type } = z
+      .object({
+        id: z.string(),
+        type: z.enum(['FOLLOW', 'UNFOLLOW']),
+      })
+      .parse(await req.json());
 
-    if (target === 'MANGA') {
-      const existingFollow = await db.mangaFollow.findUnique({
+    const user = await db.user.findUniqueOrThrow({
+      where: {
+        id,
+        NOT: {
+          id: session.user.id,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (type === 'FOLLOW') {
+      await db.user.update({
         where: {
-          mangaId_userId: {
-            mangaId: +id,
-            userId: session.user.id,
+          id: user.id,
+        },
+        data: {
+          followedBy: {
+            connect: {
+              id: session.user.id,
+            },
           },
         },
       });
-
-      if (existingFollow) {
-        await db.mangaFollow.delete({
-          where: {
-            mangaId_userId: {
-              mangaId: existingFollow.mangaId,
-              userId: session.user.id,
+    } else {
+      await db.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          followedBy: {
+            disconnect: {
+              id: session.user.id,
             },
           },
-        });
-      } else {
-        await db.mangaFollow.create({
-          data: {
-            mangaId: +id,
-            userId: session.user.id,
-          },
-        });
-      }
+        },
+      });
     }
 
     return new Response('OK');
@@ -46,8 +61,10 @@ export async function POST(req: Request) {
       return new Response('Invalid', { status: 422 });
     }
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      return new Response('Not found', { status: 404 });
+      if (error.code === 'P2025')
+        return new Response('Not found', { status: 404 });
     }
+
     return new Response('Something went wrong', { status: 500 });
   }
 }

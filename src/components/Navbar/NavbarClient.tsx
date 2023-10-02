@@ -53,12 +53,13 @@ const NavbarClient = () => {
     <nav
       className={cn(
         'inset-x-0 p-2 z-30 h-fit border-b bg-slate-100 dark:bg-zinc-800',
-        isFixed.current && 'sticky top-0 mb-8'
+        { 'sticky top-0 mb-8': isFixed.current }
       )}
     >
       <div className="container mx-auto flex items-center justify-between px-0 max-sm:px-1">
         <div className="flex items-center gap-4">
-          <NavSidebar />
+          <NavSidebar isLoggedIn={!!session} />
+
           <Link href="/" className="flex items-center gap-2">
             <Icons.logo
               aria-label="Moetruyen logo"

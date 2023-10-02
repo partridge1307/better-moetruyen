@@ -44,6 +44,8 @@ const roboto = Roboto({
   weight: '400',
   variable: '--font-roboto',
   preload: true,
+  display: 'swap',
+  adjustFontFallback: true,
 });
 
 export default function RootLayout({

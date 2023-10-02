@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 const Daily = async () => {
   const results = await db.view.findMany({
@@ -28,9 +29,8 @@ const Daily = async () => {
   return (
     <div className="space-y-3 rounded-md dark:bg-zinc-900/60">
       {results.map((result, idx) => (
-        <a
+        <Link
           key={result.mangaId}
-          target="_blank"
           href={`/manga/${result.manga.slug}`}
           className="block p-2 rounded-md transition-colors hover:dark:bg-zinc-900"
         >
@@ -43,7 +43,7 @@ const Daily = async () => {
             <dd className="line-clamp-2">{result.manga.name}</dd>
           </dl>
           <p className="text-sm">{result._count.dailyView} lượt xem</p>
-        </a>
+        </Link>
       ))}
     </div>
   );

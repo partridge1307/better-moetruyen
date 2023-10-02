@@ -27,37 +27,40 @@ const Leaderboard = dynamic(() => import('@/components/LeaderBoard'), {
 });
 
 const Home = async () => {
-  const manga = await db.manga.findMany({
-    where: {
-      isPublished: true,
+  const pin = await db.mangaPin.findMany({
+    orderBy: {
+      createdAt: 'desc',
     },
     select: {
-      id: true,
-      slug: true,
-      name: true,
-      image: true,
-      author: {
+      manga: {
         select: {
+          id: true,
+          slug: true,
           name: true,
-        },
-      },
-      tags: {
-        select: {
-          name: true,
-          description: true,
+          image: true,
+          author: {
+            select: {
+              name: true,
+            },
+          },
+          tags: {
+            select: {
+              name: true,
+              description: true,
+            },
+          },
         },
       },
     },
-    take: 10,
   });
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    itemListElement: manga.map((m, idx) => ({
+    itemListElement: pin.map(({ manga }, idx) => ({
       '@type': 'ListItem',
-      position: idx + 1,
-      url: `${process.env.NEXTAUTH_URL}/manga/${m.slug}`,
+      position: idx,
+      url: `${process.env.NEXTAUTH_URL}/manga/${manga.slug}`,
     })),
   };
 
@@ -68,7 +71,8 @@ const Home = async () => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <main className="container mx-auto max-sm:px-3">
-        <NotableManga mangas={manga} />
+        {!!pin.length && <NotableManga pin={pin} />}
+
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_.5fr] gap-10 mt-20 pb-10">
           <section className="space-y-10">
             <div className="space-y-2">

@@ -43,6 +43,7 @@ export const INSERT_IMAGE_COMMAND: LexicalCommand<InsertImagePayload> =
   createCommand('INSERT_IMAGE_COMMAND');
 
 declare global {
+  // eslint-disable-next-line no-unused-vars
   interface DragEvent {
     rangeOffset?: number;
     rangeParent?: Node;
@@ -52,6 +53,7 @@ declare global {
 export function InsertURLImageUploaded({
   onClick,
 }: {
+  // eslint-disable-next-line no-unused-vars
   onClick: (payload: ImagePayload) => void;
 }): JSX.Element {
   const [src, setSrc] = useState<string>('');
@@ -88,6 +90,7 @@ export function InsertURLImageUploaded({
 export function InsertImageUploaded({
   onClick,
 }: {
+  // eslint-disable-next-line no-unused-vars
   onClick: (payload: InsertImagePayload) => void;
 }): JSX.Element {
   const [src, setSrc] = useState('');

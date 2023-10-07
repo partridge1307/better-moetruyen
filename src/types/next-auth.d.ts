@@ -37,5 +37,6 @@ declare module 'next-auth' {
       | null;
     muteExpires: Date | null;
     isBanned: boolean;
+    twoFactor: boolean;
   }
 }

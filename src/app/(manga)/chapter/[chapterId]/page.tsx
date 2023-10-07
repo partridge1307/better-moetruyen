@@ -134,7 +134,7 @@ const page: FC<pageProps> = async ({ params }) => {
         },
         update: {
           chapterId: chapter.id,
-          updatedAt: new Date(Date.now()),
+          updatedAt: new Date(),
         },
         create: {
           userId: session.user.id,

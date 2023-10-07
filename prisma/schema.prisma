@@ -26,6 +26,7 @@ model Account {
   user User @relation(fields: [userId], references: [id])
 
   @@unique([provider, providerAccountId])
+  @@index([provider, providerAccountId])
   @@index([userId])
 }
 
@@ -50,10 +51,10 @@ model VerificationToken {
 
 model VerifyList {
   userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 
-  @@id([userId])
+  user User @relation(fields: [userId], references: [id])
+
   @@index([userId])
 }
 
@@ -76,6 +77,9 @@ model User {
   notifications Notify[]     @relation("toUser")
   session       Session[]
   account       Account[]
+
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret  String?
 
   manga          Manga[]
   mangaFollowing Manga[] @relation("userMangaFollow")

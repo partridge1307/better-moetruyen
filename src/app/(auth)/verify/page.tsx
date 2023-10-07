@@ -1,13 +1,14 @@
-import { getAuthSession } from '@/lib/auth';
+import VerifyNavigation from '@/components/Auth/VerifyNavigation';
 import { db } from '@/lib/db';
-import { verifyToken } from '@/lib/jwt';
-import { AuthVeifyValidator } from '@/lib/validators/auth';
+import { verifyAuthToken } from '@/lib/jwt';
+import { cn } from '@/lib/utils';
+import { AuthVerifyResultEnum } from '@/lib/validators/auth';
 import { Prisma } from '@prisma/client';
 import type { Metadata } from 'next';
-import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { FC } from 'react';
+import { z } from 'zod';
 
 export const metadata: Metadata = {
   title: 'Xác thực tài khoản',
@@ -29,122 +30,99 @@ interface pageProps {
 
 const Page: FC<pageProps> = async ({ searchParams }) => {
   const tokenParam = searchParams['token'];
+  if (!tokenParam) return redirect('/');
+
+  const token = tokenParam instanceof Array ? tokenParam[0] : tokenParam;
+
+  let result: z.infer<typeof AuthVerifyResultEnum>;
   try {
-    const session = await getAuthSession();
-    if (session) return redirect('/');
+    const { email, password } = await verifyAuthToken(token);
 
-    let decoded;
-    if (Array.isArray(tokenParam)) {
-      const firstToken = tokenParam[0];
-      decoded = verifyToken(firstToken);
-    } else if (typeof tokenParam === 'string') {
-      decoded = verifyToken(tokenParam);
-    } else throw new Error('Invalid URL');
+    await db.user.create({
+      data: {
+        email,
+        password,
+      },
+    });
 
-    const { email, password } = AuthVeifyValidator.parse(decoded);
-
-    await Promise.all([
-      db.user.create({
-        data: {
-          email,
-          password,
-        },
-      }),
-      signIn('credentials', { email, password, redirect: false }),
-    ]);
-
-    setTimeout(() => {
-      return redirect('/');
-    }, 15 * 1000);
-
-    return (
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="h-fit max-w-2xl space-y-4">
-          <h1 className="text-center text-4xl font-bold tracking-tight text-green-400">
-            Chúc mừng
-          </h1>
-          <p className="text-center">
-            Bạn đã tạo tài khoản{' '}
-            <Link href="/" className="underline underline-offset-4">
-              Moetruyen
-            </Link>{' '}
-            thành công
-            <br />
-            Cùng khám phá{' '}
-            <Link href="/" className="underline underline-offset-4">
-              Moetruyen
-            </Link>{' '}
-            ngay thôi nhé
-          </p>
-          <p className="text-sm">
-            <span className="text-red-500">*</span>Tự động chuyển về trang chủ
-            sau 15s
-          </p>
-        </div>
-      </div>
-    );
+    result = AuthVerifyResultEnum.Enum.OK;
   } catch (error) {
-    if (error instanceof Error) {
-      return (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="h-fit max-w-2xl space-y-4">
-            <h1 className="text-center text-4xl font-bold tracking-tight text-red-500">
-              Xin lỗi
-            </h1>
-            <p className="text-center">
-              Đường dẫn không hợp lệ
-              <br />
-              Hãy thử{' '}
-              <Link href="/sign-up" className="underline underline-offset-2">
-                đăng ký
-              </Link>{' '}
-              lại nhé
-            </p>
-          </div>
-        </div>
-      );
-    }
+    result = AuthVerifyResultEnum.Enum.SERVER_ERROR;
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      return (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="h-fit max-w-2xl space-y-4">
-            <h1 className="text-center text-4xl font-bold tracking-tight text-red-500">
-              Xin lỗi
-            </h1>
-            <p className="text-center">
-              Có vẻ như tài khoản bị người khác tạo mất mất rồi
-              <br />
-              Hãy thử{' '}
-              <Link href="/sign-up" className="underline underline-offset-2">
-                đăng ký
-              </Link>{' '}
-              tài khoản lại nhé
-            </p>
-          </div>
-        </div>
-      );
+      if (error.code === 'P2002')
+        result = AuthVerifyResultEnum.Enum.DUPLICATED_ERROR;
     }
 
-    return (
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="h-fit max-w-2xl space-y-4">
-          <h1 className="text-center text-4xl font-bold tracking-tight text-red-500">
-            Xin lỗi
-          </h1>
-          <p className="text-center">
-            Có vẻ như token không hợp lệ mất rồi
-            <br />
-            Hãy thử{' '}
-            <Link href="/sign-up" className="underline underline-offset-2">
-              đăng ký
-            </Link>{' '}
-            tài khoản lại nhé
-          </p>
-        </div>
-      </div>
-    );
+    if (error === 'JWT ERROR') {
+      result = AuthVerifyResultEnum.Enum.EXPIRED;
+    }
   }
+
+  return (
+    <main className="absolute inset-0 flex justify-center items-center">
+      <section className="p-10 space-y-20 rounded-md dark:bg-zinc-900/60">
+        <h1
+          className={cn('text-center font-semibold text-3xl', {
+            'text-red-500': result !== 'OK',
+            'text-green-500': result === 'OK',
+          })}
+        >
+          {result === 'OK' ? 'Thành công' : 'Xin lỗi'}
+        </h1>
+
+        <div className="text-center space-y-10">
+          {result === 'OK' ? (
+            <dl className="space-y-2">
+              <dt className="text-xl font-medium">
+                Bạn đã tạo tài khoản thành công!
+              </dt>
+
+              <dd>
+                Hãy cùng Mòe tìm hiểu{' '}
+                <Link
+                  href="/"
+                  className="hover:underline underline-offset-2 font-medium text-lg"
+                >
+                  Moetruyen
+                </Link>{' '}
+                nhé!
+              </dd>
+            </dl>
+          ) : (
+            <dl className="space-y-2">
+              <dt className="text-xl font-medium">
+                Mòe không thể tạo tài khoản cho bạn!
+              </dt>
+
+              <dd>
+                <p>
+                  {result === 'DUPLICATED_ERROR'
+                    ? 'Đã có người khác tạo tài khoản trước đó rồi'
+                    : result === 'EXPIRED'
+                    ? 'Mail xác thực đã hết hạn mất rồi'
+                    : 'Có lỗi xảy ra'}
+                </p>
+
+                <p>
+                  Vui lòng{' '}
+                  <Link
+                    href="/sign-up"
+                    className="font-medium hover:underline underline-offset-2 text-lg"
+                  >
+                    đăng ký
+                  </Link>{' '}
+                  lại nhé
+                </p>
+              </dd>
+            </dl>
+          )}
+
+          <VerifyNavigation isSuccess={result === 'OK'} />
+        </div>
+      </section>
+    </main>
+  );
 };
 
 export default Page;

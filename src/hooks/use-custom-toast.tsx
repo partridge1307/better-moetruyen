@@ -44,7 +44,7 @@ export const useCustomToast = () => {
       action: (
         <a
           target="_blank"
-          href="/verify-request"
+          href="/user-verify"
           className={cn(buttonVariants(), 'p-2')}
           onClick={() => dismiss()}
         >
@@ -54,11 +54,19 @@ export const useCustomToast = () => {
     });
   };
 
+  const rateLimitToast = () =>
+    toast({
+      title: 'Quá nhanh rồi',
+      description: 'Vui lòng chậm lại chút',
+      variant: 'destructive',
+    });
+
   return {
     loginToast,
     notFoundToast,
     serverErrorToast,
     successToast,
     verifyToast,
+    rateLimitToast,
   };
 };

@@ -15,7 +15,8 @@ interface MangaFollowProps {
 }
 
 const MangaFollow: FC<MangaFollowProps> = ({ hasFollow, mangaId }) => {
-  const { loginToast, notFoundToast, serverErrorToast } = useCustomToast();
+  const { loginToast, notFoundToast, rateLimitToast, serverErrorToast } =
+    useCustomToast();
   const router = useRouter();
 
   const [isFollowed, setFollowed] = useState(hasFollow);
@@ -32,6 +33,7 @@ const MangaFollow: FC<MangaFollowProps> = ({ hasFollow, mangaId }) => {
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) return loginToast();
         if (err.response?.status === 404) return notFoundToast();
+        if (err.response?.status === 429) return rateLimitToast();
       }
 
       return serverErrorToast();

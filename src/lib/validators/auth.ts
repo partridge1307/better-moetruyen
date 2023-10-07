@@ -38,3 +38,17 @@ export const AuthVeifyValidator = z.object({
   iat: z.number(),
   exp: z.number(),
 });
+
+export const AuthVerifyResultEnum = z.enum([
+  'OK',
+  'SERVER_ERROR',
+  'DUPLICATED_ERROR',
+  'EXPIRED',
+]);
+
+export const AuthTwoFactorValidator = z.object({
+  email: z.string(),
+  password: z.string(),
+  totp: z.string(),
+});
+export type AuthTwoFactorPayload = z.infer<typeof AuthTwoFactorValidator>;

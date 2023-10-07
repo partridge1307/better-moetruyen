@@ -4,7 +4,7 @@ import CommentVoteSkeleton from '@/components/Skeleton/CommentVoteSkeleton';
 import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
 import { useSubComments } from '@/hooks/use-sub-comment';
-import { formatTimeToNow } from '@/lib/utils';
+import { cn, formatTimeToNow } from '@/lib/utils';
 import { usePrevious } from '@mantine/hooks';
 import type {
   Comment,
@@ -39,6 +39,7 @@ export type ExtendedSubComment = Pick<
 > & {
   author: Pick<User, 'name' | 'image' | 'color'>;
   votes: CommentVoteType[];
+  isSending?: boolean;
 };
 
 interface SubCommentProps {
@@ -68,7 +69,12 @@ const SubComment: FC<SubCommentProps> = ({ commentId, session }) => {
       <ul className="space-y-6 mb-10">
         {!!subComments.length &&
           subComments.map((subComment) => (
-            <li key={subComment.id} className="flex gap-4">
+            <li
+              key={subComment.id}
+              className={cn('flex gap-4', {
+                'opacity-70': subComment.isSending,
+              })}
+            >
               <UserAvatar user={subComment.author} />
 
               <div className="space-y-1">
@@ -98,6 +104,7 @@ const SubComment: FC<SubCommentProps> = ({ commentId, session }) => {
                   <div className="flex items-center gap-4">
                     {!!session && (
                       <CommentVote
+                        isSending={subComment.isSending}
                         commentId={subComment.id}
                         votes={subComment.votes}
                         sessionUserId={session.user.id}
@@ -107,6 +114,7 @@ const SubComment: FC<SubCommentProps> = ({ commentId, session }) => {
 
                     {session?.user.id === subComment.authorId && (
                       <DeleteComment
+                        isSending={subComment.isSending}
                         commentId={subComment.id}
                         APIQuery={`/api/comment/${subComment.id}`}
                         setComments={setSubComments}

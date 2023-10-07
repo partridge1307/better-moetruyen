@@ -65,6 +65,7 @@ const CommentCard: FC<CommentCardProps> = ({ comment, session, children }) => {
                 votes={comment.votes}
                 sessionUserId={session.user.id}
                 APIQuery="/api/comment"
+                isSending={comment.isSending}
               />
 
               <button

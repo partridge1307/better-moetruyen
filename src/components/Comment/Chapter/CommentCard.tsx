@@ -55,6 +55,7 @@ const CommentCard = ({ comment, session, children }: CommentCardProps) => {
                 votes={comment.votes}
                 sessionUserId={session.user.id}
                 APIQuery="/api/comment"
+                isSending={comment.isSending}
               />
 
               <button

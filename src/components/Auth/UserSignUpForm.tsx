@@ -33,25 +33,25 @@ const UserSignUpForm = () => {
   });
 
   const { mutate: signUp, isLoading } = useMutation({
+    mutationKey: ['auth-sign-up'],
     mutationFn: async (values: CreateAuthSignUpPayload) => {
       const signUpForm = AuthSignUpValidator.parse(values);
 
-      const { data } = await axios.post('/api/auth/sign-up', signUpForm);
-
-      return data as string;
+      await axios.post('/api/auth/sign-up', signUpForm);
     },
     onError: (e) => {
       if (e instanceof AxiosError) {
-        if (e.response?.status === 401) {
+        if (e.response?.status === 403) {
           return toast({
-            title: 'Tài khoản đã được tạo',
+            title: 'Đã tồn tại',
             description: 'Vui lòng tạo tài khoản khác',
             variant: 'destructive',
           });
         }
-        if (e.response?.status === 400) {
+        if (e.response?.status === 418) {
           return toast({
             title: 'Không thể gửi Email',
+            description: 'Không thể gửi Email tới cho bạn',
             variant: 'destructive',
           });
         }
@@ -85,6 +85,7 @@ const UserSignUpForm = () => {
               <FormControl>
                 <Input
                   type="email"
+                  autoComplete="off"
                   placeholder="Email của bạn"
                   className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
                   {...field}

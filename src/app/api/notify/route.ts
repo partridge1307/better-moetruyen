@@ -91,23 +91,6 @@ export async function GET(req: Request) {
   }
 }
 
-export async function DELETE() {
-  try {
-    const session = await getAuthSession();
-    if (!session) return new Response('Unauthorized', { status: 401 });
-
-    await db.notify.deleteMany({
-      where: {
-        toUserId: session.user.id,
-      },
-    });
-
-    return new Response('OK');
-  } catch (error) {
-    return new Response('Something went wrong', { status: 500 });
-  }
-}
-
 export async function PATCH(req: Request) {
   try {
     const session = await getAuthSession();
@@ -153,6 +136,43 @@ export async function PATCH(req: Request) {
       return new Response('Not found', { status: 404 });
     }
 
+    return new Response('Something went wrong', { status: 500 });
+  }
+}
+
+export async function DELETE() {
+  try {
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
+
+    await db.notify.deleteMany({
+      where: {
+        toUserId: session.user.id,
+      },
+    });
+
+    return new Response('OK');
+  } catch (error) {
+    return new Response('Something went wrong', { status: 500 });
+  }
+}
+
+export async function PUT() {
+  try {
+    const session = await getAuthSession();
+    if (!session) return new Response('Unauthorized', { status: 401 });
+
+    await db.notify.updateMany({
+      where: {
+        toUserId: session.user.id,
+      },
+      data: {
+        isRead: true,
+      },
+    });
+
+    return new Response('OK');
+  } catch (error) {
     return new Response('Something went wrong', { status: 500 });
   }
 }

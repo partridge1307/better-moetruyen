@@ -7,11 +7,12 @@ import type { CommentVote } from '@prisma/client';
 import { Heart, HeartOff } from 'lucide-react';
 import { FC } from 'react';
 
-interface CommentVoteProps {
+interface CommentVoteProps extends React.HTMLAttributes<HTMLButtonElement> {
   commentId: number;
   votes: CommentVote[];
   sessionUserId?: string;
   APIQuery: string;
+  isSending?: boolean;
 }
 
 const CommentVote: FC<CommentVoteProps> = ({
@@ -19,6 +20,8 @@ const CommentVote: FC<CommentVoteProps> = ({
   votes,
   sessionUserId,
   APIQuery,
+  isSending,
+  ...props
 }) => {
   const initialVoteAmt = votes.reduce((acc, vote) => {
     if (vote.type === 'UP_VOTE') return acc + 1;
@@ -44,6 +47,8 @@ const CommentVote: FC<CommentVoteProps> = ({
         className={cn('transition-colors', {
           'text-red-500 hover:text-red-500/80': currentVote === 'UP_VOTE',
         })}
+        disabled={isSending}
+        {...props}
       >
         <Heart className="w-5 h-5" />
       </Button>
@@ -58,6 +63,8 @@ const CommentVote: FC<CommentVoteProps> = ({
         className={cn('transition-colors', {
           'text-red-500 hover:text-red-500/80': currentVote === 'DOWN_VOTE',
         })}
+        disabled={isSending}
+        {...props}
       >
         <HeartOff className="w-5 h-5" />
       </Button>

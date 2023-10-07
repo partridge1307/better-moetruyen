@@ -24,7 +24,8 @@ const FollowButton: FC<FollowButtonProps> = ({
   hasBadge,
 }) => {
   const router = useRouter();
-  const { loginToast, notFoundToast, serverErrorToast } = useCustomToast();
+  const { loginToast, notFoundToast, rateLimitToast, serverErrorToast } =
+    useCustomToast();
   const [isFollowed, setFollowed] = useState(
     user.followedBy.some((user) => user.id === sessionUserId)
   );
@@ -44,6 +45,7 @@ const FollowButton: FC<FollowButtonProps> = ({
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) return loginToast();
         if (err.response?.status === 404) return notFoundToast();
+        if (err.response?.status === 429) return rateLimitToast();
       }
 
       return serverErrorToast();

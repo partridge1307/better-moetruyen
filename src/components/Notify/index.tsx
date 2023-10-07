@@ -2,7 +2,8 @@
 
 import { useNotify } from '@/hooks/use-notify';
 import type { Notify } from '@prisma/client';
-import { Bell } from 'lucide-react';
+import { Bell, Loader2 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +12,12 @@ import {
 } from '../ui/DropdownMenu';
 import { Tabs, TabsList, TabsTrigger } from '../ui/Tabs';
 import GeneralNoti from './General';
-import SystemNoti from './System';
-import FollowNoti from './Follow';
+
+const SystemNoti = dynamic(() => import('./System'), { ssr: false });
+const FollowNoti = dynamic(() => import('./Follow'), { ssr: false });
+const NotifyControll = dynamic(() => import('./NotifyControll'), {
+  ssr: false,
+});
 
 export type ExtendedNotify = Pick<
   Notify,
@@ -20,8 +25,13 @@ export type ExtendedNotify = Pick<
 >;
 
 const Notifications = () => {
-  const { notifies, hasNextPage, isFetchingNextPage, refetch, fetchNextPage } =
-    useNotify<ExtendedNotify>();
+  const {
+    notifies,
+    setNotifies,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useNotify<ExtendedNotify>();
 
   return (
     <DropdownMenu>
@@ -38,9 +48,11 @@ const Notifications = () => {
       <DropdownMenuContent
         align="end"
         avoidCollisions
-        className="space-y-1 dark:bg-zinc-900"
+        className="space-y-1.5 dark:bg-zinc-900"
       >
         <DropdownMenuLabel className="text-base">Thông báo</DropdownMenuLabel>
+
+        {!!notifies.length && <NotifyControll setNotifies={setNotifies} />}
 
         <Tabs defaultValue="GENERAL" className="relative w-72 md:w-96">
           <TabsList className="w-full justify-between gap-2">
@@ -85,16 +97,28 @@ const Notifications = () => {
 
           <GeneralNoti
             notifies={notifies.filter((noti) => noti.type === 'GENERAL')}
+            hasNextPage={hasNextPage}
+            fetchNextPage={fetchNextPage}
           />
 
           <FollowNoti
             notifies={notifies.filter((noti) => noti.type === 'FOLLOW')}
+            hasNextPage={hasNextPage}
+            fetchNextPage={fetchNextPage}
           />
 
           <SystemNoti
             notifies={notifies.filter((noti) => noti.type === 'SYSTEM')}
+            hasNextPage={hasNextPage}
+            fetchNextPage={fetchNextPage}
           />
         </Tabs>
+
+        {isFetchingNextPage && (
+          <p className="flex justify-center">
+            <Loader2 className="w-6 h-6 animate-spin" />
+          </p>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

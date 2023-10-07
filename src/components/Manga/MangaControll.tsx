@@ -1,14 +1,14 @@
 import { buttonVariants } from '@/components/ui/Button';
+import { meDomain } from '@/config';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
 import type { Manga } from '@prisma/client';
-import type { Session } from 'next-auth';
-import { FC } from 'react';
 import { Settings, Upload } from 'lucide-react';
-import Link from 'next/link';
+import type { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
-import { meDomain } from '@/config';
+import Link from 'next/link';
+import { FC } from 'react';
 
 const MangaFollow = dynamic(() => import('./components/MangaFollow'), {
   ssr: false,
@@ -29,41 +29,23 @@ interface MangaControllProps {
 
 async function history(session: Session | null, mangaId: number) {
   if (session) {
-    const existingHistory = await db.history.findUnique({
+    const upsertedHistory = await db.history.upsert({
       where: {
         userId_mangaId: {
           userId: session.user.id,
           mangaId,
         },
       },
-      select: {
-        id: true,
-        chapterId: true,
+      update: {
+        updatedAt: new Date(Date.now()),
+      },
+      create: {
+        userId: session.user.id,
+        mangaId,
       },
     });
 
-    if (existingHistory) {
-      await db.history.update({
-        where: {
-          userId_mangaId: {
-            userId: session.user.id,
-            mangaId,
-          },
-        },
-        data: {
-          updatedAt: new Date(Date.now()),
-        },
-      });
-    } else {
-      await db.history.create({
-        data: {
-          userId: session.user.id,
-          mangaId,
-        },
-      });
-    }
-
-    return existingHistory?.chapterId ?? null;
+    return upsertedHistory.chapterId ?? null;
   } else return null;
 }
 

@@ -1,17 +1,18 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
-import { type AuthOptions, getServerSession } from 'next-auth';
+import { getServerSession, type AuthOptions } from 'next-auth';
 import { decode, encode } from 'next-auth/jwt';
 import Credentials from 'next-auth/providers/credentials';
-import Discord from 'next-auth/providers/discord';
 import Email from 'next-auth/providers/email';
 import { cookies, headers } from 'next/headers';
 import { NextRequest } from 'next/server';
+import { authenticator } from 'otplib';
+import { decrypt } from './crypto';
 import { db } from './db';
 import { signInMail, textSignInMail, transporter } from './mail';
 import { generateRandomName } from './uniqueName';
-import { AuthSignInValidator } from './validators/auth';
+import { AuthSignInValidator, AuthTwoFactorValidator } from './validators/auth';
 
 export interface AuthContext {
   params: { nextauth: string[] };
@@ -29,6 +30,10 @@ export const authOptionsWrapper = (
   const isCredentialsCallback =
     params?.nextauth?.includes('callback') &&
     params.nextauth.includes('credentials') &&
+    request.method === 'POST';
+  const isTwoFactorCallBack =
+    params?.nextauth?.includes('callback') &&
+    params.nextauth.includes('two-factor') &&
     request.method === 'POST';
 
   return [
@@ -55,7 +60,7 @@ export const authOptionsWrapper = (
               const { email, password } =
                 AuthSignInValidator.parse(credentials);
 
-              const userExists = await db.user.findFirstOrThrow({
+              const userExists = await db.user.findUniqueOrThrow({
                 where: {
                   email,
                 },
@@ -68,23 +73,87 @@ export const authOptionsWrapper = (
                   password: true,
                   muteExpires: true,
                   isBanned: true,
+                  twoFactorEnabled: true,
                 },
               });
 
-              if (await bcrypt.compare(password, userExists.password)) {
-                return {
-                  id: userExists.id,
-                  name: userExists.name,
-                  image: userExists.image,
-                  banner: userExists.banner,
-                  color: userExists.color as
-                    | { color: string }
-                    | { from: string; to: string }
-                    | null,
-                  muteExpires: userExists.muteExpires,
-                  isBanned: userExists.isBanned,
-                };
-              } else throw Error();
+              if (!(await bcrypt.compare(password, userExists.password)))
+                return null;
+
+              return {
+                id: userExists.id,
+                name: userExists.name,
+                image: userExists.image,
+                banner: userExists.banner,
+                color: userExists.color as
+                  | { color: string }
+                  | { from: string; to: string }
+                  | null,
+                twoFactor: userExists.twoFactorEnabled,
+                muteExpires: userExists.muteExpires,
+                isBanned: userExists.isBanned,
+              };
+            } catch (error) {
+              return null;
+            }
+          },
+        }),
+        Credentials({
+          id: 'two-factor',
+          name: 'Two Factor Auth',
+          credentials: {
+            email: { label: 'Email', type: 'email' },
+            password: { label: 'Password', type: 'password' },
+            totp: { label: 'TOTP', type: 'number' },
+          },
+          authorize: async (credentials) => {
+            try {
+              const { email, password, totp } =
+                AuthTwoFactorValidator.parse(credentials);
+
+              const userExist = await db.user.findUniqueOrThrow({
+                where: {
+                  email,
+                },
+                select: {
+                  id: true,
+                  name: true,
+                  image: true,
+                  banner: true,
+                  color: true,
+                  password: true,
+                  muteExpires: true,
+                  isBanned: true,
+                  twoFactorEnabled: true,
+                  twoFactorSecret: true,
+                },
+              });
+
+              if (!(await bcrypt.compare(password, userExist.password)))
+                return null;
+
+              if (!userExist.twoFactorEnabled || !userExist.twoFactorSecret)
+                return null;
+
+              const secret = decrypt(userExist.twoFactorSecret);
+              if (secret.length !== 52) return null;
+
+              const isValidToken = authenticator.check(totp, secret);
+              if (!isValidToken) return null;
+
+              return {
+                id: userExist.id,
+                name: userExist.name,
+                image: userExist.image,
+                banner: userExist.banner,
+                color: userExist.color as
+                  | { color: string }
+                  | { from: string; to: string }
+                  | null,
+                muteExpires: userExist.muteExpires,
+                isBanned: userExist.isBanned,
+                twoFactor: false,
+              };
             } catch (error) {
               return null;
             }
@@ -118,11 +187,6 @@ export const authOptionsWrapper = (
             }
           },
         }),
-        Discord({
-          clientId: process.env.DISC_CLIENT_ID!,
-          clientSecret: process.env.DISC_CLIENT_SECRET!,
-          authorization: { params: { scope: 'identify' } },
-        }),
       ],
       cookies: {
         sessionToken: {
@@ -141,8 +205,10 @@ export const authOptionsWrapper = (
       },
       callbacks: {
         async signIn({ user, account }) {
+          if (user.twoFactor) throw new Error('TWO_FACTOR');
+
           if (user) {
-            if (isCredentialsCallback) {
+            if (isCredentialsCallback || isTwoFactorCallBack) {
               const sessionToken = randomUUID();
               const sessionExpiry = new Date(
                 Date.now() + 15 * 24 * 60 * 60 * 1000
@@ -181,29 +247,6 @@ export const authOptionsWrapper = (
                 });
 
                 if (userExist) return true;
-              } else if (account?.provider === 'discord') {
-                const existAccount = await db.user.findUnique({
-                  where: {
-                    id: user.id,
-                    account: {
-                      some: {
-                        provider: 'discord',
-                      },
-                    },
-                  },
-                  select: {
-                    id: true,
-                  },
-                });
-                if (existAccount) {
-                  await db.account.deleteMany({
-                    where: {
-                      userId: existAccount.id,
-                    },
-                  });
-                }
-
-                return true;
               }
 
               return false;
@@ -259,7 +302,7 @@ export const authOptionsWrapper = (
       jwt: {
         maxAge: 15 * 24 * 60 * 60,
         encode: async (arg) => {
-          if (isCredentialsCallback) {
+          if (isCredentialsCallback || isTwoFactorCallBack) {
             const cookie = cookies().get(
               `${useSecureCookies ? '__Secure-' : ''}next-auth.session-token`
             );
@@ -271,7 +314,7 @@ export const authOptionsWrapper = (
           return encode(arg);
         },
         decode: async (arg) => {
-          if (isCredentialsCallback) {
+          if (isCredentialsCallback || isTwoFactorCallBack) {
             return null;
           }
           return decode(arg);

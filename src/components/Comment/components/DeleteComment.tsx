@@ -19,13 +19,16 @@ import { buttonVariants } from '../../ui/Button';
 export type DeleteCommentProps<TData> = {
   commentId: number;
   APIQuery: string;
+  isSending?: boolean;
   setComments: Dispatch<SetStateAction<TData[]>>;
-};
+} & React.HTMLAttributes<HTMLButtonElement>;
 
 export default function DeleteComment<TData>({
   commentId,
   APIQuery,
+  isSending,
   setComments,
+  ...props
 }: DeleteCommentProps<TData>) {
   const { mutate: Delete, isLoading: isDeleting } = useDeleteComment({
     commentId,
@@ -36,8 +39,9 @@ export default function DeleteComment<TData>({
   return (
     <AlertDialog>
       <AlertDialogTrigger
-        disabled={isDeleting}
+        disabled={isDeleting || isSending}
         className="hover:bg-red-500 text-red-500 hover:text-white transition-colors p-2 rounded-md"
+        {...props}
       >
         {isDeleting ? (
           <Loader2 className="w-5 h-5 animate-spin" />

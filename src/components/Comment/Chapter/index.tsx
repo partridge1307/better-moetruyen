@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { CommentInputProps } from '../components/CommentInput';
 import type { DeleteCommentProps } from '../components/DeleteComment';
 import CommentCard from './CommentCard';
+import { cn } from '@/lib/utils';
 
 const CommentInput = dynamic<CommentInputProps<ExtendedComment>>(
   () => import('../components/CommentInput'),
@@ -33,6 +34,7 @@ export type ExtendedComment = Pick<
   author: Pick<User, 'name' | 'image' | 'color'>;
   votes: CommentVote[];
   _count: { replies: number };
+  isSending?: boolean;
 };
 
 interface commentProps {
@@ -89,10 +91,17 @@ const Comments = ({ id }: commentProps) => {
         {comments.map((comment, idx) => {
           if (idx === comments.length - 1)
             return (
-              <li key={comment.id} ref={ref} className="flex gap-4">
+              <li
+                key={comment.id}
+                ref={ref}
+                className={cn('flex gap-4', {
+                  'opacity-70': comment.isSending,
+                })}
+              >
                 <CommentCard comment={comment} session={session}>
                   {comment.authorId === session?.user.id && (
                     <DeleteComment
+                      isSending={comment.isSending}
                       commentId={comment.id}
                       APIQuery={`/api/comment/${comment.id}`}
                       setComments={setComments}
@@ -103,10 +112,16 @@ const Comments = ({ id }: commentProps) => {
             );
           else
             return (
-              <li key={comment.id} className="flex gap-4">
+              <li
+                key={comment.id}
+                className={cn('flex gap-4', {
+                  'opacity-70': comment.isSending,
+                })}
+              >
                 <CommentCard comment={comment} session={session}>
                   {comment.authorId === session?.user.id && (
                     <DeleteComment
+                      isSending={comment.isSending}
                       commentId={comment.id}
                       APIQuery={`/api/comment/${comment.id}`}
                       setComments={setComments}

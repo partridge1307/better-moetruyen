@@ -23,9 +23,11 @@ export const verifyMail = (token: string) => `<!DOCTYPE html>
             margin: 0;
             font-family: 'Roboto', sans-serif;
             box-sizing: border-box;
-        }
+        };
 
-        ;
+        a:hover : {
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -59,9 +61,11 @@ export const signInMail = (url: string) => `<!DOCTYPE html>
             margin: 0;
             font-family: 'Roboto', sans-serif;
             box-sizing: border-box;
-        }
+        };
 
-        ;
+        a:hover : {
+            cursor: pointer
+        }
     </style>
 </head>
 

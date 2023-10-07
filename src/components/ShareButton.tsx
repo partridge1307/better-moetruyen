@@ -39,6 +39,7 @@ const ShareButton: FC<PostShareButtonProps> = ({ url, title }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Chia sẻ</DialogTitle>
+
         <div className="space-y-6">
           <div className="flex flex-wrap justify-between lg:justify-start items-center gap-2">
             {/* Facebook */}

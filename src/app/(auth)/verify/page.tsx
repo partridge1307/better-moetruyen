@@ -1,4 +1,5 @@
 import VerifyNavigation from '@/components/Auth/VerifyNavigation';
+import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { verifyAuthToken } from '@/lib/jwt';
 import { cn } from '@/lib/utils';
@@ -31,6 +32,9 @@ interface pageProps {
 const Page: FC<pageProps> = async ({ searchParams }) => {
   const tokenParam = searchParams['token'];
   if (!tokenParam) return redirect('/');
+
+  const session = await getAuthSession();
+  if (session) return redirect('/');
 
   const token = tokenParam instanceof Array ? tokenParam[0] : tokenParam;
 

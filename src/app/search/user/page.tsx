@@ -34,6 +34,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       where: {
         name: {
           contains: query,
+          mode: 'insensitive',
         },
       },
       take: Number(limit),

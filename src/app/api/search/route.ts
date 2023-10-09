@@ -12,6 +12,7 @@ export async function GET(req: Request) {
         where: {
           name: {
             contains: query,
+            mode: 'insensitive',
           },
           isPublished: true,
         },
@@ -33,6 +34,7 @@ export async function GET(req: Request) {
         where: {
           name: {
             contains: query,
+            mode: 'insensitive',
           },
         },
         select: {
@@ -46,6 +48,7 @@ export async function GET(req: Request) {
         where: {
           title: {
             contains: query,
+            mode: 'insensitive',
           },
         },
         select: {

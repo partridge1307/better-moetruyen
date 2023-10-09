@@ -30,6 +30,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       where: {
         name: {
           contains: query,
+          mode: 'insensitive',
         },
         isPublished: true,
       },
@@ -53,6 +54,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       where: {
         name: {
           contains: query,
+          mode: 'insensitive',
         },
       },
       select: {
@@ -66,6 +68,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       where: {
         title: {
           contains: query,
+          mode: 'insensitive',
         },
       },
       select: {

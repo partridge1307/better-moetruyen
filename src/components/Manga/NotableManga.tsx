@@ -103,7 +103,7 @@ const NotableManga: FC<NotableMangaProps> = ({ pin }) => {
             <AspectRatio ratio={4 / 3}>
               <Image
                 fill
-                sizes="(max-width: 640px) 50vw, 30vw"
+                sizes="30vw"
                 quality={40}
                 priority
                 src={manga.image}

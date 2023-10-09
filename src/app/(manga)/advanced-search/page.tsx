@@ -1,3 +1,4 @@
+import AdvancedMangaCard from '@/components/Manga/components/AdvancedMangaCard';
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
 import {
   serializedExcludeQuery,
@@ -5,12 +6,11 @@ import {
   serializedOrderByQuery,
 } from '@/lib/advanced-search';
 import { db } from '@/lib/db';
+import { tagGroupByCategory } from '@/lib/query';
 import type { Prisma } from '@prisma/client';
 import type { Metadata } from 'next';
-import { FC } from 'react';
-import { tagGroupByCategory } from '@/lib/query';
-import AdvancedMangaCard from '@/components/Manga/components/AdvancedMangaCard';
 import dynamic from 'next/dynamic';
+import { FC } from 'react';
 
 const AdvancedSearch = dynamic(
   () => import('@/components/Manga/AdvancedSearch'),

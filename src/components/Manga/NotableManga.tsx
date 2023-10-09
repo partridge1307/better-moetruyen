@@ -98,7 +98,7 @@ const NotableManga: FC<NotableMangaProps> = ({ pin }) => {
           <Link
             scroll={false}
             href={`/manga/${manga.slug}`}
-            className="h-full grid grid-cols-1 lg:grid-cols-[.3fr_1fr] gap-2 lg:gap-4 rounded-md p-2 max-sm:pb-10 dark:bg-zinc-900"
+            className="h-full grid grid-cols-1 md:grid-cols-[.3fr_1fr] gap-2 lg:gap-4 rounded-md p-2 max-sm:pb-10 dark:bg-zinc-900"
           >
             <AspectRatio ratio={4 / 3}>
               <Image

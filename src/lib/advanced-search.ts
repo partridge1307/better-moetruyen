@@ -45,7 +45,7 @@ const serializedOrderByQuery = (
   sortBy: 'createdAt' | 'name' | 'mangaFollow' | 'view',
   order: 'asc' | 'desc'
 ) => {
-  const sortByQuery: Prisma.MangaOrderByWithRelationInput = {
+  const sortByQuery: Prisma.MangaOrderByRelationAggregateInput = {
     [sortBy]:
       sortBy === 'view'
         ? { totalView: order }

@@ -1,4 +1,4 @@
-const LeaderboardSkeletion = () => {
+const LeaderboardSkeletion = ({ length = 10 }: { length?: number }) => {
   return (
     <div className="flex flex-col gap-2 items-start">
       <div className="inline-flex p-1 rounded-md dark:bg-zinc-900/60">
@@ -13,16 +13,12 @@ const LeaderboardSkeletion = () => {
       </div>
 
       <div className="w-full space-y-3">
-        <div className="w-full h-16 rounded-md animate-pulse dark:bg-zinc-900" />
-        <div className="w-full h-16 rounded-md animate-pulse dark:bg-zinc-900" />
-        <div className="w-full h-16 rounded-md animate-pulse dark:bg-zinc-900" />
-        <div className="w-full h-16 rounded-md animate-pulse dark:bg-zinc-900" />
-        <div className="w-full h-16 rounded-md animate-pulse dark:bg-zinc-900" />
-        <div className="w-full h-16 rounded-md animate-pulse dark:bg-zinc-900" />
-        <div className="w-full h-16 rounded-md animate-pulse dark:bg-zinc-900" />
-        <div className="w-full h-16 rounded-md animate-pulse dark:bg-zinc-900" />
-        <div className="w-full h-16 rounded-md animate-pulse dark:bg-zinc-900" />
-        <div className="w-full h-16 rounded-md animate-pulse dark:bg-zinc-900" />
+        {Array.from(Array(length).keys()).map((_, i) => (
+          <div
+            key={i}
+            className="w-full h-16 rounded-md animate-pulse dark:bg-zinc-900"
+          />
+        ))}
       </div>
     </div>
   );

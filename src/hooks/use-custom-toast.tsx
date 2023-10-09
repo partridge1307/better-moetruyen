@@ -39,16 +39,16 @@ export const useCustomToast = () => {
 
   const verifyToast = () => {
     const { dismiss } = toast({
-      title: 'Yêu cầu Xác thực',
+      title: 'Yêu cầu xác thực',
       description: 'Để thực hiện hành động này bạn cần Xác thực',
       action: (
         <a
           target="_blank"
           href="/user-verify"
-          className={cn(buttonVariants(), 'p-2')}
+          className={cn(buttonVariants(), 'w-24 p-1 text-sm')}
           onClick={() => dismiss()}
         >
-          <span className="text-sm w-max">Xác thực</span>
+          Xác thực
         </a>
       ),
     });

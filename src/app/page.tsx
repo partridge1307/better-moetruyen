@@ -2,6 +2,7 @@ import LastActivityThreadSkeletion from '@/components/Skeleton/LastActivityThrea
 import LastestMangaSkeleton from '@/components/Skeleton/LastestMangaSkeleton';
 import LeaderboardSkeletion from '@/components/Skeleton/LeaderboardSkeletion';
 import NotableMangaSkeleton from '@/components/Skeleton/NotableMangaSkeleton';
+import RecommendationSkeleton from '@/components/Skeleton/RecommendationSkeleton';
 import { db } from '@/lib/db';
 import { ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -11,17 +12,21 @@ const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
   ssr: false,
   loading: () => <NotableMangaSkeleton />,
 });
+
 const LastActivityPostForum = dynamic(
   () => import('@/components/LastActivityPostForum'),
   { loading: () => <LastActivityThreadSkeletion /> }
 );
+
 const Recommendation = dynamic(
   () => import('@/components/Manga/Recommendation'),
-  { loading: () => <LastestMangaSkeleton /> }
+  { loading: () => <RecommendationSkeleton /> }
 );
+
 const LatestManga = dynamic(() => import('@/components/Manga/LatestManga'), {
   loading: () => <LastestMangaSkeleton />,
 });
+
 const Leaderboard = dynamic(() => import('@/components/LeaderBoard'), {
   loading: () => <LeaderboardSkeletion />,
 });
@@ -70,6 +75,7 @@ const Home = async () => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
       <main className="container mx-auto max-sm:px-3">
         {!!pin.length && <NotableManga pin={pin} />}
 

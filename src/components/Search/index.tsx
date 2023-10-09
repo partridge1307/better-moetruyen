@@ -23,7 +23,7 @@ const ForumSearch = dynamic(() => import('@/components/Search/ForumSearch'), {
   ssr: false,
 });
 const SearchSkeleton = dynamic(
-  () => import('@/components/Search/SearchSkeleton')
+  () => import('@/components/Skeleton/SearchSkeleton')
 );
 
 export type SearchData = {

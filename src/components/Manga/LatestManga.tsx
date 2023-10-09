@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import LastestMangaCard from './components/LastestMangaCard';
 
-const LatestManga = async ({}) => {
+const LatestManga = async () => {
   const chapters = await db.chapter.findMany({
     take: 10,
     distinct: ['mangaId'],

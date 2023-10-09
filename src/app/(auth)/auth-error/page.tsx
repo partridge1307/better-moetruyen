@@ -22,19 +22,23 @@ const page: FC<pageProps> = async ({ searchParams }) => {
           {isAccessDenied ? 'Từ chối đăng nhập' : 'Có lỗi xảy ra khi đăng nhập'}
         </h1>
 
-        <p>
-          {isAccessDenied
-            ? 'Yêu cầu đăng nhập bị từ chối'
-            : 'Có lỗi xảy ra khi đăng nhập'}
-          . Vui lòng{' '}
-          <Link
-            href="/sign-in"
-            className="text-lg font-semibold hover:underline underline-offset-2"
-          >
-            Đăng nhập
-          </Link>{' '}
-          lại
-        </p>
+        <div className="space-y-3">
+          <p>
+            {isAccessDenied
+              ? 'Yêu cầu đăng nhập bị từ chối. Tài khoản hoặc mật khẩu không chính xác'
+              : 'Có lỗi xảy ra khi đăng nhập'}
+          </p>
+          <p>
+            Vui lòng{' '}
+            <Link
+              href="/sign-in"
+              className="text-lg font-semibold hover:underline underline-offset-2"
+            >
+              Đăng nhập
+            </Link>{' '}
+            lại
+          </p>
+        </div>
       </section>
     </main>
   );

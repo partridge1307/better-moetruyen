@@ -26,14 +26,14 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       </main>
     );
 
-  let query = (
-    typeof queryParam === 'string' ? queryParam : queryParam[0]
-  ).split(' ');
+  let query = typeof queryParam === 'string' ? queryParam : queryParam[0];
 
   const [forums, total] = await db.$transaction([
     db.subForum.findMany({
       where: {
-        OR: query.map((q) => ({ title: { contains: q, mode: 'insensitive' } })),
+        title: {
+          contains: query,
+        },
       },
       take: Number(limit),
       skip: (Number(page) - 1) * Number(limit),

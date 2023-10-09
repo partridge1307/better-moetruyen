@@ -7,14 +7,12 @@ export async function GET(req: Request) {
     const query = url.searchParams.get('q');
     if (!query) return new Response('Invalid URL', { status: 422 });
 
-    let splittedQuery = query.split(' ');
-
     const [mangas, users, forums] = await db.$transaction([
       db.manga.findMany({
         where: {
-          OR: splittedQuery.map((q) => ({
-            name: { contains: q, mode: 'insensitive' },
-          })),
+          name: {
+            contains: query,
+          },
           isPublished: true,
         },
         select: {
@@ -33,9 +31,9 @@ export async function GET(req: Request) {
       }),
       db.user.findMany({
         where: {
-          OR: splittedQuery.map((q) => ({
-            name: { contains: q, mode: 'insensitive' },
-          })),
+          name: {
+            contains: query,
+          },
         },
         select: {
           name: true,
@@ -46,9 +44,9 @@ export async function GET(req: Request) {
       }),
       db.subForum.findMany({
         where: {
-          OR: splittedQuery.map((q) => ({
-            title: { contains: q, mode: 'insensitive' },
-          })),
+          title: {
+            contains: query,
+          },
         },
         select: {
           slug: true,

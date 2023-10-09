@@ -25,7 +25,7 @@ export const metadata: Metadata = {
       'Web đọc truyện tranh online tiện ích nhất được cập nhật liên tục mỗi ngày - Cùng tham gia đọc truyện và thảo luận tại Moetruyen',
     siteName: 'Moetruyen',
     url: `${process.env.NEXTAUTH_URL}`,
-    locale: 'vi',
+    locale: 'vi_VN',
     type: 'website',
   },
   twitter: {

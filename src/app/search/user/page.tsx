@@ -27,14 +27,14 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       </main>
     );
 
-  let query = (
-    typeof queryParam === 'string' ? queryParam : queryParam[0]
-  ).split(' ');
+  let query = typeof queryParam === 'string' ? queryParam : queryParam[0];
 
   const [users, total] = await db.$transaction([
     db.user.findMany({
       where: {
-        OR: query.map((q) => ({ name: { contains: q, mode: 'insensitive' } })),
+        name: {
+          contains: query,
+        },
       },
       take: Number(limit),
       skip: (Number(page) - 1) * Number(limit),

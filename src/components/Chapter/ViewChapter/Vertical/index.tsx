@@ -172,6 +172,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
           <span>Bình luận</span>
           <MessagesSquare className="w-5 h-5" />
         </h1>
+
         <Comments id={chapter.id} />
       </div>
     </div>

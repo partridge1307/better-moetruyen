@@ -25,14 +25,14 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       </main>
     );
 
-  let query = (
-    typeof queryParam === 'string' ? queryParam : queryParam[0]
-  ).split(' ');
+  let query = typeof queryParam === 'string' ? queryParam : queryParam[0];
 
   const [mangas, total] = await db.$transaction([
     db.manga.findMany({
       where: {
-        OR: query.map((q) => ({ name: { contains: q, mode: 'insensitive' } })),
+        name: {
+          contains: query,
+        },
         isPublished: true,
       },
       take: Number(limit),

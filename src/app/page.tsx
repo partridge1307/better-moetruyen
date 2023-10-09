@@ -1,5 +1,6 @@
 import LastActivityThreadSkeletion from '@/components/Skeleton/LastActivityThreadSkeletion';
 import LastestMangaSkeleton from '@/components/Skeleton/LastestMangaSkeleton';
+import LatestCommentSkeleton from '@/components/Skeleton/LatestCommentSkeleton';
 import LeaderboardSkeletion from '@/components/Skeleton/LeaderboardSkeletion';
 import NotableMangaSkeleton from '@/components/Skeleton/NotableMangaSkeleton';
 import RecommendationSkeleton from '@/components/Skeleton/RecommendationSkeleton';
@@ -30,6 +31,11 @@ const LatestManga = dynamic(() => import('@/components/Manga/LatestManga'), {
 const Leaderboard = dynamic(() => import('@/components/LeaderBoard'), {
   loading: () => <LeaderboardSkeletion />,
 });
+
+const LatestComment = dynamic(
+  () => import('@/components/Comment/LatestComment'),
+  { loading: () => <LatestCommentSkeleton /> }
+);
 
 const Home = async () => {
   const pin = await db.mangaPin.findMany({
@@ -110,6 +116,11 @@ const Home = async () => {
             <div className="space-y-2">
               <h1 className="text-xl font-semibold">Bảng xếp hạng</h1>
               <Leaderboard />
+            </div>
+
+            <div className="space-y-2">
+              <h1 className="text-xl font-semibold">Bình luận</h1>
+              <LatestComment />
             </div>
           </section>
         </div>

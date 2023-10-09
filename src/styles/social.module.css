@@ -1,5 +1,5 @@
 .wrapper {
-  background-image: url('/red.svg');
+  background-image: url('/static/red.svg');
   background-size: cover;
   background-repeat: no-repeat;
   margin-left: auto;
@@ -32,7 +32,7 @@
   bottom: 0;
   right: 0;
   clip-path: polygon(0 0, 100% 20%, 100% 97%, 0 70%);
-  background-image: url('/fb.jpg');
+  background-image: url('/static/fb.jpg');
   background-repeat: no-repeat;
   background-size: cover;
 }
@@ -52,7 +52,7 @@
   bottom: 0;
   right: 0;
   clip-path: polygon(0 20%, 100% 0, 100% 70%, 0 97%);
-  background-image: url('/fb.jpg');
+  background-image: url('/static/fb.jpg');
   background-repeat: no-repeat;
   background-size: cover;
 }

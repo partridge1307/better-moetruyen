@@ -9,9 +9,9 @@ export async function GET(req: Request) {
 
     const users = await db.user.findMany({
       where: {
-        OR: query
-          .split(' ')
-          .map((q) => ({ name: { contains: q, mode: 'insensitive' } })),
+        name: {
+          contains: query,
+        },
       },
       select: {
         id: true,

@@ -39,7 +39,7 @@ const getMangas = async (session: Session | null) => {
 
       const filterdTags = groupedTags.slice(0, 3).map((tag) => tag[0]);
 
-      const skip = Math.floor(Math.random() * mangaCount);
+      const skip = Math.max(0, Math.floor(Math.random() * mangaCount) - 10);
 
       return await db.manga.findMany({
         where: {
@@ -83,6 +83,7 @@ const Recommendation = async () => {
               fill
               sizes="(max-width: 640px) 25vw, 30vw"
               quality={40}
+              priority
               src={manga.image}
               alt={`${manga.name} Thumbnail`}
               className="object-cover rounded-md"

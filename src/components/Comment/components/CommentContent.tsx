@@ -11,12 +11,17 @@ const MoetruyenEditorOutput = dynamic(
   { ssr: false }
 );
 
-interface CommentProps {
-  id: number;
-  content: Prisma.JsonValue;
+interface CommentProps extends React.HTMLAttributes<HTMLDivElement> {
+  commentId: number;
+  commentContent: Prisma.JsonValue;
 }
 
-const CommentContent: FC<CommentProps> = ({ id, content }): JSX.Element => {
+const CommentContent: FC<CommentProps> = ({
+  commentId,
+  commentContent,
+  className,
+  ...props
+}) => {
   const { ref, height } = useElementSize();
   const [hasExpand, setExpand] = useState(false);
 
@@ -27,10 +32,12 @@ const CommentContent: FC<CommentProps> = ({ id, content }): JSX.Element => {
         'relative max-h-72 p-2 rounded-lg overflow-hidden dark:bg-zinc-800',
         {
           'max-h-none': hasExpand,
-        }
+        },
+        className
       )}
+      {...props}
     >
-      <MoetruyenEditorOutput id={id} content={content} />
+      <MoetruyenEditorOutput id={commentId} content={commentContent} />
       {!hasExpand && height === 272 && (
         <button
           aria-label="expand button"

@@ -44,7 +44,11 @@ const CommentCard = ({ comment, session, children }: CommentCardProps) => {
         </dl>
 
         <div className="space-y-2">
-          <CommentContent id={comment.id} content={comment.content} />
+          <CommentContent
+            commentId={comment.id}
+            commentContent={comment.content}
+            className="dark:bg-zinc-900/60"
+          />
 
           {!!comment.oEmbed && <CommentOEmbed oEmbed={comment.oEmbed} />}
 

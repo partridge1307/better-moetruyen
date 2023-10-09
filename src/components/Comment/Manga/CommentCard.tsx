@@ -54,7 +54,10 @@ const CommentCard: FC<CommentCardProps> = ({ comment, session, children }) => {
         </dl>
 
         <div className="space-y-2">
-          <CommentContent id={comment.id} content={comment.content} />
+          <CommentContent
+            commentId={comment.id}
+            commentContent={comment.content}
+          />
 
           {!!comment.oEmbed && <CommentOEmbed oEmbed={comment.oEmbed} />}
 

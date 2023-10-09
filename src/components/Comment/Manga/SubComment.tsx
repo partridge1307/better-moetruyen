@@ -93,8 +93,8 @@ const SubComment: FC<SubCommentProps> = ({ commentId, session }) => {
 
                 <div className="space-y-2">
                   <CommentContent
-                    id={subComment.id}
-                    content={subComment.content}
+                    commentId={subComment.id}
+                    commentContent={subComment.content}
                   />
 
                   {!!subComment.oEmbed && (

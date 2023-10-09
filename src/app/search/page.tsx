@@ -23,14 +23,14 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       </main>
     );
 
-  let query = (
-    typeof queryParam === 'string' ? queryParam : queryParam[0]
-  ).split(' ');
+  let query = typeof queryParam === 'string' ? queryParam : queryParam[0];
 
   const [mangas, users, forums] = await db.$transaction([
     db.manga.findMany({
       where: {
-        OR: query.map((q) => ({ name: { contains: q, mode: 'insensitive' } })),
+        name: {
+          contains: query,
+        },
         isPublished: true,
       },
       select: {
@@ -51,7 +51,9 @@ const page: FC<pageProps> = async ({ searchParams }) => {
     }),
     db.user.findMany({
       where: {
-        OR: query.map((q) => ({ name: { contains: q, mode: 'insensitive' } })),
+        name: {
+          contains: query,
+        },
       },
       select: {
         name: true,
@@ -62,7 +64,9 @@ const page: FC<pageProps> = async ({ searchParams }) => {
     }),
     db.subForum.findMany({
       where: {
-        OR: query.map((q) => ({ title: { contains: q, mode: 'insensitive' } })),
+        title: {
+          contains: query,
+        },
       },
       select: {
         slug: true,
@@ -76,7 +80,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
   return (
     <main className="container max-sm:px-2 space-y-10 mb-8">
       <h1 className="text-lg font-semibold p-1 rounded-md dark:bg-zinc-900/60">
-        Từ khóa: <span className="font-normal">{query.join(' ')}</span>
+        Từ khóa: <span className="font-normal">{query}</span>
       </h1>
 
       <section className="space-y-4">

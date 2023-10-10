@@ -167,7 +167,7 @@ const page: FC<pageProps> = async ({ params }) => {
       />
 
       <main className="container max-sm:px-2 mx-auto space-y-10 mb-10">
-        <section className="relative grid grid-cols-2 lg:grid-cols-[.3fr_1fr] gap-3 lg:gap-4 p-2">
+        <section className="relative grid grid-cols-2 lg:grid-cols-[.3fr_1fr] gap-3 lg:gap-6 p-2">
           <MangaImage manga={manga} />
 
           <div className="space-y-2">

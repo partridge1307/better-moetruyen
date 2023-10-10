@@ -70,12 +70,47 @@ export async function generateMetadata({
       title: user.name ?? 'Người dùng',
       description: `Người dùng ${user.name} | Moetruyen`,
       locale: 'vi_VN',
+      ...(!!user.banner && {
+        images: [
+          {
+            url: user.banner,
+            alt: `Ảnh bìa ${user.name}`,
+          },
+        ],
+      }),
+      ...(!!user.image &&
+        !user.banner && {
+          images: [
+            {
+              url: user.image,
+              alt: `Ảnh đại diện ${user.name}`,
+            },
+          ],
+        }),
     },
     twitter: {
       site: 'Moetruyen',
       title: user.name ?? 'Người dùng',
       description: `Người dùng ${user.name} | Moetruyen`,
-      card: 'summary_large_image',
+      ...(!!user.banner && {
+        card: 'summary_large_image',
+        images: [
+          {
+            url: user.banner,
+            alt: `Ảnh bìa ${user.name}`,
+          },
+        ],
+      }),
+      ...(!!user.image &&
+        !user.banner && {
+          card: 'summary',
+          images: [
+            {
+              url: user.image,
+              alt: `Ảnh đại diện ${user.name}`,
+            },
+          ],
+        }),
     },
   };
 }

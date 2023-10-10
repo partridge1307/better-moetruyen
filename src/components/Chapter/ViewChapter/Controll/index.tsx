@@ -14,13 +14,14 @@ interface ControllProps {
 
 const Controll: FC<ControllProps> = ({ chapter, chapterList }) => {
   return (
-    <div className="space-y-8">
+    <section className="space-y-8">
       <div>
         <h1>
           <span>Vol. {chapter.volume}</span>{' '}
           <span>Ch. {chapter.chapterIndex}</span>
           {!!chapter.name && <span> - {chapter.name}</span>}
         </h1>
+
         <Link
           href={`/manga/${chapter.manga.slug}`}
           className="text-lg lg:text-xl font-semibold dark:text-orange-500"
@@ -34,7 +35,7 @@ const Controll: FC<ControllProps> = ({ chapter, chapterList }) => {
         <ChapterPage />
         <ChapterMenu />
       </div>
-    </div>
+    </section>
   );
 };
 

@@ -22,7 +22,7 @@ const ProgressHide = () => {
   }, [currentPage]);
 
   return (
-    <div
+    <section
       className={cn(
         'fixed bottom-0 inset-x-0 h-12 opacity-0 flex items-center gap-4 px-6 group transition-all hover:opacity-100 hover:dark:bg-zinc-900',
         {
@@ -53,7 +53,7 @@ const ProgressHide = () => {
       </div>
 
       <p className="hidden group-hover:block">{imagesMounted.length}</p>
-    </div>
+    </section>
   );
 };
 

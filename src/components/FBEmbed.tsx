@@ -13,17 +13,10 @@ const FBEmbed: FC<FBEmbedProps> = ({ facebookLink }) => {
     <>
       <div className="space-y-2">
         <h1 className="text-lg px-1">Facebook</h1>
-        <div className="relative w-full">
-          <FacebookProvider language="vi" lazy appId="1042446022855517">
-            <Page
-              lazy
-              height={300}
-              href={facebookLink}
-              tabs="timeline"
-              adaptContainerWidth
-            />
-          </FacebookProvider>
-        </div>
+
+        <FacebookProvider language="vi_VN" lazy appId="1042446022855517">
+          <Page lazy height={300} href={facebookLink} tabs="timeline" />
+        </FacebookProvider>
       </div>
     </>
   );

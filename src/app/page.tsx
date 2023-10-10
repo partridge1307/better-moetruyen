@@ -108,6 +108,7 @@ const Home = async () => {
                   Xem thêm <ArrowRight className="w-5 h-5" />
                 </Link>
               </div>
+
               <LatestManga />
             </div>
           </section>

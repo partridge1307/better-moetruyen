@@ -22,7 +22,7 @@ const ProgressShow = () => {
   }, [currentPage]);
 
   return (
-    <div
+    <section
       className={cn(
         'fixed bottom-0 inset-x-0 h-12 flex items-center gap-4 px-6 group transition-colors hover:dark:bg-zinc-900',
         {
@@ -56,7 +56,7 @@ const ProgressShow = () => {
       </div>
 
       <p className="hidden group-hover:block">{imagesMounted.length}</p>
-    </div>
+    </section>
   );
 };
 

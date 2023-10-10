@@ -9,6 +9,7 @@ import { Users2, Wifi } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 import dynamic from 'next/dynamic';
+import type { Metadata } from 'next';
 
 const UserBadge = dynamic(() => import('@/components/User/UserBadge'), {
   ssr: false,
@@ -27,6 +28,55 @@ const FollowButton = dynamic(() => import('@/components/User/FollowButton'), {
 interface pageProps {
   params: {
     slug: string;
+  };
+}
+
+export async function generateMetadata({
+  params,
+}: pageProps): Promise<Metadata> {
+  const user = await db.user.findUnique({
+    where: {
+      name: params.slug.split('-').join(' '),
+    },
+    select: {
+      name: true,
+      image: true,
+      banner: true,
+    },
+  });
+
+  if (!user)
+    return {
+      title: 'Người dùng',
+      description: `Người dùng ${params.slug} | Moetruyen`,
+      alternates: {
+        canonical: `${process.env.NEXTAUTH_URL}/user/${params.slug}`,
+      },
+    };
+
+  return {
+    title: {
+      default: user.name ?? 'Người dùng',
+      absolute: user.name ?? 'Người dùng',
+    },
+    description: `Người dùng ${user.name} | Moetruyen`,
+    keywords: ['User', user.name ?? 'Người dùng', 'Moetruyen'],
+    alternates: {
+      canonical: `${process.env.NEXTAUTH_URL}/user/${params.slug}`,
+    },
+    openGraph: {
+      url: `${process.env.NEXTAUTH_URL}/user/${params.slug}`,
+      siteName: 'Moetruyen',
+      title: user.name ?? 'Người dùng',
+      description: `Người dùng ${user.name} | Moetruyen`,
+      locale: 'vi_VN',
+    },
+    twitter: {
+      site: 'Moetruyen',
+      title: user.name ?? 'Người dùng',
+      description: `Người dùng ${user.name} | Moetruyen`,
+      card: 'summary_large_image',
+    },
   };
 }
 
@@ -72,11 +122,11 @@ const page: FC<pageProps> = async ({ params }) => {
         <UserBanner user={user} className="rounded-md" />
         <UserAvatar
           user={user}
-          className="absolute w-20 h-20 lg:w-24 lg:h-24 bottom-0 left-4 translate-y-1/2 border-4 dark:border-zinc-900 dark:bg-zinc-900"
+          className="absolute w-20 h-20 md:w-24 md:h-24 bottom-0 left-4 translate-y-1/2 border-4 dark:border-zinc-900 dark:bg-zinc-900"
         />
       </div>
 
-      <div className="flex flex-wrap ml-28 lg:ml-32 my-3 mr-1 justify-end items-center gap-3">
+      <div className="flex flex-wrap ml-28 md:ml-32 my-3 mr-1 justify-end items-center gap-3">
         {!!user.badge.length &&
           user.badge.map((badge) => <UserBadge key={badge.id} badge={badge} />)}
       </div>

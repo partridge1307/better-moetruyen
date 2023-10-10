@@ -15,7 +15,7 @@ const MangaSearch: FC<MangaSearchProps> = ({ mangas }) => {
   return !!mangas?.length ? (
     <div className="space-y-4">
       {mangas.map((manga) => (
-        <Link key={manga.id} href={`/manga/${manga.slug}}`}>
+        <Link key={manga.id} href={`/manga/${manga.slug}`}>
           <SheetClose className="w-full text-start grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800">
             <div>
               <AspectRatio ratio={4 / 3}>

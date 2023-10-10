@@ -67,13 +67,13 @@ const Recommendation = async () => {
   const mangas = await getMangas(session);
 
   return (
-    <div className="max-sm:flex max-sm:items-center max-sm:snap-x max-sm:snap-mandatory lg:grid lg:grid-cols-2 gap-6 overflow-auto rounded-md dark:bg-zinc-900/60">
+    <div className="max-sm:flex max-sm:items-center max-sm:snap-x max-sm:snap-mandatory md:grid md:grid-cols-2 gap-6 overflow-auto rounded-md dark:bg-zinc-900/60">
       {mangas.map((manga) => (
         <Link
           key={manga.id}
           scroll={false}
           href={`/manga/${manga.slug}`}
-          className="max-sm:shrink-0 max-sm:snap-end max-sm:snap-always grid grid-cols-2 lg:grid-cols-[.5fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-900"
+          className="max-sm:shrink-0 max-sm:snap-end max-sm:snap-always grid grid-cols-2 md:grid-cols-[.5fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-900"
         >
           <div
             className="relative max-sm:min-w-[8rem]"
@@ -81,7 +81,7 @@ const Recommendation = async () => {
           >
             <Image
               fill
-              sizes="(max-width: 640px) 25vw, 30vw"
+              sizes="(max-width: 640px) 20vw, 30vw"
               quality={40}
               priority
               src={manga.image}

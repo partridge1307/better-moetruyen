@@ -1,4 +1,3 @@
-import { AspectRatio } from '@/components/ui/AspectRatio';
 import { formatTimeToNow } from '@/lib/utils';
 import type { Manga, MangaAuthor } from '@prisma/client';
 import Image from 'next/image';
@@ -22,20 +21,18 @@ const AdvancedMangaCard: FC<AdvancedMangaCardProps> = ({ manga }) => {
     <Link
       scroll={false}
       href={manga.slug}
-      className="grid grid-cols-[.6fr_1fr] lg:grid-cols-[.3fr_1fr] gap-4 p-2 rounded-md transition-colors dark:bg-zinc-900 hover:dark:bg-zinc-900/80"
+      className="grid grid-cols-[.6fr_1fr] md:grid-cols-[.3fr_1fr] gap-4 p-2 rounded-md transition-colors dark:bg-zinc-900 hover:dark:bg-zinc-900/80"
     >
-      <div>
-        <AspectRatio ratio={4 / 3}>
-          <Image
-            fill
-            sizes="(max-width: 640px): 25vw, 30vw"
-            quality={40}
-            priority
-            src={manga.image}
-            alt={`${manga.name} Thumbnail`}
-            className="object-cover rounded-md"
-          />
-        </AspectRatio>
+      <div className="relative" style={{ aspectRatio: 4 / 3 }}>
+        <Image
+          fill
+          sizes="(max-width: 640px): 25vw, 30vw"
+          quality={40}
+          priority
+          src={manga.image}
+          alt={`${manga.name} Thumbnail`}
+          className="object-cover rounded-md"
+        />
       </div>
 
       <div className="space-y-2">

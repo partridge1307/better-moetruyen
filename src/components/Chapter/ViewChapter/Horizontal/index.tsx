@@ -1,5 +1,4 @@
 import CommentSkeleton from '@/components/Skeleton/CommentSkeleton';
-import NavigationSkeleton from '@/components/Skeleton/NavigationSkeleton';
 import { buttonVariants } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { useIntersection, useWindowEvent } from '@mantine/hooks';
@@ -17,14 +16,11 @@ import {
   useState,
 } from 'react';
 import { CurrentPageContext, ImageContext, SizeContext } from '..';
+import Navigation from '../Navigation';
 
 const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
   loading: () => <CommentSkeleton />,
-});
-const Navigation = dynamic(() => import('../Navigation'), {
-  ssr: false,
-  loading: () => <NavigationSkeleton />,
 });
 
 interface HorizontalViewChapterProps {
@@ -169,7 +165,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
   }, [scrollNext, scrollPrev, touchEnd, touchStart]);
 
   return (
-    <div
+    <section
       className="relative w-full h-screen"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
@@ -180,7 +176,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
           'h-screen': size === 'ORIGINAL' || size === 'FITWIDTH',
         })}
       >
-        {size === 'FITWIDTH'
+        {size === 'ORIGINAL'
           ? chapter.images.map((image, idx) => {
               if (idx === Math.floor(chapter.images.length * 0.7))
                 return (
@@ -191,13 +187,13 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                         setImage(e, idx);
                       }}
                       fill
-                      sizes="75vw"
-                      unoptimized
+                      sizes="(max-width: 640px) 45vw, 75vw"
+                      priority
                       src={image}
                       placeholder="blur"
                       blurDataURL={chapter.blurImages[idx]}
                       alt={`Trang ${idx + 1}`}
-                      className="object-scale-down"
+                      className="object-contain"
                     />
                   </div>
                 );
@@ -207,18 +203,18 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                     <Image
                       ref={(e) => setImage(e, idx)}
                       fill
-                      sizes="75vw"
-                      unoptimized
+                      sizes="(max-width: 640px) 45vw, 75vw"
+                      priority
                       src={image}
                       placeholder="blur"
                       blurDataURL={chapter.blurImages[idx]}
                       alt={`Trang ${idx + 1}`}
-                      className="object-scale-down"
+                      className="object-contain"
                     />
                   </div>
                 );
             })
-          : size === 'ORIGINAL'
+          : size === 'FITWIDTH'
           ? chapter.images.map((image, idx) => {
               if (idx === Math.floor(chapter.images.length * 0.7))
                 return (
@@ -229,13 +225,13 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                         setImage(e, idx);
                       }}
                       fill
-                      sizes="75vw"
-                      unoptimized
+                      sizes="(max-width: 640px) 45vw, 75vw"
+                      priority
                       src={image}
                       placeholder="blur"
                       blurDataURL={chapter.blurImages[idx]}
                       alt={`Trang ${idx + 1}`}
-                      className="object-contain"
+                      className="object-scale-down"
                     />
                   </div>
                 );
@@ -245,13 +241,13 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                     <Image
                       ref={(e) => setImage(e, idx)}
                       fill
-                      sizes="75vw"
-                      unoptimized
+                      sizes="(max-width: 640px) 45vw, 75vw"
+                      priority
                       src={image}
                       placeholder="blur"
                       blurDataURL={chapter.blurImages[idx]}
                       alt={`Trang ${idx + 1}`}
-                      className="object-contain"
+                      className="object-scale-down"
                     />
                   </div>
                 );
@@ -266,10 +262,10 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                       ref(e);
                       setImage(e, idx);
                     }}
-                    sizes="75vw"
+                    sizes="(max-width: 640px) 45vw, 75vw"
+                    priority
                     width={0}
                     height={0}
-                    unoptimized
                     src={image}
                     placeholder="blur"
                     blurDataURL={chapter.blurImages[idx]}
@@ -282,10 +278,10 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
                   <Image
                     key={idx}
                     ref={(e) => setImage(e, idx)}
-                    sizes="75vw"
+                    sizes="(max-width: 640px) 45vw, 75vw"
+                    priority
                     width={0}
                     height={0}
-                    unoptimized
                     src={image}
                     placeholder="blur"
                     blurDataURL={chapter.blurImages[idx]}
@@ -390,7 +386,7 @@ const HorizontalViewChapter: FC<HorizontalViewChapterProps> = ({
         )}
         onClick={scrollNext}
       />
-    </div>
+    </section>
   );
 };
 

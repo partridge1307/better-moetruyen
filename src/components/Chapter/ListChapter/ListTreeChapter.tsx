@@ -52,15 +52,20 @@ const ListTreeChapter: FC<ListTreeChapterProps> = async ({ mangaId }) => {
                             !!chapter.teamName &&
                             !!chapter.teamImage &&
                             "flex-1 pl-4 after:content-[''] after:absolute after:inset-0 after:-z-10 after:-skew-x-12 after:transition-colors after:dark:bg-zinc-700/90 after:hover:dark:bg-zinc-700/60",
-                          !!!chapter.teamId &&
-                            !!!chapter.teamName &&
-                            !!!chapter.teamImage &&
+                          !chapter.teamId &&
+                            !chapter.teamName &&
+                            !chapter.teamImage &&
                             'rounded-md hover:transition-colors dark:bg-zinc-800/90 hover:dark:bg-zinc-800/70'
                         )}
                       >
-                        <div className="flex items-center gap-1">
-                          <p>Ch. {chapter.index}</p>
-                          {!!chapter.name && <p>- {chapter.name}</p>}
+                        <div className="flex gap-1.5">
+                          <p className="shrink-0">Ch. {chapter.index}</p>
+                          {!!chapter.name && (
+                            <>
+                              <span>-</span>
+                              <p>{chapter.name}</p>
+                            </>
+                          )}
                         </div>
                         <time
                           dateTime={new Date(chapter.createdAt).toDateString()}

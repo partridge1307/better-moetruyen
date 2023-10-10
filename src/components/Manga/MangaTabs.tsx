@@ -13,6 +13,7 @@ import type { Manga } from '@prisma/client';
 import { List, ListTree } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
@@ -75,10 +76,7 @@ const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
       >
         <div className="space-y-6">
           <div className="p-2 rounded-md dark:bg-zinc-900/60">
-            <a
-              target="_blank"
-              href={`/user/${manga.creator.name?.split(' ').join('-')}`}
-            >
+            <Link href={`/user/${manga.creator.name?.split(' ').join('-')}`}>
               <div className="relative">
                 <UserBanner
                   user={manga.creator}
@@ -86,17 +84,17 @@ const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
                 />
                 <UserAvatar
                   user={manga.creator}
-                  className="absolute bottom-0 translate-y-1/2 left-4 border-4 w-20 h-20 lg:w-[5.5rem] lg:h-[5.5rem]"
+                  className="absolute bottom-0 translate-y-1/2 left-4 border-4 w-20 h-20 dark:bg-zinc-900"
                 />
               </div>
               <Username
                 user={manga.creator}
-                className="text-start mt-14 lg:mt-16 pl-4 text-lg lg:text-xl font-semibold"
+                className="text-start mt-14 pl-4 text-lg lg:text-xl font-semibold"
               />
-            </a>
+            </Link>
+
             {!!creatorTeam && (
-              <a
-                target="_blank"
+              <Link
                 href={`/team/${creatorTeam.id}`}
                 className="flex items-center gap-3 p-2 mt-10 rounded-md transition-colors dark:bg-zinc-800 hover:dark:bg-zinc-800/70"
               >
@@ -111,15 +109,16 @@ const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
                   />
                 </div>
                 <p>{creatorTeam.name}</p>
-              </a>
+              </Link>
             )}
           </div>
 
           {!!manga.facebookLink && (
             <FBEmbed facebookLink={manga.facebookLink} />
           )}
+          <FBEmbed facebookLink="https://www.facebook.com/Bfangteam" />
 
-          <DiscEmbed manga={manga} />
+          {!!manga.discordLink && <DiscEmbed discordLink={manga.discordLink} />}
         </div>
 
         <Tabs defaultValue="list">

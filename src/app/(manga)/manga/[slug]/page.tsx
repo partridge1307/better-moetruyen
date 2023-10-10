@@ -32,12 +32,9 @@ const MangaDesc = dynamic(
   () => import('@/components/Manga/components/MangaDesc'),
   { ssr: false, loading: () => <MangaDescSkeleton /> }
 );
-const MangaTabs = dynamic(
-  () => import('@/components/Manga/components/MangaTabs'),
-  {
-    loading: () => <MangaTabsSkeleton />,
-  }
-);
+const MangaTabs = dynamic(() => import('@/components/Manga/MangaTabs'), {
+  loading: () => <MangaTabsSkeleton />,
+});
 
 interface pageProps {
   params: {
@@ -77,7 +74,7 @@ export async function generateMetadata({
   if (!manga)
     return {
       title: 'Manga',
-      description: 'Đọc Manga | Moetruyen',
+      description: `Đọc Manga ${params.slug} | Moetruyen`,
       alternates: {
         canonical: `${process.env.NEXTAUTH_URL}/manga/${params.slug}`,
       },
@@ -98,6 +95,7 @@ export async function generateMetadata({
       siteName: 'Moetruyen',
       title: manga.name,
       description: `Đọc ${manga.name} tại Moetruyen`,
+      locale: 'vi_VN',
       images: [
         {
           url: manga.image,
@@ -167,13 +165,16 @@ const page: FC<pageProps> = async ({ params }) => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
       <main className="container max-sm:px-2 mx-auto space-y-10 mb-10">
         <section className="relative grid grid-cols-2 lg:grid-cols-[.3fr_1fr] gap-3 lg:gap-4 p-2">
           <MangaImage manga={manga} />
+
           <div className="space-y-2">
             <h1 className="text-lg lg:text-2xl font-semibold">{manga.name}</h1>
             <p>{manga.author.map((author) => author.name).join(', ')}</p>
           </div>
+
           <Image
             fill
             sizes="10vw"

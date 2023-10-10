@@ -1,35 +1,18 @@
 'use client';
 
-import ProgressBarViewChapterSkeleton from '@/components/Skeleton/ProgressBarViewChapterSkeleton';
-import VerticalViewChapterSkeleton from '@/components/Skeleton/VerticalViewChapterSkeleton';
-import ViewChapterControllSkeleton from '@/components/Skeleton/ViewChapterControllSkeleton';
 import type { Chapter, Manga } from '@prisma/client';
-import dynamic from 'next/dynamic';
 import {
-  type Dispatch,
   FC,
-  type SetStateAction,
   createContext,
   useEffect,
   useState,
+  type Dispatch,
+  type SetStateAction,
 } from 'react';
-
-const Controll = dynamic(() => import('./Controll'), {
-  ssr: false,
-  loading: () => <ViewChapterControllSkeleton />,
-});
-const VeritcalViewChapter = dynamic(() => import('./Vertical'), {
-  ssr: false,
-  loading: () => <VerticalViewChapterSkeleton />,
-});
-const HorizontalViewChapter = dynamic(() => import('./Horizontal'), {
-  ssr: false,
-  loading: () => <VerticalViewChapterSkeleton />,
-});
-const Progress = dynamic(() => import('./Progress'), {
-  ssr: false,
-  loading: () => <ProgressBarViewChapterSkeleton />,
-});
+import Controll from './Controll';
+import HorizontalViewChapter from './Horizontal';
+import Progress from './Progress';
+import VeritcalViewChapter from './Vertical';
 
 interface indexProps {
   chapter: Pick<
@@ -91,14 +74,6 @@ const ViewChapter: FC<indexProps> = ({ chapter, chapterList }) => {
 
     sessionStorage.setItem('startPage', `${Date.now()}`);
   }, []);
-
-  useEffect(() => {
-    setImages([]);
-  }, [readingMode]);
-
-  useEffect(() => {
-    setImages([]);
-  }, [size]);
 
   return (
     <ReadingModeContext.Provider value={{ readingMode, onReadingModeChange }}>

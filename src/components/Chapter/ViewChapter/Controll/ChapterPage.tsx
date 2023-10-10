@@ -4,24 +4,30 @@ import {
   PopoverTrigger,
 } from '@/components/ui/Popover';
 import {
-  FC,
+  memo,
   useCallback,
   useContext,
+  useEffect,
   useState,
   type FormEvent,
-  memo,
-  useEffect,
 } from 'react';
 import { CurrentPageContext, ImageContext } from '..';
 
-interface ChapterPageProps {}
-
-const ChapterPage: FC<ChapterPageProps> = ({}) => {
+const ChapterPage = () => {
   const { currentPage } = useContext(CurrentPageContext);
   const { images } = useContext(ImageContext);
+
   const [idx, setIdx] = useState(1);
   const [imagesMounted, setImagesMounted] = useState<HTMLImageElement[]>([]);
   const [currentPageMounted, setCurrentPageMounted] = useState(0);
+
+  useEffect(() => {
+    setImagesMounted(images);
+  }, [images]);
+
+  useEffect(() => {
+    setCurrentPageMounted(currentPage);
+  }, [currentPage]);
 
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
@@ -33,14 +39,6 @@ const ChapterPage: FC<ChapterPageProps> = ({}) => {
     },
     [idx, images]
   );
-
-  useEffect(() => {
-    setImagesMounted(images);
-  }, [images]);
-
-  useEffect(() => {
-    setCurrentPageMounted(currentPage);
-  }, [currentPage]);
 
   return (
     <Popover>

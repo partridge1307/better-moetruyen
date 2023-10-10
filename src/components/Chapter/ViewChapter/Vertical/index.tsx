@@ -1,5 +1,4 @@
 import CommentSkeleton from '@/components/Skeleton/CommentSkeleton';
-import NavigationSkeleton from '@/components/Skeleton/NavigationSkeleton';
 import { cn } from '@/lib/utils';
 import { useIntersection } from '@mantine/hooks';
 import type { Chapter } from '@prisma/client';
@@ -8,14 +7,11 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { FC, useCallback, useContext, useEffect, useRef } from 'react';
 import { CurrentPageContext, ImageContext, SizeContext } from '..';
+import Navigation from '../Navigation';
 
 const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
   loading: () => <CommentSkeleton />,
-});
-const Navigation = dynamic(() => import('../Navigation'), {
-  ssr: false,
-  loading: () => <NavigationSkeleton />,
 });
 
 interface VeritcalViewChapterProps {
@@ -112,7 +108,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
   }, [callback, images, size]);
 
   return (
-    <div className="space-y-6">
+    <section className="space-y-6">
       {chapter.images.map((image, idx) => {
         if (idx === Math.floor(chapter.images.length * 0.7))
           return (
@@ -125,7 +121,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               width={0}
               height={0}
               sizes="75vw"
-              unoptimized
+              priority
               src={image}
               alt={`Trang ${idx + 1}`}
               placeholder="blur"
@@ -144,7 +140,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
               width={0}
               height={0}
               sizes="75vw"
-              unoptimized
+              priority
               src={image}
               placeholder="blur"
               blurDataURL={chapter.blurImages[idx]}
@@ -159,7 +155,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
 
       <div
         id="navigation-section"
-        className="flex flex-col lg:flex-row lg:items-center lg:justify-between max-sm:gap-4 pt-10"
+        className="flex flex-col md:flex-row md:items-center md:justify-between max-sm:gap-4 pt-10"
       >
         <Navigation
           currentChapterIdx={chapter.chapterIndex}
@@ -175,7 +171,7 @@ const VeritcalViewChapter: FC<VeritcalViewChapterProps> = ({
 
         <Comments id={chapter.id} />
       </div>
-    </div>
+    </section>
   );
 };
 

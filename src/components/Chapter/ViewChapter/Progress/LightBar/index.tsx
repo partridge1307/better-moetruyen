@@ -22,7 +22,7 @@ const ProgressLightbar = () => {
   }, [currentPage]);
 
   return (
-    <div
+    <section
       className={cn(
         'fixed bottom-0 inset-x-0 h-12 flex items-end gap-4 px-6 group hover:items-center hover:dark:bg-zinc-900',
         {
@@ -58,7 +58,7 @@ const ProgressLightbar = () => {
       </div>
 
       <p className="hidden group-hover:block">{imagesMounted.length}</p>
-    </div>
+    </section>
   );
 };
 

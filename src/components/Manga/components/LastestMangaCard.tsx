@@ -1,4 +1,3 @@
-import { AspectRatio } from '@/components/ui/AspectRatio';
 import { formatTimeToNow } from '@/lib/utils';
 import type { Chapter, Manga } from '@prisma/client';
 import Image from 'next/image';
@@ -16,19 +15,17 @@ const LastestMangaCard: FC<LastestMangaCardProps> = ({ chapter }) => {
     <Link
       scroll={false}
       href={`/manga/${chapter.manga.slug}`}
-      className="grid grid-cols-[.6fr_1fr] lg:grid-cols-[.3fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-900"
+      className="grid grid-cols-[.6fr_1fr] md:grid-cols-[.3fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-900"
     >
-      <div>
-        <AspectRatio ratio={4 / 3}>
-          <Image
-            fill
-            sizes="(max-width: 640px): 25vw, 30vw"
-            quality={40}
-            src={chapter.manga.image}
-            alt={`${chapter.manga.name} Thumbnail`}
-            className="object-cover rounded-md"
-          />
-        </AspectRatio>
+      <div className="relative" style={{ aspectRatio: 4 / 3 }}>
+        <Image
+          fill
+          sizes="(max-width: 640px) 20vw, 30vw"
+          quality={40}
+          src={chapter.manga.image}
+          alt={`${chapter.manga.name} Thumbnail`}
+          className="object-cover rounded-md"
+        />
       </div>
       <div className="space-y-1">
         <h1 className="text-lg lg:text-xl font-semibold line-clamp-2">
@@ -36,11 +33,12 @@ const LastestMangaCard: FC<LastestMangaCardProps> = ({ chapter }) => {
         </h1>
 
         <div>
-          <div className="flex items-center gap-1">
-            <dl className="text-sm flex items-center gap-1">
+          <div className="flex items-start gap-1">
+            <dl className="shrink-0 text-sm leading-6 flex items-center gap-1">
               <dt>Vol. {chapter.volume}</dt>
               <dd>Ch. {chapter.chapterIndex}</dd>
             </dl>
+
             {!!chapter.name && <p>- {chapter.name}</p>}
           </div>
 

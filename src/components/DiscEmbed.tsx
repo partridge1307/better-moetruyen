@@ -1,8 +1,7 @@
-import type { Manga } from '@prisma/client';
 import { FC } from 'react';
 
 interface DiscEmbedProps {
-  manga: Pick<Manga, 'discordLink'>;
+  discordLink: string;
 }
 
 type DiscordProps = {
@@ -37,8 +36,8 @@ async function fetchDisc(link: string | null) {
   return result;
 }
 
-const DiscEmbed: FC<DiscEmbedProps> = async ({ manga }) => {
-  const discord = await fetchDisc(manga.discordLink);
+const DiscEmbed: FC<DiscEmbedProps> = async ({ discordLink }) => {
+  const discord = await fetchDisc(discordLink);
 
   return (
     !!discord.code && (

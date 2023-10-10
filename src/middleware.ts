@@ -13,7 +13,6 @@ export async function middleware(req: NextRequest) {
 
   try {
     await limiter.check(requestHeaders, 10, ip);
-    console.log(ip);
 
     return NextResponse.next({
       request: {

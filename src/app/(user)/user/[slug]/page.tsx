@@ -6,10 +6,10 @@ import { db } from '@/lib/db';
 import format from 'date-fns/format';
 import vi from 'date-fns/locale/vi';
 import { Users2, Wifi } from 'lucide-react';
+import type { Metadata } from 'next';
+import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
-import dynamic from 'next/dynamic';
-import type { Metadata } from 'next';
 
 const UserBadge = dynamic(() => import('@/components/User/UserBadge'), {
   ssr: false,
@@ -70,47 +70,28 @@ export async function generateMetadata({
       title: user.name ?? 'Người dùng',
       description: `Người dùng ${user.name} | Moetruyen`,
       locale: 'vi_VN',
-      ...(!!user.banner && {
+      ...(!!user.image && {
         images: [
           {
-            url: user.banner,
-            alt: `Ảnh bìa ${user.name}`,
+            url: user.image,
+            alt: `Ảnh đại diện ${user.name}`,
           },
         ],
       }),
-      ...(!!user.image &&
-        !user.banner && {
-          images: [
-            {
-              url: user.image,
-              alt: `Ảnh đại diện ${user.name}`,
-            },
-          ],
-        }),
     },
     twitter: {
       site: 'Moetruyen',
       title: user.name ?? 'Người dùng',
       description: `Người dùng ${user.name} | Moetruyen`,
-      ...(!!user.banner && {
-        card: 'summary_large_image',
+      ...(!!user.image && {
+        card: 'summary',
         images: [
           {
-            url: user.banner,
-            alt: `Ảnh bìa ${user.name}`,
+            url: user.image,
+            alt: `Ảnh đại diện ${user.name}`,
           },
         ],
       }),
-      ...(!!user.image &&
-        !user.banner && {
-          card: 'summary',
-          images: [
-            {
-              url: user.image,
-              alt: `Ảnh đại diện ${user.name}`,
-            },
-          ],
-        }),
     },
   };
 }

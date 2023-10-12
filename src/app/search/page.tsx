@@ -1,8 +1,7 @@
-import AdvancedMangaCard from '@/components/Manga/components/AdvancedMangaCard';
 import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
 import { buttonVariants } from '@/components/ui/Button';
-import { db } from '@/lib/db';
+import { searchForum, searchManga, searchUser } from '@/lib/query';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -25,75 +24,46 @@ const page: FC<pageProps> = async ({ searchParams }) => {
 
   let query = typeof queryParam === 'string' ? queryParam : queryParam[0];
 
-  const [mangas, users, forums] = await db.$transaction([
-    db.manga.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: 'insensitive',
-        },
-        isPublished: true,
-      },
-      select: {
-        id: true,
-        slug: true,
-        name: true,
-        image: true,
-        review: true,
-        createdAt: true,
-        author: true,
-        _count: {
-          select: {
-            chapter: true,
-          },
-        },
-      },
-      take: 10,
-    }),
-    db.user.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: 'insensitive',
-        },
-      },
-      select: {
-        name: true,
-        image: true,
-        color: true,
-      },
-      take: 10,
-    }),
-    db.subForum.findMany({
-      where: {
-        title: {
-          contains: query,
-          mode: 'insensitive',
-        },
-      },
-      select: {
-        slug: true,
-        title: true,
-        banner: true,
-      },
-      take: 10,
-    }),
+  const [mangas, users, forums] = await Promise.all([
+    searchManga({ searchPhrase: query, take: 10 }),
+    searchUser({ searchPhrase: query, take: 10 }),
+    searchForum({ searchPhrase: query, take: 10 }),
   ]);
 
   return (
-    <main className="container max-sm:px-2 space-y-10 mb-8">
+    <main className="container max-sm:px-2 space-y-10 mb-10">
       <h1 className="text-lg font-semibold p-1 rounded-md dark:bg-zinc-900/60">
         Từ khóa: <span className="font-normal">{query}</span>
       </h1>
 
+      {/* Manga */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">Manga</h2>
 
         <div className="rounded-md dark:bg-zinc-900/70">
           {!!mangas.length ? (
             mangas.map((manga, idx) => (
-              <div key={idx} className="p-2">
-                <AdvancedMangaCard manga={manga} />
+              <div
+                key={idx}
+                className="grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800"
+              >
+                <div className="relative" style={{ aspectRatio: 4 / 3 }}>
+                  <Image
+                    fill
+                    sizes="(max-width: 640px) 25vw, 30vw"
+                    quality={40}
+                    src={manga.image}
+                    alt={`${manga.name} Thumbnail`}
+                    className="object-cover rounded-md"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <p className="text-lg lg:text-xl font-semibold">
+                    {manga.name}
+                  </p>
+                  <p className="line-clamp-2">{manga.review}</p>
+                </div>
               </div>
             ))
           ) : (
@@ -115,10 +85,11 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         )}
       </section>
 
+      {/* User */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">User</h2>
 
-        <div className="p-2 rounded-md dark:bg-zinc-900/70">
+        <div className="grid grid-cols-2 gap-6 p-2 rounded-md dark:bg-zinc-900/70">
           {!!users.length ? (
             users.map((user, idx) => (
               <Link
@@ -126,7 +97,10 @@ const page: FC<pageProps> = async ({ searchParams }) => {
                 href={`/user/${user.name?.split(' ').join('-')}`}
                 className="flex gap-4 rounded-md p-2 transition-colors hover:dark:bg-zinc-800"
               >
-                <UserAvatar user={user} className="w-20 h-20 border-4" />
+                <UserAvatar
+                  user={user}
+                  className="w-20 h-20 border-4 dark:bg-zinc-900"
+                />
                 <Username user={user} className="text-xl font-semibold pt-1" />
               </Link>
             ))
@@ -149,6 +123,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         )}
       </section>
 
+      {/* Forum */}
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">Forum</h2>
 

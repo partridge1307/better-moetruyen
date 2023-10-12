@@ -138,7 +138,7 @@ const page: FC<pageProps> = async ({ params }) => {
         <UserBanner user={user} className="rounded-md" />
         <UserAvatar
           user={user}
-          className="absolute w-20 h-20 md:w-24 md:h-24 bottom-0 left-4 translate-y-1/2 border-4 dark:border-zinc-900 dark:bg-zinc-900"
+          className="absolute w-20 h-20 md:w-24 md:h-24 bottom-0 left-4 translate-y-1/2 border-4 dark:border-zinc-800 dark:bg-zinc-900"
         />
       </div>
 

@@ -5,11 +5,15 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
+interface pageProps {
+  params: {
+    chapterId: string | string[];
+  };
+}
+
 export async function generateMetadata({
   params,
-}: {
-  params: { chapterId: string };
-}): Promise<Metadata> {
+}: pageProps): Promise<Metadata> {
   const chapter = await db.chapter.findFirst({
     where: {
       id: +params.chapterId,
@@ -31,19 +35,20 @@ export async function generateMetadata({
 
   if (!chapter)
     return {
-      title: 'Chapter',
-      openGraph: {
-        title: 'Chapter | Moetruyen',
-        description: 'Chapter | Moetruyen',
-      },
+      title: `Chapter ${params.chapterId}`,
+      description: `Đọc chapter ${params.chapterId}`,
     };
 
   return {
     title: {
-      default: `Chapter ${chapter.chapterIndex} - ${chapter.manga.name}`,
-      absolute: `Chapter ${chapter.chapterIndex} - ${chapter.manga.name}`,
+      default: `${chapter.manga.name} - Chap ${
+        chapter.chapterIndex
+      } Tiếp Chap ${chapter.chapterIndex + 1}`,
+      absolute: `${chapter.manga.name} - Chap ${
+        chapter.chapterIndex
+      } Tiếp Chap ${chapter.chapterIndex + 1}`,
     },
-    description: `Đọc ${chapter.manga.name} | Moetruyen`,
+    description: `Đọc truyện ${chapter.manga.name} Chap ${chapter.chapterIndex} | Moetruyen`,
     keywords: [
       'Chapter',
       'Manga',
@@ -56,27 +61,25 @@ export async function generateMetadata({
     openGraph: {
       url: `${process.env.NEXTAUTH_URL}/chapter/${params.chapterId}`,
       siteName: 'Moetruyen',
-      title: `Chapter ${chapter.chapterIndex} - ${chapter.manga.name}`,
-      description: `Đọc ${chapter.manga.name} | Moetruyen`,
+      title: `${chapter.manga.name} - Chap ${chapter.chapterIndex} Tiếp Chap ${
+        chapter.chapterIndex + 1
+      }`,
+      description: `Đọc truyện ${chapter.manga.name} Chap ${chapter.chapterIndex} | Moetruyen`,
       images: [
         { url: `${chapter.manga.image}`, alt: `Ảnh bìa ${chapter.manga.name}` },
       ],
     },
     twitter: {
       site: 'Moetruyen',
-      title: `Chapter ${chapter.chapterIndex} - ${chapter.manga.name}`,
-      description: `Đọc ${chapter.manga.name} | Moetruyen`,
+      title: `${chapter.manga.name} - Chap ${chapter.chapterIndex} Tiếp Chap ${
+        chapter.chapterIndex + 1
+      }`,
+      description: `Đọc truyện ${chapter.manga.name} Chap ${chapter.chapterIndex} | Moetruyen`,
       card: 'summary_large_image',
       images: [
         { url: `${chapter.manga.image}`, alt: `Ảnh bìa ${chapter.manga.name}` },
       ],
     },
-  };
-}
-
-interface pageProps {
-  params: {
-    chapterId: string | string[];
   };
 }
 

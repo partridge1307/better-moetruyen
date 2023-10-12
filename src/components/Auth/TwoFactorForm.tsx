@@ -6,6 +6,7 @@ import {
   AuthTwoFactorPayload,
   AuthTwoFactorValidator,
 } from '@/lib/validators/auth';
+import classes from '@/styles/mantine/two-factor.module.css';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PinInput } from '@mantine/core';
 import { signIn } from 'next-auth/react';
@@ -83,13 +84,7 @@ const TwoFactorForm: FC<TwoFactorProps> = ({ email, password }) => {
                 type={'number'}
                 oneTimeCode
                 aria-label="one time code"
-                styles={{
-                  root: {
-                    '&': {
-                      justifyContent: 'center',
-                    },
-                  },
-                }}
+                classNames={classes}
                 {...field}
               />
             </FormItem>

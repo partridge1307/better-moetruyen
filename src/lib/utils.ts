@@ -16,13 +16,10 @@ export const groupBy = <T>(
   // eslint-disable-next-line no-unused-vars
   predicate: (value: T, index: number, array: T[]) => any
 ) =>
-  array.reduce(
-    (acc, value, index, array) => {
-      (acc[predicate(value, index, array)] ||= []).push(value);
-      return acc;
-    },
-    {} as { [key: string]: T[] }
-  );
+  array.reduce((acc, value, index, array) => {
+    (acc[predicate(value, index, array)] ||= []).push(value);
+    return acc;
+  }, {} as { [key: string]: T[] });
 
 const formatDistanceLocale = {
   lessThanXSeconds: 'vừa xong',
@@ -163,3 +160,12 @@ export const rgbDataURL = (r: number, g: number, b: number) =>
 
 export const normalizeText = (text: string) =>
   text.normalize('NFKD').replace(/[\u0300-\u036F]/g, '');
+
+const tsquerySpecialChars = /[()|&:*!]/g;
+export const generateSearchPhrase = (searchPhrase: string) =>
+  searchPhrase
+    .replace(tsquerySpecialChars, ' ')
+    .trim()
+    .split(/\s+/)
+    .map((phrase) => `${phrase}:*`)
+    .join(' | ');

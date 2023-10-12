@@ -52,8 +52,8 @@ function generateJsonLd(manga: Pick<Manga, 'name' | 'image'>, slug: string) {
     image: {
       '@type': 'ImageObject',
       url: `${manga.image}`,
-      height: 904,
-      width: 696,
+      width: 1280,
+      height: 960,
     },
   };
 }
@@ -68,33 +68,48 @@ export async function generateMetadata({
     select: {
       slug: true,
       name: true,
+      altName: true,
       image: true,
+      chapter: {
+        take: 1,
+        orderBy: {
+          chapterIndex: 'desc',
+        },
+        select: {
+          chapterIndex: true,
+        },
+      },
     },
   });
   if (!manga)
     return {
-      title: 'Manga',
+      title: `Manga ${params.slug}`,
       description: `Đọc Manga ${params.slug} | Moetruyen`,
       alternates: {
         canonical: `${process.env.NEXTAUTH_URL}/manga/${params.slug}`,
       },
     };
 
+  const title = `${manga.name} [Tới chap ${manga.chapter[0]?.chapterIndex}]`;
+  const description = !!manga.altName.length
+    ? `Đọc truyện ${manga.name}, ${manga.altName.join(', ')} | Moetruyen`
+    : `Đọc truyện ${manga.name} | Moetruyen`;
+
   return {
     title: {
-      default: manga.name,
-      absolute: manga.name,
+      default: title,
+      absolute: title,
     },
-    description: `Đọc ${manga.name} | Moetruyen`,
-    keywords: [`Manga`, `${manga.name}`, 'Moetruyen'],
+    description,
+    keywords: [`Manga`, `${manga.name}`, 'Moetruyen', ...manga.altName],
     alternates: {
       canonical: `${process.env.NEXTAUTH_URL}/manga/${manga.slug}`,
     },
     openGraph: {
       url: `${process.env.NEXTAUTH_URL}/manga/${manga.slug}`,
       siteName: 'Moetruyen',
-      title: manga.name,
-      description: `Đọc ${manga.name} tại Moetruyen`,
+      title,
+      description,
       locale: 'vi_VN',
       images: [
         {
@@ -105,8 +120,8 @@ export async function generateMetadata({
     },
     twitter: {
       site: 'Moetruyen',
-      title: manga.name,
-      description: `Đọc ${manga.name} | Moetruyen`,
+      title,
+      description,
       card: 'summary_large_image',
       images: [
         {
@@ -128,6 +143,7 @@ const page: FC<pageProps> = async ({ params }) => {
       id: true,
       slug: true,
       name: true,
+      altName: true,
       image: true,
       description: true,
       creatorId: true,
@@ -189,8 +205,15 @@ const page: FC<pageProps> = async ({ params }) => {
         <section className="p-2 pb-10 space-y-10 rounded-md dark:bg-zinc-900/60">
           <MangaControll manga={manga} />
 
+          {!!manga.altName.length && (
+            <dl className="space-y-2">
+              <dt className="text-lg lg:text-xl font-semibold">Tên khác</dt>
+              <dd>{manga.altName.join(', ')}</dd>
+            </dl>
+          )}
+
           <div className="space-y-2">
-            <h1 className="text-lg lg:text-xl font-semibold">Thể loại</h1>
+            <p className="text-lg lg:text-xl font-semibold">Thể loại</p>
             <TagWrapper>
               {manga.tags.map((tag) => (
                 <TagContent key={tag.id} title={tag.description}>

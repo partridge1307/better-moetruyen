@@ -1,9 +1,12 @@
 'use client';
 
-import { forumDomain } from '@/config';
-import { ScrollArea, createStyles, getStylesRef } from '@mantine/core';
+import { ScrollArea } from '@mantine/core';
 import type { Post, SubForum } from '@prisma/client';
 import { FC } from 'react';
+import '@mantine/core/styles.layer.css';
+import classes from '@/styles/mantine/post.module.css';
+import '@/styles/mantine/globals.css';
+import { forumDomain } from '@/config';
 
 interface LastActivityListProps {
   posts: (Pick<Post, 'id' | 'title'> & {
@@ -11,34 +14,11 @@ interface LastActivityListProps {
   })[];
 }
 
-const useStyles = createStyles(() => ({
-  thumb: {
-    ref: getStylesRef('thumb'),
-    'html.dark &': {
-      background: '#FFFFFF',
-      borderRadius: '50vh',
-      border: '2px solid #FFFFFF',
-    },
-    '&:hover': {
-      background: '#2E2E2E',
-    },
-  },
-  scrollbar: {
-    ref: getStylesRef('scrollbar'),
-    borderRadius: '50vh',
-    'html.dark &': {
-      background: '#000000',
-    },
-  },
-}));
-
 const LastActivityList: FC<LastActivityListProps> = ({ posts }) => {
-  const { classes } = useStyles();
-
   return (
-    <ScrollArea
+    <ScrollArea.Autosize
       mah={'18rem'}
-      scrollHideDelay={1000}
+      scrollHideDelay={150000}
       type="scroll"
       className="rounded-md dark:bg-zinc-900/60"
       classNames={classes}
@@ -55,7 +35,7 @@ const LastActivityList: FC<LastActivityListProps> = ({ posts }) => {
           </dl>
         </a>
       ))}
-    </ScrollArea>
+    </ScrollArea.Autosize>
   );
 };
 

@@ -39,6 +39,40 @@ export const metadata: Metadata = {
   },
 };
 
+function breadcrumbJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Trang chủ',
+        item: `${process.env.NEXTAUTH_URL}`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Website đọc truyện chính thức',
+        item: `${process.env.NEXTAUTH_URL}/search`,
+      },
+    ],
+  };
+}
+
+function searchActionJsonLd() {
+  return {
+    '@context': 'http://schema.org',
+    '@type': 'WebSite',
+    url: process.env.NEXTAUTH_URL,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${process.env.NEXTAUTH_URL}/search?q={query_string}`,
+      'query-input': 'required name=q',
+    },
+  };
+}
+
 const roboto = Roboto({
   subsets: ['vietnamese'],
   weight: '400',
@@ -57,6 +91,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi" className={`dark ${roboto.variable} font-sans`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(breadcrumbJsonLd()),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(searchActionJsonLd()),
+          }}
+        />
+      </head>
       <body className="antialiased dark:bg-zinc-800 md:scrollbar md:scrollbar--dark">
         <Providers>
           {authModal}

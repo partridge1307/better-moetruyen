@@ -1,0 +1,15 @@
+:is(.dark) :where(.mantine-Carousel-indicator) {
+  background-color: white !important;
+}
+
+:is(.dark) :where(.mantine-ScrollArea-thumb) {
+  background: #ffffff;
+}
+
+:is(.dark) :where(.mantine-ScrollArea-scrollbar) {
+  background: rgb(0, 0, 0, 0.5);
+}
+
+:is(.dark) :where(.mantine-Spoiler-control) {
+  color: #fb923c;
+}

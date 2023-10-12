@@ -41,7 +41,7 @@ const ShareButton: FC<PostShareButtonProps> = ({ url, title }) => {
         <DialogTitle>Chia sẻ</DialogTitle>
 
         <div className="space-y-6">
-          <div className="flex flex-wrap justify-between lg:justify-start items-center gap-2">
+          <div className="flex flex-wrap justify-between lg:justify-start items-center gap-4">
             {/* Facebook */}
             <FacebookShareButton
               url={`${serverDomain}${url}`}
@@ -77,7 +77,7 @@ const ShareButton: FC<PostShareButtonProps> = ({ url, title }) => {
             </RedditShareButton>
           </div>
 
-          <div className="grid grid-cols-[1fr_.1fr] items-center gap-2">
+          <div className="grid grid-cols-[1fr_.1fr] items-center gap-3">
             <p className="truncate p-2 rounded-md dark:bg-zinc-800">
               {serverDomain}
               {url}

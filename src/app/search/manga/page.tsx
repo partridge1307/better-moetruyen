@@ -1,7 +1,8 @@
 import { db } from '@/lib/db';
-import { FC } from 'react';
+import { searchManga } from '@/lib/query';
 import dynamic from 'next/dynamic';
-import AdvancedMangaCard from '@/components/Manga/components/AdvancedMangaCard';
+import Image from 'next/image';
+import { FC } from 'react';
 
 const PaginationControll = dynamic(
   () => import('@/components/PaginationControll'),
@@ -27,33 +28,13 @@ const page: FC<pageProps> = async ({ searchParams }) => {
 
   let query = typeof queryParam === 'string' ? queryParam : queryParam[0];
 
-  const [mangas, total] = await db.$transaction([
-    db.manga.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: 'insensitive',
-        },
-        isPublished: true,
-      },
+  const [mangas, total] = await Promise.all([
+    searchManga({
+      searchPhrase: query,
       take: Number(limit),
       skip: (Number(page) - 1) * Number(limit),
-      select: {
-        id: true,
-        slug: true,
-        name: true,
-        image: true,
-        review: true,
-        createdAt: true,
-        author: true,
-        _count: {
-          select: {
-            chapter: true,
-          },
-        },
-      },
     }),
-    db.manga.count({ where: { isPublished: true } }),
+    db.manga.count({ where: { name: query, isPublished: true } }),
   ]);
 
   return (
@@ -65,7 +46,26 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       {!!mangas.length ? (
         <div className="rounded-md p-2 space-y-6 dark:bg-zinc-900/60">
           {mangas.map((manga, idx) => (
-            <AdvancedMangaCard key={idx} manga={manga} />
+            <div
+              key={idx}
+              className="grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800"
+            >
+              <div className="relative" style={{ aspectRatio: 4 / 3 }}>
+                <Image
+                  fill
+                  sizes="(max-width: 640px) 25vw, 30vw"
+                  quality={40}
+                  src={manga.image}
+                  alt={`${manga.name} Thumbnail`}
+                  className="object-cover rounded-md"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <p className="text-lg lg:text-xl font-semibold">{manga.name}</p>
+                <p className="line-clamp-2">{manga.review}</p>
+              </div>
+            </div>
           ))}
         </div>
       ) : (

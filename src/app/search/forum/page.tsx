@@ -1,5 +1,6 @@
 import { forumDomain } from '@/config';
 import { db } from '@/lib/db';
+import { searchForum } from '@/lib/query';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { FC } from 'react';
@@ -28,23 +29,13 @@ const page: FC<pageProps> = async ({ searchParams }) => {
 
   let query = typeof queryParam === 'string' ? queryParam : queryParam[0];
 
-  const [forums, total] = await db.$transaction([
-    db.subForum.findMany({
-      where: {
-        title: {
-          contains: query,
-          mode: 'insensitive',
-        },
-      },
+  const [forums, total] = await Promise.all([
+    searchForum({
+      searchPhrase: query,
       take: Number(limit),
       skip: (Number(page) - 1) * Number(limit),
-      select: {
-        slug: true,
-        title: true,
-        banner: true,
-      },
     }),
-    db.subForum.count(),
+    db.subForum.count({ where: { title: query } }),
   ]);
 
   return (

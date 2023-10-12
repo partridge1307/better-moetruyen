@@ -1,14 +1,11 @@
-import type { Manga, MangaAuthor } from '@prisma/client';
+import type { Manga } from '@prisma/client';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
-import { AspectRatio } from '../ui/AspectRatio';
 import { SheetClose } from '../ui/Sheet';
 
 interface MangaSearchProps {
-  mangas?: (Pick<Manga, 'id' | 'slug' | 'image' | 'name' | 'review'> & {
-    author: Pick<MangaAuthor, 'name'>[];
-  })[];
+  mangas?: Pick<Manga, 'id' | 'slug' | 'image' | 'name' | 'review'>[];
 }
 
 const MangaSearch: FC<MangaSearchProps> = ({ mangas }) => {
@@ -17,24 +14,19 @@ const MangaSearch: FC<MangaSearchProps> = ({ mangas }) => {
       {mangas.map((manga) => (
         <Link key={manga.id} href={`/manga/${manga.slug}`}>
           <SheetClose className="w-full text-start grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800">
-            <div>
-              <AspectRatio ratio={4 / 3}>
-                <Image
-                  fill
-                  sizes="(max-width: 640px) 25vw, 30vw"
-                  quality={40}
-                  src={manga.image}
-                  alt={`${manga.name} Thumbnail`}
-                  className="object-cover rounded-md"
-                />
-              </AspectRatio>
+            <div className="relative" style={{ aspectRatio: 4 / 3 }}>
+              <Image
+                fill
+                sizes="(max-width: 640px) 25vw, 30vw"
+                quality={40}
+                src={manga.image}
+                alt={`${manga.name} Thumbnail`}
+                className="object-cover rounded-md"
+              />
             </div>
 
-            <div>
+            <div className="space-y-1.5">
               <h1 className="text-lg lg:text-xl font-semibold">{manga.name}</h1>
-              <p className="line-clamp-1">
-                {manga.author.map((author) => author.name).join(', ')}
-              </p>
               <p className="line-clamp-2">{manga.review}</p>
             </div>
           </SheetClose>

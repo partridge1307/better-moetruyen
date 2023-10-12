@@ -1,16 +1,6 @@
 import { db } from '@/lib/db';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
-
-const MTOutput = dynamic(
-  () => import('@/components/Editor/MoetruyenEditorOutput'),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-32 rounded-md animate-pulse bg-background" />
-    ),
-  }
-);
+import MoetruyenEditorOutput from '../Editor/MoetruyenEditorOutput';
 
 const LatestComment = async () => {
   const comments = await db.comment.findMany({
@@ -60,7 +50,7 @@ const LatestComment = async () => {
           </div>
 
           <div className="relative">
-            <MTOutput id={comment.id} content={comment.content} />
+            <MoetruyenEditorOutput id={comment.id} content={comment.content} />
             <div className="absolute inset-0" />
           </div>
         </Link>

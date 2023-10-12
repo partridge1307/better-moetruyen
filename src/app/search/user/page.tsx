@@ -1,6 +1,7 @@
 import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
 import { db } from '@/lib/db';
+import { searchUser } from '@/lib/query';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -29,23 +30,19 @@ const page: FC<pageProps> = async ({ searchParams }) => {
 
   let query = typeof queryParam === 'string' ? queryParam : queryParam[0];
 
-  const [users, total] = await db.$transaction([
-    db.user.findMany({
+  const [users, total] = await Promise.all([
+    searchUser({
+      searchPhrase: query,
+      take: Number(limit),
+      skip: (Number(page) - 1) * Number(limit),
+    }),
+    db.user.count({
       where: {
         name: {
           contains: query,
-          mode: 'insensitive',
         },
       },
-      take: Number(limit),
-      skip: (Number(page) - 1) * Number(limit),
-      select: {
-        name: true,
-        image: true,
-        color: true,
-      },
     }),
-    db.user.count(),
   ]);
 
   return (
@@ -55,14 +52,17 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       </h1>
 
       {!!users.length ? (
-        <div className="rounded-md dark:bg-zinc-900/60">
+        <div className="grid grid-cols-2 gap-6 p-2 rounded-md dark:bg-zinc-900/60">
           {users.map((user, idx) => (
             <Link
               key={idx}
               href={`/user/${user.name?.split(' ').join('-')}`}
               className="flex gap-4 rounded-md p-2 transition-colors hover:dark:bg-zinc-900"
             >
-              <UserAvatar user={user} className="w-20 h-20 border-4" />
+              <UserAvatar
+                user={user}
+                className="w-20 h-20 border-4 dark:bg-zinc-900"
+              />
               <Username user={user} className="text-xl font-semibold pt-1" />
             </Link>
           ))}

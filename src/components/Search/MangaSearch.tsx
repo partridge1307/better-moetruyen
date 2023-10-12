@@ -26,7 +26,7 @@ const MangaSearch: FC<MangaSearchProps> = ({ mangas }) => {
             </div>
 
             <div className="space-y-1.5">
-              <h1 className="text-lg lg:text-xl font-semibold">{manga.name}</h1>
+              <p className="text-lg lg:text-xl font-semibold">{manga.name}</p>
               <p className="line-clamp-2">{manga.review}</p>
             </div>
           </SheetClose>

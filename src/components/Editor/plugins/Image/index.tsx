@@ -114,7 +114,7 @@ export function InsertImageUploaded({
     <>
       <Input
         type="file"
-        accept=".jpg, .jpeg, .png"
+        accept="image/jpg, image/jpeg, image/png"
         onChange={(e) => LoadImage(e.target.files)}
       />
       <div className="flex items-stretch justify-end gap-4">

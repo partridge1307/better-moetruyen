@@ -116,7 +116,6 @@ const MangaTabs: FC<MangaTabsProps> = async ({ Manga }) => {
           {!!manga.facebookLink && (
             <FBEmbed facebookLink={manga.facebookLink} />
           )}
-          <FBEmbed facebookLink="https://www.facebook.com/Bfangteam" />
 
           {!!manga.discordLink && <DiscEmbed discordLink={manga.discordLink} />}
         </div>

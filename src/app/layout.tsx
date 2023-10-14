@@ -7,6 +7,7 @@ import { Roboto } from 'next/font/google';
 
 export const metadata: Metadata = {
   metadataBase: new URL(`${process.env.NEXTAUTH_URL}`),
+  applicationName: 'Moetruyen',
   title: {
     default: 'Moetruyen',
     template: '%s | Moetruyen',
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   description:
     'Web đọc truyện tranh online tiện ích nhất được cập nhật liên tục mỗi ngày - Cùng tham gia đọc truyện và thảo luận tại Moetruyen',
   colorScheme: 'dark light',
-  themeColor: 'dark light',
+  themeColor: '#18181B',
   referrer: 'origin-when-cross-origin',
   generator: 'Moetruyen',
   authors: [{ name: 'Moetruyen' }],
@@ -33,6 +34,14 @@ export const metadata: Metadata = {
     title: 'Moetruyen',
     description:
       'Web đọc truyện tranh online tiện ích nhất được cập nhật liên tục mỗi ngày - Cùng tham gia đọc truyện và thảo luận tại Moetruyen',
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Moetruyen',
+  },
+  formatDetection: {
+    telephone: false,
   },
   robots: {
     notranslate: true,

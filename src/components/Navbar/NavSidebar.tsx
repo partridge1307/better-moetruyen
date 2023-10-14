@@ -1,6 +1,5 @@
 'use client';
 
-import { forumDomain } from '@/config';
 import { cn } from '@/lib/utils';
 import { useColorScheme, useLocalStorage } from '@mantine/hooks';
 import {
@@ -81,7 +80,7 @@ const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
         subMenu: [
           {
             title: 'Forum',
-            link: forumDomain,
+            link: process.env.NEXT_PUBLIC_FORUM_URL!,
           },
         ],
       },

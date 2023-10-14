@@ -1,4 +1,3 @@
-import { meDomain } from '@/config';
 import { cn } from '@/lib/utils';
 import type { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
@@ -40,7 +39,7 @@ const UserDropdownMenu: FC<UserDropdownMenuProps> = ({ session }) => {
       <DropdownMenuSeparator className="my-2" />
 
       <a
-        href={meDomain}
+        href={process.env.NEXT_PUBLIC_ME_URL}
         className={cn(
           buttonVariants({ variant: 'secondary' }),
           'w-full cursor-pointer'

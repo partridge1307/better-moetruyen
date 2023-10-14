@@ -1,4 +1,3 @@
-import { meDomain } from '@/config';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
@@ -58,7 +57,7 @@ export async function POST(req: Request) {
             type: 'GENERAL',
             toUserId: team.ownerId,
             content: `${session.user.name} muốn gia nhập Team của bạn`,
-            endPoint: `${meDomain}/team`,
+            endPoint: `${process.env.NEXT_PUBLIC_ME_URL}/team`,
           },
         }),
       ]);

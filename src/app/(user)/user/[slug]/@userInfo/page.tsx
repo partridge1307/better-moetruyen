@@ -1,6 +1,5 @@
 import Username from '@/components/User/Username';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
-import { forumDomain } from '@/config';
 import { db } from '@/lib/db';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -122,7 +121,7 @@ const Default: FC<defaultProps> = async ({ params }) => {
             <a
               key={forum.slug}
               target="_blank"
-              href={`${forumDomain}/${forum.slug}`}
+              href={`${process.env.NEXT_PUBLIC_FORUM_URL}/${forum.slug}`}
               className="grid grid-cols-[.7fr_1fr] lg:grid-cols-[.3fr_1fr] gap-6 p-2 rounded-md transition-colors hover:dark:bg-zinc-800"
             >
               {!!forum.banner && (

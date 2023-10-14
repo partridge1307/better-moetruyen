@@ -1,5 +1,4 @@
 import { buttonVariants } from '@/components/ui/Button';
-import { meDomain } from '@/config';
 import { getAuthSession } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { cn } from '@/lib/utils';
@@ -125,7 +124,7 @@ const MangaControll: FC<MangaControllProps> = async ({ manga }) => {
         <>
           <a
             target="_blank"
-            href={`${meDomain}/mangas/${manga.id}`}
+            href={`${process.env.NEXT_PUBLIC_ME_URL}/mangas/${manga.id}`}
             className={buttonVariants({ variant: 'secondary' })}
             aria-label="edit"
           >
@@ -133,7 +132,7 @@ const MangaControll: FC<MangaControllProps> = async ({ manga }) => {
           </a>
           <a
             target="_blank"
-            href={`${meDomain}/chapters/${manga.id}/upload`}
+            href={`${process.env.NEXT_PUBLIC_ME_URL}/chapters/${manga.id}/upload`}
             className={buttonVariants({ variant: 'secondary' })}
             aria-label="add chapter"
           >

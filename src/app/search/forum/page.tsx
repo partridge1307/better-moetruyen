@@ -1,4 +1,3 @@
-import { forumDomain } from '@/config';
 import { db } from '@/lib/db';
 import { searchForum } from '@/lib/query';
 import dynamic from 'next/dynamic';
@@ -50,7 +49,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
             <a
               key={forum.slug}
               target="_blank"
-              href={`${forumDomain}/${forum.slug}`}
+              href={`${process.env.NEXT_PUBLIC_FORUM_URL}/${forum.slug}`}
               className="grid grid-cols-[.3fr_1fr] gap-4 rounded-md p-2 transition-colors hover:dark:bg-zinc-900"
             >
               {!!forum.banner && (

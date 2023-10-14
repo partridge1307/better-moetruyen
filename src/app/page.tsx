@@ -10,7 +10,6 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
 const NotableManga = dynamic(() => import('@/components/Manga/NotableManga'), {
-  ssr: false,
   loading: () => <NotableMangaSkeleton />,
 });
 
@@ -83,7 +82,7 @@ const Home = async () => {
       />
 
       <main className="container mx-auto max-sm:px-3">
-        {!!pin.length && <NotableManga pin={pin} />}
+        <NotableManga />
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_.5fr] gap-10 mt-20 pb-10">
           <section className="space-y-10">

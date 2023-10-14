@@ -37,10 +37,10 @@ const UserDropdownMenu = dynamic(
 const viewChapterRegex = /^\/chapter\/\d+(?:\/[\w-]+)?/;
 
 const NavbarClient = () => {
-  const { data: session } = useSession();
-
   const pathname = usePathname();
   const isFixed = useRef(true);
+  const { data: session } = useSession();
+
   useMemo(() => {
     if (pathname.match(viewChapterRegex)) {
       isFixed.current = false;

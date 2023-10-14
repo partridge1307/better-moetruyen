@@ -1,12 +1,11 @@
 'use client';
 
+import '@/styles/mantine/globals.css';
+import classes from '@/styles/mantine/post.module.css';
 import { ScrollArea } from '@mantine/core';
+import '@mantine/core/styles.layer.css';
 import type { Post, SubForum } from '@prisma/client';
 import { FC } from 'react';
-import '@mantine/core/styles.layer.css';
-import classes from '@/styles/mantine/post.module.css';
-import '@/styles/mantine/globals.css';
-import { forumDomain } from '@/config';
 
 interface LastActivityListProps {
   posts: (Pick<Post, 'id' | 'title'> & {
@@ -27,7 +26,7 @@ const LastActivityList: FC<LastActivityListProps> = ({ posts }) => {
         <a
           key={post.id}
           target="_blank"
-          href={`${forumDomain}/${post.subForum.slug}/${post.id}`}
+          href={`${process.env.NEXT_PUBLIC_FORUM_URL}/${post.subForum.slug}/${post.id}`}
         >
           <dl className="p-4 rounded-lg hover:cursor-pointer hover:dark:bg-zinc-900">
             <dt className="font-medium">{post.title}</dt>

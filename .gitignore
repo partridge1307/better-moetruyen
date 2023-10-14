@@ -27,6 +27,9 @@ yarn-error.log*
 # Yarn
 yarn.lock
 
+# Bun
+bun.lockb
+
 # local env files
 .env*.local
 .env

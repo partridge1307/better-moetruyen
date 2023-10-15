@@ -4,6 +4,7 @@ import MangaDescSkeleton from '@/components/Skeleton/MangaDescSkeleton';
 import '@/styles/mantine/globals.css';
 import classes from '@/styles/mantine/manga-description.module.css';
 import { Spoiler } from '@mantine/core';
+import '@mantine/core/styles.layer.css';
 import type { Manga } from '@prisma/client';
 import dynamic from 'next/dynamic';
 import { FC } from 'react';

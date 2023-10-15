@@ -106,7 +106,7 @@ export function InsertImageUploaded({
       }
       return '';
     };
-    if (files !== null) {
+    if (files !== null && files[0].size < 2 * 1000 * 1000) {
       reader.readAsDataURL(files[0]);
     }
   };

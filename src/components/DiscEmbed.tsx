@@ -44,6 +44,7 @@ const DiscEmbed: FC<DiscEmbedProps> = async ({ discordLink }) => {
       <div className="space-y-2">
         <h1>Discord{!!discord.name && <span>: {discord.name}</span>}</h1>
         <iframe
+          title="Discord Iframe"
           height={300}
           src={`https://discord.com/widget?id=${discord.id}&theme=dark`}
           sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"

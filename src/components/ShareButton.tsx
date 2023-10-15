@@ -50,6 +50,7 @@ const ShareButton: FC<PostShareButtonProps> = ({ url, title }) => {
             >
               <Facebook className="w-8 h-8" />
             </FacebookShareButton>
+
             {/* Twitter */}
             <TwitterShareButton
               url={`${process.env.NEXT_PUBLIC_MAIN_URL}${url}`}

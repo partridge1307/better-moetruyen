@@ -4,7 +4,6 @@ import LatestCommentSkeleton from '@/components/Skeleton/LatestCommentSkeleton';
 import LeaderboardSkeletion from '@/components/Skeleton/LeaderboardSkeletion';
 import NotableMangaSkeleton from '@/components/Skeleton/NotableMangaSkeleton';
 import RecommendationSkeleton from '@/components/Skeleton/RecommendationSkeleton';
-import { db } from '@/lib/db';
 import { ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -36,96 +35,52 @@ const LatestComment = dynamic(
   { loading: () => <LatestCommentSkeleton /> }
 );
 
-const Home = async () => {
-  const pin = await db.mangaPin.findMany({
-    orderBy: {
-      createdAt: 'desc',
-    },
-    select: {
-      manga: {
-        select: {
-          id: true,
-          slug: true,
-          name: true,
-          image: true,
-          author: {
-            select: {
-              name: true,
-            },
-          },
-          tags: {
-            select: {
-              name: true,
-              description: true,
-            },
-          },
-        },
-      },
-    },
-  });
-
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'ItemList',
-    itemListElement: pin.map(({ manga }, idx) => ({
-      '@type': 'ListItem',
-      position: idx,
-      url: `${process.env.NEXTAUTH_URL}/manga/${manga.slug}`,
-    })),
-  };
-
+const Home = () => {
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+    <main className="container mx-auto max-sm:px-3">
+      <NotableManga />
 
-      <main className="container mx-auto max-sm:px-3">
-        <NotableManga />
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_.5fr] gap-10 mt-20 pb-10">
+        <section className="space-y-10">
+          <div className="space-y-2">
+            <h1 className="text-xl font-semibold">Bài viết gần đây</h1>
+            <LastActivityPostForum />
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_.5fr] gap-10 mt-20 pb-10">
-          <section className="space-y-10">
-            <div className="space-y-2">
-              <h1 className="text-xl font-semibold">Bài viết gần đây</h1>
-              <LastActivityPostForum />
+          <div className="space-y-2">
+            <h1 className="text-xl font-semibold">Dành cho bạn</h1>
+            <Recommendation />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <h1 className="text-xl font-semibold">Mới cập nhật</h1>
+              <Link
+                scroll={false}
+                href="/latest"
+                className="hover:underline underline-offset-2 inline-flex items-center gap-2"
+              >
+                Xem thêm <ArrowRight className="w-5 h-5" />
+              </Link>
             </div>
 
-            <div className="space-y-2">
-              <h1 className="text-xl font-semibold">Dành cho bạn</h1>
-              <Recommendation />
-            </div>
+            <LatestManga />
+          </div>
+        </section>
 
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <h1 className="text-xl font-semibold">Mới cập nhật</h1>
-                <Link
-                  scroll={false}
-                  href="/latest"
-                  className="hover:underline underline-offset-2 inline-flex items-center gap-2"
-                >
-                  Xem thêm <ArrowRight className="w-5 h-5" />
-                </Link>
-              </div>
+        <section className="space-y-10 h-fit">
+          <div className="space-y-2">
+            <h1 className="text-xl font-semibold">Bảng xếp hạng</h1>
+            <Leaderboard />
+          </div>
 
-              <LatestManga />
-            </div>
-          </section>
-
-          <section className="space-y-10 h-fit">
-            <div className="space-y-2">
-              <h1 className="text-xl font-semibold">Bảng xếp hạng</h1>
-              <Leaderboard />
-            </div>
-
-            <div className="space-y-2">
-              <h1 className="text-xl font-semibold">Bình luận</h1>
-              <LatestComment />
-            </div>
-          </section>
-        </div>
-      </main>
-    </>
+          <div className="space-y-2">
+            <h1 className="text-xl font-semibold">Bình luận</h1>
+            <LatestComment />
+          </div>
+        </section>
+      </div>
+    </main>
   );
 };
 

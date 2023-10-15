@@ -3,7 +3,6 @@
 import type { SubForum } from '@prisma/client';
 import Image from 'next/image';
 import { FC } from 'react';
-import { AspectRatio } from '../ui/AspectRatio';
 import { SheetClose } from '../ui/Sheet';
 
 interface ForumSearchProps {
@@ -18,7 +17,7 @@ const ForumSearch: FC<ForumSearchProps> = ({ forums }) => {
           <SheetClose className="w-full text-start grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800">
             <div>
               {!!forum.banner && (
-                <AspectRatio ratio={16 / 9}>
+                <div className="relative aspect-video">
                   <Image
                     fill
                     sizes="(max-width: 640px) 20vw, 25vw"
@@ -27,7 +26,7 @@ const ForumSearch: FC<ForumSearchProps> = ({ forums }) => {
                     alt={`${forum.title} Thumbnail`}
                     className="object-cover object-top rounded-md"
                   />
-                </AspectRatio>
+                </div>
               )}
             </div>
 

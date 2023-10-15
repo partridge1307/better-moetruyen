@@ -1,5 +1,5 @@
-import MangaControllSkeleton from '@/components/Skeleton/MangaControllSkeleton';
-import MangaDescSkeleton from '@/components/Skeleton/MangaDescSkeleton';
+import MangaDesc from '@/components/Manga/components/MangaDesc';
+import MangaImage from '@/components/Manga/components/MangaImage';
 import MangaTabsSkeleton from '@/components/Skeleton/MangaTabsSkeleton';
 import { TagContent, TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';
@@ -10,27 +10,13 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
-const MangaImage = dynamic(
-  () => import('@/components/Manga/components/MangaImage'),
-  {
-    ssr: false,
-    loading: () => (
-      <div
-        className="rounded-md animate-pulse dark:bg-zinc-900"
-        style={{ aspectRatio: 4 / 3 }}
-      />
-    ),
-  }
-);
 const MangaControll = dynamic(
   () => import('@/components/Manga/MangaControll'),
   {
-    loading: () => <MangaControllSkeleton />,
+    loading: () => (
+      <div className="w-full h-10 rounded-md animate-pulse bg-background" />
+    ),
   }
-);
-const MangaDesc = dynamic(
-  () => import('@/components/Manga/components/MangaDesc'),
-  { ssr: false, loading: () => <MangaDescSkeleton /> }
 );
 const MangaTabs = dynamic(() => import('@/components/Manga/MangaTabs'), {
   loading: () => <MangaTabsSkeleton />,
@@ -193,7 +179,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
           <Image
             fill
-            sizes="10vw"
+            sizes="7vw"
             quality={10}
             priority
             src={manga.image}
@@ -233,7 +219,7 @@ const page: FC<pageProps> = async ({ params }) => {
           </div>
 
           <div>
-            <h1 className="text-lg lg:text-xl font-semibold">Mô tả</h1>
+            <p className="text-lg lg:text-xl font-semibold">Mô tả</p>
             <MangaDesc manga={manga} />
           </div>
 

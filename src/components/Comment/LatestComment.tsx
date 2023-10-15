@@ -4,6 +4,9 @@ import MoetruyenEditorOutput from '../Editor/MoetruyenEditorOutput';
 
 const LatestComment = async () => {
   const comments = await db.comment.findMany({
+    where: {
+      replyToId: null,
+    },
     orderBy: {
       createdAt: 'desc',
     },
@@ -37,7 +40,7 @@ const LatestComment = async () => {
               ? `/chapter/${comment.chapter.id}`
               : `/manga/${comment.manga.slug}`
           }
-          className="block max-h-40 p-2 space-y-1.5 overflow-hidden rounded-md dark:bg-zinc-900/60"
+          className="block p-2 space-y-1.5 rounded-md dark:bg-zinc-900/60"
         >
           <div className="flex items-center gap-2 text-sm">
             <p className="line-clamp-1">{comment.manga.name}</p>
@@ -49,7 +52,7 @@ const LatestComment = async () => {
             )}
           </div>
 
-          <div className="relative">
+          <div className="relative max-h-40 overflow-hidden">
             <MoetruyenEditorOutput id={comment.id} content={comment.content} />
             <div className="absolute inset-0" />
           </div>

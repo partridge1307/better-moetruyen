@@ -15,5 +15,6 @@ export const useSubComments = <TData>(commentId: number) => {
     onError: () => {
       return serverErrorToast();
     },
+    refetchOnWindowFocus: false,
   });
 };

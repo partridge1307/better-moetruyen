@@ -20,7 +20,7 @@ const useNotify = <TData>() => {
       return data as { notifications: TData[]; lastCursor: number };
     },
     getNextPageParam: (lastPage) => lastPage.lastCursor ?? false,
-    refetchInterval: 5000,
+    refetchInterval: 60000,
   });
 
   useEffect(() => {

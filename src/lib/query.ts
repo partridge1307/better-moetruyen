@@ -113,3 +113,19 @@ export const searchForum = ({
 
   return db.$queryRaw`SELECT "slug", "banner", "title" FROM "SubForum" WHERE to_tsvector('english', "title") @@ to_tsquery(${query}) LIMIT ${take} OFFSET ${skip}`;
 };
+
+export type SearchMentionResult = {
+  id: string;
+  name: string;
+};
+export const searchMentionUser = ({
+  searchPhrase,
+  take,
+}: {
+  searchPhrase: string;
+  take: number;
+}): Promise<SearchMentionResult[]> => {
+  const query = generateSearchPhrase(searchPhrase);
+
+  return db.$queryRaw`SELECT "id", "name" FROM "User" WHERE to_tsvector('english', "name") @@ to_tsquery(${query}) LIMIT ${take}`;
+};

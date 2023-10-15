@@ -1,7 +1,7 @@
+import { cn } from '@/lib/utils';
 import type { User } from '@prisma/client';
-import { FC } from 'react';
-import { AspectRatio } from '../ui/AspectRatio';
 import Image from 'next/image';
+import { FC } from 'react';
 
 interface UserBannerProps {
   user: Pick<User, 'banner'>;
@@ -15,7 +15,7 @@ const UserBanner: FC<UserBannerProps> = ({
   className,
 }) => {
   return (
-    <AspectRatio ratio={16 / 9} className={ratioClassName}>
+    <div className={cn(ratioClassName, 'relative aspect-video')}>
       {user.banner ? (
         <Image
           fill
@@ -29,7 +29,7 @@ const UserBanner: FC<UserBannerProps> = ({
       ) : (
         <div className="absolute inset-0 top-0 left-0 rounded-md dark:bg-zinc-900" />
       )}
-    </AspectRatio>
+    </div>
   );
 };
 

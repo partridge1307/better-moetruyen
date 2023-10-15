@@ -8,17 +8,12 @@ import type { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { FC } from 'react';
+import ShareButton from '../ShareButton';
 
 const MangaFollow = dynamic(() => import('./components/MangaFollow'), {
   ssr: false,
   loading: () => (
     <div className="w-14 h-10 rounded-md animate-pulse dark:bg-zinc-900" />
-  ),
-});
-const ShareButton = dynamic(() => import('@/components/ShareButton'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-28 h-10 rounded-md animate-pulse dark:bg-zinc-900" />
   ),
 });
 
@@ -36,7 +31,7 @@ async function history(session: Session | null, mangaId: number) {
         },
       },
       update: {
-        updatedAt: new Date(Date.now()),
+        updatedAt: new Date(),
       },
       create: {
         userId: session.user.id,
@@ -44,7 +39,7 @@ async function history(session: Session | null, mangaId: number) {
       },
     });
 
-    return upsertedHistory.chapterId ?? null;
+    return upsertedHistory.chapterId;
   } else return null;
 }
 
@@ -64,7 +59,7 @@ async function getFollow(session: Session | null, mangaId: number) {
       },
     });
 
-    return manga ?? null;
+    return manga;
   } else return null;
 }
 

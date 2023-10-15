@@ -1,27 +1,15 @@
-import { db } from '@/lib/db';
+import { searchMentionUser } from '@/lib/query';
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
 
   try {
-    const query = url.searchParams.get('q');
-    if (!query) return new Response('Invalid', { status: 422 });
+    const q = url.searchParams.get('q');
+    if (!q) return new Response('Invalid', { status: 422 });
 
-    const users = await db.user.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: 'insensitive',
-        },
-      },
-      select: {
-        id: true,
-        name: true,
-      },
-      take: 5,
-    });
+    const results = await searchMentionUser({ searchPhrase: q, take: 10 });
 
-    return new Response(JSON.stringify(users));
+    return new Response(JSON.stringify(results));
   } catch (error) {
     return new Response('Something went wrong', { status: 500 });
   }

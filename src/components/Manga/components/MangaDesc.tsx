@@ -1,5 +1,6 @@
 'use client';
 
+import MangaDescSkeleton from '@/components/Skeleton/MangaDescSkeleton';
 import '@/styles/mantine/globals.css';
 import classes from '@/styles/mantine/manga-description.module.css';
 import { Spoiler } from '@mantine/core';
@@ -7,9 +8,9 @@ import type { Manga } from '@prisma/client';
 import dynamic from 'next/dynamic';
 import { FC } from 'react';
 
-const MTEditorOutput = dynamic(
+const MoetruyenEditorOutput = dynamic(
   () => import('@/components/Editor/MoetruyenEditorOutput'),
-  { ssr: false }
+  { ssr: false, loading: () => <MangaDescSkeleton /> }
 );
 
 interface MangaDescProps {
@@ -24,7 +25,7 @@ const MangaDesc: FC<MangaDescProps> = ({ manga }) => {
       hideLabel="Ẩn bớt"
       classNames={classes}
     >
-      <MTEditorOutput id={manga.id} content={manga.description} />
+      <MoetruyenEditorOutput id={manga.id} content={manga.description} />
     </Spoiler>
   );
 };

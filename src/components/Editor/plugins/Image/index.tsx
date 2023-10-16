@@ -30,7 +30,7 @@ import {
   type LexicalCommand,
   type LexicalEditor,
 } from 'lexical';
-import { FileImage, Image as ImageIcon, Link2 } from 'lucide-react';
+import { FileImage, Image as ImageIcon, Link2, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
   $createImageNode,
@@ -95,19 +95,29 @@ export function InsertImageUploaded({
   onClick: (payload: InsertImagePayload) => void;
 }): JSX.Element {
   const [src, setSrc] = useState('');
+  const [isLoading, setLoading] = useState(false);
 
   const isDisabled = src === '';
 
   const LoadImage = (files: FileList | null) => {
-    const reader = new FileReader();
-    reader.onload = function () {
-      if (typeof reader.result === 'string') {
-        setSrc(reader.result);
-      }
-      return '';
-    };
     if (files !== null && files[0].size < 2 * 1000 * 1000) {
-      reader.readAsDataURL(files[0]);
+      setLoading(true);
+
+      const form = new FormData();
+      form.append('image', files[0], files[0].name);
+
+      fetch('/api/image', {
+        method: 'POST',
+        body: form,
+      })
+        .then((res) => {
+          if (res.status === 500) return;
+          return res.json();
+        })
+        .then((res) => {
+          !!res && setSrc(res.url);
+          setLoading(false);
+        });
     }
   };
 
@@ -130,7 +140,7 @@ export function InsertImageUploaded({
           disabled={isDisabled}
           onClick={() => onClick({ src, altText: 'Image' })}
         >
-          Xong
+          {isLoading && <Loader2 className="w-5 h-5 animate-spin" />} Xong
         </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>

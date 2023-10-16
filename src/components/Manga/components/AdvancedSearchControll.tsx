@@ -49,7 +49,7 @@ const OrderByArray: {
     order: ['asc', 'desc'],
   },
   {
-    sortByValue: 'mangaFollow',
+    sortByValue: 'followedBy',
     content: 'Theo dõi',
     order: ['asc', 'desc'],
   },

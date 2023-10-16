@@ -135,7 +135,11 @@ const page: FC<pageProps> = async ({ params }) => {
   return (
     <>
       <div className="relative">
-        <UserBanner user={user} className="rounded-md" />
+        <UserBanner
+          user={user}
+          sizes="(max-width: 640px) 40vw, 30vw"
+          className="rounded-md"
+        />
         <UserAvatar
           user={user}
           className="absolute w-20 h-20 md:w-24 md:h-24 bottom-0 left-4 translate-y-1/2 border-4 dark:border-zinc-800 dark:bg-zinc-900"

@@ -42,14 +42,14 @@ const serializedExcludeQuery = (
 };
 
 const serializedOrderByQuery = (
-  sortBy: 'createdAt' | 'name' | 'mangaFollow' | 'view',
+  sortBy: 'createdAt' | 'name' | 'followedBy' | 'view',
   order: 'asc' | 'desc'
 ) => {
   const sortByQuery: Prisma.MangaOrderByWithRelationAndSearchRelevanceInput = {
     [sortBy]:
       sortBy === 'view'
         ? { totalView: order }
-        : sortBy === 'mangaFollow'
+        : sortBy === 'followedBy'
         ? { _count: order }
         : order,
   };

@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils';
 import type { User } from '@prisma/client';
 import Image from 'next/image';
 import { FC } from 'react';
@@ -6,20 +5,16 @@ import { FC } from 'react';
 interface UserBannerProps {
   user: Pick<User, 'banner'>;
   className?: string;
-  ratioClassName?: string;
+  sizes?: string;
 }
 
-const UserBanner: FC<UserBannerProps> = ({
-  user,
-  ratioClassName,
-  className,
-}) => {
+const UserBanner: FC<UserBannerProps> = ({ user, className, sizes }) => {
   return (
-    <div className={cn(ratioClassName, 'relative aspect-video')}>
+    <div className="relative aspect-video">
       {user.banner ? (
         <Image
           fill
-          sizes="30vw"
+          sizes={sizes ?? '30vw'}
           quality={40}
           priority
           src={user.banner}

@@ -107,7 +107,7 @@ const convertSearchParams = ({ searchParams }: pageProps) => {
         : 'createdAt'
       : sortByParams.find(
           (param) =>
-            param === 'name' || param === 'mangaFollow' || param === 'view'
+            param === 'name' || param === 'followedBy' || param === 'view'
         ) ?? 'createdAt'
     : 'createdAt';
   const order = orderParams
@@ -139,7 +139,7 @@ const convertSearchParams = ({ searchParams }: pageProps) => {
     includeMode: includeMode as 'or' | 'and',
     exclude,
     excludeMode: excludeMode as 'or' | 'and',
-    sortBy: sortBy as 'name' | 'createdAt' | 'mangaFollow' | 'view',
+    sortBy: sortBy as 'name' | 'createdAt' | 'followedBy' | 'view',
     order: order as 'asc' | 'desc',
     name,
     author,

@@ -13,11 +13,7 @@ const NotableManga = async () => {
           slug: true,
           name: true,
           image: true,
-          author: {
-            select: {
-              name: true,
-            },
-          },
+          review: true,
           tags: {
             select: {
               name: true,

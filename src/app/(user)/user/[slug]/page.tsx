@@ -113,7 +113,11 @@ const page: FC<pageProps> = async ({ params }) => {
       createdAt: true,
       _count: {
         select: {
-          manga: true,
+          manga: {
+            where: {
+              isPublished: true,
+            },
+          },
           subForum: true,
           following: true,
           followedBy: true,

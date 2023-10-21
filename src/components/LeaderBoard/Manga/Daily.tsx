@@ -1,5 +1,6 @@
+import MangaImage from '@/components/Manga/components/MangaImage';
 import { db } from '@/lib/db';
-import { cn } from '@/lib/utils';
+import { Eye } from 'lucide-react';
 import Link from 'next/link';
 
 const Daily = async () => {
@@ -11,9 +12,10 @@ const Daily = async () => {
     },
     take: 10,
     select: {
-      mangaId: true,
       manga: {
         select: {
+          id: true,
+          image: true,
           name: true,
           slug: true,
         },
@@ -27,22 +29,31 @@ const Daily = async () => {
   });
 
   return (
-    <div className="space-y-3 rounded-md dark:bg-zinc-900/60">
+    <div className="space-y-3 px-1">
       {results.map((result, idx) => (
         <Link
-          key={result.mangaId}
+          key={result.manga.id}
           href={`/manga/${result.manga.slug}`}
-          className="block p-2 rounded-md transition-colors hover:dark:bg-zinc-900"
+          className="grid grid-cols-[.3fr_1fr] gap-4 rounded-md group transition-colors hover:bg-background/20"
         >
-          <dl
-            className={cn('flex items-center gap-2', {
-              'text-lg lg:text-xl dark:text-amber-500': idx === 0,
-            })}
-          >
-            <dt>{idx + 1}.</dt>
-            <dd className="line-clamp-2">{result.manga.name}</dd>
-          </dl>
-          <p className="text-sm">{result._count.dailyView} lượt xem</p>
+          <div className="relative">
+            <MangaImage
+              sizes="(max-width: 640px) 5vw, 10vw"
+              manga={result.manga}
+            />
+            <div className="absolute top-0 left-0 p-1 pr-2 rounded-md rounded-br-full bg-red-600">
+              {idx + 1}
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <p className="text-lg font-semibold transition-all group-hover:text-xl">
+              {result.manga.name}
+            </p>
+            <p className="flex items-center gap-1.5">
+              {result._count.dailyView} <Eye className="w-5 h-5" />
+            </p>
+          </div>
         </Link>
       ))}
     </div>

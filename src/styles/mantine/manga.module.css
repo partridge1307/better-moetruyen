@@ -4,36 +4,42 @@
   }
 }
 
+.viewport {
+  border-radius: 0.375rem;
+}
+
+.slide[data-orientation='horizontal'] {
+  padding-right: 1.5rem;
+
+  @media not all and (min-width: 640px) {
+    padding-right: 0.125rem;
+  }
+}
+
 .indicators {
-  gap: 0.375rem;
-  bottom: calc(1rem - 1px);
+  gap: 0.5rem;
+  bottom: 0.375rem;
 }
 
 .indicator {
-  width: 0.5rem;
-  height: 0.5rem;
-  transition: width 250ms ease;
+  width: 0.75rem;
+  height: 0.75rem;
   border-radius: 9999px;
+  transition-property: width;
+  transition-duration: 250ms;
+  transition-timing-function: ease;
 }
 
 .indicator[data-active] {
   width: 2.5rem;
 }
 
-.control {
-  border: none;
-}
-
-.control[data-inactive] {
-  opacity: 0;
-  cursor: default;
-}
-
 .controls {
+  height: 100%;
+  top: 0;
+  padding-left: 0;
+  padding-right: 0;
   transition: opacity 150ms ease;
-  top: auto;
-  bottom: 0.063rem;
-  justify-content: end;
 
   @media (min-width: 768px) {
     opacity: 0;
@@ -43,4 +49,24 @@
   @media not all and (min-width: 640px) {
     display: none;
   }
+}
+
+.control {
+  height: 100%;
+  padding: 0 2rem;
+  border-radius: 0.375rem;
+  box-shadow: none;
+
+  &:hover {
+    @apply bg-background/30;
+  }
+
+  &:hover svg {
+    background-color: transparent;
+  }
+}
+
+.control[data-inactive] {
+  opacity: 0;
+  cursor: default;
 }

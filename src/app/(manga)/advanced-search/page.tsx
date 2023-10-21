@@ -1,4 +1,4 @@
-import AdvancedMangaCard from '@/components/Manga/components/AdvancedMangaCard';
+import MangaCard from '@/components/Manga/components/MangaCard';
 import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
 import {
   serializedExcludeQuery,
@@ -13,7 +13,7 @@ import dynamic from 'next/dynamic';
 import { FC } from 'react';
 
 const AdvancedSearch = dynamic(
-  () => import('@/components/Manga/AdvancedSearch'),
+  () => import('@/components/Manga/components/AdvancedSearch'),
   { ssr: false }
 );
 
@@ -38,6 +38,110 @@ interface pageProps {
     [key: string]: string | string[] | undefined;
   };
 }
+
+const Page: FC<pageProps> = async ({ searchParams }) => {
+  const {
+    include,
+    includeMode,
+    exclude,
+    excludeMode,
+    sortBy,
+    order,
+    name,
+    author,
+    limit,
+    page,
+  } = convertSearchParams({ searchParams });
+
+  let whereQuery: Prisma.MangaWhereInput = { isPublished: true };
+
+  // Where
+  // Include tags
+  const includeQuery = serializedIncludeQuery(include, includeMode);
+  if (includeQuery && includeQuery.AND) {
+    whereQuery.AND = [...includeQuery.AND];
+  } else if (includeQuery && includeQuery.OR) {
+    whereQuery.OR = [...includeQuery.OR];
+  }
+
+  // Exclude tags
+  const excludeQuery = serializedExcludeQuery(exclude, excludeMode);
+  if (excludeQuery && excludeQuery.AND) {
+    whereQuery.AND = [...excludeQuery.AND];
+  } else if (excludeQuery && excludeQuery.OR) {
+    whereQuery.OR = [...excludeQuery.OR];
+  }
+
+  // Include Name
+  !!name &&
+    (whereQuery.name = {
+      contains: name,
+      mode: 'insensitive',
+    });
+
+  // Include author
+  !!author &&
+    (whereQuery.author = {
+      some: {
+        name: {
+          contains: author,
+          mode: 'insensitive',
+        },
+      },
+    });
+
+  const [mangas, totalMangas, tags] = await Promise.all([
+    db.manga.findMany({
+      where: whereQuery,
+      orderBy: serializedOrderByQuery(sortBy, order),
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        image: true,
+        review: true,
+        chapter: {
+          orderBy: {
+            chapterIndex: 'desc',
+          },
+          take: 3,
+          select: {
+            id: true,
+            volume: true,
+            chapterIndex: true,
+            name: true,
+            createdAt: true,
+          },
+        },
+      },
+      take: limit,
+      skip: (parseInt(page) - 1) * limit,
+    }),
+    db.manga.count({
+      where: whereQuery,
+      orderBy: serializedOrderByQuery(sortBy, order),
+    }),
+    tagGroupByCategory(),
+  ]);
+
+  return (
+    <main className="container max-sm:px-2 space-y-10 mt-10">
+      <AdvancedSearch tags={tags} total={totalMangas}>
+        {!!mangas.length ? (
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-2 rounded-md bg-gradient-to-b from-background/40">
+            {mangas.map((manga) => (
+              <MangaCard key={manga.id} manga={manga} />
+            ))}
+          </section>
+        ) : (
+          <p>Không có kết quả</p>
+        )}
+      </AdvancedSearch>
+    </main>
+  );
+};
+
+export default Page;
 
 const convertSearchParams = ({ searchParams }: pageProps) => {
   const includeParams = searchParams['include'];
@@ -147,105 +251,3 @@ const convertSearchParams = ({ searchParams }: pageProps) => {
     page,
   };
 };
-
-const Page: FC<pageProps> = async ({ searchParams }) => {
-  const {
-    include,
-    includeMode,
-    exclude,
-    excludeMode,
-    sortBy,
-    order,
-    name,
-    author,
-    limit,
-    page,
-  } = convertSearchParams({ searchParams });
-
-  let whereQuery: Prisma.MangaWhereInput = { isPublished: true };
-
-  // Where
-  // Include tags
-  const includeQuery = serializedIncludeQuery(include, includeMode);
-  if (includeQuery && includeQuery.AND) {
-    whereQuery.AND = [...includeQuery.AND];
-  } else if (includeQuery && includeQuery.OR) {
-    whereQuery.OR = [...includeQuery.OR];
-  }
-
-  // Exclude tags
-  const excludeQuery = serializedExcludeQuery(exclude, excludeMode);
-  if (excludeQuery && excludeQuery.AND) {
-    whereQuery.AND = [...excludeQuery.AND];
-  } else if (excludeQuery && excludeQuery.OR) {
-    whereQuery.OR = [...excludeQuery.OR];
-  }
-
-  // Include Name
-  !!name &&
-    (whereQuery.name = {
-      contains: name,
-      mode: 'insensitive',
-    });
-
-  // Include author
-  !!author &&
-    (whereQuery.author = {
-      some: {
-        name: {
-          contains: author,
-          mode: 'insensitive',
-        },
-      },
-    });
-
-  const [mangas, totalMangas, tags] = await Promise.all([
-    db.manga.findMany({
-      where: whereQuery,
-      orderBy: serializedOrderByQuery(sortBy, order),
-      select: {
-        id: true,
-        slug: true,
-        name: true,
-        image: true,
-        review: true,
-        createdAt: true,
-        author: {
-          select: {
-            name: true,
-          },
-        },
-        _count: {
-          select: {
-            chapter: true,
-          },
-        },
-      },
-      take: limit,
-      skip: (parseInt(page) - 1) * limit,
-    }),
-    db.manga.count({
-      where: whereQuery,
-      orderBy: serializedOrderByQuery(sortBy, order),
-    }),
-    tagGroupByCategory(),
-  ]);
-
-  return (
-    <main className="container max-sm:px-2 space-y-10">
-      <AdvancedSearch tags={tags} total={totalMangas}>
-        {!!mangas.length ? (
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-2">
-            {mangas.map((manga) => (
-              <AdvancedMangaCard key={manga.id} manga={manga} />
-            ))}
-          </section>
-        ) : (
-          <p>Không có kết quả</p>
-        )}
-      </AdvancedSearch>
-    </main>
-  );
-};
-
-export default Page;

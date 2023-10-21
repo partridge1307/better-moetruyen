@@ -5,21 +5,21 @@ import { useCustomToast } from '@/hooks/use-custom-toast';
 import { usePrevious } from '@mantine/hooks';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { Heart, HeartOff } from 'lucide-react';
+import { Bookmark, BookmarkMinus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
 
 interface MangaFollowProps {
-  hasFollow: boolean;
+  isFollow: boolean;
   mangaId: number;
 }
 
-const MangaFollow: FC<MangaFollowProps> = ({ hasFollow, mangaId }) => {
+const MangaFollow: FC<MangaFollowProps> = ({ isFollow, mangaId }) => {
   const { loginToast, notFoundToast, rateLimitToast, serverErrorToast } =
     useCustomToast();
   const router = useRouter();
 
-  const [isFollowed, setFollowed] = useState(hasFollow);
+  const [isFollowed, setFollowed] = useState(isFollow);
   const prevFollow = usePrevious(isFollowed);
 
   const { mutate: Toggle, isLoading: isToggling } = useMutation({
@@ -49,19 +49,24 @@ const MangaFollow: FC<MangaFollowProps> = ({ hasFollow, mangaId }) => {
 
   return isFollowed ? (
     <button
-      className={buttonVariants({ variant: 'destructive' })}
+      className={buttonVariants({
+        variant: 'destructive',
+        className: 'gap-1.5 w-36 md:w-[11.5rem] lg:w-[13.5rem]',
+      })}
       disabled={isToggling}
       onClick={() => Toggle('UNFOLLOW')}
     >
-      <HeartOff />
+      <BookmarkMinus /> Bỏ theo dõi
     </button>
   ) : (
     <button
-      className={buttonVariants()}
+      className={buttonVariants({
+        className: 'gap-1.5 w-36 md:w-[11.5rem] lg:w-[13.5rem]',
+      })}
       disabled={isToggling}
       onClick={() => Toggle('FOLLOW')}
     >
-      <Heart />
+      <Bookmark /> Theo dõi
     </button>
   );
 };

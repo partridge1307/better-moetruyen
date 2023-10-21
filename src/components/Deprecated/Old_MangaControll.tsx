@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { FC } from 'react';
 import ShareButton from '../ShareButton';
 
-const MangaFollow = dynamic(() => import('./components/MangaFollow'), {
+const MangaFollow = dynamic(() => import('../Manga/components/MangaFollow'), {
   ssr: false,
   loading: () => (
     <div className="w-14 h-10 rounded-md animate-pulse dark:bg-zinc-900" />
@@ -111,7 +111,7 @@ const MangaControll: FC<MangaControllProps> = async ({ manga }) => {
         </Link>
       )}
 
-      {!!session && <MangaFollow hasFollow={!!hasFollow} mangaId={manga.id} />}
+      {!!session && <MangaFollow isFollow={!!hasFollow} mangaId={manga.id} />}
 
       <ShareButton url={`/manga/${manga.slug}`} title={manga.name} />
 

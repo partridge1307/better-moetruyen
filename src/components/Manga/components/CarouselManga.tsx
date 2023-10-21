@@ -1,21 +1,23 @@
 'use client';
 
+import { TagContent, TagWrapper } from '@/components/ui/Tag';
+import { cn } from '@/lib/utils';
 import '@/styles/mantine/globals.css';
 import classes from '@/styles/mantine/manga.module.css';
-import { Carousel } from '@mantine/carousel';
+import { Carousel, type Embla } from '@mantine/carousel';
 import '@mantine/carousel/styles.layer.css';
-import type { Manga, MangaAuthor, Tag } from '@prisma/client';
+import { useMediaQuery } from '@mantine/hooks';
+import type { Manga, Tag } from '@prisma/client';
 import Autoplay from 'embla-carousel-autoplay';
+import type { EmblaCarouselType } from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { FC, useRef } from 'react';
-import { TagContent, TagWrapper } from '../../ui/Tag';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
+import MangaImage from './MangaImage';
 
 interface CarouselMangaProps {
   pin: {
-    manga: Pick<Manga, 'id' | 'slug' | 'name' | 'image'> & {
-      author: Pick<MangaAuthor, 'name'>[];
+    manga: Pick<Manga, 'id' | 'slug' | 'name' | 'image' | 'review'> & {
       tags: Pick<Tag, 'name' | 'description'>[];
     };
   }[];
@@ -23,6 +25,21 @@ interface CarouselMangaProps {
 
 const CarouselManga: FC<CarouselMangaProps> = ({ pin }) => {
   const autoplay = useRef(Autoplay({ delay: 5000 }));
+  const isMobile = useMediaQuery('(max-width: 640px)');
+  const [embla, setEmbla] = useState<Embla | null>(null);
+  const [currentSlideIdx, setCurrentSlideIdx] = useState(0);
+
+  const handleSlideInView = useCallback((emblaCallback: EmblaCarouselType) => {
+    const currentSlide = emblaCallback.slidesInView();
+
+    setCurrentSlideIdx(currentSlide[0] ?? 0);
+  }, []);
+
+  useEffect(() => {
+    if (embla) {
+      embla.on('slidesInView', handleSlideInView);
+    }
+  }, [embla, handleSlideInView]);
 
   return (
     <Carousel
@@ -31,52 +48,67 @@ const CarouselManga: FC<CarouselMangaProps> = ({ pin }) => {
       plugins={[autoplay.current]}
       onMouseEnter={autoplay.current.stop}
       onMouseLeave={autoplay.current.reset}
-      slideGap={{
-        sm: 'md',
-        lg: 'xl',
-      }}
+      getEmblaApi={setEmbla}
       classNames={classes}
-      nextControlIcon={<ChevronRight className="dark:text-white w-12 h-12" />}
+      align={'center'}
+      inViewThreshold={0.9}
+      slideSize={{
+        base: '100%',
+        sm: '70%',
+      }}
       previousControlIcon={
-        <ChevronLeft className="dark:text-white w-12 h-12" />
+        <ChevronLeft className="w-20 h-20 rounded-full duration-75 transition-colors bg-background/30" />
+      }
+      nextControlIcon={
+        <ChevronRight className="w-20 h-20 rounded-full duration-75 transition-colors bg-background/50" />
       }
     >
-      {pin.map(({ manga }) => (
+      {pin.map(({ manga }, idx) => (
         <Carousel.Slide key={manga.id}>
           <Link
-            scroll={false}
             href={`/manga/${manga.slug}`}
-            className="h-full grid grid-cols-1 md:grid-cols-[.3fr_1fr] gap-2 lg:gap-4 rounded-md p-2 max-sm:pb-10 dark:bg-zinc-900"
+            className={cn(
+              'h-full p-2 grid grid-cols-[.5fr_1fr] md:grid-cols-[.3fr_1fr] gap-6 opacity-50 transition-opacity rounded-md bg-background/50',
+              {
+                'opacity-100': idx === currentSlideIdx,
+              }
+            )}
           >
-            <div className="relative" style={{ aspectRatio: 4 / 3 }}>
-              <Image
-                fill
-                sizes="30vw"
-                quality={40}
-                priority
-                src={manga.image}
-                alt={`${manga.name} Thumbnail`}
-                className="object-cover rounded-md"
-              />
-            </div>
-            <div className="space-y-1 lg:space-y-2">
-              <h1 className="font-semibold text-lg lg:text-xl line-clamp-2">
-                {manga.name}
-              </h1>
+            <MangaImage sizes="20vw" manga={manga} />
 
-              <p>{manga.author.map((author) => author.name).join(', ')}</p>
+            {!isMobile ? (
+              <div className="space-y-2.5">
+                <p className="text-2xl font-semibold">{manga.name}</p>
 
-              <TagWrapper>
-                {manga.tags.slice(0, 5).map((tag, idx) => (
-                  <TagContent key={idx} title={tag.description}>
-                    {tag.name}
-                  </TagContent>
-                ))}
-                {manga.tags.length > 5 && (
-                  <TagContent>+{manga.tags.length - 5}</TagContent>
-                )}
-              </TagWrapper>
-            </div>
+                <TagWrapper>
+                  {manga.tags.slice(0, 5).map((tag, idx) => (
+                    <TagContent key={idx} title={tag.description}>
+                      {tag.name}
+                    </TagContent>
+                  ))}
+                </TagWrapper>
+
+                <p className="line-clamp-3">{manga.review}</p>
+              </div>
+            ) : (
+              <>
+                <div className="space-y-1.5">
+                  <p className="text-xl line-clamp-3 font-semibold">
+                    {manga.name}
+                  </p>
+
+                  <p className="line-clamp-3">{manga.review}</p>
+                </div>
+
+                <TagWrapper className="col-span-2 pb-3">
+                  {manga.tags.slice(0, 5).map((tag, idx) => (
+                    <TagContent key={idx} title={tag.description}>
+                      {tag.name}
+                    </TagContent>
+                  ))}
+                </TagWrapper>
+              </>
+            )}
           </Link>
         </Carousel.Slide>
       ))}

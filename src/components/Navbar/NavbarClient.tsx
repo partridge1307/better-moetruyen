@@ -1,12 +1,11 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { useHeadroom } from '@mantine/hooks';
 import { Bell, Menu, Search as SearchIcon, User2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useMemo, useRef } from 'react';
 import { Icons } from '../Icons';
 import UserAvatar from '../User/UserAvatar';
 import { buttonVariants } from '../ui/Button';
@@ -34,26 +33,18 @@ const UserDropdownMenu = dynamic(
   () => import('@/components/Auth/UserDropdownMenu')
 );
 
-const viewChapterRegex = /^\/chapter\/\d+(?:\/[\w-]+)?/;
-
 const NavbarClient = () => {
-  const pathname = usePathname();
-  const isFixed = useRef(true);
   const { data: session } = useSession();
 
-  useMemo(() => {
-    if (pathname.match(viewChapterRegex)) {
-      isFixed.current = false;
-    } else {
-      isFixed.current = true;
-    }
-  }, [pathname]);
+  const pinned = useHeadroom({ fixedAt: 120 });
 
   return (
     <nav
       className={cn(
-        'inset-x-0 p-2 z-30 h-fit border-b bg-slate-100 dark:bg-zinc-800',
-        { 'sticky top-0 mb-8': isFixed.current }
+        'sticky top-0 inset-x-0 p-2 z-50 transition-transform backdrop-blur dark:bg-zinc-800/70',
+        {
+          '-translate-y-full': !pinned,
+        }
       )}
     >
       <div className="container mx-auto flex items-center justify-between px-0 max-sm:px-1">

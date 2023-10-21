@@ -1,12 +1,12 @@
 const LastestMangaSkeleton = ({ length = 10 }: { length?: number }) => {
   return (
-    <div className="space-y-3">
-      {Array.from(Array(length).keys()).map((_, i) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+      {Array.from(Array(length).keys()).map((_, idx) => (
         <div
-          key={i}
-          className="grid grid-cols-[.6fr_1fr] lg:grid-cols-[.3fr_1fr] p-2 rounded-md animate-pulse dark:bg-zinc-900"
+          key={idx}
+          className="grid grid-cols-[.5fr_1fr] gap-2 rounded-md bg-primary-foreground"
         >
-          <div style={{ aspectRatio: 4 / 3 }} />
+          <div style={{ aspectRatio: 5 / 7 }} />
         </div>
       ))}
     </div>

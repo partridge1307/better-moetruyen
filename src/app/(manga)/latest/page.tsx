@@ -1,4 +1,4 @@
-import LatestMangaCard from '@/components/Manga/components/LastestMangaCard';
+import MangaCard from '@/components/Manga/components/MangaCard';
 import PaginationControll from '@/components/PaginationControll';
 import { db } from '@/lib/db';
 import type { Metadata } from 'next';
@@ -46,43 +46,48 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       where: {
         isPublished: true,
       },
+      take: limit,
+      skip: (page - 1) * limit,
       orderBy: {
         createdAt: 'desc',
       },
-      skip: (page - 1) * limit,
-      take: limit,
       select: {
         manga: {
           select: {
+            id: true,
             slug: true,
-            image: true,
             name: true,
+            image: true,
             review: true,
-            author: {
+            chapter: {
+              take: 3,
+              orderBy: {
+                createdAt: 'desc',
+              },
               select: {
+                id: true,
+                volume: true,
+                chapterIndex: true,
                 name: true,
+                createdAt: true,
               },
             },
           },
         },
-        chapterIndex: true,
-        volume: true,
-        name: true,
-        createdAt: true,
       },
     }),
     db.manga.count({
-      where: { isPublished: true, chapter: { some: { isPublished: true } } },
+      where: { isPublished: true },
     }),
   ]);
 
   return (
-    <main className="container mx-auto max-sm:px-2 space-y-10 mb-10">
-      <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-2 rounded-md dark:bg-zinc-900/60">
+    <main className="container mx-auto max-sm:px-2 space-y-10 mt-10">
+      <ul className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-2 rounded-md bg-gradient-to-b from-background/40">
         {latestManga.length ? (
-          latestManga.map((data, idx) => (
+          latestManga.map(({ manga }, idx) => (
             <li key={idx}>
-              <LatestMangaCard chapter={data} />
+              <MangaCard manga={manga} />
             </li>
           ))
         ) : (

@@ -1,6 +1,6 @@
-import ListChapter from '@/components/Chapter/ListChapter/ListChapter';
-import ListTreeChapter from '@/components/Chapter/ListChapter/ListTreeChapter';
-import DiscEmbed from '@/components/DiscEmbed';
+import ListChapter from '@/components/Deprecated/Old_ListChapter/ListChapter';
+import ListTreeChapter from '@/components/Deprecated/Old_ListChapter/ListTreeChapter';
+import DiscEmbed from '@/components/DiscordEmbed';
 import CommentSkeleton from '@/components/Skeleton/CommentSkeleton';
 import FBEmbedSkeleton from '@/components/Skeleton/FBEmbedSkeleton';
 import UserAvatar from '@/components/User/UserAvatar';
@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
 
-const FBEmbed = dynamic(() => import('@/components/FBEmbed'), {
+const FBEmbed = dynamic(() => import('@/components/FacebookEmbed'), {
   ssr: false,
   loading: () => <FBEmbedSkeleton />,
 });

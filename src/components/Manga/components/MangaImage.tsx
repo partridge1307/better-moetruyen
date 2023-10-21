@@ -1,31 +1,35 @@
-'use client';
-
-import '@/styles/zoom.css';
+import { cn } from '@/lib/utils';
 import type { Manga } from '@prisma/client';
 import Image from 'next/image';
-import type { FC } from 'react';
-import Zoom from 'react-medium-image-zoom';
-import 'react-medium-image-zoom/dist/styles.css';
+import { FC } from 'react';
 
-interface MangaCardProps extends React.HTMLAttributes<HTMLImageElement> {
-  manga: Pick<Manga, 'name' | 'image'>;
+interface MangaImageProps extends React.HTMLAttributes<HTMLImageElement> {
+  manga: Pick<Manga, 'image'>;
+  sizes?: string;
+  priority?: boolean;
 }
 
-const MangaImage: FC<MangaCardProps> = ({ manga }) => {
+const MangaImage: FC<MangaImageProps> = ({
+  manga,
+  sizes = '30vw',
+  priority = false,
+  className,
+  placeholder,
+  ...props
+}) => {
   return (
-    <Zoom classDialog="custom-zoom">
-      <div className="relative" style={{ aspectRatio: 4 / 3 }}>
-        <Image
-          fill
-          sizes="(max-width: 640px) 100vw, 70vw"
-          quality={40}
-          priority
-          src={manga.image}
-          alt={`${manga.name} Thumbnail`}
-          className="object-cover rounded-md"
-        />
-      </div>
-    </Zoom>
+    <div className="relative" style={{ aspectRatio: 5 / 7 }}>
+      <Image
+        fill
+        sizes={sizes}
+        priority={priority}
+        quality={40}
+        src={manga.image}
+        alt={`Ảnh bìa ${manga.image}`}
+        className={cn('object-cover rounded-md', className)}
+        {...props}
+      />
+    </div>
   );
 };
 

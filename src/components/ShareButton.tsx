@@ -21,26 +21,32 @@ import {
 } from 'next-share';
 import { FC } from 'react';
 
-interface PostShareButtonProps {
+interface PostShareButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   url: string;
   title: string;
 }
 
-const ShareButton: FC<PostShareButtonProps> = ({ url, title }) => {
+const ShareButton: FC<PostShareButtonProps> = ({
+  url,
+  title,
+  className,
+  ...props
+}) => {
   const clipboard = useClipboard({ timeout: 500 });
 
   return (
     <Dialog>
       <DialogTrigger
-        className={cn(buttonVariants({ variant: 'ghost' }), 'gap-2 rounded-md')}
+        className={cn(buttonVariants({ className: 'gap-1.5' }), className)}
+        {...props}
       >
-        <Share2 className="w-5 h-5" /> Chỉa sẻ
+        <Share2 /> Chỉa sẻ
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Chia sẻ</DialogTitle>
 
         <div className="space-y-6">
-          <div className="flex flex-wrap justify-between lg:justify-start items-center gap-4">
+          <div className="flex flex-wrap justify-between lg:justify-start items-center gap-6">
             {/* Facebook */}
             <FacebookShareButton
               url={`${process.env.NEXT_PUBLIC_MAIN_URL}${url}`}

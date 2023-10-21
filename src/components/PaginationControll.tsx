@@ -44,9 +44,10 @@ const PaginationControll: FC<PaginationControllProps> = ({ total, route }) => {
               href={`${route}&limit=${limit}&page=${range}`}
               className={cn(
                 buttonVariants({ size: 'sm', variant: 'ghost' }),
-                'hover:bg-orange-500/90',
+                'hover:bg-primary/80 hover:text-primary-foreground',
                 {
-                  'bg-orange-500': range === pagigation.active,
+                  'bg-primary text-primary-foreground':
+                    range === pagigation.active,
                 }
               )}
             >

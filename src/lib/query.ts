@@ -51,7 +51,7 @@ export type Manga = {
   createdAt: Date;
 };
 export const randomManga = (take: number) =>
-  db.$queryRaw`SELECT "id", "slug", "name", "image", "createdAt" FROM "Manga" WHERE "isPublished" = true ORDER BY random() LIMIT ${take}` as Promise<
+  db.$queryRaw`SELECT "id", "slug", "name", "image" FROM "Manga" WHERE "isPublished" = true ORDER BY random() LIMIT ${take}` as Promise<
     Manga[]
   >;
 

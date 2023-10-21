@@ -1,13 +1,13 @@
 import { db } from '@/lib/db';
-import LastestMangaCard from './components/LastestMangaCard';
+import MangaCard from './components/MangaCard';
 
 const LatestManga = async () => {
   const chapters = await db.chapter.findMany({
-    take: 10,
     distinct: ['mangaId'],
     where: {
       isPublished: true,
     },
+    take: 10,
     orderBy: {
       createdAt: 'desc',
     },
@@ -19,19 +19,28 @@ const LatestManga = async () => {
           name: true,
           image: true,
           review: true,
+          chapter: {
+            take: 3,
+            orderBy: {
+              createdAt: 'desc',
+            },
+            select: {
+              id: true,
+              volume: true,
+              chapterIndex: true,
+              name: true,
+              createdAt: true,
+            },
+          },
         },
       },
-      volume: true,
-      chapterIndex: true,
-      name: true,
-      createdAt: true,
     },
   });
 
   return (
-    <div className="space-y-3 rounded-md dark:bg-zinc-900/60">
-      {chapters.map((chapter) => (
-        <LastestMangaCard key={chapter.manga.id} chapter={chapter} />
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+      {chapters.map(({ manga }) => (
+        <MangaCard key={manga.id} manga={manga} />
       ))}
     </div>
   );

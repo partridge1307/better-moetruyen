@@ -5,7 +5,7 @@ import Team from './Team';
 const Leaderboard = () => {
   return (
     <Tabs defaultValue="manga">
-      <TabsList className="dark:bg-zinc-900/60">
+      <TabsList className="bg-primary-foreground">
         <TabsTrigger value="manga">Manga</TabsTrigger>
         <TabsTrigger value="team">Team</TabsTrigger>
       </TabsList>

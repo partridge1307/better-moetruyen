@@ -130,7 +130,7 @@ const page: FC<pageProps> = async ({ params }) => {
             <Image
               fill
               priority
-              sizes="(max-width: 640px) 41vw, 65vw"
+              sizes="(max-width: 640px) 45vw, 65vw"
               quality={40}
               src={manga.cover}
               alt={`${manga.name} Cover`}

@@ -51,7 +51,7 @@ const MangaFollow: FC<MangaFollowProps> = ({ isFollow, mangaId }) => {
     <button
       className={buttonVariants({
         variant: 'destructive',
-        className: 'gap-1.5 w-36 md:w-[11.5rem] lg:w-[13.5rem]',
+        className: 'gap-1.5 w-[8.5rem] md:w-[11.5rem] lg:w-[13.5rem]',
       })}
       disabled={isToggling}
       onClick={() => Toggle('UNFOLLOW')}

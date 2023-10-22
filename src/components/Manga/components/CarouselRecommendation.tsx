@@ -29,7 +29,10 @@ const CarouselRecommendation: FC<CarouselRecommendationProps> = ({
     >
       {mangas.map((manga) => (
         <Carousel.Slide key={manga.id}>
-          <Link href={`/manga/${manga.slug}`} className="group space-y-1.5">
+          <Link
+            href={`/manga/${manga.slug}`}
+            className="block w-24 lg:w-36 group space-y-1.5"
+          >
             <MangaImage
               sizes="20vw"
               manga={manga}

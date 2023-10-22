@@ -4,6 +4,7 @@ import DescriptionSkeleton from '@/components/Skeleton/DescriptionSkeleton';
 import classes from '@/styles/mantine/manga-info.module.css';
 import { Spoiler } from '@mantine/core';
 import '@mantine/core/styles.layer.css';
+import { useMediaQuery } from '@mantine/hooks';
 import type { Manga, MangaAuthor } from '@prisma/client';
 import dynamic from 'next/dynamic';
 import { FC } from 'react';
@@ -23,9 +24,11 @@ interface MangaDescriptionProps {
 }
 
 const MangaDescription: FC<MangaDescriptionProps> = ({ manga }) => {
+  const isMobile = useMediaQuery('(max-width: 640px)');
+
   return (
     <Spoiler
-      maxHeight={300}
+      maxHeight={isMobile ? 120 : 300}
       showLabel={
         <p className="w-fit text-sm rounded-b-md px-2.5 py-0.5 bg-primary text-primary-foreground">
           Xem thêm

@@ -55,6 +55,7 @@ const page: FC<pageProps> = async ({ params }) => {
       slug: true,
       name: true,
       altName: true,
+      cover: true,
       image: true,
       description: true,
       facebookLink: true,
@@ -68,7 +69,7 @@ const page: FC<pageProps> = async ({ params }) => {
           manga: {
             take: 3,
             where: {
-              //isPublished: true,
+              isPublished: true,
               NOT: {
                 slug: params.slug,
               },
@@ -125,15 +126,19 @@ const page: FC<pageProps> = async ({ params }) => {
       <main className="container px-0 pb-4 bg-gradient-to-t from-background">
         {/* Manga cover section */}
         <section className="relative aspect-[4/2] md:aspect-[4/1]">
-          <Image
-            fill
-            priority
-            sizes="(max-width: 640px) 30vw, 40vw"
-            quality={40}
-            src={manga.image}
-            alt={`${manga.name} Cover`}
-            className="object-cover"
-          />
+          {!!manga.cover ? (
+            <Image
+              fill
+              priority
+              sizes="(max-width: 640px) 41vw, 65vw"
+              quality={40}
+              src={manga.cover}
+              alt={`${manga.name} Cover`}
+              className="object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-primary-foreground" />
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-background md:hidden" />
         </section>
 
@@ -230,7 +235,7 @@ const page: FC<pageProps> = async ({ params }) => {
                           >
                             <MangaImage
                               manga={otherManga}
-                              sizes="10vw"
+                              sizes="(max-width: 640px) 22vw, 10vw"
                               className="transition-transform group-hover:scale-105"
                             />
 
@@ -386,7 +391,7 @@ function MangaInfoSkeleton() {
           {Array.from(Array(3).keys()).map((_, idx) => (
             <div
               key={idx}
-              className="h-5 rounded-full bg-muted"
+              className="h-7 rounded-md bg-muted"
               style={{
                 width: `${Math.round(Math.random() * (idx + 4)) + 6}rem`,
               }}
@@ -401,7 +406,7 @@ function MangaInfoSkeleton() {
           {Array.from(Array(3).keys()).map((_, idx) => (
             <div
               key={idx}
-              className="h-5 rounded-full bg-muted"
+              className="h-7 rounded-md bg-muted"
               style={{
                 width: `${Math.round(Math.random() * (idx + 4)) + 6}rem`,
               }}

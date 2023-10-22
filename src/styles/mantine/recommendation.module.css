@@ -17,6 +17,7 @@
   &[data-inactive] {
     opacity: 0;
     cursor: default;
+    transform: translateX(-100%);
   }
 
   &:first-child {

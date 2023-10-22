@@ -11,7 +11,7 @@ const MangaFollow = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-36 md:w-[11.5rem] lg:w-[13.5rem] h-10 rounded-md bg-foreground" />
+      <div className="w-32 md:w-[11.5rem] lg:w-[13.5rem] h-10 rounded-md bg-foreground" />
     ),
   }
 );
@@ -31,7 +31,7 @@ const MangaAction: FC<MangaActionProps> = async ({ manga }) => {
       <ShareButton
         url={`/manga/${manga.slug}`}
         title={manga.name}
-        className={!session ? 'w-36 md:w-[11.5rem]  lg:w-[13.5rem]' : ''}
+        className={!session ? 'w-32 md:w-[11.5rem]  lg:w-[13.5rem]' : ''}
       />
     </>
   );

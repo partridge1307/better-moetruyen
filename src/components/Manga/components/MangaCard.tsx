@@ -24,12 +24,12 @@ const MangaCard: FC<MangaCardProps> = ({ manga }) => {
         />
       </Link>
 
-      <div className="space-y-1.5 md:space-y-3 px-2">
+      <div className="space-y-1.5 md:space-y-3 px-2 py-0.5">
         <Link href={`/manga/${manga.slug}`} className="md:space-y-1">
           <p className="text-xl md:text-2xl line-clamp-2 md:line-clamp-3 font-semibold">
             {manga.name}
           </p>
-          <p className="line-clamp-3">{manga.review}</p>
+          <p className="line-clamp-3 max-sm:text-sm">{manga.review}</p>
         </Link>
 
         <div className="space-y-1.5">

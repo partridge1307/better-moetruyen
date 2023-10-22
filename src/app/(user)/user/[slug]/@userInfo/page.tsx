@@ -88,7 +88,7 @@ const Default: FC<defaultProps> = async ({ params }) => {
       <TabsContent
         value="manga"
         forceMount
-        className="data-[state=inactive]:hidden grid grid-cols-2 gap-6 max-h-[650px] overflow-auto scrollbar dark:scrollbar--dark"
+        className="data-[state=inactive]:hidden grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[650px] overflow-auto scrollbar dark:scrollbar--dark"
       >
         {!!user.manga.length ? (
           user.manga.map((manga) => <MangaCard key={manga.id} manga={manga} />)

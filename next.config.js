@@ -9,7 +9,17 @@ const withPWA = require('@ducanh2912/next-pwa').default({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['i.moetruyen.net'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'i.moetruyen.net',
+        port: '',
+        pathname: '/*/**',
+      },
+    ],
+  },
+  experimental: {
+    webpackBuildWorker: true,
   },
 };
 

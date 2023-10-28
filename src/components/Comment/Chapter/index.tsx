@@ -11,6 +11,7 @@ import type { CommentInputProps } from '../components/CommentInput';
 import type { DeleteCommentProps } from '../components/DeleteComment';
 import CommentCard from './CommentCard';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 const CommentInput = dynamic<CommentInputProps<ExtendedComment>>(
   () => import('../components/CommentInput'),
@@ -82,8 +83,15 @@ const Comments = ({ id }: commentProps) => {
         />
       ) : (
         <p>
-          Vui lòng <span className="font-semibold">đăng nhập</span> hoặc{' '}
-          <span className="font-semibold">đăng ký</span> để bình luận
+          Vui lòng{' '}
+          <Link href="/sign-in" className="font-semibold">
+            đăng nhập
+          </Link>{' '}
+          hoặc{' '}
+          <Link href="/sign-up" className="font-semibold">
+            đăng ký
+          </Link>{' '}
+          để bình luận
         </p>
       )}
 

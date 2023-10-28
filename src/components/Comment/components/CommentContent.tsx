@@ -29,7 +29,7 @@ const CommentContent: FC<CommentProps> = ({
     <div
       ref={ref}
       className={cn(
-        'relative max-h-72 p-2 rounded-lg overflow-hidden dark:bg-zinc-800',
+        'relative max-h-72 p-2 rounded-lg overflow-hidden bg-muted',
         {
           'max-h-none': hasExpand,
         },
@@ -41,7 +41,7 @@ const CommentContent: FC<CommentProps> = ({
       {!hasExpand && height === 272 && (
         <button
           aria-label="expand button"
-          className="absolute bottom-0 inset-x-0 h-10 rounded-b-lg bg-gradient-to-t dark:from-zinc-900"
+          className="absolute bottom-0 inset-x-0 h-10 rounded-b-lg bg-gradient-to-t dark:from-background"
           onClick={() => setExpand(true)}
         >
           Xem thêm

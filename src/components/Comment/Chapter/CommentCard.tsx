@@ -47,7 +47,6 @@ const CommentCard = ({ comment, session, children }: CommentCardProps) => {
           <CommentContent
             commentId={comment.id}
             commentContent={comment.content}
-            className="dark:bg-zinc-900/60"
           />
 
           {!!comment.oEmbed && <CommentOEmbed oEmbed={comment.oEmbed} />}

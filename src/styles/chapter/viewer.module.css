@@ -1,0 +1,41 @@
+.mt_wrapper {
+  overflow: hidden;
+}
+
+.mt_container {
+  display: flex;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.mt_page {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.mt_horizontal {
+  flex-direction: row;
+}
+
+.mt_vertical {
+  flex-direction: column;
+}
+
+.mt_single {
+  min-width: 0;
+  flex: 0 0 100%;
+}
+
+.mt_double {
+  min-width: 0;
+  flex: 0 0 50%;
+}
+
+.mt_page_vertical {
+  height: auto;
+  max-width: 100%;
+  flex: 0 0 auto;
+  flex: 0 0 auto;
+}

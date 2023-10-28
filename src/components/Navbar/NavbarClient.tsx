@@ -16,6 +16,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/DropdownMenu';
+import { usePathname } from 'next/navigation';
 
 const NavSidebar = dynamic(() => import('./NavSidebar'), {
   ssr: false,
@@ -33,8 +34,11 @@ const UserDropdownMenu = dynamic(
   () => import('@/components/Auth/UserDropdownMenu')
 );
 
+const chapterRouteRegex = /\/chapter\/\d+.*/;
+
 const NavbarClient = () => {
   const { data: session } = useSession();
+  const pathName = usePathname();
 
   const pinned = useHeadroom({ fixedAt: 120 });
 
@@ -44,6 +48,7 @@ const NavbarClient = () => {
         'sticky top-0 inset-x-0 p-2 z-50 transition-transform backdrop-blur dark:bg-zinc-800/70',
         {
           '-translate-y-full': !pinned,
+          hidden: chapterRouteRegex.test(pathName),
         }
       )}
     >

@@ -95,7 +95,6 @@ const SubComment: FC<SubCommentProps> = ({ commentId, session }) => {
                   <CommentContent
                     commentId={subComment.id}
                     commentContent={subComment.content}
-                    className="dark:bg-zinc-900/60"
                   />
 
                   {!!subComment.oEmbed && (

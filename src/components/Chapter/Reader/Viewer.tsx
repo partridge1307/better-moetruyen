@@ -97,7 +97,11 @@ const Viewer: FC<ViewerProps> = ({
               fill
               priority
               loading="lazy"
-              sizes={layout === 'DOUBLE' ? '50vw' : '100vw'}
+              sizes={
+                layout === 'DOUBLE'
+                  ? '50vw'
+                  : '(min-width: 1024px) 150vw, 100vw'
+              }
               src={image}
               placeholder="blur"
               blurDataURL={blurDataUrl}

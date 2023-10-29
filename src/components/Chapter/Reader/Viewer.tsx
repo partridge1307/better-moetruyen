@@ -95,7 +95,6 @@ const Viewer: FC<ViewerProps> = ({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               fetchPriority="high"
-              loading="lazy"
               decoding="async"
               src={image}
               alt={`Trang ${idx + 1}`}
@@ -116,9 +115,6 @@ const Viewer: FC<ViewerProps> = ({
                   direction === 'rtl' && {
                     objectPosition: idx % 2 === 0 ? 'left' : 'right',
                   }),
-                // position: 'absolute',
-                // inset: 0,
-                // color: 'transparent',
               }}
             />
           </div>

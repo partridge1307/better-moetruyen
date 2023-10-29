@@ -96,7 +96,7 @@ const Viewer: FC<ViewerProps> = ({
                 : classes.mt_page_vertical
             }`}
           >
-            <Image
+            {/* <Image
               fill
               priority
               loading="lazy"
@@ -110,6 +110,29 @@ const Viewer: FC<ViewerProps> = ({
               src={image}
               placeholder="blur"
               blurDataURL={blurDataUrl}
+              alt={`Trang ${idx + 1}`}
+              className={
+                layout === 'VERTICAL'
+                  ? '!static !w-auto !h-auto mx-auto'
+                  : undefined
+              }
+              style={{
+                ...(layout !== 'VERTICAL' && {
+                  objectFit: 'scale-down',
+                }),
+                ...(layout === 'DOUBLE' &&
+                  direction === 'ltr' && {
+                    objectPosition: idx % 2 === 0 ? 'right' : 'left',
+                  }),
+                ...(layout === 'DOUBLE' &&
+                  direction === 'rtl' && {
+                    objectPosition: idx % 2 === 0 ? 'left' : 'right',
+                  }),
+              }}
+            /> */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={image}
               alt={`Trang ${idx + 1}`}
               className={
                 layout === 'VERTICAL'

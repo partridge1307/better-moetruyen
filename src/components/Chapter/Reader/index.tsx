@@ -119,7 +119,12 @@ const Reader: FC<ReaderProps> = ({
       (e) => {
         if (layout === 'VERTICAL') return goToPrev();
 
-        if (embla?.canScrollPrev() && prevPressedKey === 'LEFT' && !e.repeat) {
+        if (
+          !embla?.canScrollPrev() &&
+          prevPressedKey === 'LEFT' &&
+          !e.repeat &&
+          isEnabled === 'true'
+        ) {
           return goToPrev();
         }
 
@@ -141,7 +146,12 @@ const Reader: FC<ReaderProps> = ({
       (e) => {
         if (layout === 'VERTICAL') return goToNext();
 
-        if (embla?.canScrollNext() && prevPressedKey === 'RIGHT' && !e.repeat) {
+        if (
+          !embla?.canScrollNext() &&
+          prevPressedKey === 'RIGHT' &&
+          !e.repeat &&
+          isEnabled === 'true'
+        ) {
           return goToNext();
         }
 
@@ -174,7 +184,11 @@ const Reader: FC<ReaderProps> = ({
           engine.animation.stop();
           engine.location.add(distance);
           engine.translate.to(location + distance);
-        } else if (prevPressedKey === 'UP' && !e.repeat) {
+        } else if (
+          prevPressedKey === 'UP' &&
+          !e.repeat &&
+          isEnabled === 'true'
+        ) {
           return goToPrev();
         }
 
@@ -197,7 +211,11 @@ const Reader: FC<ReaderProps> = ({
           engine.animation.stop();
           engine.location.subtract(distance);
           engine.translate.to(location - distance);
-        } else if (prevPressedKey === 'DOWN' && !e.repeat) {
+        } else if (
+          prevPressedKey === 'DOWN' &&
+          !e.repeat &&
+          isEnabled === 'true'
+        ) {
           return goToNext();
         }
 

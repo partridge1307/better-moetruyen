@@ -111,10 +111,9 @@
     background: #2e2e2e;
   }
 
-  .hide_scrollbar {
-    scrollbar-width: none;
-  }
+  .hide_scrollbar,
   .hide_scrollbar::-webkit-scrollbar {
     display: none;
+    scrollbar-width: none;
   }
 }

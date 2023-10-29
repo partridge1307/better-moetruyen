@@ -158,7 +158,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
             <ul className="flex flex-wrap gap-3 md:gap-4">
               <li className="max-sm:order-last">
-                <Popover>
+                <Popover modal>
                   <PopoverTrigger className="max-sm:text-sm p-0.5 px-2 flex items-center gap-1.5 rounded-full ring-2 ring-foreground">
                     <Pen className="w-4 h-4 md:w-5 md:h-5" />
                     <span className="line-clamp-1">{manga.creator.name}</span>
@@ -385,7 +385,7 @@ function generateJsonLd(manga: Pick<Manga, 'name' | 'image'>, slug: string) {
 
 function MangaInfoSkeleton() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <DescriptionSkeleton />
 
       <div className="space-y-1">

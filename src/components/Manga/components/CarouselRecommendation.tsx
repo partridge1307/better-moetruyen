@@ -3,9 +3,8 @@
 import classes from '@/styles/mantine/recommendation.module.css';
 import { Carousel } from '@mantine/carousel';
 import type { Manga } from '@prisma/client';
-import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
 import Link from 'next/link';
-import { FC, useRef } from 'react';
+import { FC } from 'react';
 import MangaImage from './MangaImage';
 
 interface CarouselRecommendationProps {
@@ -15,8 +14,6 @@ interface CarouselRecommendationProps {
 const CarouselRecommendation: FC<CarouselRecommendationProps> = ({
   mangas,
 }) => {
-  const wheelGestures = useRef(WheelGesturesPlugin({ forceWheelAxis: 'y' }));
-
   return (
     <Carousel
       skipSnaps
@@ -25,7 +22,6 @@ const CarouselRecommendation: FC<CarouselRecommendationProps> = ({
       slideGap={'md'}
       align={'start'}
       classNames={classes}
-      plugins={[wheelGestures.current]}
     >
       {mangas.map((manga) => (
         <Carousel.Slide key={manga.id}>

@@ -13,12 +13,15 @@ const useViewCalc = (currentChapterId: number) => {
   }, []);
 
   const calcView = () => {
-    if (seconds >= 30)
+    if (seconds >= 30) {
       fetch('/api/chapter', {
         method: 'POST',
         body: JSON.stringify({ id: currentChapterId }),
       });
 
+      interval.stop();
+      setSeconds(0);
+    }
     return;
   };
 

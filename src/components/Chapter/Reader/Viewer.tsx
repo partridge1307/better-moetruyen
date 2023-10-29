@@ -10,27 +10,23 @@ import { memo, type FC } from 'react';
 
 interface ViewerProps {
   emblaRef: UseEmblaCarouselType[0];
-  title: string;
   mangaSlug: string;
   images: string[];
   commentToggle: boolean;
   menuToggle: boolean;
   layout: LayoutType;
   direction: DirectionType;
-  prevChapter: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'> | null;
   nextChapter: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'> | null;
 }
 
 const Viewer: FC<ViewerProps> = ({
   emblaRef,
-  title,
   mangaSlug,
   images,
   commentToggle,
   menuToggle,
   layout,
   direction,
-  prevChapter,
   nextChapter,
 }) => {
   return (
@@ -51,35 +47,6 @@ const Viewer: FC<ViewerProps> = ({
         }`}
         dir={direction === 'rtl' && layout !== 'VERTICAL' ? 'rtl' : 'ltr'}
       >
-        {/* Start section */}
-        <div className="relative min-w-0 w-full h-full shrink-0 grow-0 basis-full flex justify-center items-center">
-          <div className="relative max-w-sm flex flex-col justify-center items-center gap-2 p-2.5 rounded-lg border border-primary/30">
-            <p className="text-2xl line-clamp-2 text-center">
-              Bạn đang đọc {title}
-            </p>
-            <Link
-              aria-label="start chapter link button"
-              href={
-                !!prevChapter
-                  ? `/chapter/${prevChapter.id}`
-                  : `/manga/${mangaSlug}`
-              }
-              className={buttonVariants({
-                variant: 'secondary',
-                className: 'w-full',
-              })}
-            >
-              <span className="line-clamp-1">
-                {!!prevChapter
-                  ? `Chap truớc [Vol. ${prevChapter.volume} Ch. ${
-                      prevChapter.chapterIndex
-                    }${!!prevChapter.name && ` - ${prevChapter.name}`}]`
-                  : 'Thông tin truyện'}
-              </span>
-            </Link>
-          </div>
-        </div>
-        {layout === 'DOUBLE' && <div />}
         {/* Viewer */}
         {images.map((image, idx) => (
           <div
@@ -95,17 +62,19 @@ const Viewer: FC<ViewerProps> = ({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               fetchPriority="high"
-              decoding="async"
               src={image}
               alt={`Trang ${idx + 1}`}
               className={
                 layout === 'VERTICAL'
-                  ? '!static !w-auto !h-auto mx-auto'
+                  ? '!block !w-auto !h-auto mx-auto'
                   : undefined
               }
               style={{
                 ...(layout !== 'VERTICAL' && {
                   objectFit: 'scale-down',
+                  position: 'absolute',
+                  inset: 0,
+                  color: 'transparent',
                 }),
                 ...(layout === 'DOUBLE' &&
                   direction === 'ltr' && {

@@ -239,14 +239,12 @@ const Reader: FC<ReaderProps> = ({
       <section className="relative w-full h-full overflow-hidden">
         <Viewer
           emblaRef={emblaRef}
-          title={title}
           mangaSlug={mangaSlug}
           images={images}
           commentToggle={commentToggle}
           menuToggle={menuToggle}
           layout={layout}
           direction={direction}
-          prevChapter={prevChapter}
           nextChapter={nextChapter}
         />
         <Comment
@@ -257,6 +255,7 @@ const Reader: FC<ReaderProps> = ({
         />
         <Menu
           currentChapterId={currentChapterId}
+          mangaSlug={mangaSlug}
           title={title}
           menuToggle={menuToggle}
           setMenuToggle={setMenuToggle}

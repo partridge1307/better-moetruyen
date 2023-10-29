@@ -33,6 +33,7 @@ import { memo, useState } from 'react';
 
 interface MenuProps {
   currentChapterId: number;
+  mangaSlug: string;
   title: string;
   menuToggle: boolean;
   setMenuToggle: Dispatch<SetStateAction<boolean>>;
@@ -85,6 +86,7 @@ const directionOpts: {
 
 const Menu: FC<MenuProps> = ({
   currentChapterId,
+  mangaSlug,
   title,
   menuToggle,
   setMenuToggle,
@@ -137,7 +139,11 @@ const Menu: FC<MenuProps> = ({
         <p className="text-xl">Chapter</p>
         <div className="flex items-center gap-3">
           <Link
-            href={!!prevChapterId ? `/chapter/${prevChapterId}` : `#`}
+            href={
+              !!prevChapterId
+                ? `/chapter/${prevChapterId}`
+                : `/manga/${mangaSlug}`
+            }
             aria-label="previous chapter link button"
             className={buttonVariants({ variant: 'secondary' })}
           >
@@ -191,7 +197,11 @@ const Menu: FC<MenuProps> = ({
             </PopoverContent>
           </Popover>
           <Link
-            href={!!nextChapterId ? `/chapter/${nextChapterId}` : '#'}
+            href={
+              !!nextChapterId
+                ? `/chapter/${nextChapterId}`
+                : `/manga/${mangaSlug}`
+            }
             aria-label="next chapter link button"
             className={buttonVariants({ variant: 'secondary' })}
           >

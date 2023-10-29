@@ -101,7 +101,7 @@ const Bottom: FC<BottomProps> = ({
 
   const resizeHandler = useCallback(
     (emblaCb: EmblaCarouselType) => {
-      emblaCb.scrollTo(currentPage);
+      emblaCb.scrollTo(currentPage, true);
     },
     [currentPage]
   );

@@ -45,13 +45,13 @@ const Bottom: FC<BottomProps> = ({
   const [initPage, setInitPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(
-    embla?.slideNodes().length ?? 0 - 1
+    embla?.slideNodes().length ?? 0 - 2
   );
 
   useEffect(() => {
     if (!embla) return;
 
-    const pagesLength = embla.slideNodes().length - 1;
+    const pagesLength = embla.slideNodes().length - 2;
     setTotalPages(pagesLength);
 
     const pageParam = searchParams.get('page');

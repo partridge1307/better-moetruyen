@@ -100,7 +100,7 @@ const Viewer: FC<ViewerProps> = ({
               sizes={
                 layout === 'DOUBLE'
                   ? '50vw'
-                  : '(min-width: 1024px) 150vw, 100vw'
+                  : '(min-width: 1024px) 125vw, 100vw'
               }
               src={image}
               placeholder="blur"

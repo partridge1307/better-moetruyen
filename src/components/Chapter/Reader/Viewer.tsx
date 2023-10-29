@@ -58,7 +58,9 @@ const Viewer: FC<ViewerProps> = ({
         {/* Start section */}
         <div className="relative min-w-0 w-full h-full shrink-0 grow-0 basis-full flex justify-center items-center">
           <div className="relative max-w-sm flex flex-col justify-center items-center gap-2 p-2.5 rounded-lg border border-primary/30">
-            <p className="text-2xl line-clamp-2">Bạn đang đọc {title}</p>
+            <p className="text-2xl line-clamp-2 text-center">
+              Bạn đang đọc {title}
+            </p>
             <Link
               aria-label="start chapter link button"
               href={
@@ -81,6 +83,7 @@ const Viewer: FC<ViewerProps> = ({
             </Link>
           </div>
         </div>
+        {layout === 'DOUBLE' && <div />}
         {/* Viewer */}
         {images.map((image, idx) => (
           <div
@@ -100,7 +103,9 @@ const Viewer: FC<ViewerProps> = ({
               sizes={
                 layout === 'DOUBLE'
                   ? '50vw'
-                  : '(min-width: 1024px) 125vw, 100vw'
+                  : layout === 'VERTICAL'
+                  ? '(min-width: 1024px) 135vw, 100vw'
+                  : '75vw'
               }
               src={image}
               placeholder="blur"
@@ -128,6 +133,7 @@ const Viewer: FC<ViewerProps> = ({
           </div>
         ))}
         {/* End section */}
+        {layout === 'DOUBLE' && <div />}
         <div className="relative min-w-0 w-full h-full shrink-0 grow-0 basis-full flex justify-center items-center">
           <div className="relative max-w-sm flex flex-col justify-center items-center gap-2 p-2.5 rounded-lg border border-primary/30">
             <p className="text-2xl text-center">

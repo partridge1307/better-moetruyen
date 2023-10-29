@@ -60,8 +60,6 @@ const Bottom: FC<BottomProps> = ({
     let page = parseInt(pageParam);
     if (layout === 'DOUBLE') {
       page = Math.floor(Math.abs(page / 2 - 1));
-    } else {
-      page -= 1;
     }
 
     if (page > 0 && page <= pagesLength) {
@@ -170,7 +168,7 @@ const Bottom: FC<BottomProps> = ({
           showInfo ? classes.active : ''
         }`}
       >
-        <div>{currentPage}</div>
+        <div>{direction === 'ltr' ? currentPage : totalPages}</div>
         <Slider.Root
           step={layout === 'DOUBLE' ? 2 : 1}
           className={classes.mt_bottom_slider}
@@ -192,7 +190,7 @@ const Bottom: FC<BottomProps> = ({
             </span>
           </Slider.Thumb>
         </Slider.Root>
-        <div>{totalPages}</div>
+        <div>{direction === 'ltr' ? totalPages : currentPage}</div>
       </div>
     </section>
   );

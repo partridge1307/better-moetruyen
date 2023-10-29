@@ -99,21 +99,30 @@ const Bottom: FC<BottomProps> = ({
     emblaCb.internalEngine().animation.stop();
   }, []);
 
+  const resizeHandler = useCallback(
+    (emblaCb: EmblaCarouselType) => {
+      emblaCb.scrollTo(currentPage);
+    },
+    [currentPage]
+  );
+
   useEffect(() => {
     if (!embla) return;
 
     embla
       .on('slidesInView', inViewHandler)
       .on('pointerUp', pointerUpHandler)
-      .on('reInit', reInitHandler);
+      .on('reInit', reInitHandler)
+      .on('resize', resizeHandler);
 
     return () => {
       embla
         .off('slidesInView', inViewHandler)
         .off('pointerUp', pointerUpHandler)
-        .off('reInit', reInitHandler);
+        .off('reInit', reInitHandler)
+        .off('resize', resizeHandler);
     };
-  }, [embla, inViewHandler, pointerUpHandler, reInitHandler]);
+  }, [embla, inViewHandler, pointerUpHandler, reInitHandler, resizeHandler]);
 
   const onClickHandler = useCallback(
     (event: MouseEvent, containerRect: DOMRect) => {

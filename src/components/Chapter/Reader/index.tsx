@@ -4,51 +4,46 @@ import { useDirectionReader } from '@/hooks/use-direction-reader';
 import { useLayoutReader } from '@/hooks/use-layout-reader';
 import { useNavChapter } from '@/hooks/use-nav-chapter';
 import { useHotkeys, usePrevious } from '@mantine/hooks';
-import type { Chapter } from '@prisma/client';
+import type { Chapter, Manga } from '@prisma/client';
 import useEmblaCarousel from 'embla-carousel-react';
 import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures';
-import { FC, useState } from 'react';
-import Bottom from './Bottom';
-import Top from './Top';
-import Viewer from './Viewer';
 import dynamic from 'next/dynamic';
+import { FC, useState } from 'react';
+import Context from './Context';
+import Viewer from './Viewer';
 
-const Menu = dynamic(() => import('./Menu'), { ssr: false });
+const Top = dynamic(() => import('./Top'), { ssr: false });
+const Bottom = dynamic(() => import('./Bottom'), { ssr: false });
 const Comment = dynamic(() => import('./Comment'), { ssr: false });
+const Menu = dynamic(() => import('./Menu'), { ssr: false });
 
 interface ReaderProps {
-  currentChapterId: number;
-  mangaSlug: string;
-  images: string[];
-  title: string;
   prevChapter: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'> | null;
   nextChapter: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'> | null;
-  chapterList: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'>[];
+  chapter: Pick<
+    Chapter,
+    'id' | 'images' | 'volume' | 'chapterIndex' | 'name'
+  > & {
+    manga: Pick<Manga, 'slug'> & {
+      chapter: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'>[];
+    };
+  };
 }
 
 useEmblaCarousel.globalOptions = {
   align: 'start',
-  startIndex: 1,
 };
 
-const Reader: FC<ReaderProps> = ({
-  currentChapterId,
-  mangaSlug,
-  images,
-  title,
-  prevChapter,
-  nextChapter,
-  chapterList,
-}) => {
-  const [menuToggle, setMenuToggle] = useState(false);
-  const [commentToggle, setCommentToggle] = useState(false);
-  const [showInfo, setShowInfo] = useState(false);
+const Reader: FC<ReaderProps> = ({ prevChapter, nextChapter, chapter }) => {
+  const menuConfig = useState(false);
+  const commentConfig = useState(false);
+  const infoConfig = useState(false);
   const { layout, setLayout } = useLayoutReader();
   const { direction, setDirection } = useDirectionReader();
   const { isEnabled, setContinuous, goToPrev, goToNext } = useNavChapter({
     prevChapter,
     nextChapter,
-    mangaSlug,
+    mangaSlug: `/manga/${chapter.manga.slug}`,
   });
   const [pressedKey, setPressedKey] = useState<
     'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | null
@@ -70,11 +65,11 @@ const Reader: FC<ReaderProps> = ({
   useHotkeys([
     [
       'ctrl+shift+C',
-      () => setCommentToggle((prev) => !prev),
+      () => menuConfig[1]((prev) => !prev),
       { preventDefault: true },
     ],
-    ['ctrl+M', () => setMenuToggle((prev) => !prev)],
-    ['ctrl+I', () => setShowInfo((prev) => !prev)],
+    ['ctrl+M', () => menuConfig[1]((prev) => !prev)],
+    ['ctrl+I', () => infoConfig[1]((prev) => !prev)],
     [
       'Home',
       () => {
@@ -119,12 +114,7 @@ const Reader: FC<ReaderProps> = ({
       (e) => {
         if (layout === 'VERTICAL') return goToPrev();
 
-        if (
-          !embla?.canScrollPrev() &&
-          prevPressedKey === 'LEFT' &&
-          !e.repeat &&
-          isEnabled === 'true'
-        ) {
+        if (!embla?.canScrollPrev() && prevPressedKey === 'LEFT' && !e.repeat) {
           return goToPrev();
         }
 
@@ -149,8 +139,7 @@ const Reader: FC<ReaderProps> = ({
         if (
           !embla?.canScrollNext() &&
           prevPressedKey === 'RIGHT' &&
-          !e.repeat &&
-          isEnabled === 'true'
+          !e.repeat
         ) {
           return goToNext();
         }
@@ -184,11 +173,7 @@ const Reader: FC<ReaderProps> = ({
           engine.animation.stop();
           engine.location.add(distance);
           engine.translate.to(location + distance);
-        } else if (
-          prevPressedKey === 'UP' &&
-          !e.repeat &&
-          isEnabled === 'true'
-        ) {
+        } else if (prevPressedKey === 'UP' && !e.repeat) {
           return goToPrev();
         }
 
@@ -211,11 +196,7 @@ const Reader: FC<ReaderProps> = ({
           engine.animation.stop();
           engine.location.subtract(distance);
           engine.translate.to(location - distance);
-        } else if (
-          prevPressedKey === 'DOWN' &&
-          !e.repeat &&
-          isEnabled === 'true'
-        ) {
+        } else if (prevPressedKey === 'DOWN' && !e.repeat) {
           return goToNext();
         }
 
@@ -225,63 +206,54 @@ const Reader: FC<ReaderProps> = ({
   ]);
 
   return (
-    <>
+    <Context
+      menuConfig={menuConfig}
+      commentConfig={commentConfig}
+      infoConfig={infoConfig}
+      layoutConfig={{ layout, setLayout }}
+      directionConfig={{ direction, setDirection }}
+      continuousConfig={{ isEnabled, setContinuous }}
+    >
       <Top
-        href={`/manga/${mangaSlug}`}
-        title={title}
-        commentToggle={commentToggle}
-        setCommentToggle={setCommentToggle}
-        menuToggle={menuToggle}
-        setMenuToggle={setMenuToggle}
-        showInfo={showInfo}
+        href={`/manga/${chapter.manga.slug}`}
+        title={`Vol. ${chapter.volume} Ch. ${chapter.chapterIndex}${
+          !!chapter.name && ` - ${chapter.name}`
+        }`}
       />
 
       <section className="relative w-full h-full overflow-hidden">
         <Viewer
           emblaRef={emblaRef}
-          mangaSlug={mangaSlug}
-          images={images}
-          commentToggle={commentToggle}
-          menuToggle={menuToggle}
-          layout={layout}
-          direction={direction}
-          nextChapter={nextChapter}
+          images={chapter.images}
+          nextChapterUrl={
+            !!nextChapter
+              ? `/chapter/${nextChapter.id}`
+              : `/manga/${chapter.manga.slug}`
+          }
+          hasNextChapter={!!nextChapter}
         />
-        <Comment
-          currentChapterId={currentChapterId}
-          commentToggle={commentToggle}
-          setCommentToggle={setCommentToggle}
-          menuToggle={menuToggle}
-        />
+        <Comment chapterId={chapter.id} />
         <Menu
-          currentChapterId={currentChapterId}
-          mangaSlug={mangaSlug}
-          title={title}
-          menuToggle={menuToggle}
-          setMenuToggle={setMenuToggle}
-          layout={layout}
-          setLayout={setLayout}
-          direction={direction}
-          setDirection={setDirection}
-          isContinuosEnabled={isEnabled === 'true'}
-          setContinuous={setContinuous}
-          prevChapterId={prevChapter?.id}
-          nextChapterId={nextChapter?.id}
-          chapterList={chapterList}
+          chapterId={chapter.id}
+          title={`Vol. ${chapter.volume} Ch. ${chapter.chapterIndex}${
+            !!chapter.name && ` - ${chapter.name}`
+          }`}
+          prevChapterUrl={
+            !!prevChapter
+              ? `/chapter/${prevChapter.id}`
+              : `/manga/${chapter.manga.slug}`
+          }
+          nextChapterUrl={
+            !!nextChapter
+              ? `/chapter/${nextChapter.id}`
+              : `/manga/${chapter.manga.slug}`
+          }
+          chapterList={chapter.manga.chapter}
         />
       </section>
 
-      <Bottom
-        embla={embla}
-        currentChapterId={currentChapterId}
-        commentToggle={commentToggle}
-        menuToggle={menuToggle}
-        layout={layout}
-        direction={direction}
-        showInfo={showInfo}
-        setShowInfo={setShowInfo}
-      />
-    </>
+      <Bottom embla={embla} chapterId={chapter.id} />
+    </Context>
   );
 };
 

@@ -4,28 +4,23 @@ import { cn } from '@/lib/utils';
 import classes from '@/styles/chapter/top.module.css';
 import { ChevronLeft, Menu, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
-import type { Dispatch, FC, SetStateAction } from 'react';
-import { useEffect, useRef, memo } from 'react';
+import type { FC } from 'react';
+import { memo, useContext, useEffect, useRef } from 'react';
+import {
+  CommentToggleContext,
+  InfoToggleContext,
+  MenuToggleContext,
+} from './Context';
 
 interface TopProps {
   href: string;
   title: string;
-  commentToggle: boolean;
-  setCommentToggle: Dispatch<SetStateAction<boolean>>;
-  menuToggle: boolean;
-  setMenuToggle: Dispatch<SetStateAction<boolean>>;
-  showInfo: boolean;
 }
 
-const Top: FC<TopProps> = ({
-  href,
-  title,
-  commentToggle,
-  setCommentToggle,
-  menuToggle,
-  setMenuToggle,
-  showInfo,
-}) => {
+const Top: FC<TopProps> = ({ href, title }) => {
+  const [menuToggle, setMenuToggle] = useContext(MenuToggleContext);
+  const [commentToggle, setCommentToggle] = useContext(CommentToggleContext);
+  const [showInfo] = useContext(InfoToggleContext);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {

@@ -8,21 +8,18 @@ const useViewCalc = (currentChapterId: number) => {
   useEffect(() => {
     interval.start();
 
-    return interval.stop;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    return () => interval.stop();
+  }, [interval]);
 
   const calcView = () => {
     if (seconds >= 30) {
+      interval.stop();
       fetch('/api/chapter', {
         method: 'POST',
         body: JSON.stringify({ id: currentChapterId }),
       });
-
-      interval.stop();
       setSeconds(0);
     }
-    return;
   };
 
   return { calcView };

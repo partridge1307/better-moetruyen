@@ -1,8 +1,11 @@
+'use client';
+
+import CommentSkeleton from '@/components/Skeleton/CommentSkeleton';
 import { cn } from '@/lib/utils';
 import { ChevronLeft } from 'lucide-react';
-import { Dispatch, FC, SetStateAction, memo } from 'react';
 import dynamic from 'next/dynamic';
-import CommentSkeleton from '@/components/Skeleton/CommentSkeleton';
+import { FC, memo, useContext } from 'react';
+import { CommentToggleContext, MenuToggleContext } from './Context';
 
 const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
@@ -10,18 +13,13 @@ const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
 });
 
 interface CommentProps {
-  currentChapterId: number;
-  commentToggle: boolean;
-  setCommentToggle: Dispatch<SetStateAction<boolean>>;
-  menuToggle: boolean;
+  chapterId: number;
 }
 
-const Comment: FC<CommentProps> = ({
-  currentChapterId,
-  commentToggle,
-  setCommentToggle,
-  menuToggle,
-}) => {
+const Comment: FC<CommentProps> = ({ chapterId }) => {
+  const [menuToggle] = useContext(MenuToggleContext);
+  const [commentToggle, setCommentToggle] = useContext(CommentToggleContext);
+
   return (
     <div
       className={cn(
@@ -47,7 +45,7 @@ const Comment: FC<CommentProps> = ({
       </div>
 
       <div className="my-4 space-y-10 px-4">
-        <Comments id={currentChapterId} />
+        <Comments id={chapterId} />
       </div>
     </div>
   );

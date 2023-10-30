@@ -39,3 +39,7 @@
   flex: 0 0 auto;
   flex: 0 0 auto;
 }
+
+.mt_placeholder {
+  background: url('/static/spinner.gif') center center no-repeat;
+}

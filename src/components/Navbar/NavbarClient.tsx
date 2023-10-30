@@ -43,74 +43,75 @@ const NavbarClient = () => {
   const pinned = useHeadroom({ fixedAt: 120 });
 
   return (
-    <nav
-      className={cn(
-        'sticky top-0 inset-x-0 p-2 z-50 transition-transform backdrop-blur dark:bg-zinc-800/70',
-        {
-          '-translate-y-full': !pinned,
-          hidden: chapterRouteRegex.test(pathName),
-        }
-      )}
-    >
-      <div className="container mx-auto flex items-center justify-between px-0 max-sm:px-1">
-        <div className="flex items-center gap-4">
-          <NavSidebar isLoggedIn={!!session} />
+    !chapterRouteRegex.test(pathName) && (
+      <nav
+        className={cn(
+          'sticky top-0 inset-x-0 p-2 z-50 transition-transform backdrop-blur dark:bg-zinc-800/70',
+          {
+            '-translate-y-full': !pinned,
+          }
+        )}
+      >
+        <div className="container mx-auto flex items-center justify-between px-0 max-sm:px-1">
+          <div className="flex items-center gap-4">
+            <NavSidebar isLoggedIn={!!session} />
 
-          <Link href="/" className="flex items-center gap-2">
-            <Icons.logo
-              aria-label="Moetruyen logo"
-              className="h-6 w-6 bg-black dark:bg-white"
-            />
-            <span
-              aria-label="Moetruyen"
-              className="text-2xl font-semibold max-sm:hidden"
-            >
-              Moetruyen
-            </span>
-          </Link>
-        </div>
+            <Link href="/" className="flex items-center gap-2">
+              <Icons.logo
+                aria-label="Moetruyen logo"
+                className="h-6 w-6 bg-black dark:bg-white"
+              />
+              <span
+                aria-label="Moetruyen"
+                className="text-2xl font-semibold max-sm:hidden"
+              >
+                Moetruyen
+              </span>
+            </Link>
+          </div>
 
-        <div className="flex items-center gap-4 md:gap-6">
-          <Search />
+          <div className="flex items-center gap-4 md:gap-6">
+            <Search />
 
-          {!!session?.user && <Notifications />}
+            {!!session?.user && <Notifications />}
 
-          <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                {session?.user ? (
+                  <UserAvatar className="w-8 h-8" user={session.user} />
+                ) : (
+                  <User2 className="h-7 w-7" aria-label="User button" />
+                )}
+              </DropdownMenuTrigger>
+
               {session?.user ? (
-                <UserAvatar className="w-8 h-8" user={session.user} />
+                <UserDropdownMenu session={session} />
               ) : (
-                <User2 className="h-7 w-7" aria-label="User button" />
+                <DropdownMenuContent align="end" className="min-w-[200px] p-2">
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/sign-in"
+                      className={cn(buttonVariants(), 'w-full cursor-pointer')}
+                    >
+                      Đăng nhập
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/sign-up"
+                      className={cn(buttonVariants(), 'w-full cursor-pointer')}
+                    >
+                      Đăng ký
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
               )}
-            </DropdownMenuTrigger>
-
-            {session?.user ? (
-              <UserDropdownMenu session={session} />
-            ) : (
-              <DropdownMenuContent align="end" className="min-w-[200px] p-2">
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/sign-in"
-                    className={cn(buttonVariants(), 'w-full cursor-pointer')}
-                  >
-                    Đăng nhập
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/sign-up"
-                    className={cn(buttonVariants(), 'w-full cursor-pointer')}
-                  >
-                    Đăng ký
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            )}
-          </DropdownMenu>
+            </DropdownMenu>
+          </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    )
   );
 };
 

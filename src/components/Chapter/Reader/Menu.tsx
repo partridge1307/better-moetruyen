@@ -16,7 +16,6 @@ import {
 import { Switch } from '@/components/ui/Switch';
 import type { DirectionType } from '@/hooks/use-direction-reader';
 import type { LayoutType } from '@/hooks/use-layout-reader';
-import type { ContinuousType } from '@/hooks/use-nav-chapter';
 import { cn } from '@/lib/utils';
 import type { Chapter } from '@prisma/client';
 import {
@@ -28,26 +27,20 @@ import {
   Rows,
 } from 'lucide-react';
 import Link from 'next/link';
-import type { Dispatch, FC, SetStateAction } from 'react';
-import { memo, useState } from 'react';
+import type { FC } from 'react';
+import { memo, useContext, useState } from 'react';
+import {
+  ContinuousContext,
+  DirectionContext,
+  LayoutContext,
+  MenuToggleContext,
+} from './Context';
 
 interface MenuProps {
-  currentChapterId: number;
-  mangaSlug: string;
+  chapterId: number;
   title: string;
-  menuToggle: boolean;
-  setMenuToggle: Dispatch<SetStateAction<boolean>>;
-  layout: LayoutType;
-  // eslint-disable-next-line no-unused-vars
-  setLayout: (type: LayoutType) => void;
-  direction: DirectionType;
-  // eslint-disable-next-line no-unused-vars
-  setDirection: (type: DirectionType) => void;
-  isContinuosEnabled: boolean;
-  // eslint-disable-next-line no-unused-vars
-  setContinuous: (type: ContinuousType) => void;
-  prevChapterId?: number;
-  nextChapterId?: number;
+  prevChapterUrl: string;
+  nextChapterUrl: string;
   chapterList: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'>[];
 }
 
@@ -85,23 +78,19 @@ const directionOpts: {
 ];
 
 const Menu: FC<MenuProps> = ({
-  currentChapterId,
-  mangaSlug,
+  chapterId,
   title,
-  menuToggle,
-  setMenuToggle,
-  layout,
-  setLayout,
-  direction,
-  setDirection,
-  isContinuosEnabled,
-  setContinuous,
-  prevChapterId,
-  nextChapterId,
+  prevChapterUrl,
+  nextChapterUrl,
   chapterList,
 }) => {
+  const [menuToggle, setMenuToggle] = useContext(MenuToggleContext);
+  const { layout, setLayout } = useContext(LayoutContext);
+  const { direction, setDirection } = useContext(DirectionContext);
+  const { isEnabled: isContinuosEnabled, setContinuous } =
+    useContext(ContinuousContext);
   const [value, setValue] = useState(
-    chapterList.find((chapter) => chapter.id === currentChapterId)
+    chapterList.find((chapter) => chapter.id === chapterId)
   );
 
   return (
@@ -139,11 +128,7 @@ const Menu: FC<MenuProps> = ({
         <p className="text-xl">Chapter</p>
         <div className="flex items-center gap-3">
           <Link
-            href={
-              !!prevChapterId
-                ? `/chapter/${prevChapterId}`
-                : `/manga/${mangaSlug}`
-            }
+            href={prevChapterUrl}
             aria-label="previous chapter link button"
             className={buttonVariants({ variant: 'secondary' })}
           >
@@ -197,11 +182,7 @@ const Menu: FC<MenuProps> = ({
             </PopoverContent>
           </Popover>
           <Link
-            href={
-              !!nextChapterId
-                ? `/chapter/${nextChapterId}`
-                : `/manga/${mangaSlug}`
-            }
+            href={nextChapterUrl}
             aria-label="next chapter link button"
             className={buttonVariants({ variant: 'secondary' })}
           >
@@ -276,8 +257,8 @@ const Menu: FC<MenuProps> = ({
         <p>Tự động chuyển Chapter</p>
         <Switch
           aria-label="continuous chapter switch"
-          aria-checked={isContinuosEnabled}
-          checked={isContinuosEnabled}
+          aria-checked={isContinuosEnabled === 'true'}
+          checked={isContinuosEnabled === 'true'}
           onCheckedChange={(checked) =>
             setContinuous(checked ? 'true' : 'false')
           }

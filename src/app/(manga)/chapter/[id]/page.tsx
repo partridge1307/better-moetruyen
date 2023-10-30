@@ -4,6 +4,7 @@ import type { Chapter } from '@prisma/client';
 import dynamic from 'next/dynamic';
 import type { FC } from 'react';
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 const Reader = dynamic(() => import('@/components/Chapter/Reader'), {
   ssr: false,
@@ -16,76 +17,51 @@ interface pageProps {
 }
 
 const page: FC<pageProps> = async ({ params }) => {
-  const [session, chapter] = await Promise.all([
-    getAuthSession(),
-    db.chapter.findUnique({
-      where: {
-        id: +params.id,
-        isPublished: true,
-      },
-      select: {
-        id: true,
-        volume: true,
-        chapterIndex: true,
-        name: true,
-        images: true,
-        manga: {
-          select: {
-            id: true,
-            slug: true,
-            chapter: {
-              where: {
-                isPublished: true,
-              },
-              orderBy: {
-                chapterIndex: 'desc',
-              },
-              select: {
-                id: true,
-                volume: true,
-                chapterIndex: true,
-                name: true,
-              },
+  const chapter = await db.chapter.findUnique({
+    where: {
+      id: +params.id,
+      isPublished: true,
+    },
+    select: {
+      id: true,
+      volume: true,
+      chapterIndex: true,
+      name: true,
+      images: true,
+      manga: {
+        select: {
+          id: true,
+          slug: true,
+          chapter: {
+            where: {
+              isPublished: true,
+            },
+            orderBy: {
+              chapterIndex: 'desc',
+            },
+            select: {
+              id: true,
+              volume: true,
+              chapterIndex: true,
+              name: true,
             },
           },
         },
       },
-    }),
-  ]);
-  if (!chapter) return;
+    },
+  });
+  if (!chapter) return notFound();
 
-  if (session) {
-    await db.history.upsert({
-      where: {
-        userId_mangaId: {
-          userId: session.user.id,
-          mangaId: chapter.manga.id,
-        },
-      },
-      update: {
-        createdAt: new Date(),
-      },
-      create: {
-        userId: session.user.id,
-        mangaId: chapter.manga.id,
-      },
-    });
-  }
+  updateHistory(chapter.manga.id);
 
   const navChapter = getNavChapter(chapter.id, chapter.manga.chapter);
 
   return (
     <main className="relative h-[100dvh] bg-background">
       <Reader
-        currentChapterId={chapter.id}
-        mangaSlug={chapter.manga.slug}
-        images={chapter.images}
-        title={`Vol. ${chapter.volume} Ch. ${chapter.chapterIndex}${
-          !!chapter.name && ` - ${chapter.name}`
-        }`}
         prevChapter={!!navChapter?.prev ? navChapter.prev : null}
         nextChapter={!!navChapter?.next ? navChapter.next : null}
-        chapterList={chapter.manga.chapter}
+        chapter={chapter}
       />
     </main>
   );
@@ -105,6 +81,27 @@ const getNavChapter = (
     next: index === chaptersList.length - 1 ? null : chaptersList[index + 1],
   };
 };
+
+const updateHistory = (mangaId: number) =>
+  getAuthSession().then(async (session) => {
+    if (!session) return;
+
+    return await db.history.upsert({
+      where: {
+        userId_mangaId: {
+          userId: session.user.id,
+          mangaId,
+        },
+      },
+      update: {
+        createdAt: new Date(),
+      },
+      create: {
+        userId: session.user.id,
+        mangaId,
+      },
+    });
+  });
 
 export async function generateMetadata({
   params,

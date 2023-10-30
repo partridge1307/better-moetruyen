@@ -1,34 +1,36 @@
+'use client';
+
 import { buttonVariants } from '@/components/ui/Button';
-import type { DirectionType } from '@/hooks/use-direction-reader';
-import type { LayoutType } from '@/hooks/use-layout-reader';
 import { cn } from '@/lib/utils';
 import classes from '@/styles/chapter/viewer.module.css';
-import type { Chapter } from '@prisma/client';
 import type { UseEmblaCarouselType } from 'embla-carousel-react';
 import Link from 'next/link';
-import { memo, type FC } from 'react';
+import { memo, useContext, type FC } from 'react';
+import {
+  CommentToggleContext,
+  DirectionContext,
+  LayoutContext,
+  MenuToggleContext,
+} from './Context';
 
 interface ViewerProps {
   emblaRef: UseEmblaCarouselType[0];
-  mangaSlug: string;
   images: string[];
-  commentToggle: boolean;
-  menuToggle: boolean;
-  layout: LayoutType;
-  direction: DirectionType;
-  nextChapter: Pick<Chapter, 'id' | 'volume' | 'chapterIndex' | 'name'> | null;
+  nextChapterUrl: string;
+  hasNextChapter: boolean;
 }
 
 const Viewer: FC<ViewerProps> = ({
   emblaRef,
-  mangaSlug,
   images,
-  commentToggle,
-  menuToggle,
-  layout,
-  direction,
-  nextChapter,
+  nextChapterUrl,
+  hasNextChapter,
 }) => {
+  const [menuToggle] = useContext(MenuToggleContext);
+  const [commentToggle] = useContext(CommentToggleContext);
+  const { layout } = useContext(LayoutContext);
+  const { direction } = useContext(DirectionContext);
+
   return (
     <div
       ref={emblaRef}
@@ -51,7 +53,7 @@ const Viewer: FC<ViewerProps> = ({
         {images.map((image, idx) => (
           <div
             key={idx}
-            className={`${classes.mt_page} ${
+            className={`${classes.mt_page} ${classes.mt_placeholder} ${
               layout === 'DOUBLE'
                 ? classes.mt_double
                 : layout === 'SINGLE'
@@ -64,17 +66,19 @@ const Viewer: FC<ViewerProps> = ({
               fetchPriority="high"
               src={image}
               alt={`Trang ${idx + 1}`}
-              className={
-                layout === 'VERTICAL'
-                  ? '!block !w-auto !h-auto mx-auto'
-                  : undefined
-              }
               style={{
+                ...(layout === 'VERTICAL' && {
+                  display: 'block',
+                  width: 'auto',
+                  height: 'auto',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  minHeight: '35px',
+                }),
                 ...(layout !== 'VERTICAL' && {
                   objectFit: 'scale-down',
-                  position: 'absolute',
-                  inset: 0,
-                  color: 'transparent',
+                  width: '100%',
+                  height: '100%',
                 }),
                 ...(layout === 'DOUBLE' &&
                   direction === 'ltr' && {
@@ -89,29 +93,26 @@ const Viewer: FC<ViewerProps> = ({
           </div>
         ))}
         {/* End section */}
-        <div className="relative min-w-0 w-full h-full shrink-0 grow-0 basis-full flex justify-center items-center">
+        <div
+          className={cn(
+            'relative min-w-0 w-full h-full shrink-0 grow-0 basis-full flex justify-center items-center',
+            { 'basis-1/2': layout === 'DOUBLE' && images.length % 2 !== 0 }
+          )}
+        >
           <div className="relative max-w-sm flex flex-col justify-center items-center gap-2 p-2.5 rounded-lg border border-primary/30">
             <p className="text-2xl text-center">
-              {!!nextChapter ? 'Tiếp theo' : 'Đã là chương mới nhất'}
+              {hasNextChapter ? 'Tiếp theo' : 'Đã là chương mới nhất'}
             </p>
             <Link
               aria-label="end chapter link button"
-              href={
-                !!nextChapter
-                  ? `/chapter/${nextChapter.id}`
-                  : `/manga/${mangaSlug}`
-              }
+              href={nextChapterUrl}
               className={buttonVariants({
                 variant: 'secondary',
                 className: 'w-full',
               })}
             >
               <span className="line-clamp-1">
-                {!!nextChapter
-                  ? `Chap tiếp [Vol. ${nextChapter.volume} Ch. ${
-                      nextChapter.chapterIndex
-                    }${!!nextChapter.name && ` - ${nextChapter.name}`}]`
-                  : 'Thông tin truyện'}
+                {hasNextChapter ? 'Chuơng tiếp theo' : 'Thông tin truyện'}
               </span>
             </Link>
           </div>

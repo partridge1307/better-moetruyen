@@ -1,128 +1,104 @@
 'use client';
 
-import type { DirectionType } from '@/hooks/use-direction-reader';
-import type { LayoutType } from '@/hooks/use-layout-reader';
 import { useViewCalc } from '@/hooks/use-view-calc';
 import classes from '@/styles/chapter/bottom.module.css';
+import { useMediaQuery } from '@mantine/hooks';
 import * as Slider from '@radix-ui/react-slider';
 import type { EmblaCarouselType } from 'embla-carousel-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-  Dispatch,
-  SetStateAction,
   memo,
   useCallback,
+  useContext,
   useEffect,
   useState,
   type FC,
 } from 'react';
+import {
+  CommentToggleContext,
+  DirectionContext,
+  InfoToggleContext,
+  LayoutContext,
+  MenuToggleContext,
+} from './Context';
 
 interface BottomProps {
   embla?: EmblaCarouselType;
-  currentChapterId: number;
-  commentToggle: boolean;
-  menuToggle: boolean;
-  layout: LayoutType;
-  direction: DirectionType;
-  showInfo: boolean;
-  setShowInfo: Dispatch<SetStateAction<boolean>>;
+  chapterId: number;
 }
 
-const Bottom: FC<BottomProps> = ({
-  embla,
-  currentChapterId,
-  commentToggle,
-  menuToggle,
-  layout,
-  direction,
-  showInfo,
-  setShowInfo,
-}) => {
+const Bottom: FC<BottomProps> = ({ embla, chapterId }) => {
+  const [menuToggle] = useContext(MenuToggleContext);
+  const [commentToggle] = useContext(CommentToggleContext);
+  const [showInfo, setShowInfo] = useContext(InfoToggleContext);
+  const { layout } = useContext(LayoutContext);
+  const { direction } = useContext(DirectionContext);
+  const { calcView } = useViewCalc(chapterId);
+
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { calcView } = useViewCalc(currentChapterId);
-
-  const [initPage, setInitPage] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(
-    embla?.slideNodes().length ?? 0 - 2
-  );
+  const [totalPages, setTotalPages] = useState(0);
+  const isMobile = useMediaQuery('(max-width: 640px)');
 
   useEffect(() => {
     if (!embla) return;
 
-    const pagesLength = embla.slideNodes().length - 2;
-    setTotalPages(pagesLength);
+    const totalPages =
+      layout === 'DOUBLE'
+        ? embla.slideNodes().length / 2
+        : embla.slideNodes().length - 1;
+    setTotalPages(totalPages);
 
-    const pageParam = searchParams.get('page');
-    if (!pageParam) return;
-
-    let page = parseInt(pageParam);
+    let page = parseInt(searchParams.get('page') ?? '1');
     if (layout === 'DOUBLE') {
       page = Math.floor(Math.abs(page / 2 - 1));
-    }
+    } else page -= 1;
 
-    if (page > 0 && page <= pagesLength) {
-      setInitPage(page);
-    } else if (page <= 0) {
-      page = 1;
-      setInitPage(1);
+    if (page >= 0) {
+      setCurrentPage(page);
+      embla.scrollTo(page, true);
     }
-    embla.scrollTo(page, true);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [embla, layout]);
 
+  useEffect(() => {
+    router.replace(`?page=${currentPage}`, { scroll: false });
+    calcView();
+  }, [currentPage, router, calcView]);
+
   const inViewHandler = useCallback(
     (emblaCb: EmblaCarouselType) => {
       const inViewSlides = emblaCb.slidesInView();
-      let page = inViewSlides[inViewSlides.length - 1] ?? 1;
+      let page = (inViewSlides[inViewSlides.length - 1] ?? 0) + 1;
       if (page >= emblaCb.slideNodes().length) page--;
 
-      setCurrentPage(page);
-
-      page > 0 && (router.push(`?page=${page}`), calcView());
+      setCurrentPage(layout === 'DOUBLE' ? Math.round(page / 2) : page);
     },
-    [calcView, router]
+    [layout]
   );
 
-  const reInitHandler = useCallback(
+  const pointerUpHandler = useCallback(
     (emblaCb: EmblaCarouselType) => {
-      emblaCb.scrollTo(initPage, true);
+      if (!emblaCb.canScrollPrev() || !emblaCb.canScrollNext()) return;
+
+      !isMobile && emblaCb.internalEngine().animation.stop();
     },
-    [initPage]
-  );
-
-  const pointerUpHandler = useCallback((emblaCb: EmblaCarouselType) => {
-    if (!emblaCb.canScrollPrev() || !emblaCb.canScrollNext()) return;
-
-    emblaCb.internalEngine().animation.stop();
-  }, []);
-
-  const resizeHandler = useCallback(
-    (emblaCb: EmblaCarouselType) => {
-      emblaCb.scrollTo(currentPage, true);
-    },
-    [currentPage]
+    [isMobile]
   );
 
   useEffect(() => {
     if (!embla) return;
 
-    embla
-      .on('slidesInView', inViewHandler)
-      .on('pointerUp', pointerUpHandler)
-      .on('reInit', reInitHandler)
-      .on('resize', resizeHandler);
+    embla.on('slidesInView', inViewHandler).on('pointerUp', pointerUpHandler);
 
     return () => {
       embla
         .off('slidesInView', inViewHandler)
-        .off('pointerUp', pointerUpHandler)
-        .off('reInit', reInitHandler)
-        .off('resize', resizeHandler);
+        .off('pointerUp', pointerUpHandler);
     };
-  }, [embla, inViewHandler, pointerUpHandler, reInitHandler, resizeHandler]);
+  }, [embla, inViewHandler, pointerUpHandler]);
 
   const onClickHandler = useCallback(
     (event: MouseEvent, containerRect: DOMRect) => {
@@ -177,9 +153,12 @@ const Bottom: FC<BottomProps> = ({
           showInfo ? classes.active : ''
         }`}
       >
-        <div>{direction === 'ltr' ? currentPage : totalPages}</div>
+        <span>
+          {direction === 'rtl' && layout !== 'VERTICAL'
+            ? totalPages
+            : currentPage}
+        </span>
         <Slider.Root
-          step={layout === 'DOUBLE' ? 2 : 1}
           className={classes.mt_bottom_slider}
           min={1}
           max={totalPages}
@@ -199,7 +178,11 @@ const Bottom: FC<BottomProps> = ({
             </span>
           </Slider.Thumb>
         </Slider.Root>
-        <div>{direction === 'ltr' ? totalPages : currentPage}</div>
+        <span>
+          {direction === 'rtl' && layout !== 'VERTICAL'
+            ? currentPage
+            : totalPages}
+        </span>
       </div>
     </section>
   );

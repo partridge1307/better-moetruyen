@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   description:
     'Web đọc truyện tranh online tiện ích nhất được cập nhật liên tục mỗi ngày - Cùng tham gia đọc truyện và thảo luận tại Moetruyen',
-  referrer: 'origin-when-cross-origin',
+  referrer: 'strict-origin-when-cross-origin',
   generator: 'Moetruyen',
   authors: [{ name: 'Moetruyen' }],
   keywords: ['Manga', 'Truyện tranh', 'Moetruyen'],

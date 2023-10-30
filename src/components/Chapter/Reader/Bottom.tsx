@@ -56,7 +56,7 @@ const Bottom: FC<BottomProps> = ({ embla, chapterId }) => {
     } else page -= 1;
 
     if (page >= 0) {
-      setCurrentPage(page);
+      setCurrentPage(page + 1);
       embla.scrollTo(page, true);
     }
 

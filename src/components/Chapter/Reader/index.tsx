@@ -221,10 +221,7 @@ const Reader: FC<ReaderProps> = ({ prevChapter, nextChapter, chapter }) => {
         }`}
       />
 
-      <section
-        id="viewer-section"
-        className="relative w-full h-full overflow-hidden"
-      >
+      <section className="relative w-full h-full overflow-hidden">
         <Viewer
           emblaRef={emblaRef}
           images={chapter.images}

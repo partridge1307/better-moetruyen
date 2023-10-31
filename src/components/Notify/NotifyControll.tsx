@@ -15,7 +15,7 @@ interface NotifyControllProps {
 const NotifyControll: FC<NotifyControllProps> = ({ setNotifies }) => {
   const { loginToast, serverErrorToast, successToast } = useCustomToast();
 
-  const { mutate: CheckAll, isLoading: isChecking } = useMutation({
+  const { mutate: CheckAll, isPending: isChecking } = useMutation({
     mutationKey: ['notify-read-all'],
     mutationFn: async () => {
       await axios.put('/api/notify');
@@ -40,7 +40,7 @@ const NotifyControll: FC<NotifyControllProps> = ({ setNotifies }) => {
     },
   });
 
-  const { mutate: DeleteAll, isLoading: isDeleting } = useMutation({
+  const { mutate: DeleteAll, isPending: isDeleting } = useMutation({
     mutationKey: ['notify-delete-all'],
     mutationFn: async () => {
       await axios.delete('/api/notify');

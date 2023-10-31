@@ -92,7 +92,8 @@ export const useUploadComment = <TData>({
 
             return [...prev.slice(0, -1), lastComment];
           });
-
+    },
+    onSettled: () => {
       editorRef.current?.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
       editorRef.current?.setEditable(true);
     },

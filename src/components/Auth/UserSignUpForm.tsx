@@ -32,7 +32,7 @@ const UserSignUpForm = () => {
     },
   });
 
-  const { mutate: signUp, isLoading } = useMutation({
+  const { mutate: signUp, isPending } = useMutation({
     mutationKey: ['auth-sign-up'],
     mutationFn: async (values: CreateAuthSignUpPayload) => {
       const signUpForm = AuthSignUpValidator.parse(values);
@@ -135,8 +135,8 @@ const UserSignUpForm = () => {
 
         <Button
           type="submit"
-          isLoading={isLoading}
-          disabled={isLoading}
+          isLoading={isPending}
+          disabled={isPending}
           className="w-full"
         >
           Đăng ký

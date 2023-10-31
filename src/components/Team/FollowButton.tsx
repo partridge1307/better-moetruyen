@@ -27,7 +27,7 @@ const FollowButton: FC<FollowButtonProps> = ({ team, sessionUserId }) => {
   );
   const prevFollow = usePrevious(isFollowed);
 
-  const { mutate: Toggle, isLoading: isToggling } = useMutation({
+  const { mutate: Toggle, isPending: isToggling } = useMutation({
     mutationKey: ['team-follow', team.id],
     mutationFn: async (type: 'FOLLOW' | 'UNFOLLOW') => {
       await axios.post('/api/user/follow/team', {

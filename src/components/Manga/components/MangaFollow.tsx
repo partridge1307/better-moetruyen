@@ -22,7 +22,7 @@ const MangaFollow: FC<MangaFollowProps> = ({ isFollow, mangaId }) => {
   const [isFollowed, setFollowed] = useState(isFollow);
   const prevFollow = usePrevious(isFollowed);
 
-  const { mutate: Toggle, isLoading: isToggling } = useMutation({
+  const { mutate: Toggle, isPending: isToggling } = useMutation({
     mutationKey: ['follow', mangaId],
     mutationFn: async (type: 'FOLLOW' | 'UNFOLLOW') => {
       await axios.post(`/api/user/follow/manga`, { id: mangaId, type });

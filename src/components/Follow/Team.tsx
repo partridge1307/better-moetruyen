@@ -5,7 +5,7 @@ import type { Team } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FC, useEffect } from 'react';
+import { useEffect } from 'react';
 
 type TeamFollowType = Pick<Team, 'id' | 'image' | 'name'> & {
   _count: {
@@ -14,14 +14,7 @@ type TeamFollowType = Pick<Team, 'id' | 'image' | 'name'> & {
   };
 };
 
-interface TeamFollowProps {
-  initialData: {
-    follows: TeamFollowType[];
-    lastCursor?: number;
-  };
-}
-
-const TeamFollow: FC<TeamFollowProps> = ({ initialData }) => {
+const TeamFollow = () => {
   const {
     follows,
     entry,
@@ -29,7 +22,7 @@ const TeamFollow: FC<TeamFollowProps> = ({ initialData }) => {
     isFetchingNextPage,
     ref,
     fetchNextPage,
-  } = useFollow<TeamFollowType>(initialData, 'team');
+  } = useFollow<TeamFollowType>('team');
 
   useEffect(() => {
     if (entry?.isIntersecting && hasNextPage) {

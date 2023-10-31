@@ -30,7 +30,7 @@ export default function DeleteComment<TData>({
   setComments,
   ...props
 }: DeleteCommentProps<TData>) {
-  const { mutate: Delete, isLoading: isDeleting } = useDeleteComment({
+  const { mutate: Delete, isPending: isDeleting } = useDeleteComment({
     commentId,
     APIQuery,
     setComments,

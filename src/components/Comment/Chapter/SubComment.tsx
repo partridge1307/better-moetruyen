@@ -19,6 +19,7 @@ import CommentContent from '../components/CommentContent';
 import type { CommentInputProps } from '../components/CommentInput';
 import CommentOEmbed from '../components/CommentOEmbed';
 import type { DeleteCommentProps } from '../components/DeleteComment';
+import { useCustomToast } from '@/hooks/use-custom-toast';
 
 const CommentVote = dynamic(() => import('../components/CommentVote'), {
   ssr: false,
@@ -48,10 +49,20 @@ interface SubCommentProps {
 }
 
 const SubComment: FC<SubCommentProps> = ({ commentId, session }) => {
-  const { data: subCommentsData, isFetching } =
-    useSubComments<ExtendedSubComment>(commentId);
+  const { serverErrorToast } = useCustomToast();
+  const {
+    data: subCommentsData,
+    error,
+    isFetching,
+  } = useSubComments<ExtendedSubComment>(commentId);
   const [subComments, setSubComments] = useState<ExtendedSubComment[]>([]);
   const prevComments = usePrevious(subComments);
+
+  useEffect(() => {
+    if (error) {
+      serverErrorToast();
+    }
+  }, [error, serverErrorToast]);
 
   useEffect(() => {
     if (subCommentsData?.length) {

@@ -5,7 +5,7 @@ import type { Manga } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FC, useEffect } from 'react';
+import { useEffect } from 'react';
 
 type MangaFollowType = Pick<Manga, 'id' | 'slug' | 'image' | 'name'> & {
   _count: {
@@ -14,14 +14,7 @@ type MangaFollowType = Pick<Manga, 'id' | 'slug' | 'image' | 'name'> & {
   };
 };
 
-interface MangaProps {
-  initialData: {
-    follows: MangaFollowType[];
-    lastCursor?: number;
-  };
-}
-
-const Manga: FC<MangaProps> = ({ initialData }) => {
+const Manga = () => {
   const {
     follows,
     entry,
@@ -29,7 +22,7 @@ const Manga: FC<MangaProps> = ({ initialData }) => {
     isFetchingNextPage,
     ref,
     fetchNextPage,
-  } = useFollow<MangaFollowType>(initialData, 'manga');
+  } = useFollow<MangaFollowType>('manga');
 
   useEffect(() => {
     if (entry?.isIntersecting && hasNextPage) {

@@ -42,7 +42,7 @@ const Index = () => {
   const [query, setQuery] = useState('');
   const [debouncedValue] = useDebouncedValue(query, 300);
 
-  const { mutate: Search, isLoading: isSearching } = useMutation({
+  const { mutate: Search, isPending: isSearching } = useMutation({
     mutationFn: async () => {
       const { data } = await axios.get(`/api/search?q=${debouncedValue}`);
 

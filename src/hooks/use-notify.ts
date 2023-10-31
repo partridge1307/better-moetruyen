@@ -3,23 +3,27 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
+type notifyProps<TData> = {
+  notifications: TData[];
+  lastCursor: number | undefined;
+};
 const useNotify = <TData>() => {
   const [notifies, setNotifies] = useState<TData[]>([]);
 
-  const query = useInfiniteQuery({
+  const query = useInfiniteQuery<notifyProps<TData>>({
     queryKey: ['infinite-notify-query'],
     queryFn: async ({ pageParam }) => {
       let query = `/api/notify?limit=${INFINITE_SCROLL_PAGINATION_RESULTS}`;
-
-      if (pageParam) {
+      if (pageParam && pageParam !== 0) {
         query = `${query}&cursor=${pageParam}`;
       }
 
       const { data } = await axios.get(query);
 
-      return data as { notifications: TData[]; lastCursor: number };
+      return data as notifyProps<TData>;
     },
-    getNextPageParam: (lastPage) => lastPage.lastCursor ?? false,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => lastPage.lastCursor ?? null,
     refetchInterval: 60000,
   });
 

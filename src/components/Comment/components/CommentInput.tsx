@@ -40,10 +40,10 @@ export default function CommentInput<TData>({
   const {
     data: OEmbed,
     mutate: fetch,
-    isLoading: isFetching,
+    isPending: isFetching,
   } = useFetchOEmbed();
 
-  const { mutate: Upload, isLoading: isUploading } = useUploadComment({
+  const { mutate: Upload, isPending: isUploading } = useUploadComment({
     type,
     id,
     session,

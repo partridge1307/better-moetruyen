@@ -24,7 +24,7 @@ const UserVerifyForm = () => {
     },
   });
 
-  const { mutate: VerifyRequest, isLoading: isRequesting } = useMutation({
+  const { mutate: VerifyRequest, isPending: isRequesting } = useMutation({
     mutationKey: ['user-verify-request'],
     mutationFn: async (values: UserVerifyPayload) => {
       await axios.post('/api/auth/verify', values);

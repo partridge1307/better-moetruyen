@@ -24,7 +24,7 @@ const JoinButton: FC<JoinButtonProps> = ({ team, sessionUserId }) => {
   const { loginToast, notFoundToast, serverErrorToast, successToast } =
     useCustomToast();
 
-  const { mutate: Toggle, isLoading: isToggling } = useMutation({
+  const { mutate: Toggle, isPending: isToggling } = useMutation({
     mutationKey: ['team-join', team.id],
     mutationFn: async (type: 'JOIN' | 'LEAVE') => {
       const { status } = await axios.post('/api/team', {

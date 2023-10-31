@@ -46,13 +46,14 @@ const Bottom: FC<BottomProps> = ({ embla, chapterId }) => {
 
     const totalPages =
       layout === 'DOUBLE'
-        ? embla.slideNodes().length / 2
+        ? Math.floor(embla.slideNodes().length / 2)
         : embla.slideNodes().length - 1;
     setTotalPages(totalPages);
 
     let page = parseInt(searchParams.get('page') ?? '1');
+
     if (layout === 'DOUBLE') {
-      page = Math.floor(Math.abs(page / 2 - 1));
+      page = Math.floor(page / 2);
     } else page -= 1;
 
     if (page >= 0) {

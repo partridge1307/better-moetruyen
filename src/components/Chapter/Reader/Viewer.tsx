@@ -93,12 +93,10 @@ const Viewer: FC<ViewerProps> = ({
           </div>
         ))}
         {/* End section */}
-        <div
-          className={cn(
-            'relative min-w-0 w-full h-full shrink-0 grow-0 basis-full flex justify-center items-center',
-            { 'basis-1/2': layout === 'DOUBLE' && images.length % 2 !== 0 }
-          )}
-        >
+        {layout === 'DOUBLE' && images.length % 2 !== 0 && (
+          <div className="min-w-0 w-full h-full shrink-0 grow-0 basis-1/2" />
+        )}
+        <div className="relative min-w-0 w-full h-full shrink-0 grow-0 basis-full flex justify-center items-center">
           <div className="relative max-w-sm flex flex-col justify-center items-center gap-2 p-2.5 rounded-lg border border-primary/30">
             <p className="text-2xl text-center">
               {hasNextChapter ? 'Tiếp theo' : 'Đã là chương mới nhất'}

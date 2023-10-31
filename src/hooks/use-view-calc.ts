@@ -1,5 +1,5 @@
 import { useInterval } from '@mantine/hooks';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const useViewCalc = (currentChapterId: number) => {
   const [seconds, setSeconds] = useState(0);
@@ -11,7 +11,7 @@ const useViewCalc = (currentChapterId: number) => {
     return () => interval.stop();
   }, [interval]);
 
-  const calcView = () => {
+  const calcView = useCallback(() => {
     if (seconds >= 30) {
       interval.stop();
       fetch('/api/chapter', {
@@ -20,7 +20,7 @@ const useViewCalc = (currentChapterId: number) => {
       });
       setSeconds(0);
     }
-  };
+  }, [currentChapterId, interval, seconds]);
 
   return { calcView };
 };

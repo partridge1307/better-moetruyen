@@ -15,11 +15,12 @@ import {
   type FC,
 } from 'react';
 import {
-  CommentToggleContext,
-  DirectionContext,
-  InfoToggleContext,
-  LayoutContext,
-  MenuToggleContext,
+  CommentToggleValueContext,
+  DirectionValueContext,
+  InfoToggleDispatchContext,
+  InfoToggleValueContext,
+  LayoutValueContext,
+  MenuToggleValueContext,
 } from './Context';
 
 interface BottomProps {
@@ -29,11 +30,12 @@ interface BottomProps {
 }
 
 const Bottom: FC<BottomProps> = ({ embla, chapterId, totalImages }) => {
-  const [menuToggle] = useContext(MenuToggleContext);
-  const [commentToggle] = useContext(CommentToggleContext);
-  const [showInfo, setShowInfo] = useContext(InfoToggleContext);
-  const { layout } = useContext(LayoutContext);
-  const { direction } = useContext(DirectionContext);
+  const menuToggle = useContext(MenuToggleValueContext);
+  const commentToggle = useContext(CommentToggleValueContext);
+  const showInfo = useContext(InfoToggleValueContext);
+  const setShowInfo = useContext(InfoToggleDispatchContext);
+  const layout = useContext(LayoutValueContext);
+  const direction = useContext(DirectionValueContext);
   const { calcView } = useViewCalc(chapterId, totalImages);
 
   const router = useRouter();

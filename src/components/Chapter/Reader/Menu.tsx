@@ -30,10 +30,14 @@ import Link from 'next/link';
 import type { FC } from 'react';
 import { memo, useContext, useState } from 'react';
 import {
-  ContinuousContext,
-  DirectionContext,
-  LayoutContext,
-  MenuToggleContext,
+  ContinuousDispatchContext,
+  ContinuousValueContext,
+  DirectionDispatchContext,
+  DirectionValueContext,
+  LayoutDispatchContext,
+  LayoutValueContext,
+  MenuToggleDispatchContext,
+  MenuToggleValueContext,
 } from './Context';
 
 interface MenuProps {
@@ -84,11 +88,14 @@ const Menu: FC<MenuProps> = ({
   nextChapterUrl,
   chapterList,
 }) => {
-  const [menuToggle, setMenuToggle] = useContext(MenuToggleContext);
-  const { layout, setLayout } = useContext(LayoutContext);
-  const { direction, setDirection } = useContext(DirectionContext);
-  const { isEnabled: isContinuosEnabled, setContinuous } =
-    useContext(ContinuousContext);
+  const menuToggle = useContext(MenuToggleValueContext);
+  const setMenuToggle = useContext(MenuToggleDispatchContext);
+  const layout = useContext(LayoutValueContext);
+  const setLayout = useContext(LayoutDispatchContext);
+  const direction = useContext(DirectionValueContext);
+  const setDirection = useContext(DirectionDispatchContext);
+  const isContinuosEnabled = useContext(ContinuousValueContext);
+  const setContinuous = useContext(ContinuousDispatchContext);
   const [value, setValue] = useState(
     chapterList.find((chapter) => chapter.id === chapterId)
   );

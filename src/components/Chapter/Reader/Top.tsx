@@ -7,9 +7,11 @@ import Link from 'next/link';
 import type { FC } from 'react';
 import { memo, useContext, useEffect, useRef } from 'react';
 import {
-  CommentToggleContext,
-  InfoToggleContext,
-  MenuToggleContext,
+  CommentToggleDispatchContext,
+  CommentToggleValueContext,
+  InfoToggleValueContext,
+  MenuToggleDispatchContext,
+  MenuToggleValueContext,
 } from './Context';
 
 interface TopProps {
@@ -18,9 +20,11 @@ interface TopProps {
 }
 
 const Top: FC<TopProps> = ({ href, title }) => {
-  const [menuToggle, setMenuToggle] = useContext(MenuToggleContext);
-  const [commentToggle, setCommentToggle] = useContext(CommentToggleContext);
-  const [showInfo] = useContext(InfoToggleContext);
+  const menuToggle = useContext(MenuToggleValueContext);
+  const setMenuToggle = useContext(MenuToggleDispatchContext);
+  const commentToggle = useContext(CommentToggleValueContext);
+  const setCommentToggle = useContext(CommentToggleDispatchContext);
+  const showInfo = useContext(InfoToggleValueContext);
   const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {

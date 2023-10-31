@@ -2,10 +2,15 @@
 
 import CommentSkeleton from '@/components/Skeleton/CommentSkeleton';
 import { cn } from '@/lib/utils';
+import { usePrevious } from '@mantine/hooks';
 import { ChevronLeft } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { FC, memo, useContext } from 'react';
-import { CommentToggleContext, MenuToggleContext } from './Context';
+import {
+  CommentToggleDispatchContext,
+  CommentToggleValueContext,
+  MenuToggleValueContext,
+} from './Context';
 
 const Comments = dynamic(() => import('@/components/Comment/Chapter'), {
   ssr: false,
@@ -17,16 +22,19 @@ interface CommentProps {
 }
 
 const Comment: FC<CommentProps> = ({ chapterId }) => {
-  const [menuToggle] = useContext(MenuToggleContext);
-  const [commentToggle, setCommentToggle] = useContext(CommentToggleContext);
+  const menuToggle = useContext(MenuToggleValueContext);
+  const commentToggle = useContext(CommentToggleValueContext);
+  const setCommentToggle = useContext(CommentToggleDispatchContext);
+  const prevMenuToggle = usePrevious(menuToggle);
 
   return (
     <div
       className={cn(
-        'absolute top-0 right-0 inset-y-0 w-full md:w-[24rem] z-[21] transition-all duration-300 translate-x-full',
+        'absolute top-0 right-0 inset-y-0 w-full md:w-[24rem] z-20 transition-all duration-300 translate-x-full',
         {
           'translate-x-0': commentToggle,
           'xl:right-[24rem]': menuToggle && commentToggle,
+          'z-[21]': prevMenuToggle,
         },
         'bg-primary-foreground overflow-y-auto md:border-l md:border-foreground/50 scrollbar dark:scrollbar--dark'
       )}

@@ -19,27 +19,36 @@ interface ContextProps {
   };
 }
 
-export const MenuToggleContext = createContext<
-  [boolean, Dispatch<SetStateAction<boolean>>]
->([false, () => {}]);
-export const CommentToggleContext = createContext<
-  [boolean, Dispatch<SetStateAction<boolean>>]
->([false, () => {}]);
-export const InfoToggleContext = createContext<
-  [boolean, Dispatch<SetStateAction<boolean>>]
->([false, () => {}]);
-export const LayoutContext = createContext<{
-  layout: LayoutType;
-  setLayout: (type: LayoutType) => void;
-}>({ layout: 'VERTICAL', setLayout: () => {} });
-export const DirectionContext = createContext<{
-  direction: DirectionType;
-  setDirection: (type: DirectionType) => void;
-}>({ direction: 'ltr', setDirection: () => {} });
-export const ContinuousContext = createContext<{
-  isEnabled: ContinuousType;
-  setContinuous: (state: ContinuousType) => void;
-}>({ isEnabled: 'true', setContinuous: () => {} });
+// Menu context
+export const MenuToggleValueContext = createContext<boolean>(false);
+export const MenuToggleDispatchContext = createContext<
+  Dispatch<SetStateAction<boolean>>
+>(() => {});
+// Comment context
+export const CommentToggleValueContext = createContext<boolean>(false);
+export const CommentToggleDispatchContext = createContext<
+  Dispatch<SetStateAction<boolean>>
+>(() => {});
+// Info context
+export const InfoToggleValueContext = createContext<boolean>(false);
+export const InfoToggleDispatchContext = createContext<
+  Dispatch<SetStateAction<boolean>>
+>(() => {});
+// Layout context
+export const LayoutValueContext = createContext<LayoutType>('VERTICAL');
+export const LayoutDispatchContext = createContext<(type: LayoutType) => void>(
+  () => {}
+);
+// Direction context
+export const DirectionValueContext = createContext<DirectionType>('ltr');
+export const DirectionDispatchContext = createContext<
+  (type: DirectionType) => void
+>(() => {});
+// Continuous context
+export const ContinuousValueContext = createContext<ContinuousType>('true');
+export const ContinuousDispatchContext = createContext<
+  (state: ContinuousType) => void
+>(() => {});
 
 const Context: FC<ContextProps> = ({
   children,
@@ -51,19 +60,47 @@ const Context: FC<ContextProps> = ({
   continuousConfig,
 }) => {
   return (
-    <MenuToggleContext.Provider value={menuConfig}>
-      <CommentToggleContext.Provider value={commentConfig}>
-        <InfoToggleContext.Provider value={infoConfig}>
-          <LayoutContext.Provider value={layoutConfig}>
-            <DirectionContext.Provider value={directionConfig}>
-              <ContinuousContext.Provider value={continuousConfig}>
-                {children}
-              </ContinuousContext.Provider>
-            </DirectionContext.Provider>
-          </LayoutContext.Provider>
-        </InfoToggleContext.Provider>
-      </CommentToggleContext.Provider>
-    </MenuToggleContext.Provider>
+    // Menu Provider
+    <MenuToggleValueContext.Provider value={menuConfig[0]}>
+      <MenuToggleDispatchContext.Provider value={menuConfig[1]}>
+        {/* Comment Provider */}
+        <CommentToggleValueContext.Provider value={commentConfig[0]}>
+          <CommentToggleDispatchContext.Provider value={commentConfig[1]}>
+            {/* Info Provider */}
+            <InfoToggleValueContext.Provider value={infoConfig[0]}>
+              <InfoToggleDispatchContext.Provider value={infoConfig[1]}>
+                {/* Layout Provider */}
+                <LayoutValueContext.Provider value={layoutConfig.layout}>
+                  <LayoutDispatchContext.Provider
+                    value={layoutConfig.setLayout}
+                  >
+                    {/* Direction Provider */}
+                    <DirectionValueContext.Provider
+                      value={directionConfig.direction}
+                    >
+                      <DirectionDispatchContext.Provider
+                        value={directionConfig.setDirection}
+                      >
+                        {/* Continuous Provider */}
+                        <ContinuousValueContext.Provider
+                          value={continuousConfig.isEnabled}
+                        >
+                          <ContinuousDispatchContext.Provider
+                            value={continuousConfig.setContinuous}
+                          >
+                            {children}
+                          </ContinuousDispatchContext.Provider>
+                        </ContinuousValueContext.Provider>
+                      </DirectionDispatchContext.Provider>
+                    </DirectionValueContext.Provider>
+                  </LayoutDispatchContext.Provider>
+                </LayoutValueContext.Provider>
+              </InfoToggleDispatchContext.Provider>
+            </InfoToggleValueContext.Provider>
+          </CommentToggleDispatchContext.Provider>
+        </CommentToggleValueContext.Provider>
+      </MenuToggleDispatchContext.Provider>
+    </MenuToggleValueContext.Provider>
   );
 };
 

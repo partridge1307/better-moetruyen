@@ -1,6 +1,6 @@
 import type { Chapter } from '@prisma/client';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 export type ContinuousType = 'true' | 'false';
 
@@ -16,26 +16,35 @@ const useNavChapter = ({
   mangaSlug,
 }: navChapterProps) => {
   const router = useRouter();
-  const savedContinuous =
-    (localStorage.getItem('continuous') as ContinuousType) ?? 'true';
-  const [isEnabled, setIsEnabled] = useState<ContinuousType>(savedContinuous);
+  const savedContinuous = useRef(
+    (localStorage.getItem('continuous') as ContinuousType) ?? 'true'
+  );
+  const [isEnabled, setIsEnabled] = useState<ContinuousType>(
+    savedContinuous.current
+  );
 
-  const setContinuous = (state: ContinuousType) => {
+  const setContinuous = useCallback((state: ContinuousType) => {
     localStorage.setItem('continuous', state);
     setIsEnabled(state);
-  };
-  const goToPrev = () =>
-    isEnabled === 'false'
-      ? null
-      : router.push(
-          !!prevChapter ? `/chapter/${prevChapter.id}` : `/manga/${mangaSlug}`
-        );
-  const goToNext = () =>
-    isEnabled === 'false'
-      ? null
-      : router.push(
-          !!nextChapter ? `/chapter/${nextChapter.id}` : `/manga/${mangaSlug}`
-        );
+  }, []);
+  const goToPrev = useCallback(
+    () =>
+      isEnabled === 'false'
+        ? null
+        : router.push(
+            !!prevChapter ? `/chapter/${prevChapter.id}` : `/manga/${mangaSlug}`
+          ),
+    [isEnabled, router, prevChapter, mangaSlug]
+  );
+  const goToNext = useCallback(
+    () =>
+      isEnabled === 'false'
+        ? null
+        : router.push(
+            !!nextChapter ? `/chapter/${nextChapter.id}` : `/manga/${mangaSlug}`
+          ),
+    [isEnabled, mangaSlug, nextChapter, router]
+  );
 
   return {
     isEnabled,

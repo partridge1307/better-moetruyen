@@ -7,10 +7,10 @@ import type { UseEmblaCarouselType } from 'embla-carousel-react';
 import Link from 'next/link';
 import { memo, useContext, type FC } from 'react';
 import {
-  CommentToggleContext,
-  DirectionContext,
-  LayoutContext,
-  MenuToggleContext,
+  CommentToggleValueContext,
+  DirectionValueContext,
+  LayoutValueContext,
+  MenuToggleValueContext,
 } from './Context';
 
 interface ViewerProps {
@@ -26,10 +26,10 @@ const Viewer: FC<ViewerProps> = ({
   nextChapterUrl,
   hasNextChapter,
 }) => {
-  const [menuToggle] = useContext(MenuToggleContext);
-  const [commentToggle] = useContext(CommentToggleContext);
-  const { layout } = useContext(LayoutContext);
-  const { direction } = useContext(DirectionContext);
+  const menuToggle = useContext(MenuToggleValueContext);
+  const commentToggle = useContext(CommentToggleValueContext);
+  const layout = useContext(LayoutValueContext);
+  const direction = useContext(DirectionValueContext);
 
   return (
     <div

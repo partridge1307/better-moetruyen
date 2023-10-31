@@ -68,13 +68,13 @@ const CarouselManga: FC<CarouselMangaProps> = ({ pin }) => {
           <Link
             href={`/manga/${manga.slug}`}
             className={cn(
-              'h-full p-2 grid grid-cols-[.5fr_1fr] md:grid-cols-[.3fr_1fr] gap-6 opacity-50 transition-opacity rounded-md bg-background/50',
+              'h-full p-2 grid grid-cols-[.5fr_1fr] md:grid-cols-[.3fr_1fr] gap-3 md:gap-6 opacity-50 transition-opacity rounded-md bg-background/50',
               {
                 'opacity-100': idx === currentSlideIdx,
               }
             )}
           >
-            <MangaImage sizes="20vw" manga={manga} />
+            <MangaImage priority sizes="20vw" manga={manga} />
 
             {!isMobile ? (
               <div className="space-y-2.5">
@@ -100,7 +100,7 @@ const CarouselManga: FC<CarouselMangaProps> = ({ pin }) => {
                   <p className="line-clamp-3">{manga.review}</p>
                 </div>
 
-                <TagWrapper className="col-span-2 pb-3">
+                <TagWrapper className="col-span-2 pb-4">
                   {manga.tags.slice(0, 5).map((tag, idx) => (
                     <TagContent key={idx} title={tag.description}>
                       {tag.name}

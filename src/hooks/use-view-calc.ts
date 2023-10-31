@@ -1,9 +1,14 @@
 import { useInterval } from '@mantine/hooks';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-const useViewCalc = (currentChapterId: number) => {
+const miniumPage = 10;
+
+const useViewCalc = (chapterId: number, totalImages: number) => {
   const [seconds, setSeconds] = useState(0);
   const interval = useInterval(() => setSeconds((s) => s + 1), 1000);
+  const threshold = useRef(
+    totalImages > miniumPage ? 30 : Math.floor(totalImages * 3 * 0.7)
+  );
 
   useEffect(() => {
     interval.start();
@@ -12,15 +17,15 @@ const useViewCalc = (currentChapterId: number) => {
   }, [interval]);
 
   const calcView = useCallback(() => {
-    if (seconds >= 30) {
+    if (seconds >= threshold.current) {
       interval.stop();
       fetch('/api/chapter', {
         method: 'POST',
-        body: JSON.stringify({ id: currentChapterId }),
+        body: JSON.stringify({ id: chapterId }),
       });
       setSeconds(0);
     }
-  }, [currentChapterId, interval, seconds]);
+  }, [chapterId, interval, seconds]);
 
   return { calcView };
 };

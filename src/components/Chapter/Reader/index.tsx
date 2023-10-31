@@ -252,7 +252,11 @@ const Reader: FC<ReaderProps> = ({ prevChapter, nextChapter, chapter }) => {
         />
       </section>
 
-      <Bottom embla={embla} chapterId={chapter.id} />
+      <Bottom
+        embla={embla}
+        chapterId={chapter.id}
+        totalImages={chapter.images.length}
+      />
     </Context>
   );
 };

@@ -25,30 +25,29 @@ import {
 interface BottomProps {
   embla?: EmblaCarouselType;
   chapterId: number;
+  totalImages: number;
 }
 
-const Bottom: FC<BottomProps> = ({ embla, chapterId }) => {
+const Bottom: FC<BottomProps> = ({ embla, chapterId, totalImages }) => {
   const [menuToggle] = useContext(MenuToggleContext);
   const [commentToggle] = useContext(CommentToggleContext);
   const [showInfo, setShowInfo] = useContext(InfoToggleContext);
   const { layout } = useContext(LayoutContext);
   const { direction } = useContext(DirectionContext);
-  const { calcView } = useViewCalc(chapterId);
+  const { calcView } = useViewCalc(chapterId, totalImages);
 
   const router = useRouter();
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(totalImages);
   const isMobile = useMediaQuery('(max-width: 640px)');
 
   useEffect(() => {
     if (!embla) return;
 
-    const totalPages =
-      layout === 'DOUBLE'
-        ? Math.floor(embla.slideNodes().length / 2)
-        : embla.slideNodes().length - 1;
-    setTotalPages(totalPages);
+    setTotalPages(
+      layout === 'DOUBLE' ? Math.round(totalImages / 2) : totalImages
+    );
 
     let page = parseInt(searchParams.get('page') ?? '1');
 

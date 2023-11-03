@@ -36,13 +36,13 @@ const page: FC<pageProps> = async ({ searchParams }) => {
         Từ khóa tìm kiếm: <span>{query}</span>
       </h1>
 
-      <div className="grid md:grid-cols-[1fr_.5fr] gap-10 lg:gap-6">
+      <div className="grid md:grid-cols-[1fr_.5fr] gap-10 md:gap-6">
         <section className="min-w-0 w-full h-fit p-2 space-y-12 rounded-md bg-gradient-to-b from-background/40">
           <div className="space-y-4">
             <div className="flex justify-between">
               <h1 className="text-xl font-semibold">Manga</h1>
               <Link
-                aria-label="manga view more button"
+                aria-label="xem thêm manga link button"
                 href={`/search/manga?q=${queryParam}`}
                 className="relative flex items-center group"
               >
@@ -84,7 +84,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
             <div className="flex justify-between">
               <h1 className="text-xl font-semibold">Forum</h1>
               <Link
-                aria-label="forum view more button"
+                aria-label="xem thêm forum link button"
                 href={`/search/forum?q=${queryParam}`}
                 className="relative flex items-center group"
               >
@@ -133,7 +133,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
           <div className="flex justify-between">
             <h1 className="text-xl font-semibold">Người dùng</h1>
             <Link
-              aria-label="user view more button"
+              aria-label="xem thêm người dùng link button"
               href={`/search/user?q=${queryParam}`}
               className="relative flex items-center group"
             >

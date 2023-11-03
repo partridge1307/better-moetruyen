@@ -28,9 +28,16 @@ const PaginationControll: FC<PaginationControllProps> = ({ total, route }) => {
     <section className="flex flex-wrap justify-center items-center gap-4">
       <Button
         size={'sm'}
+        aria-label="previous page"
         className="px-2"
         disabled={!(page - 1 > 0)}
-        onClick={() => router.push(`${route}&limit=${limit}&page=${page - 1}`)}
+        onClick={() =>
+          router.push(
+            `${route}${
+              route[route.length - 1] === '?' ? '' : '&'
+            }limit=${limit}&page=${page - 1}`
+          )
+        }
       >
         <ChevronLeft className="w-5 h-5" />
       </Button>
@@ -60,9 +67,16 @@ const PaginationControll: FC<PaginationControllProps> = ({ total, route }) => {
 
       <Button
         size={'sm'}
+        aria-label="next page"
         className="px-2"
         disabled={!((page - 1) * limit + limit < total)}
-        onClick={() => router.push(`${route}&limit=${limit}&page=${page + 1}`)}
+        onClick={() =>
+          router.push(
+            `${route}${
+              route[route.length - 1] === '?' ? '' : '&'
+            }limit=${limit}&page=${page + 1}`
+          )
+        }
       >
         <ChevronRight className="w-5 h-5" />
       </Button>

@@ -88,7 +88,7 @@ const Default: FC<defaultProps> = async ({ params }) => {
       <TabsContent
         value="manga"
         forceMount
-        className="data-[state=inactive]:hidden grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[650px] overflow-auto scrollbar dark:scrollbar--dark"
+        className="data-[state=inactive]:hidden grid grid-cols-1 md:grid-cols-2 gap-6"
       >
         {!!user.manga.length ? (
           user.manga.map((manga) => <MangaCard key={manga.id} manga={manga} />)
@@ -100,7 +100,7 @@ const Default: FC<defaultProps> = async ({ params }) => {
       <TabsContent
         value="forum"
         forceMount
-        className="data-[state=inactive]:hidden space-y-4 max-h-[650px] overflow-auto scrollbar dark:scrollbar--dark"
+        className="data-[state=inactive]:hidden space-y-4"
       >
         {!!user.subForum.length ? (
           user.subForum.map((forum) => (
@@ -139,7 +139,7 @@ const Default: FC<defaultProps> = async ({ params }) => {
 
       <TabsContent
         value="followedBy"
-        className="data-[state=inactive]:hidden space-y-4 max-h-[650px] overflow-auto scrollbar dark:scrollbar--dark"
+        className="data-[state=inactive]:hidden space-y-4"
       >
         {!!user.followedBy.length ? (
           user.followedBy.map((usr) => (
@@ -174,7 +174,7 @@ const Default: FC<defaultProps> = async ({ params }) => {
 
       <TabsContent
         value="following"
-        className="data-[state=inactive]:hidden space-y-4 max-h-[650px] overflow-auto scrollbar dark:scrollbar--dark"
+        className="data-[state=inactive]:hidden space-y-4"
       >
         {!!user.following.length ? (
           user.following.map((usr) => (

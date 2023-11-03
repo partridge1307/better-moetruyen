@@ -13,7 +13,7 @@ const page = async () => {
   if (!session) return redirect(`/sign-in`);
 
   return (
-    <main className="container max-sm:px-2 space-y-6 lg:space-y-10">
+    <main className="container max-sm:px-2 space-y-4 mt-10">
       <h1 className="text-xl font-semibold">Manga bạn đang theo dõi</h1>
 
       <MangaFollow />

@@ -17,7 +17,7 @@ const PaginationControll: FC<PaginationControllProps> = ({ total, route }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const page = parseInt(searchParams.get('page') ?? '1');
-  const limit = parseInt(searchParams.get('limit') ?? '10');
+  const limit = parseInt(searchParams.get('limit') ?? '20');
 
   const pagigation = usePagination({
     total: Math.ceil(total / limit),
@@ -41,7 +41,9 @@ const PaginationControll: FC<PaginationControllProps> = ({ total, route }) => {
           return (
             <Link
               key={idx}
-              href={`${route}&limit=${limit}&page=${range}`}
+              href={`${route}${
+                route[route.length - 1] === '?' ? '' : '&'
+              }limit=${limit}&page=${range}`}
               className={cn(
                 buttonVariants({ size: 'sm', variant: 'ghost' }),
                 'hover:bg-primary/80 hover:text-primary-foreground',

@@ -13,7 +13,7 @@ const page = async ({
   searchParams: { [key: string]: string | string[] | undefined };
 }) => {
   const page = searchParams['page'] ?? '1';
-  const limit = searchParams['limit'] ?? '10';
+  const limit = searchParams['limit'] ?? '20';
 
   const session = await getAuthSession();
   if (!session) return redirect(`/sign-in`);
@@ -43,7 +43,7 @@ const page = async ({
   if (!user) return notFound();
 
   return (
-    <main className="container max-sm:px-2 space-y-6 lg:space-y-10">
+    <main className="container max-sm:px-2 space-y-4 mt-10">
       <h1 className="text-xl font-semibold">Người dùng bạn đang theo dõi</h1>
 
       <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 p-2 rounded-md dark:bg-zinc-900/60">

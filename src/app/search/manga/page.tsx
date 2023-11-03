@@ -1,7 +1,7 @@
-import { db } from '@/lib/db';
-import { searchManga } from '@/lib/query';
+import MangaImage from '@/components/Manga/components/MangaImage';
+import { countFTResult, searchManga } from '@/lib/query';
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
+import Link from 'next/link';
 import { FC } from 'react';
 
 const PaginationControll = dynamic(
@@ -34,46 +34,42 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       take: Number(limit),
       skip: (Number(page) - 1) * Number(limit),
     }),
-    db.manga.count({ where: { name: query, isPublished: true } }),
+    countFTResult(query, 'Manga'),
   ]);
 
   return (
-    <main className="container mx-auto max-sm:px-2 space-y-10 mb-10">
-      <h1 className="text-lg font-semibold p-1 rounded-md dark:bg-zinc-900/60">
-        <span>Từ khóa:</span> {queryParam}
-      </h1>
+    <main className="container max-sm:px-2 mt-10 space-y-4">
+      <h1 className="text-xl">Từ khóa: {query}</h1>
 
-      {!!mangas.length ? (
-        <div className="rounded-md p-2 space-y-6 dark:bg-zinc-900/60">
-          {mangas.map((manga, idx) => (
-            <div
-              key={idx}
-              className="grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800"
-            >
-              <div className="relative" style={{ aspectRatio: 4 / 3 }}>
-                <Image
-                  fill
-                  sizes="(max-width: 640px) 25vw, 30vw"
-                  quality={40}
-                  src={manga.image}
-                  alt={`${manga.name} Thumbnail`}
-                  className="object-cover rounded-md"
+      {mangas.length ? (
+        <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-2 rounded-md bg-gradient-to-b from-background/40">
+          {mangas.map((manga) => (
+            <li key={manga.id}>
+              <Link
+                href={`/manga/${manga.slug}`}
+                className="grid grid-cols-[.6fr_1fr] rounded-md group transition-colors hover:bg-primary-foreground"
+              >
+                <MangaImage
+                  manga={manga}
+                  sizes="(max-width: 640px) 25vw, 20vw"
+                  className="group-hover:scale-105 transition-transform"
                 />
-              </div>
-
-              <div className="space-y-1.5">
-                <p className="text-lg lg:text-xl font-semibold">{manga.name}</p>
-                <p className="line-clamp-2">{manga.review}</p>
-              </div>
-            </div>
+                <div className="space-y-0.5 min-w-0 pl-4 px-2">
+                  <p className="text-2xl lg:text-3xl line-clamp-2 font-semibold">
+                    {manga.name}
+                  </p>
+                  <p className="line-clamp-3">{manga.slug}</p>
+                </div>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
-        <p>Không tìm thấy Forum</p>
+        <p>Không có kết quả</p>
       )}
 
       <PaginationControll
-        total={total}
+        total={total[0].count}
         route={`/search/manga?q=${queryParam}`}
       />
     </main>

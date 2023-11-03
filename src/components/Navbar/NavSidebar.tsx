@@ -142,9 +142,9 @@ const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       <SheetTrigger>
         <Menu aria-label="sidebar button" className="h-8 w-8" />
       </SheetTrigger>
-      <SheetContent side="left" className="p-0 dark:bg-zinc-800">
+      <SheetContent side="left" className="p-0 bg-muted">
         <div className="scrollbar dark:scrollbar--dark container flex h-[90%] flex-col overflow-y-auto pb-4 max-sm:px-2">
-          <h1 className="sticky top-0 bg-white py-4 text-center text-2xl font-semibold dark:bg-zinc-800">
+          <h1 className="sticky top-0 py-4 text-center text-2xl font-semibold bg-muted">
             Moetruyen
           </h1>
           <ul className="mt-2 flex flex-col gap-y-8 px-4">
@@ -153,9 +153,8 @@ const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                 className={cn(
                   'flex justify-center items-center w-full gap-2 py-2 rounded-lg text-center text-xl font-medium',
                   {
-                    'bg-slate-200 dark:bg-zinc-900/70': pathname === '/',
-                    'hover:bg-slate-100 dark:hover:bg-zinc-700':
-                      pathname !== '/',
+                    'bg-primary-foreground': pathname === '/',
+                    'hover:bg-primary-foreground/70': pathname !== '/',
                   }
                 )}
               >
@@ -176,9 +175,8 @@ const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                         className={cn(
                           'w-full py-2 pl-8 text-start rounded-lg transition-colors duration-100',
                           {
-                            'bg-slate-200 dark:bg-zinc-900/70':
-                              pathname === nsm.link,
-                            'hover:bg-slate-100 dark:hover:bg-zinc-700':
+                            'bg-primary-foreground': pathname === nsm.link,
+                            'hover:bg-primary-foreground/70':
                               pathname !== nsm.link,
                           }
                         )}
@@ -193,7 +191,7 @@ const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
           </ul>
         </div>
 
-        <div className="flex h-[10%] items-center justify-between px-6 dark:bg-zinc-900">
+        <div className="flex h-[10%] items-center justify-between px-6 bg-primary-foreground">
           <div>
             <p>©Moetruyen</p>
             <p>Version: 1.0.0</p>

@@ -1,5 +1,4 @@
-import { db } from '@/lib/db';
-import { searchForum } from '@/lib/query';
+import { countFTResult, searchForum } from '@/lib/query';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { FC } from 'react';
@@ -34,46 +33,48 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       take: Number(limit),
       skip: (Number(page) - 1) * Number(limit),
     }),
-    db.subForum.count({ where: { title: query } }),
+    countFTResult(query, 'SubForum'),
   ]);
 
   return (
-    <main className="container mx-auto max-sm:px-2 space-y-10 mb-10">
-      <h1 className="text-lg font-semibold p-1 rounded-md dark:bg-zinc-900/60">
-        <span>Từ khóa:</span> {queryParam}
-      </h1>
+    <main className="container max-sm:px-2 space-y-4 mt-10">
+      <h1 className="text-xl">Từ khóa: {query}</h1>
 
-      {!!forums.length ? (
-        <div className="rounded-md dark:bg-zinc-900/60">
-          {forums.map((forum) => (
-            <a
-              key={forum.slug}
-              target="_blank"
-              href={`${process.env.NEXT_PUBLIC_FORUM_URL}/${forum.slug}`}
-              className="grid grid-cols-[.3fr_1fr] gap-4 rounded-md p-2 transition-colors hover:dark:bg-zinc-900"
-            >
-              {!!forum.banner && (
+      {forums.length ? (
+        <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-2 rounded-md bg-gradient-to-b from-background/40">
+          {forums.map((forum, idx) => (
+            <li key={idx}>
+              <a
+                target="_blank"
+                href={`${process.env.NEXT_PUBLIC_FORUM_URL}/${forum.slug}`}
+                className="block space-y-1.5 group transition-colors hover:bg-primary-foreground"
+              >
                 <div className="relative aspect-video">
-                  <Image
-                    fill
-                    sizes="(max-width: 640px) 25vw, 30vw"
-                    quality={40}
-                    src={forum.banner}
-                    alt={`${forum.title} Thumbnail`}
-                    className="rounded-md object-cover"
-                  />
+                  {!!forum.banner ? (
+                    <Image
+                      fill
+                      sizes="(max-width: 640px) 25vw, 20vw"
+                      src={forum.banner}
+                      alt={`Ảnh bìa ${forum.title}`}
+                      className="object-cover rounded-md transition-transform group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-primary-foreground rounded-md" />
+                  )}
                 </div>
-              )}
-              <p className="text-xl font-semibold">{forum.title}</p>
-            </a>
+                <p className="text-2xl lg:text-3xl line-clamp-3 px-2 font-semibold">
+                  {forum.title}
+                </p>
+              </a>
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
-        <p>Không tìm thấy Forum</p>
+        <p>Không có kết quả</p>
       )}
 
       <PaginationControll
-        total={total}
+        total={total[0].count}
         route={`/search/forum?q=${queryParam}`}
       />
     </main>

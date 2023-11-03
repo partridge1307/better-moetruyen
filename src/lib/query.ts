@@ -129,3 +129,16 @@ export const searchMentionUser = ({
 
   return db.$queryRaw`SELECT "id", "name" FROM "User" WHERE to_tsvector('english', "name") @@ to_tsquery(${query}) LIMIT ${take}`;
 };
+
+export const countFTResult = (
+  searchPhrase: string,
+  type: 'Manga' | 'SubForum' | 'User'
+): Promise<{ count: number }[]> => {
+  const query = generateSearchPhrase(searchPhrase);
+
+  if (type === 'Manga')
+    return db.$queryRaw`SELECT COUNT(*)::int FROM "Manga" WHERE to_tsvector('english', "name") @@ to_tsquery(${query}) AND "isPublished" = true`;
+  else if (type === 'SubForum')
+    return db.$queryRaw`SELECT COUNT(*)::int FROM "SubForum" WHERE to_tsvector('english', "title") @@ to_tsquery(${query})`;
+  return db.$queryRaw`SELECT COUNT(*)::int FROM "User" WHERE to_tsvector('english', "name") @@ to_tsquery(${query})`;
+};

@@ -49,7 +49,7 @@ const page = () => {
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-semibold">Mới cập nhật</h1>
               <Link href="/latest" className="group flex items-center gap-1.5">
-                <span className="transition-all duration-200 opacity-0 translate-x-1/2 group-hover:opacity-100 group-hover:translate-x-0">
+                <span className="transition-all duration-300 opacity-0 translate-x-1/2 group-hover:opacity-100 group-hover:translate-x-0">
                   Xem thêm
                 </span>
                 <MoveRight className="w-8 h-8" />

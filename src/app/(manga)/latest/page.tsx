@@ -18,7 +18,7 @@ interface pageProps {
 
 const getSearchParams = ({ searchParams }: pageProps) => {
   const pageParams = searchParams['page'] ?? '1';
-  const limitParams = searchParams['limit'] ?? '10';
+  const limitParams = searchParams['limit'] ?? '20';
 
   const page = pageParams
     ? typeof pageParams === 'string'
@@ -82,7 +82,8 @@ const page: FC<pageProps> = async ({ searchParams }) => {
   ]);
 
   return (
-    <main className="container mx-auto max-sm:px-2 space-y-10 mt-10">
+    <main className="container mx-auto max-sm:px-2 space-y-4 mt-10">
+      <h1 className="text-2xl font-semibold">Mới cập nhật</h1>
       <ul className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-2 rounded-md bg-gradient-to-b from-background/40">
         {latestManga.length ? (
           latestManga.map(({ manga }, idx) => (

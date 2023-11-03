@@ -1,7 +1,6 @@
 import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
-import { db } from '@/lib/db';
-import { searchUser } from '@/lib/query';
+import { countFTResult, searchUser } from '@/lib/query';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -36,43 +35,41 @@ const page: FC<pageProps> = async ({ searchParams }) => {
       take: Number(limit),
       skip: (Number(page) - 1) * Number(limit),
     }),
-    db.user.count({
-      where: {
-        name: {
-          contains: query,
-        },
-      },
-    }),
+    countFTResult(query, 'User'),
   ]);
 
   return (
-    <main className="container mx-auto max-sm:px-2 space-y-10 mb-10">
-      <h1 className="text-lg font-semibold p-1 rounded-md dark:bg-zinc-900/60">
-        <span>Từ khóa:</span> {queryParam}
-      </h1>
+    <main className="container max-sm:px-2 space-y-4 mt-10">
+      <h1 className="text-xl">Từ khóa: {query}</h1>
 
-      {!!users.length ? (
-        <div className="grid grid-cols-2 gap-6 p-2 rounded-md dark:bg-zinc-900/60">
+      {users.length ? (
+        <ul className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 p-2 rounded-md bg-gradient-to-b from-background/40">
           {users.map((user, idx) => (
-            <Link
-              key={idx}
-              href={`/user/${user.name?.split(' ').join('-')}`}
-              className="flex gap-4 rounded-md p-2 transition-colors hover:dark:bg-zinc-900"
-            >
-              <UserAvatar
-                user={user}
-                className="w-20 h-20 border-4 dark:bg-zinc-900"
-              />
-              <Username user={user} className="text-xl font-semibold pt-1" />
-            </Link>
+            <li key={idx}>
+              <Link
+                href={`/user/${user.name.split(' ').join('-')}`}
+                className="grid grid-cols-[.3fr_1fr] gap-4 p-2 rounded-md group transition-colors hover:bg-primary-foreground"
+              >
+                <div className="relative aspect-square">
+                  <UserAvatar
+                    user={user}
+                    className="w-full h-full bg-background border-4 border-muted"
+                  />
+                </div>
+                <Username
+                  user={user}
+                  className="text-start text-xl lg:text-2xl font-semibold"
+                />
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
-        <p>Không tìm thấy Forum</p>
+        <p>Không có kết quả</p>
       )}
 
       <PaginationControll
-        total={total}
+        total={total[0].count}
         route={`/search/user?q=${queryParam}`}
       />
     </main>

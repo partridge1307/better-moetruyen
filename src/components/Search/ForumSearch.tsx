@@ -11,10 +11,10 @@ interface ForumSearchProps {
 
 const ForumSearch: FC<ForumSearchProps> = ({ forums }) => {
   return !!forums?.length ? (
-    <div className="space-y-4">
+    <div className="grid md:grid-cols-2 gap-4">
       {forums.map((forum, idx) => (
         <a key={idx} target="_blank" href={`/m/${forum.slug}`}>
-          <SheetClose className="w-full text-start grid grid-cols-[.5fr_1fr] lg:grid-cols-[.1fr_1fr] gap-4 p-2 rounded-md transition-colors hover:dark:bg-zinc-800">
+          <SheetClose className="w-full text-start grid grid-cols-[.5fr_1fr] lg:grid-cols-[.2fr_1fr] gap-4 p-2 rounded-md transition-colors hover:bg-muted">
             <div>
               {!!forum.banner && (
                 <div className="relative aspect-video">
@@ -30,7 +30,7 @@ const ForumSearch: FC<ForumSearchProps> = ({ forums }) => {
               )}
             </div>
 
-            <p className="text-lg lg:text-xl font-semibold">{forum.title}</p>
+            <p className="text-2xl lg:text-3xl font-semibold">{forum.title}</p>
           </SheetClose>
         </a>
       ))}

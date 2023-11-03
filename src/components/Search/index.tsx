@@ -81,15 +81,14 @@ const Index = () => {
         <SearchIcon className="w-7 h-7" aria-label="Search button" />
       </SheetTrigger>
 
-      <SheetContent side={'top'} className="p-2">
+      <SheetContent side={'top'} className="p-2 bg-primary-foreground">
         <form
           onSubmit={(e) => {
             e.preventDefault();
-
-            router.push(`/search?q=${query}`);
-
+            e.stopPropagation();
             const target = document.getElementById('sheet-close-button');
             target?.click();
+            router.push(`/search?q=${query}`);
           }}
         >
           <Input
@@ -98,33 +97,42 @@ const Index = () => {
             placeholder="Tìm kiếm"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="bg-zinc-800"
+            className="bg-muted"
           />
         </form>
 
         {isSearching && !!debouncedValue.length && <SearchSkeleton />}
 
         {!isSearching && !debouncedValue.length && (
-          <p className="mt-6 px-1">Nhập nội dung bạn muốn tìm kiếm</p>
+          <p className="mt-4 px-1">Nhập nội dung bạn muốn tìm kiếm</p>
         )}
 
         {!isSearching && !!debouncedValue.length && (
-          <Tabs defaultValue="manga" className="mt-6">
+          <Tabs defaultValue="manga" className="mt-4">
             <TabsList>
               <TabsTrigger value="manga">Manga</TabsTrigger>
               <TabsTrigger value="user">User</TabsTrigger>
               <TabsTrigger value="forum">Forum</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="manga">
+            <TabsContent
+              value="manga"
+              className="relative pr-2 max-h-[calc(100dvh-7.5rem)] overflow-y-auto scrollbar dark:scrollbar--dark"
+            >
               <MangaSearch mangas={searchResults?.mangas} />
             </TabsContent>
 
-            <TabsContent value="user">
+            <TabsContent
+              value="user"
+              className="relative pr-2 max-h-[calc(100dvh-7.5rem)] overflow-y-auto scrollbar dark:scrollbar--dark"
+            >
               <UserSearch users={searchResults?.users} />
             </TabsContent>
 
-            <TabsContent value="forum">
+            <TabsContent
+              value="forum"
+              className="relative pr-2 max-h-[calc(100dvh-7.5rem)] overflow-y-auto scrollbar dark:scrollbar--dark"
+            >
               <ForumSearch forums={searchResults?.forums} />
             </TabsContent>
           </Tabs>

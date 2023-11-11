@@ -1,8 +1,10 @@
+import type { User } from '@prisma/client';
 import {
   NumberDictionary,
-  type Config,
   uniqueNamesGenerator,
+  type Config,
 } from 'unique-names-generator';
+import { db } from './db';
 
 const CatNames = [
   'MoeMongMo',
@@ -39,4 +41,26 @@ const customConfig: Config = {
   length: 2,
 };
 
-export const generateRandomName = uniqueNamesGenerator(customConfig);
+export const setRandomUsername = async (userId: string): Promise<User> => {
+  const randomName = uniqueNamesGenerator(customConfig);
+
+  const isExisted = await db.user.findUnique({
+    where: {
+      name: randomName,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (isExisted) return setRandomUsername(userId);
+  else
+    return await db.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        name: randomName,
+      },
+    });
+};

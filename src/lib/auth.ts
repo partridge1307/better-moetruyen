@@ -11,7 +11,7 @@ import { authenticator } from 'otplib';
 import { decrypt } from './crypto';
 import { db } from './db';
 import { signInMail, textSignInMail, transporter } from './mail';
-import { generateRandomName } from './uniqueName';
+import { setRandomUsername } from './uniqueName';
 import { AuthSignInValidator, AuthTwoFactorValidator } from './validators/auth';
 
 export interface AuthContext {
@@ -266,14 +266,7 @@ export const authOptionsWrapper = (
           }
 
           if (!dbUser.name) {
-            const updatedUser = await db.user.update({
-              where: {
-                id: dbUser.id,
-              },
-              data: {
-                name: generateRandomName,
-              },
-            });
+            const updatedUser = await setRandomUsername(dbUser.id);
 
             return {
               user: {

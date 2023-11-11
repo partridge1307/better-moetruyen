@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import { FC } from 'react';
+import { FC, memo } from 'react';
 
 interface CommentOEmbedProps {
   oEmbed: Prisma.JsonValue;
@@ -55,4 +55,4 @@ const CommentOEmbed: FC<CommentOEmbedProps> = ({ oEmbed }) => {
   );
 };
 
-export default CommentOEmbed;
+export default memo(CommentOEmbed);

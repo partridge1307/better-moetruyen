@@ -67,6 +67,52 @@ const FollowValidator = z.object({
   cursor: z.string().nullish().optional(),
 });
 
+const getMangaFollows = ({
+  cursor,
+  limit,
+  userId,
+}: {
+  cursor?: number;
+  limit: number;
+  userId: string;
+}) => {
+  let paginationProps: Prisma.MangaFindManyArgs = {};
+  if (cursor) {
+    paginationProps.skip = 1;
+    paginationProps.cursor = {
+      id: cursor,
+    };
+  }
+
+  return db.user.findUniqueOrThrow({
+    where: {
+      id: userId,
+    },
+    select: {
+      mangaFollowing: {
+        select: {
+          id: true,
+          slug: true,
+          name: true,
+          image: true,
+          _count: {
+            select: {
+              chapter: {
+                where: {
+                  isPublished: true,
+                },
+              },
+              followedBy: true,
+            },
+          },
+        },
+        take: limit,
+        ...paginationProps,
+      },
+    },
+  });
+};
+
 export async function GET(req: Request) {
   const url = new URL(req.url);
 
@@ -80,67 +126,11 @@ export async function GET(req: Request) {
     });
 
     const cursor = userCursor ? parseInt(userCursor) : undefined;
-
-    let user;
-    if (cursor) {
-      user = await db.user.findUniqueOrThrow({
-        where: {
-          id: session.user.id,
-        },
-        select: {
-          mangaFollowing: {
-            select: {
-              id: true,
-              slug: true,
-              name: true,
-              image: true,
-              _count: {
-                select: {
-                  chapter: {
-                    where: {
-                      isPublished: true,
-                    },
-                  },
-                  followedBy: true,
-                },
-              },
-            },
-            take: parseInt(limit),
-            skip: 1,
-            cursor: {
-              id: cursor,
-            },
-          },
-        },
-      });
-    } else {
-      user = await db.user.findUniqueOrThrow({
-        where: {
-          id: session.user.id,
-        },
-        select: {
-          mangaFollowing: {
-            select: {
-              id: true,
-              slug: true,
-              name: true,
-              image: true,
-              _count: {
-                select: {
-                  chapter: {
-                    where: {
-                      isPublished: true,
-                    },
-                  },
-                  followedBy: true,
-                },
-              },
-            },
-            take: parseInt(limit),
-          },
-        },
-      });
-    }
+    const user = await getMangaFollows({
+      cursor,
+      limit: parseInt(limit),
+      userId: session.user.id,
+    });
 
     return new Response(
       JSON.stringify({

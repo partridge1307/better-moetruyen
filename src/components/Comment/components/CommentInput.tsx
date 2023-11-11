@@ -9,6 +9,7 @@ import { $isAutoLinkNode, type AutoLinkNode } from '@lexical/link';
 import { type LexicalEditor } from 'lexical';
 import type { Session } from 'next-auth';
 import {
+  memo,
   useCallback,
   useEffect,
   useRef,
@@ -22,16 +23,14 @@ export type CommentInputProps<TData> = {
   session: Session;
   id: number;
   setComments: Dispatch<SetStateAction<TData[]>>;
-  prevComment?: TData[];
   APIQuery: string;
 };
 
-export default function CommentInput<TData>({
+function CommentInput<TData>({
   type,
   session,
   id,
   setComments,
-  prevComment,
   APIQuery,
 }: CommentInputProps<TData>) {
   const editorRef = useRef<LexicalEditor>(null);
@@ -48,7 +47,6 @@ export default function CommentInput<TData>({
     id,
     session,
     setComments,
-    prevComment,
     editorRef,
     APIQuery,
   });
@@ -114,3 +112,5 @@ export default function CommentInput<TData>({
     </div>
   );
 }
+
+export default memo(CommentInput) as typeof CommentInput;

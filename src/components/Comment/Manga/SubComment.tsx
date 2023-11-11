@@ -3,9 +3,9 @@
 import CommentVoteSkeleton from '@/components/Skeleton/CommentVoteSkeleton';
 import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
+import { useCustomToast } from '@/hooks/use-custom-toast';
 import { useSubComments } from '@/hooks/use-sub-comment';
 import { cn, formatTimeToNow } from '@/lib/utils';
-import { usePrevious } from '@mantine/hooks';
 import type {
   Comment,
   CommentVote as CommentVoteType,
@@ -19,7 +19,6 @@ import CommentContent from '../components/CommentContent';
 import type { CommentInputProps } from '../components/CommentInput';
 import CommentOEmbed from '../components/CommentOEmbed';
 import type { DeleteCommentProps } from '../components/DeleteComment';
-import { useCustomToast } from '@/hooks/use-custom-toast';
 
 const CommentVote = dynamic(() => import('../components/CommentVote'), {
   ssr: false,
@@ -56,7 +55,6 @@ const SubComment: FC<SubCommentProps> = ({ commentId, session }) => {
     isFetching,
   } = useSubComments<ExtendedSubComment>(commentId);
   const [subComments, setSubComments] = useState<ExtendedSubComment[]>([]);
-  const prevComments = usePrevious(subComments);
 
   useEffect(() => {
     if (error) {
@@ -144,7 +142,6 @@ const SubComment: FC<SubCommentProps> = ({ commentId, session }) => {
           session={session}
           id={commentId}
           setComments={setSubComments}
-          prevComment={prevComments}
           APIQuery="/api/comment/manga"
         />
       )}

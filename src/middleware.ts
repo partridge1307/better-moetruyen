@@ -35,12 +35,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/api/chapter',
-    '/api/comment/chapter',
-    '/api/comment/manga',
-    '/api/user/follow',
-    '/api/user/follow/team',
-    '/api/user/follow/manga',
-  ],
+  matcher: ['/api/chapter', '/api/((?=comment|(user/follow)).*)', ,],
 };

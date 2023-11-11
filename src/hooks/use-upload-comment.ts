@@ -12,7 +12,6 @@ export const useUploadComment = <TData>({
   id: commentId,
   session,
   setComments,
-  prevComment,
   editorRef,
   APIQuery,
 }: {
@@ -20,7 +19,6 @@ export const useUploadComment = <TData>({
   id: number;
   session: Session;
   setComments: Dispatch<SetStateAction<TData[]>>;
-  prevComment?: TData[];
   editorRef: MutableRefObject<LexicalEditor | null>;
   APIQuery: string;
 }) => {
@@ -35,7 +33,11 @@ export const useUploadComment = <TData>({
       return data as number;
     },
     onError: (err) => {
-      setComments(prevComment ?? []);
+      setComments((prev) =>
+        type === 'COMMENT'
+          ? prev.slice(1, prev.length)
+          : prev.slice(0, prev.length - 1)
+      );
 
       if (err instanceof AxiosError) {
         if (err.response?.status === 401) return loginToast();

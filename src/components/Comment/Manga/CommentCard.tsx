@@ -1,3 +1,4 @@
+import CommentVoteSkeleton from '@/components/Skeleton/CommentVoteSkeleton';
 import UserAvatar from '@/components/User/UserAvatar';
 import Username from '@/components/User/Username';
 import { buttonVariants } from '@/components/ui/Button';
@@ -5,13 +6,12 @@ import { formatTimeToNow } from '@/lib/utils';
 import { MessageSquare } from 'lucide-react';
 import type { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { FC, useRef } from 'react';
 import { ExtendedComment } from '.';
-import CommentVoteSkeleton from '@/components/Skeleton/CommentVoteSkeleton';
 import CommentContent from '../components/CommentContent';
 import CommentOEmbed from '../components/CommentOEmbed';
 import SubCommentWrapper from '../components/SubCommentWrapper';
-import Link from 'next/link';
 
 const CommentVote = dynamic(() => import('../components/CommentVote'), {
   ssr: false,

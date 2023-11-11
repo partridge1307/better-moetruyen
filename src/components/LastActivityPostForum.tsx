@@ -30,7 +30,7 @@ const LastActivityPostForum = async () => {
         <a
           key={post.id}
           target="_blank"
-          href={`${process.env.NEXT_PUBLIC_FORUM_URL}/${post.subForum.slug}/${post.id}`}
+          href={`${process.env.NEXT_PUBLIC_FORUM_URL}/m/${post.subForum.slug}/${post.id}`}
           className="block p-1 rounded-md space-y-1.5 transition-colors bg-background/10 hover:bg-background/30"
         >
           <p className="text-xl">{post.title}</p>

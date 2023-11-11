@@ -1,17 +1,17 @@
 'use client';
 
 import { useComments } from '@/hooks/use-comment';
-import { useIntersection, usePrevious } from '@mantine/hooks';
+import { cn } from '@/lib/utils';
+import { useIntersection } from '@mantine/hooks';
 import type { Chapter, Comment, CommentVote, User } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import type { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { CommentInputProps } from '../components/CommentInput';
 import type { DeleteCommentProps } from '../components/DeleteComment';
 import CommentCard from './CommentCard';
-import { cn } from '@/lib/utils';
-import Link from 'next/link';
 
 const CommentInput = dynamic<CommentInputProps<ExtendedComment>>(
   () => import('../components/CommentInput'),
@@ -51,7 +51,6 @@ const Comments = ({ id, session }: CommentProps) => {
     root: lastCmtRef.current,
   });
   const [comments, setComments] = useState<ExtendedComment[]>([]);
-  const prevComments = usePrevious(comments);
 
   const {
     data: commentsData,
@@ -78,7 +77,6 @@ const Comments = ({ id, session }: CommentProps) => {
           id={id}
           session={session}
           setComments={setComments}
-          prevComment={prevComments}
           APIQuery={API_QUERY}
         />
       ) : (

@@ -3,13 +3,13 @@
 import { Button } from '@/components/ui/Button';
 import { useVote } from '@/hooks/use-vote';
 import { cn } from '@/lib/utils';
-import type { CommentVote } from '@prisma/client';
+import type { CommentVote as Vote } from '@prisma/client';
 import { Heart, HeartOff } from 'lucide-react';
-import { FC } from 'react';
+import { FC, memo } from 'react';
 
 interface CommentVoteProps extends React.HTMLAttributes<HTMLButtonElement> {
   commentId: number;
-  votes: CommentVote[];
+  votes: Vote[];
   sessionUserId?: string;
   APIQuery: string;
   isSending?: boolean;
@@ -72,4 +72,4 @@ const CommentVote: FC<CommentVoteProps> = ({
   );
 };
 
-export default CommentVote;
+export default memo(CommentVote);

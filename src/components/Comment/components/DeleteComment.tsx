@@ -3,6 +3,7 @@
 import useDeleteComment from '@/hooks/use-delete-comment';
 import { Loader2, X } from 'lucide-react';
 import type { Dispatch, SetStateAction } from 'react';
+import { memo } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,7 +24,7 @@ export type DeleteCommentProps<TData> = {
   setComments: Dispatch<SetStateAction<TData[]>>;
 } & React.HTMLAttributes<HTMLButtonElement>;
 
-export default function DeleteComment<TData>({
+function DeleteComment<TData>({
   commentId,
   APIQuery,
   isSending,
@@ -70,3 +71,5 @@ export default function DeleteComment<TData>({
     </AlertDialog>
   );
 }
+
+export default memo(DeleteComment) as typeof DeleteComment;

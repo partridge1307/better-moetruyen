@@ -71,6 +71,47 @@ const FollowValidator = z.object({
   cursor: z.string().nullish().optional(),
 });
 
+const getTeamFollows = ({
+  cursor,
+  limit,
+  userId,
+}: {
+  cursor?: number;
+  limit: number;
+  userId: string;
+}) => {
+  let paginationProps: Prisma.TeamFindManyArgs = {};
+  if (cursor) {
+    paginationProps.skip = 1;
+    paginationProps.cursor = {
+      id: cursor,
+    };
+  }
+
+  return db.user.findUniqueOrThrow({
+    where: {
+      id: userId,
+    },
+    select: {
+      teamFollowing: {
+        select: {
+          id: true,
+          image: true,
+          name: true,
+          _count: {
+            select: {
+              member: true,
+              follows: true,
+            },
+          },
+        },
+        take: limit,
+        ...paginationProps,
+      },
+    },
+  });
+};
+
 export async function GET(req: Request) {
   const url = new URL(req.url);
 
@@ -84,57 +125,11 @@ export async function GET(req: Request) {
     });
 
     const cursor = userCursor ? parseInt(userCursor) : undefined;
-
-    let user;
-    if (cursor) {
-      user = await db.user.findUniqueOrThrow({
-        where: {
-          id: session.user.id,
-        },
-        select: {
-          teamFollowing: {
-            select: {
-              id: true,
-              image: true,
-              name: true,
-              _count: {
-                select: {
-                  member: true,
-                  follows: true,
-                },
-              },
-            },
-            take: parseInt(limit),
-            skip: 1,
-            cursor: {
-              id: cursor,
-            },
-          },
-        },
-      });
-    } else {
-      user = await db.user.findUniqueOrThrow({
-        where: {
-          id: session.user.id,
-        },
-        select: {
-          teamFollowing: {
-            select: {
-              id: true,
-              image: true,
-              name: true,
-              _count: {
-                select: {
-                  member: true,
-                  follows: true,
-                },
-              },
-            },
-            take: parseInt(limit),
-          },
-        },
-      });
-    }
+    const user = await getTeamFollows({
+      cursor,
+      limit: parseInt(limit),
+      userId: session.user.id,
+    });
 
     return new Response(
       JSON.stringify({

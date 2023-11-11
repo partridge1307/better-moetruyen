@@ -8,6 +8,47 @@ const NotifyValidator = z.object({
   cursor: z.string().nullish().optional(),
 });
 
+const getNotifies = ({
+  cursor,
+  limit,
+  userId,
+}: {
+  cursor?: number;
+  limit: number;
+  userId: string;
+}) => {
+  let paginationProps: Prisma.NotifyFindManyArgs = {};
+  if (cursor) {
+    paginationProps.skip = 1;
+    paginationProps.cursor = {
+      id: cursor,
+    };
+  }
+
+  return db.user.findUniqueOrThrow({
+    where: {
+      id: userId,
+    },
+    select: {
+      notifications: {
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+        select: {
+          id: true,
+          type: true,
+          content: true,
+          endPoint: true,
+          createdAt: true,
+          isRead: true,
+        },
+        ...paginationProps,
+      },
+    },
+  });
+};
+
 export async function GET(req: Request) {
   const url = new URL(req.url);
 
@@ -21,57 +62,11 @@ export async function GET(req: Request) {
     });
 
     const cursor = userCursor ? parseInt(userCursor) : undefined;
-
-    let notify;
-    if (cursor) {
-      notify = await db.user.findUniqueOrThrow({
-        where: {
-          id: session.user.id,
-        },
-        select: {
-          notifications: {
-            take: parseInt(limit),
-            skip: 1,
-            cursor: {
-              id: cursor,
-            },
-            orderBy: {
-              createdAt: 'desc',
-            },
-            select: {
-              id: true,
-              type: true,
-              content: true,
-              endPoint: true,
-              createdAt: true,
-              isRead: true,
-            },
-          },
-        },
-      });
-    } else {
-      notify = await db.user.findUniqueOrThrow({
-        where: {
-          id: session.user.id,
-        },
-        select: {
-          notifications: {
-            take: parseInt(limit),
-            orderBy: {
-              createdAt: 'desc',
-            },
-            select: {
-              id: true,
-              type: true,
-              content: true,
-              endPoint: true,
-              createdAt: true,
-              isRead: true,
-            },
-          },
-        },
-      });
-    }
+    const notify = await getNotifies({
+      cursor,
+      limit: parseInt(limit),
+      userId: session.user.id,
+    });
 
     return new Response(
       JSON.stringify({

@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { useElementSize } from '@mantine/hooks';
 import type { Prisma } from '@prisma/client';
 import dynamic from 'next/dynamic';
-import { FC, useState } from 'react';
+import { FC, memo, useState } from 'react';
 
 const MoetruyenEditorOutput = dynamic(
   () => import('@/components/Editor/MoetruyenEditorOutput'),
@@ -51,4 +51,4 @@ const CommentContent: FC<CommentProps> = ({
   );
 };
 
-export default CommentContent;
+export default memo(CommentContent);

@@ -1,10 +1,67 @@
 import { db } from '@/lib/db';
+import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 const CommentValidator = z.object({
   limit: z.string(),
   cursor: z.string().nullish().optional(),
 });
+
+const getComments = ({
+  cursor,
+  limit,
+  mangaId,
+}: {
+  cursor?: number;
+  limit: number;
+  mangaId: number;
+}) => {
+  let paginationProps: Prisma.CommentFindManyArgs = {};
+  if (cursor) {
+    paginationProps.skip = 1;
+    paginationProps.cursor = {
+      id: cursor,
+    };
+  }
+
+  return db.comment.findMany({
+    where: {
+      mangaId,
+      replyToId: null,
+    },
+    select: {
+      id: true,
+      content: true,
+      oEmbed: true,
+      createdAt: true,
+      votes: true,
+      authorId: true,
+      author: {
+        select: {
+          name: true,
+          color: true,
+          image: true,
+        },
+      },
+      chapter: {
+        select: {
+          id: true,
+          chapterIndex: true,
+        },
+      },
+      _count: {
+        select: {
+          replies: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    take: limit,
+    ...paginationProps,
+  });
+};
 
 export async function GET(req: Request, context: { params: { id: string } }) {
   try {
@@ -16,87 +73,11 @@ export async function GET(req: Request, context: { params: { id: string } }) {
     });
 
     const cursor = userCursor ? parseInt(userCursor) : undefined;
-
-    let comments;
-    if (cursor) {
-      comments = await db.comment.findMany({
-        where: {
-          mangaId: +context.params.id,
-          replyToId: null,
-        },
-        select: {
-          id: true,
-          content: true,
-          oEmbed: true,
-          createdAt: true,
-          votes: true,
-          authorId: true,
-          author: {
-            select: {
-              name: true,
-              color: true,
-              image: true,
-            },
-          },
-          chapter: {
-            select: {
-              id: true,
-              chapterIndex: true,
-            },
-          },
-          _count: {
-            select: {
-              replies: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        take: parseInt(limit),
-        skip: 1,
-        cursor: {
-          id: cursor,
-        },
-      });
-    } else {
-      comments = await db.comment.findMany({
-        where: {
-          mangaId: +context.params.id,
-          replyToId: null,
-        },
-        select: {
-          id: true,
-          content: true,
-          oEmbed: true,
-          createdAt: true,
-          votes: true,
-          authorId: true,
-          author: {
-            select: {
-              name: true,
-              color: true,
-              image: true,
-            },
-          },
-          chapter: {
-            select: {
-              id: true,
-              chapterIndex: true,
-            },
-          },
-          _count: {
-            select: {
-              replies: true,
-            },
-          },
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        take: parseInt(limit),
-      });
-    }
+    const comments = await getComments({
+      cursor,
+      limit: parseInt(limit),
+      mangaId: +context.params.id,
+    });
 
     return new Response(
       JSON.stringify({

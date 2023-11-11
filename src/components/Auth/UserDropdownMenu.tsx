@@ -1,4 +1,3 @@
-import { cn } from '@/lib/utils';
 import type { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
 import { FC } from 'react';
@@ -33,20 +32,28 @@ const UserDropdownMenu: FC<UserDropdownMenuProps> = ({ session }) => {
 
       <Username
         user={session.user}
-        className="text-lg text-start font-semibold pl-4 mt-11 lg:mt-14"
+        className="text-lg text-start font-semibold pl-4 mt-11 lg:mt-12"
       />
 
       <DropdownMenuSeparator className="my-2" />
 
-      <a
-        href={process.env.NEXT_PUBLIC_ME_URL}
-        className={cn(
-          buttonVariants({ variant: 'secondary' }),
-          'w-full cursor-pointer'
-        )}
-      >
-        Quản lý
-      </a>
+      <div className="space-y-2">
+        <a
+          href={process.env.NEXT_PUBLIC_ME_URL}
+          className={buttonVariants({ className: 'w-full cursor-pointer' })}
+        >
+          Đăng truyện
+        </a>
+        <a
+          href={process.env.NEXT_PUBLIC_ME_URL}
+          className={buttonVariants({
+            variant: 'secondary',
+            className: 'w-full cursor-pointer',
+          })}
+        >
+          Quản lý
+        </a>
+      </div>
 
       <DropdownMenuSeparator className="my-2" />
 

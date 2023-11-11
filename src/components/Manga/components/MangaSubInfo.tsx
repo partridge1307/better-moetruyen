@@ -1,6 +1,3 @@
-import UserAvatar from '@/components/User/UserAvatar';
-import UserBanner from '@/components/User/UserBanner';
-import Username from '@/components/User/Username';
 import {
   Popover,
   PopoverContent,
@@ -9,9 +6,20 @@ import {
 import { db } from '@/lib/db';
 import { nFormatter } from '@/lib/utils';
 import { Bookmark, Eye, Loader2, MessageSquare, Pen } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { FC } from 'react';
+import { type FC } from 'react';
+
+const UserAvatar = dynamic(() => import('@/components/User/UserAvatar'), {
+  ssr: false,
+});
+const UserBanner = dynamic(() => import('@/components/User/UserBanner'), {
+  ssr: false,
+});
+const Username = dynamic(() => import('@/components/User/Username'), {
+  ssr: false,
+});
 
 interface MangaSubInfoProps {
   mangaId: number;

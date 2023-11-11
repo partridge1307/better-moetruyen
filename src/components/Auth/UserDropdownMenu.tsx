@@ -39,7 +39,7 @@ const UserDropdownMenu: FC<UserDropdownMenuProps> = ({ session }) => {
 
       <div className="space-y-2">
         <a
-          href={process.env.NEXT_PUBLIC_ME_URL}
+          href={`${process.env.NEXT_PUBLIC_ME_URL}/upload`}
           className={buttonVariants({ className: 'w-full cursor-pointer' })}
         >
           Đăng truyện

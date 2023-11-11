@@ -17,7 +17,7 @@ const Page = async () => {
   if (session) return redirect('/');
 
   return (
-    <main className="mx-auto md:w-3/4 lg:w-2/3 p-2 space-y-10 mb-6 rounded-md dark:bg-zinc-900/60">
+    <main className="mx-auto md:w-3/4 lg:w-2/3 p-2 space-y-10 mt-12 my-6 rounded-md bg-primary-foreground">
       <Link
         href="/"
         className={buttonVariants({

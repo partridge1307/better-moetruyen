@@ -222,7 +222,7 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
             <span>Lọc</span>
           </DialogTrigger>
 
-          <DialogContent className="dark:bg-zinc-900">
+          <DialogContent>
             <div className="flex flex-wrap items-center gap-4">
               <DialogClose
                 className="p-2 rounded-md transition-colors bg-orange-600 hover:bg-orange-600/90"
@@ -231,7 +231,9 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
                 Xong
               </DialogClose>
               <button
-                className="flex items-center space-x-2 p-2 rounded-md transition-colors bg-zinc-800 hover:bg-zinc-800/70"
+                type="button"
+                aria-label="Reset filter button"
+                className="flex items-center space-x-2 p-2 rounded-md transition-colors bg-primary-foreground hover:bg-primary-foreground/80"
                 onClick={onTagReset}
               >
                 <FilterX className="w-5 h-5" />
@@ -287,9 +289,9 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
 
             {tags.map((category, idx) => (
               <div key={idx} className="space-y-2">
-                <h1 className="text-lg lg:text-xl font-semibold">
+                <p className="text-lg lg:text-xl font-semibold">
                   {category.category}
-                </h1>
+                </p>
 
                 <div className="flex flex-wrap gap-4">
                   {category.data.map((tag) => (
@@ -297,7 +299,7 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
                       key={tag.id}
                       title={tag.description}
                       aria-label={`${tag.name} tag`}
-                      className={cn('p-1 px-2 rounded-md', {
+                      className={cn('p-1 px-2 rounded-md bg-muted', {
                         'bg-orange-600': include.includes(tag.id),
                         'bg-red-600': exclude.includes(tag.id),
                       })}

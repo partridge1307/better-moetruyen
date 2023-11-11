@@ -8,7 +8,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/Accordion';
-import { TagContent, TagWrapper } from '@/components/ui/Tag';
+import { TagWrapper } from '@/components/ui/Tag';
 import { db } from '@/lib/db';
 import type { Manga } from '@prisma/client';
 import type { Metadata } from 'next';
@@ -152,9 +152,14 @@ const page: FC<pageProps> = async ({ params }) => {
         <section className="mx-1 md:px-4 md:mx-9 mt-6 md:mt-7 space-y-8">
           <TagWrapper className="px-2">
             {manga.tags.map((tag) => (
-              <TagContent key={tag.id} title={tag.description}>
-                {tag.name}
-              </TagContent>
+              <li key={tag.id} title={tag.description}>
+                <Link
+                  href={`/advanced-search?include=${tag.id}`}
+                  className="block p-0.5 px-2 rounded-lg font-medium bg-primary text-primary-foreground"
+                >
+                  {tag.name}
+                </Link>
+              </li>
             ))}
           </TagWrapper>
 

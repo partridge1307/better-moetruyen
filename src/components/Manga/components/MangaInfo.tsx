@@ -7,6 +7,7 @@ import '@mantine/core/styles.layer.css';
 import { useMediaQuery } from '@mantine/hooks';
 import type { Manga, MangaAuthor } from '@prisma/client';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { FC } from 'react';
 
 const MoetruyenEditorOutput = dynamic(
@@ -49,11 +50,13 @@ const MangaDescription: FC<MangaDescriptionProps> = ({ manga }) => {
               <p className="text-lg font-semibold">Tác giả</p>
               <ul className="flex flex-wrap items-center gap-x-4 gap-y-2.5">
                 {manga.author.map((author, idx) => (
-                  <li
-                    key={idx}
-                    className="py-0.5 px-2 rounded-md bg-foreground/10"
-                  >
-                    {author.name}
+                  <li key={idx}>
+                    <Link
+                      href={`/advanced-search?author=${author.name}`}
+                      className="block py-0.5 px-2 rounded-md bg-foreground/10"
+                    >
+                      {author.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -81,11 +84,13 @@ const MangaDescription: FC<MangaDescriptionProps> = ({ manga }) => {
             <p className="text-lg font-semibold">Tác giả</p>
             <ul className="flex flex-wrap items-center gap-x-4 gap-y-2.5">
               {manga.author.map((author, idx) => (
-                <li
-                  key={idx}
-                  className="py-0.5 px-2 rounded-md bg-foreground/10"
-                >
-                  {author.name}
+                <li key={idx}>
+                  <Link
+                    href={`/advanced-search?author=${author.name}`}
+                    className="block py-0.5 px-2 rounded-md bg-foreground/10"
+                  >
+                    {author.name}
+                  </Link>
                 </li>
               ))}
             </ul>

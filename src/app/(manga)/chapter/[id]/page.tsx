@@ -37,7 +37,7 @@ const page: FC<pageProps> = async ({ params }) => {
               isPublished: true,
             },
             orderBy: {
-              chapterIndex: 'desc',
+              chapterIndex: 'asc',
             },
             select: {
               id: true,

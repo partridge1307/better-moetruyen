@@ -180,14 +180,14 @@ const page: FC<pageProps> = async ({ params }) => {
           <dl className="flex items-center gap-1.5 max-sm:w-full">
             <dt>Đang theo dõi:</dt>
             <dd className="flex items-center gap-0.5">
-              {user._count.followedBy} <Wifi className="w-5 h-5 rotate-45" />
+              {user._count.following} <Wifi className="w-5 h-5 rotate-45" />
             </dd>
           </dl>
 
           <dl className="flex items-center gap-1.5 max-sm:w-full">
             <dt>Người theo dõi:</dt>
             <dd className="flex gap-1">
-              {user._count.following} <Users2 className="w-5 h-5" />
+              {user._count.followedBy} <Users2 className="w-5 h-5" />
             </dd>
           </dl>
         </div>

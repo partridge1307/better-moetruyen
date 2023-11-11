@@ -19,11 +19,12 @@ const useViewCalc = (chapterId: number, totalImages: number) => {
   const calcView = useCallback(() => {
     if (seconds >= threshold.current) {
       interval.stop();
+      setSeconds(0);
+
       fetch('/api/chapter', {
         method: 'POST',
         body: JSON.stringify({ id: chapterId }),
       });
-      setSeconds(0);
     }
   }, [chapterId, interval, seconds]);
 

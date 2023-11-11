@@ -21,6 +21,7 @@ const Normal: FC<NormalProps> = async ({ mangaId }) => {
     .chapter({
       select: {
         id: true,
+        isPublished: true,
         name: true,
         chapterIndex: true,
         createdAt: true,
@@ -48,6 +49,8 @@ const Normal: FC<NormalProps> = async ({ mangaId }) => {
       {chapters
         .sort((a, b) => b.chapterIndex - a.chapterIndex)
         .map((chapter) => {
+          if (!chapter.isPublished) return null;
+
           if (chapter.createdAt.getTime() > latestChapter.createdAt.getTime()) {
             latestChapter = chapter;
           }

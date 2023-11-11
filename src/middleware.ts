@@ -11,8 +11,10 @@ export async function middleware(req: NextRequest) {
   const ip = requestIp(req);
   const requestHeaders = new Headers(req.headers);
 
+  console.log(ip);
+
   try {
-    await limiter.check(requestHeaders, 10, ip);
+    await limiter.check(requestHeaders, 50, ip);
 
     return NextResponse.next({
       request: {

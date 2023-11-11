@@ -31,18 +31,14 @@ const useNavChapter = ({
     () =>
       isEnabled === 'false'
         ? null
-        : router.push(
-            !!prevChapter ? `/chapter/${prevChapter.id}` : `/manga/${mangaSlug}`
-          ),
+        : router.push(!!prevChapter ? `/chapter/${prevChapter.id}` : mangaSlug),
     [isEnabled, router, prevChapter, mangaSlug]
   );
   const goToNext = useCallback(
     () =>
       isEnabled === 'false'
         ? null
-        : router.push(
-            !!nextChapter ? `/chapter/${nextChapter.id}` : `/manga/${mangaSlug}`
-          ),
+        : router.push(!!nextChapter ? `/chapter/${nextChapter.id}` : mangaSlug),
     [isEnabled, mangaSlug, nextChapter, router]
   );
 

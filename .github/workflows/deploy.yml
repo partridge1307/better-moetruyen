@@ -1,0 +1,22 @@
+name: Deploy to Server
+
+on:
+  push: # deploy on push ->
+    branches: ['master'] # to this branch
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: SSH into the server and run a command
+        run: |
+          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{secrets.SSH_SERVER_IP}} << 'EOF'
+            echo "Connected!!!"
+            export PATH="$PATH:/usr/bin/nodejs"
+            cd ~/main_page
+            git pull
+            npm i
+            npm run build
+            pm2 restart main
+            echo "Deployment done!"
+          EOF

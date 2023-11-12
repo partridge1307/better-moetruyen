@@ -1,21 +1,22 @@
 'use client';
 
-import MoetruyenEditorOutput from '@/components/Editor/MoetruyenEditorOutput';
+import DescriptionSkeleton from '@/components/Skeleton/DescriptionSkeleton';
 import classes from '@/styles/mantine/manga-info.module.css';
 import { Spoiler } from '@mantine/core';
 import '@mantine/core/styles.layer.css';
 import { useMediaQuery } from '@mantine/hooks';
 import type { Manga, MangaAuthor } from '@prisma/client';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { FC } from 'react';
 
-// const MoetruyenEditorOutput = dynamic(
-//   () => import('@/components/Editor/MoetruyenEditorOutput'),
-//   {
-//     ssr: false,
-//     loading: () => <DescriptionSkeleton />,
-//   }
-// );
+const MoetruyenEditorOutput = dynamic(
+  () => import('@/components/Editor/MoetruyenEditorOutput'),
+  {
+    ssr: false,
+    loading: () => <DescriptionSkeleton />,
+  }
+);
 
 interface MangaDescriptionProps {
   manga: Pick<Manga, 'id' | 'altName' | 'description'> & {

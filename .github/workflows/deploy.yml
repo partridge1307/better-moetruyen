@@ -16,7 +16,6 @@ jobs:
             export PATH="$PATH:/usr/bin/nodejs"
             cd ~/main_page
             git pull
-            yarn --version
             yarn install
             yarn build
             pm2 restart main

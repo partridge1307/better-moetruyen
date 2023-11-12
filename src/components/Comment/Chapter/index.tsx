@@ -82,11 +82,17 @@ const Comments = ({ id }: commentProps) => {
       ) : (
         <p>
           Vui lòng{' '}
-          <Link href="/sign-in" className="font-semibold">
+          <Link
+            href="/sign-in"
+            className="text-lg font-semibold hover:underline underline-offset-2"
+          >
             đăng nhập
           </Link>{' '}
           hoặc{' '}
-          <Link href="/sign-up" className="font-semibold">
+          <Link
+            href="/sign-up"
+            className="text-lg font-semibold hover:underline underline-offset-2"
+          >
             đăng ký
           </Link>{' '}
           để bình luận

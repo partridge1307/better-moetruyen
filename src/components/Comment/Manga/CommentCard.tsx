@@ -30,12 +30,16 @@ const CommentCard: FC<CommentCardProps> = ({ comment, session, children }) => {
 
   return (
     <>
-      <UserAvatar user={comment.author} />
+      <Link href={`/user/${comment.author.name?.split(' ').join('-')}`}>
+        <UserAvatar user={comment.author} />
+      </Link>
 
       <div className="min-w-0 space-y-1 flex-1">
         <dl className="flex flex-wrap items-center gap-2">
           <dt>
-            <Username user={comment.author} className="text-start" />
+            <Link href={`/user/${comment.author.name?.split(' ').join('-')}`}>
+              <Username user={comment.author} className="text-start" />
+            </Link>
           </dt>
           <dd className="text-sm flex items-center gap-2">
             <time dateTime={new Date(comment.createdAt).toDateString()}>

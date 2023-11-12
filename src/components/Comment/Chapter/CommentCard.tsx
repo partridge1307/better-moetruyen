@@ -6,6 +6,7 @@ import { formatTimeToNow } from '@/lib/utils';
 import { MessageSquare } from 'lucide-react';
 import type { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 import { useRef } from 'react';
 import type { ExtendedComment } from '.';
 import CommentContent from '../components/CommentContent';
@@ -29,12 +30,16 @@ const CommentCard = ({ comment, session, children }: CommentCardProps) => {
 
   return (
     <>
-      <UserAvatar user={comment.author} />
+      <Link href={`/user/${comment.author.name?.split(' ').join('-')}`}>
+        <UserAvatar user={comment.author} />
+      </Link>
 
       <div className="min-w-0 space-y-1 flex-1">
         <dl className="flex flex-wrap items-center gap-2">
           <dt>
-            <Username user={comment.author} className="text-start" />
+            <Link href={`/user/${comment.author.name?.split(' ').join('-')}`}>
+              <Username user={comment.author} className="text-start" />
+            </Link>
           </dt>
           <dd className="text-sm">
             <time dateTime={new Date(comment.createdAt).toDateString()}>

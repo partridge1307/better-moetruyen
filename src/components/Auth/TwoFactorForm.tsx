@@ -9,6 +9,7 @@ import {
 import classes from '@/styles/mantine/two-factor.module.css';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PinInput } from '@mantine/core';
+import '@mantine/core/styles.layer.css';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { FC, useState } from 'react';

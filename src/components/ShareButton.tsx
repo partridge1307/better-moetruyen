@@ -40,7 +40,7 @@ const ShareButton: FC<PostShareButtonProps> = ({
         className={cn(buttonVariants({ className: 'gap-1.5' }), className)}
         {...props}
       >
-        <Share2 /> Chỉa sẻ
+        <Share2 /> Chia sẻ
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Chia sẻ</DialogTitle>

@@ -22,5 +22,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: yarn install
-      - run: yarn build
+      - name: SSH into the server and run a command
+        run: |
+          sshpass -p ${{ secrets.SSH_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{secrets.SSH_SERVER_IP}} << 'EOF'
+            echo "Connected!!!"
+            cd ~/main_page
+            git pull
+            yarn install
+            yarn build
+            pm2 restart your-application
+            echo "Deployment done!"
+          EOF

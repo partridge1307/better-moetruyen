@@ -1,7 +1,7 @@
 import ChapterList from '@/components/Chapter/ChapterList';
 import MangaImage from '@/components/Manga/components/MangaImage';
+import MangaInfo from '@/components/Manga/components/MangaInfo';
 import { MangaSubInfoSkeleton } from '@/components/Manga/components/MangaSubInfo';
-import DescriptionSkeleton from '@/components/Skeleton/DescriptionSkeleton';
 import {
   Accordion,
   AccordionContent,
@@ -17,7 +17,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
-import MangaInfo from '@/components/Manga/components/MangaInfo';
 
 const MangaSubInfo = dynamic(
   () => import('@/components/Manga/components/MangaSubInfo'),
@@ -28,13 +27,6 @@ const MangaSubInfo = dynamic(
 const MangaAction = dynamic(() => import('@/components/Manga/MangaAction'));
 const DiscordEmbed = dynamic(() => import('@/components/DiscordEmbed'));
 const FacebookEmbed = dynamic(() => import('@/components/FacebookEmbed'));
-// const MangaInfo = dynamic(
-//   () => import('@/components/Manga/components/MangaInfo'),
-//   {
-//     ssr: false,
-//     loading: () => <MangaInfoSkeleton />,
-//   }
-// );
 
 interface pageProps {
   params: {
@@ -327,42 +319,4 @@ function generateJsonLd(manga: Pick<Manga, 'name' | 'image'>, slug: string) {
       height: 960,
     },
   };
-}
-
-function MangaInfoSkeleton() {
-  return (
-    <div className="space-y-4">
-      <DescriptionSkeleton />
-
-      <div className="space-y-1">
-        <p className="text-lg font-semibold">Tác giả</p>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5">
-          {Array.from(Array(3).keys()).map((_, idx) => (
-            <div
-              key={idx}
-              className="h-7 rounded-md bg-muted"
-              style={{
-                width: `${Math.round(Math.random() * (idx + 4)) + 6}rem`,
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-1">
-        <p className="text-lg font-semibold">Tên khác</p>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2.5">
-          {Array.from(Array(3).keys()).map((_, idx) => (
-            <div
-              key={idx}
-              className="h-7 rounded-md bg-muted"
-              style={{
-                width: `${Math.round(Math.random() * (idx + 4)) + 6}rem`,
-              }}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
 }

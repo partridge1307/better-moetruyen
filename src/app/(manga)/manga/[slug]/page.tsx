@@ -17,6 +17,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FC } from 'react';
+import MangaInfo from '@/components/Manga/components/MangaInfo';
 
 const MangaSubInfo = dynamic(
   () => import('@/components/Manga/components/MangaSubInfo'),
@@ -27,13 +28,13 @@ const MangaSubInfo = dynamic(
 const MangaAction = dynamic(() => import('@/components/Manga/MangaAction'));
 const DiscordEmbed = dynamic(() => import('@/components/DiscordEmbed'));
 const FacebookEmbed = dynamic(() => import('@/components/FacebookEmbed'));
-const MangaInfo = dynamic(
-  () => import('@/components/Manga/components/MangaInfo'),
-  {
-    ssr: false,
-    loading: () => <MangaInfoSkeleton />,
-  }
-);
+// const MangaInfo = dynamic(
+//   () => import('@/components/Manga/components/MangaInfo'),
+//   {
+//     ssr: false,
+//     loading: () => <MangaInfoSkeleton />,
+//   }
+// );
 
 interface pageProps {
   params: {

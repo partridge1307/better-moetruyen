@@ -15,7 +15,7 @@ jobs:
             export PATH="$PATH:/usr/bin/nodejs"
             cd ~/main_page
             git pull
-            yarn
+            yarn install
             yarn build
             pm2 restart main
             echo "Deployment done!"

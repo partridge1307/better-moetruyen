@@ -128,6 +128,7 @@ const page: FC<pageProps> = async ({ params }) => {
         {/* Manga image section */}
         <section className="-translate-y-1/2 px-2 mx-2 md:px-6 md:mx-10 grid grid-cols-[.6fr_1fr] md:grid-cols-[.3fr_1fr] lg:grid-cols-[.2fr_1fr] gap-6">
           <MangaImage
+            priority
             manga={manga}
             className="ring-4 ring-foreground shadow-[0_-4px_6px_-1px_rgba(255,255,255,0.6)]"
           />

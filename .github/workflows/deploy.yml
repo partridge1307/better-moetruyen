@@ -15,8 +15,8 @@ jobs:
             export PATH="$PATH:/usr/bin/nodejs"
             cd ~/main_page
             git pull
-            npm i
-            npm run build
+            yarn
+            yarn build
             pm2 restart main
             echo "Deployment done!"
           EOF

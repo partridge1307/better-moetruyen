@@ -33,7 +33,7 @@ const LastActivityPostForum = async () => {
           href={`${process.env.NEXT_PUBLIC_FORUM_URL}/m/${post.subForum.slug}/${post.id}`}
           className="block p-1 rounded-md space-y-1 transition-colors bg-background/10 hover:bg-background/30"
         >
-          <p className="text-2xl font-semibold">{post.title}</p>
+          <p className="text-xl font-semibold">{post.title}</p>
 
           <dl className="flex justify-between items-center">
             <dt className="opacity-80">m/{post.subForum.title}</dt>

@@ -31,12 +31,12 @@ const LastActivityPostForum = async () => {
           key={post.id}
           target="_blank"
           href={`${process.env.NEXT_PUBLIC_FORUM_URL}/m/${post.subForum.slug}/${post.id}`}
-          className="block p-1 rounded-md space-y-1.5 transition-colors bg-background/10 hover:bg-background/30"
+          className="block p-1 rounded-md space-y-1 transition-colors bg-background/10 hover:bg-background/30"
         >
-          <p className="text-xl">{post.title}</p>
+          <p className="text-2xl font-semibold">{post.title}</p>
 
           <dl className="flex justify-between items-center">
-            <dt>m/{post.title}</dt>
+            <dt className="opacity-80">m/{post.subForum.title}</dt>
             <dd className="flex items-center gap-1.5">
               {post._count.comments} <MessageSquare className="w-5 h-5" />
             </dd>

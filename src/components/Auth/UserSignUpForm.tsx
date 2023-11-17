@@ -55,6 +55,12 @@ const UserSignUpForm = () => {
             variant: 'destructive',
           });
         }
+        if (e.response?.status === 406)
+          return toast({
+            title: 'Email không hợp lệ',
+            description: 'Chỉ nhận Gmail',
+            variant: 'destructive',
+          });
       }
 
       return serverErrorToast();

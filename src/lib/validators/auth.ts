@@ -14,7 +14,13 @@ export type CreateAuthSignInPayload = z.infer<typeof AuthSignInValidator>;
 
 export const AuthSignUpValidator = z
   .object({
-    email: z.string().email({ message: 'Định dạng không hợp lệ' }),
+    email: z
+      .string()
+      .email({ message: 'Định dạng không hợp lệ' })
+      .refine(
+        (mail) => mail.split('@')[1].startsWith('gmail.com'),
+        'Email không hợp lệ. Chỉ nhận Gmail'
+      ),
     password: z
       .string()
       .min(5, { message: 'Mật khẩu tối thiểu 5 kí tự' })

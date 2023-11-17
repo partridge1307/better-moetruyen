@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 
-export async function UpdateCookie(token: string) {
+export function UpdateCookie(token: string) {
   const sessionExpiry = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000 - 2000);
 
   cookies().set(

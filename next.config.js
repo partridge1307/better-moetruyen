@@ -20,6 +20,9 @@ const nextConfig = {
   },
   experimental: {
     webpackBuildWorker: true,
+    serverActions: {
+      allowedOrigins: ['localhost:3000', process.env.NEXTAUTH_URL],
+    },
   },
 };
 

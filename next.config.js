@@ -1,3 +1,5 @@
+const url = new URL(process.env.NEXTAUTH_URL);
+
 const withPWA = require('@ducanh2912/next-pwa').default({
   dest: 'public',
   cacheOnFrontEndNav: true,
@@ -21,7 +23,7 @@ const nextConfig = {
   experimental: {
     webpackBuildWorker: true,
     serverActions: {
-      allowedOrigins: ['localhost:3000', process.env.NEXTAUTH_URL],
+      allowedOrigins: ['localhost:3000', url.origin],
     },
   },
 };

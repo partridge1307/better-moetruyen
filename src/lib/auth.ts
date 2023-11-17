@@ -18,9 +18,6 @@ export interface AuthContext {
   params: { nextauth: string[] };
 }
 
-const HOST_URL = new URL(process.env.NEXTAUTH_URL!);
-const useSecureCookies = HOST_URL.protocol.startsWith('https');
-
 export const authOptionsWrapper = (
   request: NextRequest,
   context: AuthContext
@@ -190,16 +187,18 @@ export const authOptionsWrapper = (
       ],
       cookies: {
         sessionToken: {
-          name: `${useSecureCookies ? `__Secure-` : ''}next-auth.session-token`,
+          name: `${
+            process.env.NODE_ENV === 'production' ? `__Secure-` : ''
+          }next-auth.session-token`,
           options: {
             httpOnly: true,
             sameSite: 'lax',
             path: '/',
             domain:
-              HOST_URL.hostname === 'localhost'
-                ? HOST_URL.hostname
-                : `.moetruyen.net`,
-            secure: useSecureCookies,
+              process.env.NODE_ENV === 'production'
+                ? 'moetruyen.net'
+                : 'localhost',
+            secure: process.env.NODE_ENV === 'production',
           },
         },
       },
@@ -223,17 +222,19 @@ export const authOptionsWrapper = (
               });
 
               cookies().set(
-                `${useSecureCookies ? '__Secure-' : ''}next-auth.session-token`,
+                `${
+                  process.env.NODE_ENV === 'production' ? '__Secure-' : ''
+                }next-auth.session-token`,
                 sessionToken,
                 {
                   expires: sessionExpiry,
                   httpOnly: true,
                   sameSite: 'lax',
                   domain:
-                    HOST_URL.hostname === 'localhost'
-                      ? HOST_URL.hostname
-                      : `.moetruyen.net`,
-                  secure: useSecureCookies,
+                    process.env.NODE_ENV === 'production'
+                      ? 'moetruyen.net'
+                      : 'localhost',
+                  secure: process.env.NODE_ENV === 'production',
                 }
               );
 
@@ -297,7 +298,9 @@ export const authOptionsWrapper = (
         encode: async (arg) => {
           if (isCredentialsCallback || isTwoFactorCallBack) {
             const cookie = cookies().get(
-              `${useSecureCookies ? '__Secure-' : ''}next-auth.session-token`
+              `${
+                process.env.NODE_ENV === 'production' ? '__Secure-' : ''
+              }next-auth.session-token`
             );
 
             if (cookie) return cookie.value;

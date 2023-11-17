@@ -2,11 +2,11 @@
 
 import { cookies } from 'next/headers';
 
-const HOST_URL = new URL(process.env.NEXTAUTH_URL!);
-const useSecureCookies = HOST_URL.protocol.startsWith('https');
-
 export async function UpdateCookie(token: string) {
+  const HOST_URL = new URL(process.env.NEXTAUTH_URL!);
+  const useSecureCookies = HOST_URL.protocol.startsWith('https');
   const sessionExpiry = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000 - 2000);
+
   cookies().set(
     `${useSecureCookies ? '__Secure-' : ''}next-auth.session-token`,
     token,
@@ -17,7 +17,7 @@ export async function UpdateCookie(token: string) {
       domain:
         HOST_URL.hostname === 'localhost'
           ? HOST_URL.hostname
-          : `.moetruyen.net`,
+          : '.moetruyen.net',
       secure: useSecureCookies,
     }
   );

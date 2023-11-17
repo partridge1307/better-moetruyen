@@ -90,87 +90,11 @@ export const disRegex =
 export const vieRegex =
   /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\w ]+$/;
 
-type targetProps = {
-  time: number;
-  view: number;
-}[];
-
-export function filterView({
-  target,
-  timeRange,
-  currentTime,
-}: {
-  target: targetProps;
-  timeRange: number[];
-  currentTime: number;
-}) {
-  const excludedTarget = target.filter((t) => t.time <= currentTime);
-  let viewTimeHolder: number,
-    res: number[] = [];
-
-  const currentTimeIdx = excludedTarget.findIndex((t) => t.time >= currentTime);
-  if (currentTimeIdx === -1) res.push(0);
-  else {
-    const lastValArr = excludedTarget.pop();
-    res.push(Number(lastValArr?.view));
-    viewTimeHolder = lastValArr?.time!;
-  }
-
-  const timeRangeDistance = excludedTarget.map((t) =>
-    Math.abs(viewTimeHolder - t.time)
-  );
-  const inTimeRange = timeRangeDistance.map((td) =>
-    timeRange.find((tr) => tr >= td)
-  );
-
-  for (let i = 1; i < timeRange.length; i++) {
-    const spliceStart = inTimeRange.findIndex((tr) => tr === timeRange[i]);
-    const spliceCount = inTimeRange.filter(
-      (tr) => tr === inTimeRange[i]
-    ).length;
-
-    const splicedArr = excludedTarget.splice(spliceStart, spliceCount);
-    let count = 0;
-    Array.from(splicedArr, (x) => (count += Number(x.view)));
-    res.push(count);
-  }
-
-  return res;
-}
-
-export function dataUrlToBlob(dataUrl: string) {
-  const splittedData = dataUrl.split(',');
-  const byteStr = atob(splittedData[1]);
-  const typeStr = splittedData[0].split(':')[1].split(';')[0];
-  const buffer = new ArrayBuffer(byteStr.length);
-  const dv = new DataView(buffer);
-
-  for (let i = 0; i < byteStr.length; i++) {
-    dv.setUint8(i, byteStr.charCodeAt(i));
-  }
-
-  return new Blob([buffer], { type: typeStr });
-}
-
 export const groupArray = <T>(array: T[]) =>
   array.reduce(
     (acc, val) => ((acc[val] = (acc[val] || 0) + 1), acc),
     {} as any
   );
-
-const keyStr =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-
-const triplet = (e1: number, e2: number, e3: number) =>
-  keyStr.charAt(e1 >> 2) +
-  keyStr.charAt(((e1 & 3) << 4) | (e2 >> 4)) +
-  keyStr.charAt(((e2 & 15) << 2) | (e3 >> 6)) +
-  keyStr.charAt(e3 & 63);
-
-export const rgbDataURL = (r: number, g: number, b: number) =>
-  `data:image/gif;base64,R0lGODlhAQABAPAA${
-    triplet(0, r, g) + triplet(b, 255, 255)
-  }/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`;
 
 export const normalizeText = (text: string) =>
   text.normalize('NFKD').replace(/[\u0300-\u036F]/g, '');

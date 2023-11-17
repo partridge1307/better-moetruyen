@@ -38,7 +38,7 @@ const VerifyNavigation: FC<VerifyNavigationProps> = ({
 
   useEffect(() => {
     if (!sessionToken) return;
-    UpdateCookie(sessionToken);
+    UpdateCookie(sessionToken).then(() => location.reload());
   }, [sessionToken]);
 
   useEffect(() => {

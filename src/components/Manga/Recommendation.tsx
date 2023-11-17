@@ -60,7 +60,7 @@ const Recommendation = async () => {
   const session = await getAuthSession();
   const mangas = await getMangas(session);
 
-  return <CarouselRecommendation mangas={mangas} />;
+  return !!mangas.length && <CarouselRecommendation mangas={mangas} />;
 };
 
 export default Recommendation;

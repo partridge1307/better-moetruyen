@@ -22,16 +22,16 @@ const Weekly = async () => {
   });
 
   return (
-    <div className="space-y-3 rounded-md dark:bg-zinc-900/60">
+    <div className="space-y-3 px-1">
       {results.map((result, idx) => (
         <Link
           key={idx}
           href={`/team/${result.id}`}
-          className="block p-2 rounded-md transition-colors hover:dark:bg-zinc-900"
+          className="block p-2 rounded-md transition-colors hover:bg-background/20"
         >
           <dl
             className={cn('flex items-center gap-2', {
-              'text-lg lg:text-xl dark:text-amber-500': idx === 0,
+              'text-lg lg:text-xl text-red-600': idx === 0,
             })}
           >
             <dt>{idx + 1}.</dt>

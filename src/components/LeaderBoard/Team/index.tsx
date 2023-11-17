@@ -6,7 +6,7 @@ import All from './All';
 const Team = () => {
   return (
     <Tabs defaultValue="daily">
-      <TabsList className="grid grid-cols-3 gap-2 dark:bg-zinc-900/60">
+      <TabsList className="grid grid-cols-3 gap-2 bg-primary-foreground">
         <TabsTrigger value="daily">Ngày</TabsTrigger>
         <TabsTrigger value="weekly">Tuần</TabsTrigger>
         <TabsTrigger value="all">Mọi lúc</TabsTrigger>

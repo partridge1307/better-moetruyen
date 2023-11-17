@@ -3,10 +3,12 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useEffect, useMemo, useState } from 'react';
+import { UpdateCookie } from './UpdateCookie';
 
 interface VerifyNavigationProps {
   isSuccess: boolean;
   second?: number;
+  sessionToken?: string;
 }
 
 const getSeconds = (countDown: number) => {
@@ -16,6 +18,7 @@ const getSeconds = (countDown: number) => {
 const VerifyNavigation: FC<VerifyNavigationProps> = ({
   isSuccess,
   second = 15,
+  sessionToken,
 }) => {
   const router = useRouter();
   const pathName = usePathname();
@@ -34,8 +37,9 @@ const VerifyNavigation: FC<VerifyNavigationProps> = ({
   const [isRouteChange, setRouteChange] = useState(false);
 
   useEffect(() => {
-    window.history.pushState(null, '', '/verify');
-  }, []);
+    if (!sessionToken) return;
+    UpdateCookie(sessionToken);
+  }, [sessionToken]);
 
   useEffect(() => {
     const interval = setInterval(

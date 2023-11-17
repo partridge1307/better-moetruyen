@@ -5,6 +5,7 @@ import { verifyAuthToken } from '@/lib/jwt';
 import { cn } from '@/lib/utils';
 import { AuthVerifyResultEnum } from '@/lib/validators/auth';
 import { Prisma } from '@prisma/client';
+import { randomUUID } from 'crypto';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -38,16 +39,27 @@ const Page: FC<pageProps> = async ({ searchParams }) => {
 
   const token = tokenParam instanceof Array ? tokenParam[0] : tokenParam;
 
-  let result: z.infer<typeof AuthVerifyResultEnum>;
+  let result: z.infer<typeof AuthVerifyResultEnum>,
+    sessionTokenStr = '';
   try {
     const { email, password } = await verifyAuthToken(token);
 
-    await db.user.create({
+    const createdUser = await db.user.create({
       data: {
         email,
         password,
       },
     });
+
+    const sessionToken = randomUUID();
+    const createdSession = await db.session.create({
+      data: {
+        sessionToken,
+        userId: createdUser.id,
+        expires: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
+      },
+    });
+    sessionTokenStr = createdSession.sessionToken;
 
     result = AuthVerifyResultEnum.Enum.OK;
   } catch (error) {
@@ -122,7 +134,10 @@ const Page: FC<pageProps> = async ({ searchParams }) => {
             </dl>
           )}
 
-          <VerifyNavigation isSuccess={result === 'OK'} />
+          <VerifyNavigation
+            isSuccess={result === 'OK'}
+            sessionToken={sessionTokenStr}
+          />
         </div>
       </section>
     </main>

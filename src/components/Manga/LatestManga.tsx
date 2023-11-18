@@ -7,7 +7,7 @@ const LatestManga = async () => {
     where: {
       isPublished: true,
     },
-    take: 10,
+    take: 20,
     orderBy: {
       createdAt: 'desc',
     },

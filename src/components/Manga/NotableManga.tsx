@@ -6,6 +6,7 @@ const NotableManga = async () => {
     orderBy: {
       createdAt: 'desc',
     },
+    take: 10,
     select: {
       manga: {
         select: {

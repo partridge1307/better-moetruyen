@@ -6,7 +6,7 @@ import type { Session } from 'next-auth';
 import CarouselRecommendation from './components/CarouselRecommendation';
 
 const getMangas = async (session: Session | null) => {
-  if (!session) return await randomManga(10);
+  if (!session) return await randomManga(12);
 
   const [mangaHistory, mangaCount] = await db.$transaction([
     db.history.findMany({
@@ -51,7 +51,7 @@ const getMangas = async (session: Session | null) => {
       image: true,
       name: true,
     },
-    take: 10,
+    take: 12,
     skip,
   });
 };

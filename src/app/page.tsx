@@ -32,7 +32,7 @@ const LastActivityPostForum = dynamic(
 
 const page = () => {
   return (
-    <main className="container mx-auto max-sm:px-2 pb-8 space-y-10">
+    <main className="container mx-auto max-sm:px-2 pb-4 space-y-10">
       <NotableManga />
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_.4fr] gap-6 md:gap-4">

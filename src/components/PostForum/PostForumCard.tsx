@@ -20,7 +20,7 @@ const PostForumCard: FC<PostForumCardProps> = ({ post }) => {
         <UserAvatar user={post.author} className="w-14 h-14 bg-background" />
         <div className="space-y-1">
           <Username user={post.author} className="text-start" />
-          <div className="flex items-center gap-2 text-xs opacity-80">
+          <div className="flex items-center gap-2 text-xs opacity-60">
             <time dateTime={post.createdAt.toDateString()} className="shrink-0">
               {formatTimeToNow(post.createdAt)}
             </time>

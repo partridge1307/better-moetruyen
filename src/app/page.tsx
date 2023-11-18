@@ -26,13 +26,13 @@ const Leaderboard = dynamic(() => import('@/components/LeaderBoard'), {
 });
 
 const LastActivityPostForum = dynamic(
-  () => import('@/components/LastActivityPostForum'),
+  () => import('@/components/PostForum/LastActivityPostForum'),
   { loading: () => <LastActivityPostSkeletion /> }
 );
 
 const page = () => {
   return (
-    <main className="container mx-auto max-sm:px-2 space-y-10">
+    <main className="container mx-auto max-sm:px-2 pb-8 space-y-10">
       <NotableManga />
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_.4fr] gap-6 md:gap-4">

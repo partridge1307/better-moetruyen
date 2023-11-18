@@ -9,7 +9,3 @@
 :is(.dark) :where(.mantine-ScrollArea-scrollbar) {
   background: rgb(0, 0, 0, 0.5);
 }
-
-:is(.dark) :where(.mantine-Spoiler-control) {
-  color: #fb923c;
-}

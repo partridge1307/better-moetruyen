@@ -2,7 +2,10 @@ import { db } from '@/lib/db';
 import type { Post, SubForum, User } from '@prisma/client';
 import PostForumCard from './PostForumCard';
 
-export type TPost = Pick<Post, 'id' | 'plainTextContent' | 'createdAt'> & {
+export type TPost = Pick<
+  Post,
+  'id' | 'title' | 'plainTextContent' | 'createdAt'
+> & {
   _count: {
     comments: number;
   };
@@ -18,6 +21,7 @@ const LastActivityPostForum = async () => {
     },
     select: {
       id: true,
+      title: true,
       plainTextContent: true,
       createdAt: true,
       subForum: {

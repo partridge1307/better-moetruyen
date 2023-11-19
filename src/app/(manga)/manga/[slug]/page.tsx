@@ -24,7 +24,11 @@ const MangaSubInfo = dynamic(
     loading: () => <MangaSubInfoSkeleton />,
   }
 );
-const MangaAction = dynamic(() => import('@/components/Manga/MangaAction'));
+const MangaAction = dynamic(() => import('@/components/Manga/MangaAction'), {
+  loading: () => (
+    <div className="w-36 md:w-[11.5rem] lg:w-[13.5rem] h-10 rounded-md animate-pulse bg-background" />
+  ),
+});
 const DiscordEmbed = dynamic(() => import('@/components/DiscordEmbed'));
 const FacebookEmbed = dynamic(() => import('@/components/FacebookEmbed'));
 

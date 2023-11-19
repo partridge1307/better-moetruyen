@@ -107,7 +107,7 @@ const Default: FC<defaultProps> = async ({ params }) => {
             <a
               key={forum.slug}
               target="_blank"
-              href={`${process.env.NEXT_PUBLIC_FORUM_URL}/${forum.slug}`}
+              href={`${process.env.NEXT_PUBLIC_FORUM_URL}/m/${forum.slug}`}
               className="grid grid-cols-[.7fr_1fr] lg:grid-cols-[.3fr_1fr] gap-6 p-2 rounded-md transition-colors hover:dark:bg-zinc-800"
             >
               {!!forum.banner && (

@@ -222,7 +222,7 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
             <span>Lọc</span>
           </DialogTrigger>
 
-          <DialogContent>
+          <DialogContent className="max-h-[100dvh] overflow-y-auto scrollbar dark:scrollbar--dark">
             <div className="flex flex-wrap items-center gap-4">
               <DialogClose
                 className="p-2 rounded-md transition-colors bg-orange-600 hover:bg-orange-600/90"

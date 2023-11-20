@@ -148,24 +148,27 @@ const AdvancedSearchControll: FC<AdvancedSearchControllProps> = ({
     limitParams,
   ]);
 
-  function onTagFilter(id: number) {
-    if (!include.includes(id) && !exclude.includes(id)) {
-      onIncludeChange((prev) => [...prev, id]);
-      return;
-    }
-    if (!exclude.includes(id)) {
-      onExcludeChange((prev) => [...prev, id]);
+  const onTagFilter = useCallback(
+    (id: number) => {
+      if (!include.includes(id) && !exclude.includes(id)) {
+        onIncludeChange((prev) => [...prev, id]);
+        return;
+      }
+      if (!exclude.includes(id)) {
+        onExcludeChange((prev) => [...prev, id]);
+        onIncludeChange((prev) => prev.filter((includeId) => includeId !== id));
+        return;
+      }
       onIncludeChange((prev) => prev.filter((includeId) => includeId !== id));
-      return;
-    }
-    onIncludeChange((prev) => prev.filter((includeId) => includeId !== id));
-    onExcludeChange((prev) => prev.filter((excludeId) => excludeId !== id));
-  }
+      onExcludeChange((prev) => prev.filter((excludeId) => excludeId !== id));
+    },
+    [exclude, include]
+  );
 
-  function onTagReset() {
+  const onTagReset = useCallback(() => {
     onIncludeChange([]);
     onExcludeChange([]);
-  }
+  }, []);
 
   const onTagDone = useCallback(() => {
     let query = `/advanced-search?includeMode=${includeMode}&excludeMode=${excludeMode}&sortBy=${sortBy}&order=${order}`;

@@ -37,7 +37,8 @@ export async function POST(req: Request) {
             replyToId: targetComment.id,
             mangaId: targetComment.mangaId,
             authorId: session.user.id,
-            content: { ...content },
+            // @ts-ignore
+            content,
             oEmbed,
           },
         }),
@@ -59,7 +60,8 @@ export async function POST(req: Request) {
         data: {
           mangaId: id,
           authorId: session.user.id,
-          content: { ...content },
+          // @ts-ignore
+          content,
           oEmbed,
         },
       });

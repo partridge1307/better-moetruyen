@@ -24,7 +24,7 @@ const MangaCard: FC<MangaCardProps> = ({ manga }) => {
         />
       </Link>
 
-      <div className="space-y-1.5 md:space-y-3 px-2 py-0.5">
+      <div className="space-y-1.5 md:space-y-3 px-2 py-0.5 pb-1">
         <Link href={`/manga/${manga.slug}`} className="md:space-y-1">
           <p className="text-xl md:text-2xl line-clamp-2 md:line-clamp-3 font-semibold">
             {manga.name}
@@ -32,7 +32,7 @@ const MangaCard: FC<MangaCardProps> = ({ manga }) => {
           <p className="line-clamp-3 max-sm:text-sm">{manga.review}</p>
         </Link>
 
-        <div className="space-y-1.5">
+        <div className="space-y-2.5">
           {manga.chapter.map((chapter) => (
             <Link
               href={`/chapter/${chapter.id}`}

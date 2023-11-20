@@ -43,7 +43,8 @@ export async function POST(req: Request) {
             mangaId: targetChapter.mangaId,
             authorId: session.user.id,
             replyToId: targetComment.id,
-            content: { ...content },
+            // @ts-ignore
+            content,
             oEmbed,
           },
         }),
@@ -66,7 +67,8 @@ export async function POST(req: Request) {
           chapterId: targetChapter.id,
           mangaId: targetChapter.mangaId,
           authorId: session.user.id,
-          content: { ...content },
+          // @ts-ignore
+          content,
           oEmbed,
         },
       });

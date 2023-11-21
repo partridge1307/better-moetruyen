@@ -1,11 +1,11 @@
+import { formatTimeToNow } from '@/lib/utils';
+import type { Chapter, Manga } from '@prisma/client';
 import Link from 'next/link';
 import { FC } from 'react';
 import MangaImage from './MangaImage';
-import type { Chapter, Manga } from '@prisma/client';
-import { formatTimeToNow } from '@/lib/utils';
 
 interface MangaCardProps {
-  manga: Pick<Manga, 'id' | 'slug' | 'name' | 'image' | 'review'> & {
+  manga: Pick<Manga, 'slug' | 'name' | 'image' | 'review'> & {
     chapter: Pick<
       Chapter,
       'id' | 'volume' | 'chapterIndex' | 'name' | 'createdAt'
@@ -52,10 +52,10 @@ const MangaCard: FC<MangaCardProps> = ({ manga }) => {
               </div>
 
               <time
-                dateTime={chapter.createdAt.toDateString()}
+                dateTime={new Date(chapter.createdAt).toDateString()}
                 className="line-clamp-1"
               >
-                {formatTimeToNow(chapter.createdAt)}
+                {formatTimeToNow(new Date(chapter.createdAt))}
               </time>
             </Link>
           ))}

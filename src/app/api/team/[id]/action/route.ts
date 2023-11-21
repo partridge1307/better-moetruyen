@@ -3,14 +3,13 @@ import { db } from '@/lib/db';
 import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
-export async function POST(req: Request) {
+export async function POST(req: Request, context: { params: { id: string } }) {
   try {
     const session = await getAuthSession();
     if (!session) return new Response('Unauthorized', { status: 401 });
 
-    const { id, type } = z
+    const { type } = z
       .object({
-        id: z.number(),
         type: z.enum(['JOIN', 'LEAVE']),
       })
       .parse(await req.json());
@@ -26,10 +25,7 @@ export async function POST(req: Request) {
       }),
       db.team.findUniqueOrThrow({
         where: {
-          id,
-          NOT: {
-            ownerId: session.user.id,
-          },
+          id: +context.params.id,
         },
         select: {
           id: true,
@@ -38,12 +34,10 @@ export async function POST(req: Request) {
       }),
     ]);
 
-    if (user.teamId && user.teamId !== team.id)
-      return new Response('Not found', { status: 404 });
-
     if (type === 'JOIN') {
-      if (user.teamId)
-        return new Response('You already joined team', { status: 406 });
+      if (user.teamId === team.id)
+        return new Response('Forbidden', { status: 403 });
+      if (!!user.teamId) return new Response('Forbidden', { status: 403 });
 
       await db.$transaction([
         db.teamJoinRequest.create({
@@ -54,9 +48,9 @@ export async function POST(req: Request) {
         }),
         db.notify.create({
           data: {
-            type: 'GENERAL',
             toUserId: team.ownerId,
-            content: `${session.user.name} muốn gia nhập Team của bạn`,
+            type: 'SYSTEM',
+            content: `${session.user.name} muốn xin gia nhập Team của bạn`,
             endPoint: `${process.env.NEXT_PUBLIC_ME_URL}/team`,
           },
         }),
@@ -64,30 +58,29 @@ export async function POST(req: Request) {
 
       return new Response('OK', { status: 201 });
     } else {
-      await db.user.update({
+      if (user.teamId !== team.id)
+        return new Response('Forbidden', { status: 409 });
+
+      await db.team.update({
         where: {
-          id: session.user.id,
+          id: team.id,
         },
         data: {
-          team: {
+          member: {
             disconnect: {
-              id: team.id,
+              id: session.user.id,
             },
           },
         },
       });
-
-      return new Response('OK', { status: 204 });
+      return new Response('OK');
     }
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return new Response('Invalid', { status: 422 });
-    }
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2025')
         return new Response('Not found', { status: 404 });
       if (error.code === 'P2002')
-        return new Response('You already sent join request', { status: 409 });
+        return new Response('Not accept', { status: 406 });
     }
 
     return new Response('Something went wrong', { status: 500 });

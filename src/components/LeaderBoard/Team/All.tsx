@@ -1,5 +1,7 @@
+import TeamImage from '@/components/Team/TeamImage';
 import { db } from '@/lib/db';
-import { cn } from '@/lib/utils';
+import { nFormatter } from '@/lib/utils';
+import { Eye } from 'lucide-react';
 import Link from 'next/link';
 
 const All = async () => {
@@ -10,28 +12,38 @@ const All = async () => {
     take: 10,
     select: {
       id: true,
+      image: true,
       name: true,
       totalView: true,
     },
   });
 
   return (
-    <div className="space-y-3 px-1">
-      {results.map((result, idx) => (
+    <div className="space-y-3">
+      {results.map((team, idx) => (
         <Link
-          key={idx}
-          href={`/team/${result.id}`}
-          className="block p-2 rounded-md transition-colors hover:bg-background/20"
+          key={team.id}
+          href={`/team/${team.id}`}
+          className="flex items-start gap-4 p-2 rounded-l-full transition-colors hover:bg-primary-foreground"
         >
-          <dl
-            className={cn('flex items-center gap-2', {
-              'text-lg lg:text-xl text-red-600': idx === 0,
-            })}
-          >
-            <dt>{idx + 1}.</dt>
-            <dd className="line-clamp-2">{result.name}</dd>
-          </dl>
-          <p className="text-sm">{result.totalView} lượt xem</p>
+          <TeamImage
+            team={team}
+            sizes="(max-width: 640px) 10vw, 15vw"
+            className="w-16 h-16"
+          />
+          <div className="space-y-1.5">
+            <p
+              className={`flex items-center gap-1.5 ${
+                idx === 0 ? 'text-xl font-semibold text-red-500' : ''
+              }`}
+            >
+              <span>{++idx}.</span>
+              {team.name}
+            </p>
+            <span className="flex items-center gap-1.5">
+              {nFormatter(team.totalView, 1)} <Eye className="w-4 h-4" />
+            </span>
+          </div>
         </Link>
       ))}
     </div>

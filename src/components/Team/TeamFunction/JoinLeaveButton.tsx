@@ -1,5 +1,16 @@
 'use client';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/AlertDialog';
 import { Button } from '@/components/ui/Button';
 import { useCustomToast } from '@/hooks/use-custom-toast';
 import { toast } from '@/hooks/use-toast';
@@ -86,15 +97,35 @@ const JoinLeaveButton: FC<JoinLeaveButtonProps> = ({ user, team }) => {
         </Button>
       )}
       {user.teamId === team.id && (
-        <Button
-          variant={'destructive'}
-          className="md:w-[18.5%]"
-          disabled={isToggling}
-          isLoading={isToggling}
-          onClick={() => Toggle('LEAVE')}
-        >
-          Rời Team
-        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant={'destructive'}
+              className="md:w-[18.5%]"
+              isLoading={isToggling}
+            >
+              Rời Team
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Yêu cầu xác nhận</AlertDialogTitle>
+              <AlertDialogDescription>
+                Bạn có chắc chắn muốn rời Team?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter>
+              <AlertDialogCancel>Hủy</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={isToggling}
+                onClick={() => Toggle('LEAVE')}
+              >
+                Chắc chắn
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       )}
     </>
   );

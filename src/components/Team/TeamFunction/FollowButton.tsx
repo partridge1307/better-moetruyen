@@ -13,9 +13,14 @@ import { FC, useState } from 'react';
 interface FollowButtonProps {
   team: Pick<Team, 'id'>;
   isFollow: boolean;
+  inOtherTeam: boolean;
 }
 
-const FollowButton: FC<FollowButtonProps> = ({ team, isFollow }) => {
+const FollowButton: FC<FollowButtonProps> = ({
+  team,
+  isFollow,
+  inOtherTeam,
+}) => {
   const { loginToast, notFoundToast, serverErrorToast, rateLimitToast } =
     useCustomToast();
   const router = useRouter();
@@ -55,11 +60,16 @@ const FollowButton: FC<FollowButtonProps> = ({ team, isFollow }) => {
       variant={'destructive'}
       disabled={isToggling}
       onClick={() => Toggle('UNFOLLOW')}
+      className={inOtherTeam ? 'w-28 md:w-[18.5%]' : undefined}
     >
       <HeartOff />
     </Button>
   ) : (
-    <Button disabled={isToggling} onClick={() => Toggle('FOLLOW')}>
+    <Button
+      disabled={isToggling}
+      onClick={() => Toggle('FOLLOW')}
+      className={inOtherTeam ? 'w-28 md:w-[18.5%]' : undefined}
+    >
       <Heart />
     </Button>
   );

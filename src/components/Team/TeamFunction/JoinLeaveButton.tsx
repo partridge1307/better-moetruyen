@@ -38,13 +38,19 @@ const JoinLeaveButton: FC<JoinLeaveButtonProps> = ({ user, team }) => {
             description: 'Bạn đã gia nhâọ Team này hoặc Team khác rồi',
             variant: 'destructive',
           });
-        if (err.response?.status === 406)
+        if (err.response?.status === 418)
+          return toast({
+            title: 'Hmmm',
+            description: 'Bạn là chủ Team này',
+            variant: 'destructive',
+          });
+        if (err.response?.status === 409)
           return toast({
             title: 'Từ chối yêu cầu',
             description: 'Bạn đã gửi yêu cầu rồi',
             variant: 'destructive',
           });
-        if (err.response?.status === 409)
+        if (err.response?.status === 406)
           return toast({
             title: 'Từ chối yêu cầu',
             description: 'Bạn không ở trong Team này',

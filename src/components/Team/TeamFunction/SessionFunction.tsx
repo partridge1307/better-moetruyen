@@ -44,7 +44,11 @@ const SessionFunction: FC<SessionFunctionProps> = async ({ team }) => {
       {(!user.teamId || user.teamId === team.id) && (
         <JoinLeaveButton user={user} team={team} />
       )}
-      <FollowButton team={team} isFollow={!!user.teamFollowing.length} />
+      <FollowButton
+        team={team}
+        isFollow={!!user.teamFollowing.length}
+        inOtherTeam={!!user.teamId && user.teamId !== team.id}
+      />
     </>
   );
 };

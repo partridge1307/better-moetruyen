@@ -34,6 +34,9 @@ export async function POST(req: Request, context: { params: { id: string } }) {
       }),
     ]);
 
+    if (team.ownerId === session.user.id)
+      return new Response('Teapot', { status: 418 });
+
     if (type === 'JOIN') {
       if (user.teamId === team.id)
         return new Response('Forbidden', { status: 403 });
@@ -59,7 +62,7 @@ export async function POST(req: Request, context: { params: { id: string } }) {
       return new Response('OK', { status: 201 });
     } else {
       if (user.teamId !== team.id)
-        return new Response('Forbidden', { status: 409 });
+        return new Response('Forbidden', { status: 406 });
 
       await db.team.update({
         where: {
@@ -80,7 +83,7 @@ export async function POST(req: Request, context: { params: { id: string } }) {
       if (error.code === 'P2025')
         return new Response('Not found', { status: 404 });
       if (error.code === 'P2002')
-        return new Response('Not accept', { status: 406 });
+        return new Response('Not accept', { status: 409 });
     }
 
     return new Response('Something went wrong', { status: 500 });

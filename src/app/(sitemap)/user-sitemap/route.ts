@@ -2,20 +2,15 @@ import { db } from '@/lib/db';
 import { ISitemapField, getServerSideSitemap } from 'next-sitemap';
 
 export async function GET(req: Request) {
-  const users = await db.user.findMany({
-    where: {
-      verified: true,
-    },
-    select: {
-      name: true,
-    },
-  });
+  const count = await db.user.count();
 
-  const fields: ISitemapField[] = users.map((user) => ({
-    loc: `${process.env.NEXTAUTH_URL}/user/${user.name?.split(' ').join('-')}`,
+  const fields: ISitemapField[] = Array.from(
+    Array(Math.ceil(count / 7000)).keys()
+  ).map((_, index) => ({
+    loc: `${process.env.NEXTAUTH_URL}/user-sitemap-${index}.xml`,
     lastmod: new Date().toISOString(),
-    priority: 0.7,
-    changefreq: 'weekly',
+    priority: 1,
+    changefreq: 'always',
   }));
 
   const siteMap = await (
@@ -25,6 +20,7 @@ export async function GET(req: Request) {
   return new Response(siteMap, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=900',
     },
   });
 }

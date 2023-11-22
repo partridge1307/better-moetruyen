@@ -1,4 +1,4 @@
-const url = process.env.NEXTAUTH_URL || 'https://beta.moetruyen.net';
+const url = process.env.NEXTAUTH_URL || 'https://moetruyen.net';
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
@@ -8,6 +8,7 @@ module.exports = {
   robotsTxtOptions: {
     additionalSitemaps: [
       `${url}/manga-sitemap.xml`,
+      `${url}/chapter-sitemap.xml`,
       `${url}/user-sitemap.xml`,
       `${url}/team-sitemap.xml`,
     ],

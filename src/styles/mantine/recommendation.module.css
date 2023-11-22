@@ -8,6 +8,7 @@
 .control {
   height: 100%;
   border-radius: 0;
+  box-shadow: none;
 
   & svg {
     width: 50px !important;

@@ -17,7 +17,7 @@ const Member: FC<MemberProps> = ({ members }) => {
       forceMount
       className="data-[state=inactive]:hidden p-2 rounded-md bg-primary-foreground/50"
     >
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-3 gap-6">
         {members.map((member, index) => (
           <Link
             key={index}

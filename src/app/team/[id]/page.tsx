@@ -84,9 +84,12 @@ const page: FC<pageProps> = async ({ params }) => {
           <h1 className="text-3xl md:text-4xl font-semibold">{team.name}</h1>
           <Popover>
             <PopoverTrigger asChild>
-              <div className="shrink-0 flex items-center gap-2 px-2 py-1 rounded-l-full transition-colors hover:bg-muted cursor-pointer">
-                <UserAvatar user={team.owner} className="w-12 h-12" />
-                <Username user={team.owner} />
+              <div className="shrink-0 flex items-center gap-2 px-2 py-2 md:py-1 rounded-full md:rounded-l-full transition-colors hover:bg-muted cursor-pointer">
+                <UserAvatar
+                  user={team.owner}
+                  className="w-14 h-14 md:w-12 md:h-12"
+                />
+                <Username user={team.owner} className="max-sm:hidden" />
               </div>
             </PopoverTrigger>
 

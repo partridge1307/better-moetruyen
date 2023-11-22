@@ -3,24 +3,34 @@ import type { User } from '@prisma/client';
 import Image from 'next/image';
 import { FC } from 'react';
 
-interface UserBannerProps {
+interface UserBannerProps extends React.HTMLAttributes<HTMLImageElement> {
   user: Pick<User, 'banner'>;
-  className?: string;
+  priority?: boolean;
+  quality?: number;
   sizes?: string;
 }
 
-const UserBanner: FC<UserBannerProps> = ({ user, className, sizes }) => {
+const UserBanner: FC<UserBannerProps> = ({
+  user,
+  priority = true,
+  quality = 40,
+  sizes = '30vw',
+  className,
+  placeholder,
+  ...props
+}) => {
   return (
     <div className="relative aspect-video">
       {user.banner ? (
         <Image
           fill
-          sizes={sizes ?? '30vw'}
-          quality={40}
-          priority
+          priority={priority}
+          sizes={sizes}
+          quality={quality}
           src={user.banner}
           alt="User Banner"
           className={className}
+          {...props}
         />
       ) : (
         <div

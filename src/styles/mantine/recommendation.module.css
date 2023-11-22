@@ -7,7 +7,6 @@
 
 .control {
   height: 100%;
-  border-radius: 0.375rem;
 
   & svg {
     width: 50px !important;
@@ -21,10 +20,10 @@
   }
 
   &:first-child {
-    @apply bg-gradient-to-r from-background;
+    @apply bg-gradient-to-r from-background/70;
   }
 
   &:last-child {
-    @apply bg-gradient-to-l from-background;
+    @apply bg-gradient-to-l from-background/70;
   }
 }

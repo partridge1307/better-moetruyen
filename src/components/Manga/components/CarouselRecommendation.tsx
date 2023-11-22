@@ -17,6 +17,7 @@ const CarouselRecommendation: FC<CarouselRecommendationProps> = ({
   return (
     <Carousel
       skipSnaps
+      dragFree
       slidesToScroll={6}
       slideSize={'16.66%'}
       slideGap={'md'}

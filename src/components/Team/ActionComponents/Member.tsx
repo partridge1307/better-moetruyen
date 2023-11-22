@@ -25,7 +25,7 @@ const Member: FC<MemberProps> = ({ members }) => {
             className="block p-1.5 pb-5 rounded-md transition-colors bg-muted hover:bg-muted/75"
           >
             <div className="relative">
-              <UserBanner user={member} />
+              <UserBanner user={member} sizes="45vw" className="rounded-md" />
               <UserAvatar
                 user={member}
                 className="absolute left-[5%] bottom-0 translate-y-1/2 w-20 h-20 border-4 bg-background"

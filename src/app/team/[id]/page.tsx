@@ -81,7 +81,7 @@ const page: FC<pageProps> = async ({ params }) => {
 
         {/* Name section */}
         <section className="ml-[30%] md:ml-[26%] mb-[8%] mt-1 md:mt-3 flex items-start justify-between">
-          <h1 className="text-3xl md:text-4xl font-semibold">{team.name}</h1>
+          <h1 className="text-2xl md:text-4xl font-semibold">{team.name}</h1>
           <Popover>
             <PopoverTrigger asChild>
               <div className="shrink-0 flex items-center gap-2 px-2 py-2 md:py-1 rounded-full md:rounded-l-full transition-colors hover:bg-muted cursor-pointer">

@@ -82,9 +82,9 @@ const page: FC<pageProps> = async ({ searchParams }) => {
   ]);
 
   return (
-    <main className="container mx-auto max-sm:px-2 space-y-4 mt-10">
+    <main className="container max-sm:px-2 space-y-4 mt-6 p-3 rounded-md bg-gradient-to-b from-background/50">
       <h1 className="text-2xl font-semibold">Mới cập nhật</h1>
-      <ul className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-2 rounded-md bg-gradient-to-b from-background/40">
+      <ul className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {latestManga.length ? (
           latestManga.map(({ manga }, idx) => (
             <li key={idx}>

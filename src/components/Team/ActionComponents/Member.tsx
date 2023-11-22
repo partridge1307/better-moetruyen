@@ -29,7 +29,7 @@ const Member: FC<MemberProps> = ({ members }) => {
                 user={member}
                 priority
                 quality={60}
-                sizes="45vw"
+                sizes="(max-width: 640px) 55vw, 45vw"
                 className="rounded-md"
               />
               <UserAvatar

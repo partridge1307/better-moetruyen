@@ -1,14 +1,9 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { RateLimitError, rateLimit } from './lib/rate-limit';
+import { RateLimitError, limiter } from './lib/rate-limit';
 import { requestIp } from './lib/request-ip';
 
-const limiter = rateLimit({
-  uniqueTokenPerInterval: 500,
-  interval: 1000 * 60,
-});
-
 export async function middleware(req: NextRequest) {
-  const ip = requestIp(req);
+  const ip = requestIp(req.headers) ?? req.ip ?? '127.0.0.1';
   const requestHeaders = new Headers(req.headers);
 
   try {
@@ -35,5 +30,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/api/chapter', '/api/((?=comment|user).*)'],
+  matcher: ['/api/((?=comment|user).*)'],
 };

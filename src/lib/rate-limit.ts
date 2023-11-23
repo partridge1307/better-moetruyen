@@ -43,3 +43,8 @@ export const rateLimit = (options?: Options) => {
       }),
   };
 };
+
+export const limiter = rateLimit({
+  uniqueTokenPerInterval: 500,
+  interval: 1000 * 60,
+});

@@ -1,17 +1,13 @@
-import type { NextRequest } from 'next/server';
-
-export const requestIp = (req: NextRequest) => {
+export const requestIp = (headers: Headers) => {
   const ip =
-    req.headers.get('x-client-ip') ||
-    req.headers.get('x-forwarded-for') ||
-    req.headers.get('cf-connecting-ip') ||
-    req.headers.get('true-client-ip') ||
-    req.ip ||
-    req.headers.get('x-real-ip') ||
-    req.headers.get('x-forwarded') ||
-    req.headers.get('forwarded-for') ||
-    req.headers.get('forwarded') ||
-    '127.0.0.1';
+    headers.get('x-client-ip') ||
+    headers.get('x-forwarded-for') ||
+    headers.get('cf-connecting-ip') ||
+    headers.get('true-client-ip') ||
+    headers.get('x-real-ip') ||
+    headers.get('x-forwarded') ||
+    headers.get('forwarded-for') ||
+    headers.get('forwarded');
 
   return ip;
 };

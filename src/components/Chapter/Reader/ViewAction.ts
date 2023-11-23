@@ -1,18 +1,21 @@
-import { db } from '@/lib/db';
-import { Prisma } from '@prisma/client';
-import { z } from 'zod';
+'use server';
 
-export async function POST(req: Request) {
+import { db } from '@/lib/db';
+import { limiter } from '@/lib/rate-limit';
+import { requestIp } from '@/lib/request-ip';
+import { headers } from 'next/headers';
+
+export async function UpdateView(chapterId: number) {
+  const header = headers();
+  const headersList = new Headers(header);
+  const ip = requestIp(header) ?? '127.0.0.1';
+
   try {
-    const { id } = z
-      .object({
-        id: z.number(),
-      })
-      .parse(await req.json());
+    await limiter.check(headersList, 50, ip);
 
     const chapter = await db.chapter.findUniqueOrThrow({
       where: {
-        id,
+        id: chapterId,
       },
       select: {
         id: true,
@@ -21,7 +24,7 @@ export async function POST(req: Request) {
       },
     });
 
-    if (chapter.teamId !== null) {
+    if (!!chapter.teamId) {
       await db.$transaction([
         db.view.update({
           where: {
@@ -30,13 +33,13 @@ export async function POST(req: Request) {
           data: {
             dailyView: {
               create: {
-                chapterId: chapter.id,
+                chapterId,
                 teamId: chapter.teamId,
               },
             },
             weeklyView: {
               create: {
-                chapterId: chapter.id,
+                chapterId,
                 teamId: chapter.teamId,
               },
             },
@@ -57,19 +60,21 @@ export async function POST(req: Request) {
         }),
       ]);
     } else {
-      await db.view.update({
+      db.view.update({
         where: {
           mangaId: chapter.mangaId,
         },
         data: {
           dailyView: {
             create: {
-              chapterId: chapter.id,
+              chapterId,
+              teamId: chapter.teamId,
             },
           },
           weeklyView: {
             create: {
-              chapterId: chapter.id,
+              chapterId,
+              teamId: chapter.teamId,
             },
           },
           totalView: {
@@ -79,14 +84,8 @@ export async function POST(req: Request) {
       });
     }
 
-    return new Response('OK');
+    return;
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return new Response('Invalid', { status: 422 });
-    }
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      return new Response('Not found', { status: 404 });
-    }
-    return new Response('Something went wrong', { status: 500 });
+    return;
   }
 }

@@ -1,3 +1,4 @@
+import { UpdateView } from '@/components/Chapter/Reader/ViewAction';
 import { useInterval } from '@mantine/hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -20,11 +21,7 @@ const useViewCalc = (chapterId: number, totalImages: number) => {
     if (seconds >= threshold.current) {
       interval.stop();
       setSeconds(0);
-
-      fetch('/api/chapter', {
-        method: 'POST',
-        body: JSON.stringify({ id: chapterId }),
-      });
+      UpdateView(chapterId);
     }
   }, [chapterId, interval, seconds]);
 

@@ -5,7 +5,7 @@ import { FC } from 'react';
 
 const SessionFunction = dynamic(() => import('./SessionFunction'), {
   loading: () => (
-    <div className="w-[30%] md:w-[15%] h-10 rounded-md animate-pulse bg-background" />
+    <div className="w-[30%] md:w-[19%] lg:w-[16%] h-10 rounded-md animate-pulse bg-background" />
   ),
 });
 
@@ -20,7 +20,7 @@ const UserFunction: FC<UserFunctionProps> = async ({ user }) => {
       <ShareButton
         title={user.name ?? 'Moetruyen'}
         url={`/user/${user.name?.split(' ').join('-')}`}
-        className="w-[30%] md:w-[15%]"
+        className="w-[30%] md:w-[19%] lg:w-[16%]"
       />
     </>
   );

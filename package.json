@@ -9,6 +9,7 @@
     "lint": "next lint",
     "prestart": "prisma generate",
     "prerestart": "prisma generate",
+    "prebuild": "prisma generate",
     "postbuild": "next-sitemap"
   },
   "dependencies": {

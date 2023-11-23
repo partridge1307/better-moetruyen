@@ -18,18 +18,6 @@ const nextConfig = {
         port: '',
         pathname: '/*/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'sin1.contabostorage.com',
-        port: '',
-        pathname: '/*/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cdn.discordapp.com',
-        port: '',
-        pathname: '/*/**',
-      },
     ],
   },
   rewrites: async () => [

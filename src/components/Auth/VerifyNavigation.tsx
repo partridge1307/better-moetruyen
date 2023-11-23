@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, startTransition, useEffect, useMemo, useState } from 'react';
 import { UpdateCookie } from './UpdateCookie';
 
 interface VerifyNavigationProps {
@@ -38,7 +38,10 @@ const VerifyNavigation: FC<VerifyNavigationProps> = ({
 
   useEffect(() => {
     if (!sessionToken) return;
-    UpdateCookie(sessionToken).then(() => location.reload());
+
+    startTransition(() => {
+      UpdateCookie(sessionToken).then(() => location.reload());
+    });
   }, [sessionToken]);
 
   useEffect(() => {

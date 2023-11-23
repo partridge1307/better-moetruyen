@@ -42,7 +42,7 @@ const Bottom: FC<BottomProps> = ({ embla, chapterId, totalImages }) => {
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(totalImages);
-  const isMobile = useMediaQuery('(max-width: 640px)');
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   useEffect(() => {
     if (!embla) return;
@@ -85,9 +85,9 @@ const Bottom: FC<BottomProps> = ({ embla, chapterId, totalImages }) => {
     (emblaCb: EmblaCarouselType) => {
       if (!emblaCb.canScrollPrev() || !emblaCb.canScrollNext()) return;
 
-      !isMobile && emblaCb.internalEngine().animation.stop();
+      isDesktop && emblaCb.internalEngine().animation.stop();
     },
-    [isMobile]
+    [isDesktop]
   );
 
   useEffect(() => {

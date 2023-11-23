@@ -29,7 +29,7 @@ const UserBanner: FC<UserBannerProps> = ({
           quality={quality}
           src={user.banner}
           alt="User Banner"
-          className={className}
+          className={cn('object-cover rounded-md', className)}
           {...props}
         />
       ) : (

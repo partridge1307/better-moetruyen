@@ -1,5 +1,5 @@
 import LastActivityPostSkeletion from '@/components/Skeleton/LastActivityPostSkeletion';
-import LastestMangaSkeleton from '@/components/Skeleton/LastestMangaSkeleton';
+import MangaCardSkeleton from '@/components/Skeleton/MangaCardSkeleton';
 import LeaderboardSkeletion from '@/components/Skeleton/LeaderboardSkeletion';
 import NotableMangaSkeleton from '@/components/Skeleton/NotableMangaSkeleton';
 import RecommendationSkeleton from '@/components/Skeleton/RecommendationSkeleton';
@@ -18,7 +18,7 @@ const Recommendation = dynamic(
 );
 
 const LatestManga = dynamic(() => import('@/components/Manga/LatestManga'), {
-  loading: () => <LastestMangaSkeleton />,
+  loading: () => <MangaCardSkeleton />,
 });
 
 const Leaderboard = dynamic(() => import('@/components/LeaderBoard'), {

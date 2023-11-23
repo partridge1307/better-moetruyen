@@ -52,7 +52,7 @@ const page: FC<pageProps> = async ({ params }) => {
   });
   if (!chapter) return notFound();
 
-  updateHistory(chapter.manga.id);
+  updateHistory(chapter.manga.id, chapter.id);
 
   const navChapter = getNavChapter(chapter.id, chapter.manga.chapter);
 
@@ -82,7 +82,7 @@ const getNavChapter = (
   };
 };
 
-const updateHistory = (mangaId: number) =>
+const updateHistory = (mangaId: number, chapterId: number) =>
   getAuthSession().then(async (session) => {
     if (!session) return;
 
@@ -94,11 +94,13 @@ const updateHistory = (mangaId: number) =>
         },
       },
       update: {
+        chapterId,
         createdAt: new Date(),
       },
       create: {
         userId: session.user.id,
         mangaId,
+        chapterId,
       },
     });
   });
@@ -130,7 +132,7 @@ export async function generateMetadata({
     };
 
   const title = `Vol. ${chapter.volume} Ch. ${chapter.chapterIndex}${
-    !!chapter.name && ` - ${chapter.name}`
+    !!chapter.name ? ` - ${chapter.name}` : ''
   }. Truyện ${chapter.manga.name} | Tiếp Chap ${chapter.chapterIndex + 1}`;
   const description = `Đọc truyện ${chapter.manga.name} Chap ${chapter.chapterIndex}.`;
 

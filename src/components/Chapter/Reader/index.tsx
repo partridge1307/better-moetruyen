@@ -65,7 +65,7 @@ const Reader: FC<ReaderProps> = ({ prevChapter, nextChapter, chapter }) => {
   useHotkeys([
     [
       'ctrl+shift+C',
-      () => menuConfig[1]((prev) => !prev),
+      () => commentConfig[1]((prev) => !prev),
       { preventDefault: true },
     ],
     ['ctrl+M', () => menuConfig[1]((prev) => !prev)],
@@ -217,7 +217,7 @@ const Reader: FC<ReaderProps> = ({ prevChapter, nextChapter, chapter }) => {
       <Top
         href={`/manga/${chapter.manga.slug}`}
         title={`Vol. ${chapter.volume} Ch. ${chapter.chapterIndex}${
-          !!chapter.name && ` - ${chapter.name}`
+          !!chapter.name ? ` - ${chapter.name}` : ''
         }`}
       />
 
@@ -236,7 +236,7 @@ const Reader: FC<ReaderProps> = ({ prevChapter, nextChapter, chapter }) => {
         <Menu
           chapterId={chapter.id}
           title={`Vol. ${chapter.volume} Ch. ${chapter.chapterIndex}${
-            !!chapter.name && ` - ${chapter.name}`
+            !!chapter.name ? ` - ${chapter.name}` : ''
           }`}
           prevChapterUrl={
             !!prevChapter

@@ -20,7 +20,7 @@ const UserBanner: FC<UserBannerProps> = ({
   ...props
 }) => {
   return (
-    <div className="relative aspect-video">
+    <div className="relative aspect-[2.39/1]">
       {user.banner ? (
         <Image
           fill

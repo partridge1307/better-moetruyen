@@ -1,41 +1,31 @@
 'use client';
 
-import { User } from '@prisma/client';
-import { FC, useState } from 'react';
-import { Button } from '../ui/Button';
-import { Heart, HeartOff } from 'lucide-react';
+import { useCustomToast } from '@/hooks/use-custom-toast';
+import { usePrevious } from '@mantine/hooks';
 import { useMutation } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
-import { usePrevious } from '@mantine/hooks';
-import { useCustomToast } from '@/hooks/use-custom-toast';
+import { Heart, HeartOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { FC, useState } from 'react';
+import { Button } from '../../ui/Button';
 
 interface FollowButtonProps {
-  user: Pick<User, 'id'> & {
-    followedBy: Pick<User, 'id'>[];
-  };
-  sessionUserId: string;
-  hasBadge: boolean;
+  isFollowing: boolean;
+  userId: string;
 }
 
-const FollowButton: FC<FollowButtonProps> = ({
-  user,
-  sessionUserId,
-  hasBadge,
-}) => {
+const FollowButton: FC<FollowButtonProps> = ({ isFollowing, userId }) => {
   const router = useRouter();
   const { loginToast, notFoundToast, rateLimitToast, serverErrorToast } =
     useCustomToast();
-  const [isFollowed, setFollowed] = useState(
-    user.followedBy.some((user) => user.id === sessionUserId)
-  );
+  const [isFollowed, setFollowed] = useState(isFollowing);
   const prevFollow = usePrevious(isFollowed);
 
   const { mutate: Toggle, isPending: isToggling } = useMutation({
-    mutationKey: ['follow-user', user.id],
+    mutationKey: ['follow-user', userId],
     mutationFn: async (type: 'FOLLOW' | 'UNFOLLOW') => {
       await axios.post('/api/user/follow', {
-        id: user.id,
+        id: userId,
         type,
       });
     },
@@ -63,7 +53,7 @@ const FollowButton: FC<FollowButtonProps> = ({
     <Button
       variant={'destructive'}
       disabled={isToggling}
-      className={`${hasBadge ? 'mt-3' : 'mt-16'} w-full mb-2`}
+      className="w-[30%] md:w-[15%]"
       onClick={() => Toggle('UNFOLLOW')}
     >
       <HeartOff />
@@ -71,7 +61,7 @@ const FollowButton: FC<FollowButtonProps> = ({
   ) : (
     <Button
       disabled={isToggling}
-      className={`${hasBadge ? 'mt-3' : 'mt-16'} w-full mb-2`}
+      className="w-[30%] md:w-[15%]"
       onClick={() => Toggle('FOLLOW')}
     >
       <Heart />

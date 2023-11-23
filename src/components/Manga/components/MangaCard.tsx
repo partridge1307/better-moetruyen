@@ -53,7 +53,7 @@ const MangaCard: FC<MangaCardProps> = ({ manga }) => {
 
               <time
                 dateTime={new Date(chapter.createdAt).toDateString()}
-                className="line-clamp-1"
+                className="line-clamp-1 max-sm:hidden"
               >
                 {formatTimeToNow(new Date(chapter.createdAt))}
               </time>

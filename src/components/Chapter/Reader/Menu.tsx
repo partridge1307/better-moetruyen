@@ -1,6 +1,6 @@
 'use client';
 
-import { buttonVariants } from '@/components/ui/Button';
+import { Button, buttonVariants } from '@/components/ui/Button';
 import {
   Command,
   CommandEmpty,
@@ -23,8 +23,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Columns,
+  Expand,
   File,
   Rows,
+  Shrink,
 } from 'lucide-react';
 import Link from 'next/link';
 import type { FC } from 'react';
@@ -39,6 +41,7 @@ import {
   MenuToggleDispatchContext,
   MenuToggleValueContext,
 } from './Context';
+import { useFullscreen } from '@mantine/hooks';
 
 interface MenuProps {
   chapterId: number;
@@ -96,6 +99,8 @@ const Menu: FC<MenuProps> = ({
   const setDirection = useContext(DirectionDispatchContext);
   const isContinuosEnabled = useContext(ContinuousValueContext);
   const setContinuous = useContext(ContinuousDispatchContext);
+
+  const { toggle, fullscreen } = useFullscreen();
   const [value, setValue] = useState(
     chapterList.find((chapter) => chapter.id === chapterId)
   );
@@ -271,6 +276,34 @@ const Menu: FC<MenuProps> = ({
           }
         />
       </div>
+
+      {!fullscreen ? (
+        <Button
+          variant={'secondary'}
+          className="mt-6 w-full space-x-2"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggle();
+          }}
+        >
+          <Expand />
+          <span>Toàn màn hình</span>
+        </Button>
+      ) : (
+        <Button
+          variant={'destructive'}
+          className="mt-6 w-full space-x-2"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggle();
+          }}
+        >
+          <Shrink />
+          <span>Thoát toàn màn hình</span>
+        </Button>
+      )}
     </div>
   );
 };

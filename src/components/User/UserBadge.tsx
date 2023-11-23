@@ -68,7 +68,7 @@ const UserBadge: FC<UserBadgeProps> = ({ badge }) => {
         >
           {badge.name}
         </p>
-        <p className="text-sm">{badge.description}</p>
+        <p className="text-sm opacity-70">{badge.description}</p>
       </PopoverContent>
     </Popover>
   );

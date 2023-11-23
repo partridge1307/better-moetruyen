@@ -65,7 +65,7 @@ const page: FC<pageProps> = async ({ params }) => {
   if (!team) return notFound();
 
   return (
-    <main className="relative container max-sm:px-2 mt-6 pb-4 lg:w-4/5">
+    <main className="relative container max-sm:px-0 mt-4 pb-4 lg:w-4/5">
       {/* Info section */}
       <section className="p-3 pb-7 rounded-t-md bg-primary-foreground">
         {/* Image section */}
@@ -84,7 +84,7 @@ const page: FC<pageProps> = async ({ params }) => {
           <h1 className="text-2xl md:text-4xl font-semibold">{team.name}</h1>
           <Popover>
             <PopoverTrigger asChild>
-              <div className="shrink-0 flex items-center gap-2 px-2 py-2 md:py-1 rounded-full md:rounded-l-full transition-colors hover:bg-muted cursor-pointer">
+              <div className="shrink-0 flex items-center gap-2 px-2 py-2 md:py-1 rounded-full md:rounded-l-full md:rounded-r-none transition-colors hover:bg-muted cursor-pointer">
                 <UserAvatar
                   user={team.owner}
                   className="w-14 h-14 md:w-12 md:h-12"
@@ -154,7 +154,7 @@ export async function generateMetadata({
 
   if (!team)
     return {
-      title: `Team | Moetruyen`,
+      title: 'Nhóm dịch',
       description: 'Team, Nhóm | Moetruyen',
       alternates: {
         canonical: `${process.env.NEXTAUTH_URL}/team/${params.id}`,

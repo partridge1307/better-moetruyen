@@ -26,13 +26,13 @@ const UserDropdownMenu: FC<UserDropdownMenuProps> = ({ session }) => {
 
         <UserAvatar
           user={session.user}
-          className="absolute left-4 bottom-0 translate-y-1/2 w-16 h-16 lg:w-20 lg:h-20 border-4 dark:border-zinc-800 dark:bg-zinc-900"
+          className="absolute left-4 bottom-0 translate-y-1/2 w-16 h-16 md:w-20 md:h-20 border-4 dark:border-zinc-800 dark:bg-zinc-900"
         />
       </div>
 
       <Username
         user={session.user}
-        className="text-lg text-start font-semibold pl-4 mt-11 lg:mt-12"
+        className="text-lg text-start font-semibold pl-4 mt-10 md:mt-12"
       />
 
       <DropdownMenuSeparator className="my-2" />

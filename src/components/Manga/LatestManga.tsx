@@ -1,3 +1,4 @@
+import { INFINITE_SCROLL_PAGINATION_RESULTS } from '@/config';
 import { db } from '@/lib/db';
 import MangaCard from './components/MangaCard';
 
@@ -7,7 +8,7 @@ const LatestManga = async () => {
     where: {
       isPublished: true,
     },
-    take: 20,
+    take: INFINITE_SCROLL_PAGINATION_RESULTS,
     orderBy: {
       createdAt: 'desc',
     },

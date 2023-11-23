@@ -5,14 +5,14 @@ import type { Session } from 'next-auth';
 import dynamic from 'next/dynamic';
 import { FC } from 'react';
 import ShareButton from '../ShareButton';
+import Link from 'next/link';
+import { buttonVariants } from '../ui/Button';
 
 const MangaFollow = dynamic(
   () => import('@/components/Manga/components/MangaFollow'),
   {
     ssr: false,
-    loading: () => (
-      <div className="w-[8.5rem] md:w-[11.5rem] lg:w-[13.5rem] h-10 rounded-md bg-foreground" />
-    ),
+    loading: () => <div className="w-[7.5rem] h-10 rounded-md bg-foreground" />,
   }
 );
 
@@ -22,12 +22,30 @@ interface MangaActionProps {
 
 const MangaAction: FC<MangaActionProps> = async ({ manga }) => {
   const session = await getAuthSession();
-
-  const hasFollowed = await checkFollow(manga.id, session);
+  const [isFollowing, chapterId] = await Promise.all([
+    checkFollow(manga.id, session),
+    getLastChapterId(manga.id, session),
+  ]);
 
   return (
     <>
-      {!!session && <MangaFollow isFollow={!!hasFollowed} mangaId={manga.id} />}
+      {!!chapterId && (
+        <Link
+          href={`/chapter/${chapterId}`}
+          className={buttonVariants({
+            className: 'w-36 md:w-[11.5rem] lg:w-[13.5rem]',
+          })}
+        >
+          Đọc truyện
+        </Link>
+      )}
+      {!!session && (
+        <MangaFollow
+          mangaId={manga.id}
+          isFollow={!!isFollowing}
+          hasChapter={!!chapterId}
+        />
+      )}
       <ShareButton
         url={`/manga/${manga.slug}`}
         title={manga.name}
@@ -39,10 +57,10 @@ const MangaAction: FC<MangaActionProps> = async ({ manga }) => {
 
 export default MangaAction;
 
-async function checkFollow(id: number, session: Session | null) {
+function checkFollow(id: number, session: Session | null) {
   if (!session) return null;
 
-  return await db.manga.findUnique({
+  return db.manga.findUnique({
     where: {
       id,
       followedBy: {
@@ -55,4 +73,46 @@ async function checkFollow(id: number, session: Session | null) {
       id: true,
     },
   });
+}
+
+async function getLastChapterId(mangaId: number, session: Session | null) {
+  const firstChapterPromise = db.chapter
+    .findFirst({
+      where: {
+        mangaId,
+      },
+      orderBy: {
+        chapterIndex: 'asc',
+      },
+      select: {
+        id: true,
+      },
+    })
+    .then((result) => result?.id);
+  const historyPromise = !!session
+    ? [
+        db.history
+          .findUnique({
+            where: {
+              userId_mangaId: {
+                userId: session.user.id,
+                mangaId,
+              },
+            },
+            select: {
+              chapterId: true,
+            },
+          })
+          .then((result) => result?.chapterId),
+      ]
+    : [];
+
+  const [firstChapterId, historyChapterId] = await Promise.all([
+    firstChapterPromise,
+    ...historyPromise,
+  ]);
+
+  if (!session) return firstChapterId;
+  else if (!historyChapterId) return firstChapterId;
+  else return historyChapterId;
 }

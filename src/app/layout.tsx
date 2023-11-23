@@ -82,8 +82,8 @@ function searchActionJsonLd() {
     url: process.env.NEXTAUTH_URL,
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${process.env.NEXTAUTH_URL}/search?q={query_string}`,
-      'query-input': 'required name=q',
+      target: `${process.env.NEXTAUTH_URL}/search?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
     },
   };
 }

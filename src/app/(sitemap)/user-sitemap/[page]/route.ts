@@ -16,9 +16,9 @@ export async function GET(req: Request, context: { params: { page: string } }) {
   const siteMap = await (
     await getServerSideSitemap(
       users.map((user) => ({
-        loc: `${process.env.NEXTAUTH_URL}/user/${user.name
-          ?.split(' ')
-          .join('-')}`,
+        loc: `${process.env.NEXTAUTH_URL}/user/${encodeURI(
+          user.name?.split(' ').join('-') ?? 'Moetruyen'
+        )}`,
         lastmod: new Date().toISOString(),
         priority: 0.9,
         changefreq: 'daily',

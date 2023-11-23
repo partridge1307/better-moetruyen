@@ -79,7 +79,7 @@ const MangaSubInfo: FC<MangaSubInfoProps> = async ({ mangaId }) => {
 
               <Username
                 user={manga.creator}
-                className="text-start mt-11 pl-4"
+                className="text-start mt-10 pl-4 text-lg font-semibold"
               />
             </Link>
           </PopoverContent>

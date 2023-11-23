@@ -99,7 +99,7 @@ const page: FC<pageProps> = async ({ params }) => {
                 className="relative block pb-4 border border-primary-foreground transition-colors hover:bg-primary-foreground"
               >
                 <div className="relative">
-                  <UserBanner user={team.owner} />
+                  <UserBanner user={team.owner} className="rounded-md" />
                   <UserAvatar
                     user={team.owner}
                     className="absolute left-[5%] bottom-0 translate-y-1/2 w-20 h-20 border-4 border-primary-foreground bg-background"

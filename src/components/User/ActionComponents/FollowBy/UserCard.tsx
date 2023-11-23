@@ -16,7 +16,7 @@ const UserCard: FC<UserCardProps> = ({ user }) => {
       className="block p-2 pb-6 rounded-md transition-colors bg-primary-foreground hover:bg-primary-foreground/70"
     >
       <div className="relative">
-        <UserBanner user={user} className="bg-background" />
+        <UserBanner user={user} className="rounded-md bg-background" />
         <UserAvatar
           user={user}
           className="absolute left-[5%] bottom-0 translate-y-1/2 w-20 h-20 border-4 border-muted bg-background"

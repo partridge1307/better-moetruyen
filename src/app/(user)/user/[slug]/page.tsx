@@ -43,7 +43,7 @@ const page: FC<pageProps> = async ({ params }) => {
       <section className="p-2 pb-4 rounded-t-md bg-primary-foreground">
         {/* Image section */}
         <section className="relative">
-          <UserBanner user={user} className="bg-background" />
+          <UserBanner user={user} className="rounded-md bg-background" />
           <UserAvatar
             user={user}
             className="absolute left-[5%] md:left-[3%] bottom-0 translate-y-1/2 w-24 h-24 md:w-40 md:h-40 border-[5px] border-muted bg-background"

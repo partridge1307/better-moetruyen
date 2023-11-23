@@ -24,7 +24,7 @@ interface pageProps {
 const page: FC<pageProps> = async ({ params }) => {
   const user = await db.user.findUnique({
     where: {
-      name: params.slug.split('-').join(' '),
+      name: decodeURI(params.slug).split('-').join(' '),
     },
     select: {
       id: true,
@@ -69,11 +69,11 @@ const page: FC<pageProps> = async ({ params }) => {
           )}
         </section>
         {/* Function section */}
-        <section className="ml-[4%] mb-5 space-x-6">
+        <section className="ml-[3%] mb-5 space-x-6">
           <UserFunction user={user} />
         </section>
         {/* Count info section */}
-        <section className="ml-[4%] space-y-1">
+        <section className="ml-[3%] space-y-1">
           <UserInfo user={user} />
         </section>
       </section>
@@ -93,7 +93,7 @@ export async function generateMetadata({
 }: pageProps): Promise<Metadata> {
   const user = await db.user.findUnique({
     where: {
-      name: params.slug.split('-').join(' '),
+      name: decodeURI(params.slug).split('-').join(' '),
     },
     select: {
       name: true,

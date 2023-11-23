@@ -110,8 +110,7 @@ const page: FC<pageProps> = async ({ params }) => {
               fill
               priority
               loading="eager"
-              sizes="(max-width: 640px) 55vw, 75vw"
-              quality={75}
+              sizes="(max-width: 640px) 65vw, 100vw"
               src={manga.cover}
               alt={`${manga.name} Cover`}
               className="object-cover"

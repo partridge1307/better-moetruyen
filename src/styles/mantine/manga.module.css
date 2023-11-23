@@ -1,4 +1,6 @@
 .root {
+  margin-top: 2rem !important;
+
   &:hover .controls {
     opacity: 1;
   }

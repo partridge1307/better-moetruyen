@@ -141,7 +141,7 @@ const page: FC<pageProps> = async ({ params }) => {
         </section>
 
         {/* Action section */}
-        <section className="-mt-14 md:-mt-24 lg:-mt-[6.5rem] px-2 mx-1 md:px-6 md:mx-9 flex items-center gap-5">
+        <section className="-mt-14 md:-mt-24 lg:-mt-[6.5rem] px-2 mx-1 md:px-6 md:mx-9 flex flex-wrap items-center gap-5">
           <MangaAction manga={manga} />
         </section>
 

@@ -68,7 +68,9 @@ const Bottom: FC<BottomProps> = ({ embla, chapterId, totalImages }) => {
   useEffect(() => {
     router.replace(`?page=${currentPage}`, { scroll: false });
     calcView();
-  }, [currentPage, router, calcView]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage, calcView]);
 
   const inViewHandler = useCallback(
     (emblaCb: EmblaCarouselType) => {

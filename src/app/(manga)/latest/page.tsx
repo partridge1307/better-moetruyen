@@ -87,7 +87,7 @@ const page: FC<pageProps> = async ({ searchParams }) => {
   ]);
 
   return (
-    <main className="container max-sm:px-2 space-y-4 mt-6 p-3 rounded-md bg-gradient-to-b from-background/50">
+    <main className="container max-sm:px-2 space-y-4 mt-6 p-3 pb-6 rounded-md bg-gradient-to-b from-background/50">
       <h1 className="text-2xl font-semibold">Mới cập nhật</h1>
       <ul className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {latestManga.length ? (

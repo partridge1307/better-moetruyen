@@ -26,11 +26,7 @@ const All = async () => {
           href={`/team/${team.id}`}
           className="flex items-start gap-4 p-2 rounded-l-full transition-colors hover:bg-primary-foreground"
         >
-          <TeamImage
-            team={team}
-            sizes="(max-width: 640px) 10vw, 15vw"
-            className="w-16 h-16"
-          />
+          <TeamImage team={team} sizes="15vw" className="w-16 h-16" />
           <div className="space-y-1.5">
             <p
               className={`flex items-center gap-1.5 ${

@@ -33,7 +33,7 @@ const MangaAction: FC<MangaActionProps> = async ({ manga }) => {
         <Link
           href={`/chapter/${chapterId}`}
           className={buttonVariants({
-            className: 'w-36 md:w-[11.5rem] lg:w-[13.5rem]',
+            className: 'min-w-[9rem] md:min-w-[11.5rem] lg:min-w-[13.5rem]',
           })}
         >
           Đọc truyện
@@ -51,7 +51,7 @@ const MangaAction: FC<MangaActionProps> = async ({ manga }) => {
         title={manga.name}
         className={
           !session && !chapterId
-            ? 'w-[8.5rem] md:w-[11.5rem]  lg:w-[13.5rem]'
+            ? 'min-w-[8.5rem] md:min-w-[11.5rem]  lg:min-w-[13.5rem]'
             : ''
         }
       />

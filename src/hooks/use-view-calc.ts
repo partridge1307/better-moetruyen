@@ -4,13 +4,14 @@ import { UpdateView } from '@/components/Chapter/Reader/ViewAction';
 import { useInterval } from '@mantine/hooks';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const miniumPage = 10;
+const MAXIUM_PAGE = 10;
+const MIN_TIME = 25;
 
 const useViewCalc = (chapterId: number, totalImages: number) => {
   const [seconds, setSeconds] = useState(0);
   const interval = useInterval(() => setSeconds((s) => s + 1), 1000);
   const threshold = useRef(
-    totalImages > miniumPage ? 25 : Math.floor(totalImages * 0.7 * 3)
+    totalImages > MAXIUM_PAGE ? MIN_TIME : Math.floor(totalImages * 0.7 * 3)
   );
 
   useEffect(() => {
@@ -21,14 +22,18 @@ const useViewCalc = (chapterId: number, totalImages: number) => {
   }, []);
 
   const calcView = useCallback(() => {
-    if (seconds < threshold.current) return;
+    if (!interval.active || seconds < threshold.current) return;
 
     interval.stop();
-    UpdateView(
-      chapterId,
-      new Date(
-        new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' })
-      ).getTime()
+    setTimeout(
+      () =>
+        UpdateView(
+          chapterId,
+          new Date(
+            new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' })
+          ).getTime()
+        ),
+      0
     );
   }, [chapterId, interval, seconds]);
 

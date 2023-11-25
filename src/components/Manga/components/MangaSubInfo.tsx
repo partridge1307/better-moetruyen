@@ -73,13 +73,13 @@ const MangaSubInfo: FC<MangaSubInfoProps> = async ({ mangaId }) => {
                 <UserBanner user={manga.creator} />
                 <UserAvatar
                   user={manga.creator}
-                  className="w-20 h-20 absolute left-4 bottom-0 translate-y-1/2 bg-background ring-4 ring-secondary"
+                  className="w-16 h-16 absolute left-4 bottom-0 translate-y-1/2 bg-background ring-4 ring-secondary"
                 />
               </div>
 
               <Username
                 user={manga.creator}
-                className="text-start mt-1 ml-28 text-lg font-semibold line-clamp-2"
+                className="text-start mt-1 ml-24 text-lg font-semibold line-clamp-2"
               />
             </Link>
           </PopoverContent>

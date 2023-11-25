@@ -170,7 +170,11 @@ const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                 </div>
                 <div className="flex flex-col gap-2">
                   {nc.subMenu.map((nsm) => (
-                    <Link key={nsm.title} href={nsm.link}>
+                    <Link
+                      prefetch={nsm.link !== '/latest'}
+                      key={nsm.title}
+                      href={nsm.link}
+                    >
                       <SheetClose
                         className={cn(
                           'w-full py-2 pl-8 text-start rounded-lg transition-colors duration-100',

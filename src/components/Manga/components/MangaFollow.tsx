@@ -58,7 +58,7 @@ const MangaFollow: FC<MangaFollowProps> = ({
         variant: 'destructive',
         className: hasChapter
           ? 'gap-1.5'
-          : 'gap-1.5 w-[8.5rem] md:w-[11.5rem] lg:w-[13.5rem]',
+          : 'gap-1.5 min-w-[9rem] md:min-w-[11.5rem] lg:min-w-[13.5rem]',
       })}
       disabled={isToggling}
       onClick={() => Toggle('UNFOLLOW')}
@@ -70,7 +70,7 @@ const MangaFollow: FC<MangaFollowProps> = ({
       className={buttonVariants({
         className: hasChapter
           ? 'gap-1.5'
-          : 'gap-1.5 w-[8.5rem] md:w-[11.5rem] lg:w-[13.5rem]',
+          : 'gap-1.5 min-w-[9rem] md:min-w-[11.5rem] lg:min-w-[13.5rem]',
       })}
       disabled={isToggling}
       onClick={() => Toggle('FOLLOW')}

@@ -125,7 +125,7 @@ const Page: FC<pageProps> = async ({ searchParams }) => {
   ]);
 
   return (
-    <main className="container max-sm:px-2 space-y-10 mt-10">
+    <main className="container max-sm:px-2 space-y-10 mt-6 pb-6">
       <AdvancedSearch tags={tags} total={totalMangas}>
         {!!mangas.length ? (
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-2 rounded-md bg-gradient-to-b from-background/40">

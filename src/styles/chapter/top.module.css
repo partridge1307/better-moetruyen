@@ -43,7 +43,7 @@
 .mt_top_title_run > span {
   display: inline-block;
   padding-left: 50%;
-  animation: marquee 45s linear infinite;
+  animation: marquee 20s linear infinite;
 }
 
 .mt_top_action {

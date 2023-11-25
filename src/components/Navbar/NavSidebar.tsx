@@ -194,7 +194,7 @@ const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
         <div className="flex h-[10%] items-center justify-between px-6 bg-primary-foreground">
           <div>
             <p>©Moetruyen</p>
-            <p>Version: 1.3.0</p>
+            <p>Version: 1.3.1</p>
           </div>
           <SwitchWithIcon checked={isChecked} onCheckedChange={handleSwitch}>
             <SunMoon />

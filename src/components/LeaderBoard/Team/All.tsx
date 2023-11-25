@@ -34,7 +34,7 @@ const All = async () => {
           <div className="space-y-1.5">
             <p
               className={`flex items-center gap-1.5 ${
-                idx === 0 ? 'text-xl font-semibold text-red-500' : ''
+                idx === 0 ? 'text-xl font-semibold text-leader' : ''
               }`}
             >
               <span>{++idx}.</span>

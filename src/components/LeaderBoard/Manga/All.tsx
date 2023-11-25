@@ -37,7 +37,7 @@ const All = async () => {
         >
           <div className="relative">
             <MangaImage sizes="15vw" manga={result.manga} />
-            <div className="absolute top-0 left-0 p-1 pr-2 rounded-md rounded-br-full bg-red-600">
+            <div className="absolute top-0 left-0 p-1 pr-2 rounded-md rounded-br-full bg-leader">
               {idx + 1}
             </div>
           </div>

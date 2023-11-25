@@ -37,7 +37,7 @@ const MangaCard: FC<MangaCardProps> = ({ manga }) => {
             <Link
               href={`/chapter/${chapter.id}`}
               key={chapter.id}
-              className="text-sm flex justify-between gap-2 p-1.5 rounded-md transition-colors hover:dark:bg-zinc-700 dark:bg-zinc-800"
+              className="text-sm flex justify-between gap-2 p-1.5 rounded-md transition-colors bg-muted hover:bg-muted/80"
             >
               <div className="flex items-center gap-1.5">
                 <p className="shrink-0">

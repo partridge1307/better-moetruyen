@@ -30,7 +30,7 @@ const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const pathname = usePathname();
   const colorScheme = useColorScheme();
   const [colorTheme, setColorTheme] = useLocalStorage({ key: 'theme' });
-  const [isChecked, setChecked] = useState<boolean>(false);
+  const [isChecked, setChecked] = useState<boolean>(true);
 
   const NavContent: NavContentProps[] = useMemo(
     () => [
@@ -111,17 +111,17 @@ const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   );
 
   useEffect(() => {
-    if (colorTheme) {
-      if (
-        colorTheme === 'dark' ||
-        (!('theme' in localStorage) && colorScheme === 'dark')
-      ) {
-        document.documentElement.classList.add('dark');
-        setChecked(true);
-      } else {
-        document.documentElement.classList.remove('dark');
-        setChecked(false);
-      }
+    if (!colorTheme) return;
+
+    if (
+      colorTheme === 'dark' ||
+      (!('theme' in localStorage) && colorScheme === 'dark')
+    ) {
+      document.documentElement.classList.add('dark');
+      setChecked(true);
+    } else {
+      document.documentElement.classList.remove('dark');
+      setChecked(false);
     }
   }, [colorScheme, colorTheme]);
 
@@ -194,7 +194,7 @@ const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
         <div className="flex h-[10%] items-center justify-between px-6 bg-primary-foreground">
           <div>
             <p>©Moetruyen</p>
-            <p>Version: 1.2.3</p>
+            <p>Version: 1.3.0</p>
           </div>
           <SwitchWithIcon checked={isChecked} onCheckedChange={handleSwitch}>
             <SunMoon />

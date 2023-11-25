@@ -120,7 +120,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased dark:bg-zinc-800 md:scrollbar md:scrollbar--dark">
+      <body className="antialiased bg-muted md:scrollbar md:scrollbar--dark">
         <Providers>
           {authModal}
 

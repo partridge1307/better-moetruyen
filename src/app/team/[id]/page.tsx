@@ -70,7 +70,7 @@ const page: FC<pageProps> = async ({ params }) => {
       <section className="p-3 pb-7 rounded-t-md bg-primary-foreground">
         {/* Image section */}
         <section className="relative">
-          <TeamCover team={team} quality={75} />
+          <TeamCover team={team} quality={75} loading="eager" />
           <div className="absolute left-[3%] bottom-0 w-1/4 h-1/4 md:w-1/5 md:h-1/5">
             <TeamImage
               team={team}

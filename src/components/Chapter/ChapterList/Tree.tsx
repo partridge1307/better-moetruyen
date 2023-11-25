@@ -36,7 +36,7 @@ const Tree: FC<TreeProps> = async ({ mangaId }) => {
               Volume {group.volume}
             </AccordionTrigger>
 
-            <AccordionContent asChild>
+            <AccordionContent asChild className="text-base">
               <ul className="space-y-5">
                 {group.data
                   .sort((a, b) => b.index - a.index)
@@ -60,7 +60,7 @@ const Tree: FC<TreeProps> = async ({ mangaId }) => {
                       <li key={chapter.id} className="flex gap-2 md:gap-4">
                         <Link
                           href={`/chapter/${chapter.id}`}
-                          className="block flex-1 py-1 px-1.5 rounded-md space-y-1.5 transition-colors dark:bg-zinc-700 dark:hover:bg-zinc-600"
+                          className="block flex-1 py-1 px-1.5 rounded-md space-y-1.5 transition-colors bg-muted hover:bg-muted/70"
                         >
                           <div className="flex items-center gap-1.5 md:text-lg font-semibold">
                             {latestChapter.id === chapter.id && (
@@ -89,7 +89,7 @@ const Tree: FC<TreeProps> = async ({ mangaId }) => {
                           !!chapter.teamImage && (
                             <Link
                               href={`/team/${chapter.teamId}`}
-                              className="flex items-center gap-3 py-1 px-1.5 rounded-md transition-colors dark:bg-zinc-700 dark:hover:bg-zinc-600"
+                              className="flex items-center gap-3 py-1 px-2 rounded-md transition-colors bg-muted hover:bg-muted/70"
                             >
                               <div className="relative w-10 h-10 aspect-square">
                                 <Image

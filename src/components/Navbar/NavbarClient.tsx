@@ -46,7 +46,7 @@ const NavbarClient = () => {
     !chapterRouteRegex.test(pathName) && (
       <nav
         className={cn(
-          'sticky top-0 inset-x-0 p-2 z-50 transition-transform backdrop-blur dark:bg-zinc-800/70',
+          'sticky top-0 inset-x-0 p-2 z-50 transition-transform backdrop-blur bg-muted/70',
           {
             '-translate-y-full': !pinned,
           }

@@ -31,6 +31,7 @@ const CarouselRecommendation: FC<CarouselRecommendationProps> = ({
             className="block w-24 lg:w-36 group space-y-1.5"
           >
             <MangaImage
+              priority
               sizes="20vw"
               manga={manga}
               className="transition-transform group-hover:scale-105"

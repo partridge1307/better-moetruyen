@@ -43,13 +43,13 @@ export default function manifest() {
         label: 'List of Manga Resources in Moetruyen',
       },
       {
-        src: '/static/homescreen.webp',
+        src: '/static/homescreen-narrow.webp',
         sizes: '750x1243',
         type: 'image/webp',
         label: 'Mobile homescreen of Moetruyen',
       },
       {
-        src: '/static/manga-info.webp',
+        src: '/static/manga-info-narrow.webp',
         sizes: '750x1242',
         type: 'image/webp',
         label: 'List of Manga Resources in Moetruyen',

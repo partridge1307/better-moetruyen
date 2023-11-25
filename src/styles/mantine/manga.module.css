@@ -10,11 +10,10 @@
   border-radius: 0.375rem;
 }
 
-.slide[data-orientation='horizontal'] {
-  padding-right: 1.5rem;
-
+.container {
+  column-gap: 3rem;
   @media not all and (min-width: 640px) {
-    padding-right: 0.125rem;
+    column-gap: 1rem;
   }
 }
 

@@ -29,18 +29,30 @@ export default function manifest() {
     ],
     screenshots: [
       {
-        src: '/static/homescreen.webp',
-        sizes: '1535x720',
+        src: '/static/homescreen-wide.webp',
+        sizes: '1280x720',
         type: 'image/webp',
         form_factor: 'wide',
-        label: 'Homescreen of Moetruyen App',
+        label: 'Desktop homescreen of Moetruyen',
+      },
+      {
+        src: '/static/manga-info-wide.webp',
+        sizes: '1280x720',
+        type: 'image/webp',
+        form_factor: 'wide',
+        label: 'List of Manga Resources in Moetruyen',
+      },
+      {
+        src: '/static/homescreen.webp',
+        sizes: '750x1243',
+        type: 'image/webp',
+        label: 'Mobile homescreen of Moetruyen',
       },
       {
         src: '/static/manga-info.webp',
-        sizes: '1548x720',
+        sizes: '750x1242',
         type: 'image/webp',
-        form_factor: 'wide',
-        label: 'List of Manga Resources in Moetruyen App',
+        label: 'List of Manga Resources in Moetruyen',
       },
     ],
   };

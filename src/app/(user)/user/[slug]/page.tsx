@@ -55,10 +55,10 @@ const page: FC<pageProps> = async ({ params }) => {
           />
         </section>
         {/* Name and Badge section */}
-        <section className="ml-[5%] md:ml-56 mt-2.5 mb-3 md:mb-16 flex items-start justify-between">
+        <section className="ml-[5%] md:ml-56 mt-3 md:mt-2.5 mb-5 md:mb-16 flex items-start justify-between">
           <Username
             user={user}
-            className="text-start text-xl md:text-2xl font-semibold max-sm:mt-14"
+            className="text-start text-xl md:text-2xl font-semibold max-sm:mt-12"
           />
           {!!user.badge.length && (
             <div className="shrink-0 max-w-[200px] flex flex-wrap items-center gap-4">

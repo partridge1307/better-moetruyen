@@ -70,7 +70,7 @@ const page: FC<pageProps> = async ({ params }) => {
       <section className="p-3 pb-7 rounded-t-md bg-primary-foreground">
         {/* Image section */}
         <section className="relative">
-          <TeamCover team={team} />
+          <TeamCover team={team} quality={75} />
           <div className="absolute left-[3%] bottom-0 w-1/4 h-1/4 md:w-1/5 md:h-1/5">
             <TeamImage
               team={team}
@@ -84,7 +84,10 @@ const page: FC<pageProps> = async ({ params }) => {
           <h1 className="text-2xl md:text-4xl font-semibold">{team.name}</h1>
           <Popover>
             <PopoverTrigger asChild>
-              <div className="shrink-0 flex items-center gap-2 px-2 py-2 md:py-1 rounded-full md:rounded-l-full md:rounded-r-none transition-colors hover:bg-muted cursor-pointer">
+              <div
+                role="button"
+                className="shrink-0 flex items-center gap-2 px-2 py-2 md:py-1 rounded-full md:rounded-l-full md:rounded-r-none transition-colors hover:bg-muted cursor-pointer"
+              >
                 <UserAvatar
                   user={team.owner}
                   className="w-14 h-14 md:w-12 md:h-12"

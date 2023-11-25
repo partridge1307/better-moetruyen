@@ -53,7 +53,7 @@ const FollowButton: FC<FollowButtonProps> = ({ isFollowing, userId }) => {
     <Button
       variant={'destructive'}
       disabled={isToggling}
-      className="w-[30%] md:w-[19%] lg:w-[16%]"
+      className="w-28 md:w-40"
       onClick={() => Toggle('UNFOLLOW')}
     >
       <HeartOff />
@@ -61,7 +61,7 @@ const FollowButton: FC<FollowButtonProps> = ({ isFollowing, userId }) => {
   ) : (
     <Button
       disabled={isToggling}
-      className="w-[30%] md:w-[19%] lg:w-[16%]"
+      className="w-28 md:w-40"
       onClick={() => Toggle('FOLLOW')}
     >
       <Heart />

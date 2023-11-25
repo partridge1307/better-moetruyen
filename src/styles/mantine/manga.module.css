@@ -60,7 +60,7 @@
   box-shadow: none;
 
   &:hover {
-    @apply bg-background/30;
+    background-color: hsl(var(--background) / 0.3);
   }
 
   &:hover svg {

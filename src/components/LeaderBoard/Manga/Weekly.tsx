@@ -5,6 +5,11 @@ import Link from 'next/link';
 
 const Weekly = async () => {
   const results = await db.view.findMany({
+    where: {
+      manga: {
+        isPublished: true,
+      },
+    },
     orderBy: {
       weeklyView: {
         _count: 'desc',
@@ -37,10 +42,7 @@ const Weekly = async () => {
           className="grid grid-cols-[.3fr_1fr] gap-4 rounded-md group transition-colors hover:bg-background/20"
         >
           <div className="relative">
-            <MangaImage
-              sizes="(max-width: 640px) 5vw, 10vw"
-              manga={result.manga}
-            />
+            <MangaImage sizes="15vw" manga={result.manga} />
             <div className="absolute top-0 left-0 p-1 pr-2 rounded-md rounded-br-full bg-red-600">
               {idx + 1}
             </div>

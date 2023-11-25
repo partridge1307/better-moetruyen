@@ -161,7 +161,7 @@ const page: FC<pageProps> = async ({ params }) => {
           </TagWrapper>
 
           <div className="grid md:grid-cols-[1fr_.35fr] gap-6">
-            <div className="p-2 rounded-md md:bg-primary-foreground/95">
+            <div className="p-3 rounded-md md:bg-primary-foreground/95">
               <MangaInfo manga={manga} />
             </div>
 

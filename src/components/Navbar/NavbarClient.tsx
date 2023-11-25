@@ -52,7 +52,7 @@ const NavbarClient = () => {
           }
         )}
       >
-        <div className="container mx-auto flex items-center justify-between px-0 max-sm:px-1">
+        <div className="container px-0 max-sm:px-0.5 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <NavSidebar isLoggedIn={!!session} />
 
@@ -91,6 +91,7 @@ const NavbarClient = () => {
                   <DropdownMenuItem asChild>
                     <Link
                       href="/sign-in"
+                      scroll={false}
                       className={cn(buttonVariants(), 'w-full cursor-pointer')}
                     >
                       Đăng nhập
@@ -100,6 +101,7 @@ const NavbarClient = () => {
                   <DropdownMenuItem asChild>
                     <Link
                       href="/sign-up"
+                      scroll={false}
                       className={cn(buttonVariants(), 'w-full cursor-pointer')}
                     >
                       Đăng ký

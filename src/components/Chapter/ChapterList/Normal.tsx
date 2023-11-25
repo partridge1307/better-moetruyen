@@ -45,7 +45,7 @@ const Normal: FC<NormalProps> = async ({ mangaId }) => {
   let latestChapter = chapters[0];
 
   return (
-    <ul className="space-y-3">
+    <ul className="space-y-5">
       {chapters
         .sort((a, b) => b.chapterIndex - a.chapterIndex)
         .map((chapter) => {

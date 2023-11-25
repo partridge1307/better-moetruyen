@@ -32,6 +32,9 @@ const Manga: FC<MangaProps> = async ({ user }) => {
           review: true,
           createdAt: true,
           chapter: {
+            where: {
+              isPublished: true,
+            },
             take: 3,
             orderBy: {
               createdAt: 'desc',

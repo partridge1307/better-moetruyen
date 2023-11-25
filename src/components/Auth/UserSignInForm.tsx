@@ -117,8 +117,9 @@ const UserSignInForm = ({
                 <FormMessage />
                 <FormControl>
                   <Input
+                    required
                     type="email"
-                    autoComplete="off"
+                    autoComplete="username"
                     placeholder="Email của bạn"
                     className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
                     {...field}
@@ -137,7 +138,9 @@ const UserSignInForm = ({
                 <FormMessage />
                 <FormControl>
                   <Input
+                    required
                     type="password"
+                    autoComplete="current-password"
                     placeholder="Mật khẩu của bạn"
                     className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
                     {...field}
@@ -172,6 +175,7 @@ const UserSignInForm = ({
           id="magic_link"
           placeholder="Email"
           type="email"
+          autoComplete="username"
           value={emailString}
           disabled={isLoading}
           onChange={(e) => {

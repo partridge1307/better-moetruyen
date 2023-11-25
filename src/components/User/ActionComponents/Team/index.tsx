@@ -49,7 +49,7 @@ const Team: FC<TeamProps> = async ({ user }) => {
           className="block rounded-md transition-colors bg-primary-foreground hover:bg-primary-foreground/70"
         >
           <div className="relative">
-            <TeamCover team={dbUser.team} quality={60} />
+            <TeamCover team={dbUser.team} quality={75} loading="eager" />
             <div className="absolute left-[5%] md:left-[3%] bottom-0 w-1/3 h-1/3 md:w-1/5 md:h-1/5">
               <TeamImage
                 team={dbUser.team}

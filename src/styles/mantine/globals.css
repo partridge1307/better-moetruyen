@@ -9,3 +9,7 @@
 :is(.dark) :where(.mantine-ScrollArea-scrollbar) {
   background: rgb(0, 0, 0, 0.5);
 }
+
+:is(.dark) :where(.mantine-PinInput-pinInput) {
+  color: black;
+}

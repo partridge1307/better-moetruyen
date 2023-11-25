@@ -49,7 +49,11 @@ const MangaAction: FC<MangaActionProps> = async ({ manga }) => {
       <ShareButton
         url={`/manga/${manga.slug}`}
         title={manga.name}
-        className={!session ? 'w-[8.5rem] md:w-[11.5rem]  lg:w-[13.5rem]' : ''}
+        className={
+          !session && !chapterId
+            ? 'w-[8.5rem] md:w-[11.5rem]  lg:w-[13.5rem]'
+            : ''
+        }
       />
     </>
   );

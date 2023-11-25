@@ -44,7 +44,9 @@ const page: FC<pageProps> = async ({ searchParams }) => {
     db.chapter.findMany({
       distinct: ['mangaId'],
       where: {
-        isPublished: true,
+        manga: {
+          isPublished: true,
+        },
       },
       take: limit,
       skip: (page - 1) * limit,
@@ -60,10 +62,13 @@ const page: FC<pageProps> = async ({ searchParams }) => {
             image: true,
             review: true,
             chapter: {
-              take: 3,
+              where: {
+                isPublished: true,
+              },
               orderBy: {
                 createdAt: 'desc',
               },
+              take: 3,
               select: {
                 id: true,
                 volume: true,

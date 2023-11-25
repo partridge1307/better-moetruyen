@@ -37,7 +37,7 @@ const Tree: FC<TreeProps> = async ({ mangaId }) => {
             </AccordionTrigger>
 
             <AccordionContent asChild>
-              <ul className="space-y-3">
+              <ul className="space-y-5">
                 {group.data
                   .sort((a, b) => b.index - a.index)
                   .map((chapter) => {

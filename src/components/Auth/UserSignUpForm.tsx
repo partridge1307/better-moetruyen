@@ -90,8 +90,9 @@ const UserSignUpForm = () => {
               <FormMessage />
               <FormControl>
                 <Input
+                  required
                   type="email"
-                  autoComplete="off"
+                  autoComplete="username"
                   placeholder="Email của bạn"
                   className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
                   {...field}
@@ -110,7 +111,9 @@ const UserSignUpForm = () => {
               <FormMessage />
               <FormControl>
                 <Input
+                  required
                   type="password"
+                  autoComplete="new-password"
                   placeholder="Mật khẩu của bạn"
                   className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
                   {...field}
@@ -129,7 +132,9 @@ const UserSignUpForm = () => {
               <FormMessage />
               <FormControl>
                 <Input
+                  required
                   type="password"
+                  autoComplete="new-password"
                   placeholder="Mật khẩu của bạn"
                   className="border-2 focus:ring-offset-2 dark:border-slate-200 focus-visible:dark:ring-slate-200"
                   {...field}

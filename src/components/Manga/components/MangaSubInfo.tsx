@@ -67,19 +67,19 @@ const MangaSubInfo: FC<MangaSubInfoProps> = async ({ mangaId }) => {
           <PopoverContent className="p-1.5" asChild>
             <Link
               href={`/user/${manga.creator.name?.split(' ').join('-')}`}
-              className="block"
+              className="block pb-7"
             >
               <div className="relative">
                 <UserBanner user={manga.creator} />
                 <UserAvatar
                   user={manga.creator}
-                  className="w-14 h-14 absolute left-4 bottom-0 translate-y-1/2 bg-background ring-4 ring-secondary"
+                  className="w-20 h-20 absolute left-4 bottom-0 translate-y-1/2 bg-background ring-4 ring-secondary"
                 />
               </div>
 
               <Username
                 user={manga.creator}
-                className="text-start mt-10 pl-4 text-lg font-semibold"
+                className="text-start mt-1 ml-28 text-lg font-semibold line-clamp-2"
               />
             </Link>
           </PopoverContent>

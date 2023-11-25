@@ -6,7 +6,9 @@ const LatestManga = async () => {
   const chapters = await db.chapter.findMany({
     distinct: ['mangaId'],
     where: {
-      isPublished: true,
+      manga: {
+        isPublished: true,
+      },
     },
     take: INFINITE_SCROLL_PAGINATION_RESULTS,
     orderBy: {
@@ -21,10 +23,13 @@ const LatestManga = async () => {
           image: true,
           review: true,
           chapter: {
-            take: 3,
+            where: {
+              isPublished: true,
+            },
             orderBy: {
               createdAt: 'desc',
             },
+            take: 3,
             select: {
               id: true,
               volume: true,
@@ -39,7 +44,7 @@ const LatestManga = async () => {
   });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-y-8">
       {chapters.map(({ manga }) => (
         <MangaCard key={manga.id} manga={manga} />
       ))}

@@ -8,13 +8,15 @@ interface TeamCoverProps extends React.HTMLAttributes<HTMLImageElement> {
   quality?: number;
   sizes?: string;
   priority?: boolean;
+  loading?: 'eager' | 'lazy';
 }
 
 const TeamCover: FC<TeamCoverProps> = ({
   team,
   quality = 50,
-  sizes = '(max-width: 640px) 45vw, 65vw',
+  sizes = '(max-width: 640px) 55vw, 75vw',
   priority = true,
+  loading = 'lazy',
   className,
   placeholder,
   ...props
@@ -24,6 +26,7 @@ const TeamCover: FC<TeamCoverProps> = ({
       {team.cover ? (
         <Image
           fill
+          loading={loading}
           quality={quality}
           sizes={sizes}
           priority={priority}

@@ -32,12 +32,12 @@ const LastActivityPostForum = dynamic(
 
 const page = () => {
   return (
-    <main className="max-sm:px-2 pb-4 space-y-12 md:space-y-16">
+    <main className="pb-4 space-y-12 md:space-y-16">
       <NotableManga />
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_.4fr] gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_.4fr] gap-10 md:gap-8">
         {/* Left section */}
-        <section className="min-w-0 h-fit md:ml-6 p-2 space-y-10 rounded-lg bg-gradient-to-b from-background/40">
+        <section className="min-w-0 h-fit md:ml-6 p-3 space-y-12 rounded-lg bg-gradient-to-b from-background/40">
           {/* Recommendation */}
           <div className="space-y-3">
             <h1 className="text-2xl font-semibold">Dành cho bạn</h1>
@@ -60,7 +60,7 @@ const page = () => {
         </section>
 
         {/* Right section */}
-        <section className="min-w-0 h-fit p-2 space-y-10 rounded-lg md:rounded-l-lg md:rounded-r-none bg-gradient-to-b from-background/40">
+        <section className="min-w-0 h-fit p-3 space-y-12 rounded-lg md:rounded-l-lg md:rounded-r-none bg-gradient-to-b from-background/40">
           {/* Leaderboard */}
           <div className="space-y-3">
             <h1 className="text-2xl font-semibold">Bảng xếp hạng</h1>

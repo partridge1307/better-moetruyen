@@ -64,7 +64,7 @@ const Tree: FC<TreeProps> = async ({ mangaId }) => {
                         >
                           <div className="flex items-center gap-1.5 md:text-lg font-semibold">
                             {latestChapter.id === chapter.id && (
-                              <span className="py-0.5 px-1 md:px-1.5 mr-1 md:mr-1.5 text-sm rounded-md bg-foreground text-primary-foreground">
+                              <span className="shrink-0 py-0.5 px-1 md:px-1.5 mr-1 md:mr-1.5 text-sm rounded-md bg-foreground text-primary-foreground">
                                 NEW
                               </span>
                             )}

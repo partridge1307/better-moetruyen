@@ -171,7 +171,7 @@ const NavSidebar = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
                 <div className="flex flex-col gap-2">
                   {nc.subMenu.map((nsm) => (
                     <Link
-                      prefetch={nsm.link !== '/latest'}
+                      prefetch={nsm.link !== '/random'}
                       key={nsm.title}
                       href={nsm.link}
                     >

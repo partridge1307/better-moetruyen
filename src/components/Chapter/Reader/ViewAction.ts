@@ -5,13 +5,14 @@ import { limiter } from '@/lib/rate-limit';
 import { requestIp } from '@/lib/request-ip';
 import { headers } from 'next/headers';
 
-export async function UpdateView(chapterId: number) {
-  const header = headers();
-  const headersList = new Headers(header);
-  const ip = requestIp(header) ?? '127.0.0.1';
+export async function UpdateView(chapterId: number, stime: number) {
+  if (Math.round(Date.now() - stime) > 1000 * 60) return;
+
+  const HeadersList = new Headers(headers());
+  const ip = requestIp(HeadersList) ?? '127.0.0.1';
 
   try {
-    await limiter.check(headersList, 50, ip);
+    await limiter.check(HeadersList, 50, ip);
 
     const chapter = await db.chapter.findUniqueOrThrow({
       where: {
@@ -24,27 +25,48 @@ export async function UpdateView(chapterId: number) {
       },
     });
 
-    if (!!chapter.teamId) {
+    if (!chapter.teamId) {
+      db.view.update({
+        where: {
+          mangaId: chapter.mangaId,
+        },
+        data: {
+          totalView: {
+            increment: 1,
+          },
+          dailyView: {
+            create: {
+              chapterId: chapter.id,
+            },
+          },
+          weeklyView: {
+            create: {
+              chapterId: chapter.id,
+            },
+          },
+        },
+      });
+    } else {
       await db.$transaction([
         db.view.update({
           where: {
             mangaId: chapter.mangaId,
           },
           data: {
+            totalView: {
+              increment: 1,
+            },
             dailyView: {
               create: {
-                chapterId,
+                chapterId: chapter.id,
                 teamId: chapter.teamId,
               },
             },
             weeklyView: {
               create: {
-                chapterId,
+                chapterId: chapter.id,
                 teamId: chapter.teamId,
               },
-            },
-            totalView: {
-              increment: 1,
             },
           },
         }),
@@ -59,32 +81,7 @@ export async function UpdateView(chapterId: number) {
           },
         }),
       ]);
-    } else {
-      db.view.update({
-        where: {
-          mangaId: chapter.mangaId,
-        },
-        data: {
-          dailyView: {
-            create: {
-              chapterId,
-              teamId: chapter.teamId,
-            },
-          },
-          weeklyView: {
-            create: {
-              chapterId,
-              teamId: chapter.teamId,
-            },
-          },
-          totalView: {
-            increment: 1,
-          },
-        },
-      });
     }
-
-    return;
   } catch (error) {
     return;
   }

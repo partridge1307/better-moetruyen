@@ -14,7 +14,7 @@ interface TagContentProps extends React.HTMLAttributes<HTMLLIElement> {}
 const TagContent: FC<TagContentProps> = ({ className, children, ...props }) => (
   <li
     className={cn(
-      'p-0.5 px-1 md:px-2 rounded-lg text-xs md:text-sm bg-primary text-primary-foreground',
+      'p-0.5 px-1 md:px-2 rounded-lg text-xs md:text-sm lg:text-base font-semibold bg-primary text-primary-foreground',
       className
     )}
     {...props}

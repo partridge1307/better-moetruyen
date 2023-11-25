@@ -29,5 +29,17 @@ export default function manifest(): MetadataRoute.Manifest {
         type: 'image/png',
       },
     ],
+    screenshots: [
+      {
+        src: '/static/homepage.webp',
+        sizes: '1535x720',
+        type: 'image/webp',
+      },
+      {
+        src: '/static/manga-info.webp',
+        sizes: '1548x720',
+        type: 'image/webp',
+      },
+    ],
   };
 }

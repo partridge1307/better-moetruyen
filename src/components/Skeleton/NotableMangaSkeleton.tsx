@@ -1,6 +1,6 @@
 const NotableMangaSkeleton = () => {
   return (
-    <div className="grid md:grid-cols-[.2fr_1.1fr_.24fr] gap-6">
+    <div className="grid md:grid-cols-[.2fr_1.1fr_.24fr] gap-6 mt-8">
       {Array.from(Array(3).keys()).map((_, idx) => (
         <div
           key={idx}

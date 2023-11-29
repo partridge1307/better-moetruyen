@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { FC } from 'react';
 
 interface MangaImageProps extends React.HTMLAttributes<HTMLImageElement> {
-  manga: Pick<Manga, 'image'>;
+  manga: Pick<Manga, 'image' | 'name'>;
   loading?: 'eager' | 'lazy';
   sizes?: string;
   priority?: boolean;
@@ -28,7 +28,7 @@ const MangaImage: FC<MangaImageProps> = ({
         priority={priority}
         quality={40}
         src={manga.image}
-        alt={`Ảnh bìa ${manga.image}`}
+        alt={`Ảnh bìa ${manga.name}`}
         className={cn('object-cover rounded-md', className)}
         {...props}
       />

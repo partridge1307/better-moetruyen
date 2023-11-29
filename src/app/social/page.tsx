@@ -10,9 +10,7 @@ const getLikes = async (pageId: string) => {
     /(?:\<div class="_1drq" .*?\>)(.*?)(?=\<\/div\>)/
   );
   const likesStr = !!!likesMatch ? '0' : likesMatch[1];
-  const likes = !!likesStr.match(/^[0-9.]*/)
-    ? likesStr.match(/^[0-9.]*/)![0]
-    : '0';
+  const likes = !!likesStr.match(/\d+/) ? likesStr.match(/\d+/)![0] : '0';
 
   return Number(likes);
 };

@@ -80,7 +80,14 @@ const Tree: FC<TreeProps> = async ({ mangaId }) => {
                             ).toDateString()}
                             className="block"
                           >
-                            {formatTimeToNow(new Date(chapter.createdAt))}
+                            {formatTimeToNow(
+                              new Date(
+                                new Date(chapter.createdAt).toLocaleString(
+                                  'en-US',
+                                  { timeZone: 'Asia/Ho_Chi_Minh' }
+                                )
+                              )
+                            )}
                           </time>
                         </Link>
 

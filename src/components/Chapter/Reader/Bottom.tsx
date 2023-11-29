@@ -65,7 +65,7 @@ const Bottom: FC<BottomProps> = ({ embla, chapterId, totalImages }) => {
   }, [embla, layout]);
 
   useEffect(() => {
-    const url = `${window.location.protocol}//${window.location.host}/${window.location.pathname}?page=${currentPage}`;
+    const url = `${window.location.protocol}//${window.location.host}${window.location.pathname}?page=${currentPage}`;
     window.history.pushState({ path: url }, '', url);
 
     calcView();

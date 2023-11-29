@@ -5,7 +5,7 @@ import classes from '@/styles/chapter/bottom.module.css';
 import { useMediaQuery } from '@mantine/hooks';
 import * as Slider from '@radix-ui/react-slider';
 import type { EmblaCarouselType } from 'embla-carousel-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import {
   memo,
   useCallback,
@@ -38,7 +38,6 @@ const Bottom: FC<BottomProps> = ({ embla, chapterId, totalImages }) => {
   const direction = useContext(DirectionValueContext);
   const { calcView } = useViewCalc(chapterId, totalImages);
 
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(totalImages);
@@ -66,7 +65,9 @@ const Bottom: FC<BottomProps> = ({ embla, chapterId, totalImages }) => {
   }, [embla, layout]);
 
   useEffect(() => {
-    router.push(`?page=${currentPage}`, { scroll: false });
+    const url = `${window.location.protocol}//${window.location.host}/${window.location.pathname}?page=${currentPage}`;
+    window.history.pushState({ path: url }, '', url);
+
     calcView();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

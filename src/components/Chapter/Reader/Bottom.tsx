@@ -66,7 +66,7 @@ const Bottom: FC<BottomProps> = ({ embla, chapterId, totalImages }) => {
   }, [embla, layout]);
 
   useEffect(() => {
-    router.replace(`?page=${currentPage}`, { scroll: false });
+    router.push(`?page=${currentPage}`, { scroll: false });
     calcView();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

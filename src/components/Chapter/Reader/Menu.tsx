@@ -167,7 +167,7 @@ const Menu: FC<MenuProps> = ({
               <Command>
                 <CommandInput placeholder="Chapter" />
                 <CommandEmpty>Không tìm thấy Chapter</CommandEmpty>
-                <CommandGroup>
+                <CommandGroup className="max-h-72 overflow-y-auto md:scrollbar md:dark:scrollbar--dark">
                   {chapterList.map((chapter) => (
                     <CommandItem
                       key={chapter.id}

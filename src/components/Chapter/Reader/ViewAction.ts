@@ -5,8 +5,8 @@ import { limiter } from '@/lib/rate-limit';
 import { requestIp } from '@/lib/request-ip';
 import { headers } from 'next/headers';
 
-export async function UpdateView(chapterId: number, stime: number) {
-  if (Math.round(Date.now() - stime) > 1000 * 60) return;
+export async function UpdateView(chapterId: number) {
+  //if (Math.round(Date.now() - stime) > 1000 * 60) return;
 
   const HeadersList = new Headers(headers());
   const ip = requestIp(HeadersList) ?? '127.0.0.1';

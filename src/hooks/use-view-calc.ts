@@ -25,16 +25,7 @@ const useViewCalc = (chapterId: number, totalImages: number) => {
     if (!interval.active || seconds < threshold.current) return;
 
     interval.stop();
-    setTimeout(
-      () =>
-        UpdateView(
-          chapterId,
-          new Date(
-            new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' })
-          ).getTime()
-        ),
-      0
-    );
+    setTimeout(() => UpdateView(chapterId), 0);
   }, [chapterId, interval, seconds]);
 
   return { calcView };

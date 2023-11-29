@@ -56,6 +56,11 @@ const Tree: FC<TreeProps> = async ({ mangaId }) => {
                       };
                     }
 
+                    const date = new Date(
+                      Date.parse(new Date(chapter.createdAt).toUTCString()) -
+                        new Date(chapter.createdAt).getTimezoneOffset() * 60000
+                    );
+
                     return (
                       <li key={chapter.id} className="flex gap-2 md:gap-4">
                         <Link
@@ -75,12 +80,10 @@ const Tree: FC<TreeProps> = async ({ mangaId }) => {
                           </div>
 
                           <time
-                            dateTime={new Date(
-                              chapter.createdAt
-                            ).toDateString()}
+                            dateTime={date.toDateString()}
                             className="block"
                           >
-                            {formatTimeToNow(new Date(chapter.createdAt))}
+                            {formatTimeToNow(date)}
                           </time>
                         </Link>
 
